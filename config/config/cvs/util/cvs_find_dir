@@ -1,0 +1,11 @@
+#!/bin/sh -f
+
+dn=`dirname $cm_workfile`
+bn=`basename $cm_workfile`
+
+cr=`$PSETCFG/util/cvs_find_name`
+
+if [ "$cr" != "-" ]; then
+    echo $cm_workfile | sed -e "s%/$cr%%"
+fi
+

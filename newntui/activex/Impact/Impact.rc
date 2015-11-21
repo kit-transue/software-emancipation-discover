@@ -1,0 +1,432 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "include\Resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "include\\Resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""Impact.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "THECOMPANY\0"
+            VALUE "FileDescription", "Impact ActiveX Control Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "Impact\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OLESelfRegister", "\0"
+            VALUE "OriginalFilename", "Impact.OCX\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "Impact ActiveX Control Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_IMPACT              BITMAP  DISCARDABLE     "res/ImpactCtl.bmp"
+IDB_XREF                BITMAP  DISCARDABLE     "res/xref.bmp"
+IDB_VARIABLES           BITMAP  DISCARDABLE     "res/variables.bmp"
+IDB_UNIONS              BITMAP  DISCARDABLE     "res/union.bmp"
+IDB_TYPEDEFS            BITMAP  DISCARDABLE     "res/typedef.bmp"
+IDB_TEMPLATES           BITMAP  DISCARDABLE     "res/template.bmp"
+IDB_TABLE               BITMAP  DISCARDABLE     "res/table.bmp"
+IDB_SUBSYSTEMS          BITMAP  DISCARDABLE     "res/groups.bmp"
+IDB_STRUCTURES          BITMAP  DISCARDABLE     "res/struct.bmp"
+IDB_STRINGS             BITMAP  DISCARDABLE     "res/strings.bmp"
+IDB_SEMTYPE             BITMAP  DISCARDABLE     "res/semtype.bmp"
+IDB_QUERYRESULTS        BITMAP  DISCARDABLE     "res/QueryResultsCtl.bmp"
+IDB_PROJECTS            BITMAP  DISCARDABLE     "res/rootr_projects.bmp"
+IDB_MACROS              BITMAP  DISCARDABLE     "res/macroses.bmp"
+IDB_LOCALVARS           BITMAP  DISCARDABLE     "res/locvar.bmp"
+IDB_LABEL               BITMAP  DISCARDABLE     "res/label.bmp"
+IDB_INSTANCES           BITMAP  DISCARDABLE     "res/variable.bmp"
+IDB_FUNCTIONS           BITMAP  DISCARDABLE     "res/function.bmp"
+IDB_FILES               BITMAP  DISCARDABLE     "res/files.bmp"
+IDB_FIELD               BITMAP  DISCARDABLE     "res/field2.bmp"
+IDB_EVAL                BITMAP  DISCARDABLE     "res/eval.bmp"
+IDB_ENUMS               BITMAP  DISCARDABLE     "res/enum.bmp"
+IDB_DEFECT              BITMAP  DISCARDABLE     "res/defect.bmp"
+IDB_CURSOR              BITMAP  DISCARDABLE     "res/cursor.bmp"
+IDB_CONST               BITMAP  DISCARDABLE     "res/const.bmp"
+IDB_CLASSES             BITMAP  DISCARDABLE     "res/classes.bmp"
+IDB_CATEGORYMAP         BITMAP  DISCARDABLE     "res/categ.bmp"
+IDB_AST                 BITMAP  DISCARDABLE     "res/ast.bmp"
+IDB_ACTION              BITMAP  DISCARDABLE     "res/action.bmp"
+IDB_STATES              BITMAP  DISCARDABLE     "res/state.bmp"
+IDB_IMPACTREPORT        BITMAP  DISCARDABLE     "res/impactre.bmp"
+IDB_IMPACTPROJECT       BITMAP  DISCARDABLE     "res/impactpr.bmp"
+IDB_CHANGES             BITMAP  DISCARDABLE     "res/changes.bmp"
+IDB_PACKAGES            BITMAP  DISCARDABLE     "res/packages.bmp"
+IDB_INTERFACES          BITMAP  DISCARDABLE     "res/interfac.bmp"
+IDB_WARNING             BITMAP  DISCARDABLE     "res/warning.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE_IMPACT DIALOG DISCARDABLE  0, 0, 250, 62
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of Impact Control on this dialog.",
+                    IDC_STATIC,7,25,229,16
+END
+
+IDD_RENAME DIALOG DISCARDABLE  0, 0, 187, 73
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Rename"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,23,52,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,105,52,50,14
+    LTEXT           "Original Name:",IDC_STATIC,11,11,55,12
+    LTEXT           "New Name:",IDC_STATIC,11,31,55,12
+    EDITTEXT        IDC_ORIGINAL,66,11,114,12,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_NEW,66,31,114,12,ES_AUTOHSCROLL
+END
+
+IDD_SELECTORTMPLT DIALOG DISCARDABLE  0, 0, 260, 49
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "xxx"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,74,27,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,135,27,50,14
+    LTEXT           "xxx",IDC_SELECTORNAME,7,9,10,8
+    COMBOBOX        IDC_SELECTOR,48,7,203,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_ENUMVALUE DIALOG DISCARDABLE  0, 0, 187, 48
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Enum Value"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,30,27,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,104,27,50,14
+    LTEXT           "Name:",IDC_STATIC,7,9,21,8
+    EDITTEXT        IDC_VALNAME,31,7,149,12,ES_AUTOHSCROLL
+END
+
+IDD_FIELDINFO DIALOG DISCARDABLE  0, 0, 187, 105
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Field"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,28,84,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,103,84,50,14
+    LTEXT           "Type:",IDC_STATIC,7,9,19,8
+    EDITTEXT        IDC_TYPE,32,7,148,12,ES_AUTOHSCROLL
+    LTEXT           "Name:",IDC_STATIC,7,24,21,8
+    EDITTEXT        IDC_NAME,32,23,148,12,ES_AUTOHSCROLL
+    GROUPBOX        "",IDC_STATIC,7,36,173,45,WS_GROUP
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON,13,44,35,
+                    10
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,13,
+                    56,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,13,68,
+                    37,10
+END
+
+IDD_METHODINFO DIALOG DISCARDABLE  0, 0, 187, 167
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Method"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,34,146,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,107,146,50,14
+    LTEXT           "Type:",IDC_STATIC,7,9,19,8
+    LTEXT           "Name:",IDC_STATIC,7,24,21,8
+    EDITTEXT        IDC_TYPE,30,7,150,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_NAME,30,23,150,12,ES_AUTOHSCROLL
+    GROUPBOX        "",IDC_ACCESSBORDER,7,96,173,42
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON,12,103,
+                    35,10
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,12,
+                    114,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,12,125,
+                    37,10
+    CONTROL         "Virtual",IDC_VIRTUAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,115,103,35,10
+END
+
+IDD_ARGUMENTSINFO DIALOG DISCARDABLE  0, 0, 187, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Arguments"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,32,74,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,108,74,50,14
+END
+
+IDD_FIELD_PERMISSIONS_JAVA DIALOG DISCARDABLE  0, 0, 126, 130
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Declaration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,17,14,35,13
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,17,
+                    33,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,17,68,
+                    45,10
+    CONTROL         "Final",IDC_FINAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    17,91,31,10
+    DEFPUSHBUTTON   "OK",IDOK,7,109,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,69,109,50,14
+    GROUPBOX        "",IDC_GROUPBOX,7,7,112,78
+    CONTROL         """Package""",IDC_PACKAGE,"Button",BS_AUTORADIOBUTTON,17,
+                    49,53,13
+    CONTROL         "Static",IDC_STATIC2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,69,91,34,10
+END
+
+IDD_NEWTYPE DIALOG DISCARDABLE  0, 0, 187, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Type"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,32,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,108,45,50,14
+    LTEXT           "Original Type:",IDC_STATIC,7,8,43,8
+    LTEXT           "New Type:",IDC_STATIC,7,25,34,8
+    EDITTEXT        IDC_TYPE,55,7,125,12,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_NEWTYPE,55,24,125,12,ES_AUTOHSCROLL
+END
+
+IDD_METHOD_PERMISSIONS_JAVA DIALOG DISCARDABLE  0, 0, 124, 142
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Declaration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,121,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,67,121,50,14
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,17,14,35,13
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,17,
+                    32,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,17,62,
+                    45,10
+    GROUPBOX        "",IDC_GROUPBOX,7,7,110,71
+    CONTROL         "Final",IDC_FINAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    17,103,31,10
+    CONTROL         "Static",IDC_STATIC2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,69,103,34,10
+    CONTROL         "Native",IDC_NATIVE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,69,85,37,10
+    CONTROL         """Package""",IDC_PACKAGE,"Button",BS_AUTORADIOBUTTON,17,
+                    47,56,10
+    CONTROL         "Abstract",IDC_ABSTRACT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,17,85,42,10
+END
+
+IDD_CLASS_PERMISSIONS DIALOG DISCARDABLE  0, 0, 141, 130
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Declaration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,109,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,84,109,50,14
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,13,
+                    34,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,13,66,
+                    45,10
+    GROUPBOX        "",IDC_GROUPBOX,7,7,127,75
+    CONTROL         "Final",IDC_FINAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    59,90,34,10
+    CONTROL         "Static",IDC_STATIC2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,99,90,34,10
+    CONTROL         """Package""",IDC_PACKAGE,"Button",BS_AUTORADIOBUTTON,13,
+                    50,55,10
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON,13,18,45,
+                    10
+    CONTROL         "Abstract",IDC_ABSTRACT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,90,41,10
+END
+
+IDD_METHOD_PERMISSIONS_CPP DIALOG DISCARDABLE  0, 0, 139, 105
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Declaration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,84,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,82,84,50,14
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,14,
+                    29,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,14,41,
+                    45,10
+    CONTROL         "Const",IDC_CONST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    13,65,35,10
+    GROUPBOX        "",IDC_GROUPBOX,7,7,125,51
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON,14,17,45,
+                    10
+    CONTROL         "Virtual",IDC_VIRTUAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,96,66,35,10
+    CONTROL         "Static",IDC_STATIC2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,53,65,35,10
+END
+
+IDD_FIELD_PERMISSIONS_CPP DIALOG DISCARDABLE  0, 0, 128, 106
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Declaration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,85,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,71,85,50,14
+    CONTROL         "Protected",IDC_PROTECTED,"Button",BS_AUTORADIOBUTTON,13,
+                    29,45,10
+    CONTROL         "Private",IDC_PRIVATE,"Button",BS_AUTORADIOBUTTON,13,41,
+                    45,10
+    CONTROL         "Const",IDC_CONST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    13,65,35,10
+    GROUPBOX        "",IDC_GROUPBOX,7,7,114,51
+    CONTROL         "Public",IDC_PUBLIC,"Button",BS_AUTORADIOBUTTON,13,17,45,
+                    10
+    CONTROL         "Static",IDC_STATIC2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,71,65,35,10
+END
+
+IDD_CHANGEVARIABLE DIALOG DISCARDABLE  0, 0, 123, 47
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Declaration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,26,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,66,26,50,14
+    CONTROL         "Static",IDC_STATIC2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,66,7,34,10
+    CONTROL         "Const",IDC_CONST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    7,7,34,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CHANGEVARIABLE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 116
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_IMPACT              "Impact Control"
+    IDS_IMPACT_PPG          "Impact Property Page"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_IMPACT_PPG_CAPTION  "General"
+    IDS_IMPACTPROJECT       "Project"
+    IDS_IMPACTREPORT        "Report"
+    IDS_IMPACTROOTNAME      "Impact Project"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "Impact.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

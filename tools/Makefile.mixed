@@ -1,0 +1,12 @@
+all makemf depend xref xrefs clean includes :
+	@cd static; $(MAKE) $@
+	@cd dynamic; $(MAKE) $@
+
+rafile : rfile afile
+
+rfile :
+	@cd static; $(MAKE) $@
+
+afile :
+	@cd dynamic; $(MAKE) $@
+

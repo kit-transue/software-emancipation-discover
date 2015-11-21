@@ -1,0 +1,49 @@
+<html>
+<body>
+
+<p><b>HON - Hiding Of Names</b></p>
+
+<p>Declarations of names should not hide other declarations of the same name.
+The option 'Formally' regulates whether hiding of names should be detected
+for parameter variable, if the only usage of it is to assign its value to
+the attribute with the same name.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class HON {<br>
+&nbsp; &nbsp; int index;<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int <font color='red'>index</font>; <br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; void setIndex (int <font color='red'>index</font>) {  <br>
+&nbsp; &nbsp; &nbsp; &nbsp; this.index = index;<br>
+&nbsp; &nbsp; }<br>
+}<br>
+</code></nobr></p>
+
+(Note that the second violation would be raised
+only if 'Formally' option is switched on.)
+
+<p><b>Tip:</b>
+Rename variable which hides attribute or another variable.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class HON {<br>
+&nbsp; &nbsp; int index;<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int <font color='blue'>index1</font>; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; void setIndex (int <font color='blue'>anIndex</font>) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; this.index = anIndex;<br>
+&nbsp; &nbsp; }<br>
+}<br>
+</code></nobr></p>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+#!/bin/csh -f
+
+# Name: setwait
+
+# input: none
+
+# output: none
+
+# Purpose: wait the confirmation of the user
+
+# Conventions:
+
+if ( ! $?PSET_NOWAIT && "$PSET_FORCE_NOWAIT" == "0") then
+    echo -n "Enter <cr> to finish..."
+    echo $<
+endif
+
+exit 0

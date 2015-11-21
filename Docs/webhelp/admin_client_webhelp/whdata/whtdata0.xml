@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<tocdata>
+<book name="Welcome to DIScover" url="ciee_ia_01_welcome/welcome_to_code_integrity_enterprise_edition.htm#TOC_Welcome_to_Code" >
+  <item name="About This Online Help" url="ciee_ia_01_welcome/about_this_online_help.htm#TOC_About_This_Online_Help" />
+  <item name="Related Documentation" url="ciee_ia_01_welcome/related_documentation.htm#TOC_Related_Documentation" />
+  <item name="Typographical Conventions" url="ciee_ia_01_welcome/typographical_conventions.htm#TOC_Typographical_Conventions" />
+  <item name="Roles" url="ciee_ia_01_welcome/roles.htm#TOC_Roles" />
+  <item name="Assumptions" url="ciee_ia_01_welcome/assumptions.htm#TOC_Assumptions" />
+  <item name="Getting Help" url="ciee_ia_01_welcome/getting_help.htm#TOC_Getting_Help" />
+  <item name="Professional Services" url="ciee_ia_01_welcome/professional_services.htm#TOC_Professional_Services" />
+  <item name="Documentation Feedback" url="ciee_ia_01_welcome/documentation_feedback.htm#TOC_Documentation_Feedback" />
+  <item name="Where To Go From Here" url="ciee_ia_01_welcome/where_to_go_from_here.htm#TOC_Where_To_Go_From_Here" />
+</book>
+<book name="Understanding DIScover" url="ciee_ia_02_introduction/understanding_code_integrity.htm#TOC_Understanding_Code" >
+  <book name="DIScover Overview" url="ciee_ia_02_introduction/code_integrity_overview.htm#TOC_Code_Integrity_Overview" >
+    <item name="Features and Benefits" url="ciee_ia_02_introduction/features_and_benefits.htm#TOC_Features_and_Benefits" />
+  </book>
+  <book name="Core Concepts" url="ciee_ia_02_introduction/core_concepts.htm#TOC_Core_Concepts" >
+    <item name="Repository" url="ciee_ia_02_introduction/repository.htm#TOC_Repository" />
+    <item name="Information Model" url="ciee_ia_02_introduction/information_model.htm#TOC_Information_Model" />
+    <item name="Project" url="ciee_ia_02_introduction/project.htm#TOC_Project" />
+    <item name="Model Server" url="ciee_ia_02_introduction/model_server.htm#TOC_Model_Server" />
+    <item name="Build Server" url="ciee_ia_02_introduction/build_server.htm#TOC_Build_Server" />
+    <item name="Entities and Instances" url="ciee_ia_02_introduction/entities_and_instances.htm#TOC_Entities_and_Instances" />
+    <item name="Queries" url="ciee_ia_02_introduction/queries.htm#TOC_Queries" />
+  </book>
+  <book name="DIScover Components" url="ciee_ia_02_introduction/code_integrity_components.htm#TOC_Code_Integrity_Components" >
+    <item name="Model Browser" url="ciee_ia_02_introduction/model_browser.htm#TOC_Model_Browser" />
+    <item name="Developer Xpress" url="ciee_ia_02_introduction/developer_xpress.htm#TOC_Developer_Xpress" />
+    <item name="Access" url="ciee_ia_02_introduction/access.htm#TOC_Access" />
+  </book>
+  <item name="DIScover in the Enterprise Environment" url="ciee_ia_02_introduction/code_integrity_in_the_enterprise_environment.htm#TOC_Code_Integrity_in_the" />
+  <item name="Administrator Responsibilities" url="ciee_ia_02_introduction/administrator_responsibilities.htm#TOC_Administrator" />
+</book>
+<book name="Getting Started With an Information Model" url="ciee_ia_05_setting_up_infomodel/getting_started_with_an_information_model.htm#TOC_Getting_Started_With_an" >
+  <item name="Making an Information Model Available for Browsing" url="ciee_ia_05_setting_up_infomodel/making_an_information_model_available_for_browsing.htm#TOC_Making_an_Information" />
+  <book name="Preparing to Create an Information Model" url="ciee_ia_05_setting_up_infomodel/preparing_to_create_an_information_model.htm#TOC_Preparing_to_Create_an" >
+    <item name="Design Considerations" url="ciee_ia_05_setting_up_infomodel/design_considerations.htm#TOC_Design_Considerations" />
+    <book name="Checking Your Build System Requirements" url="ciee_ia_05_setting_up_infomodel/checking_your_build_system_requirements.htm#TOC_Checking_Your_Build" >
+      <item name="Memory" url="ciee_ia_05_setting_up_infomodel/memory.htm#TOC_Memory" />
+      <item name="Storage" url="ciee_ia_05_setting_up_infomodel/storage.htm#TOC_Storage" />
+    </book>
+  </book>
+  <item name="Starting the Administration Client" url="ciee_ia_05_setting_up_infomodel/starting_the_administration_client.htm#TOC_Starting_the" />
+  <book name="The Administration Client Interface" url="ciee_ia_05_setting_up_infomodel/the_administration_client_interface.htm#TOC_The_Administration" >
+    <item name="Application Window" url="ciee_ia_05_setting_up_infomodel/application_window.htm#TOC_Application_Window" />
+    <item name="Title Bar" url="ciee_ia_05_setting_up_infomodel/title_bar.htm#TOC_Title_Bar" />
+    <item name="Menu Bar" url="ciee_ia_05_setting_up_infomodel/menu_bar.htm#TOC_Menu_Bar" />
+    <item name="Toolbar" url="ciee_ia_05_setting_up_infomodel/toolbar.htm#TOC_Toolbar" />
+    <item name="Navigator Pane" url="ciee_ia_05_setting_up_infomodel/navigator_pane.htm#TOC_Navigator_Pane" />
+    <book name="Contents Pane" url="ciee_ia_05_setting_up_infomodel/contents_pane.htm#TOC_Contents_Pane" >
+      <item name="Available Models" url="ciee_ia_05_setting_up_infomodel/available_models.htm#TOC_Available_Models" />
+      <item name="Information Model Information" url="ciee_ia_05_setting_up_infomodel/information_model_information.htm#TOC_Information_Model1" />
+      <item name="Model Version Information" url="ciee_ia_05_setting_up_infomodel/model_version_information.htm#TOC_Model_Version_Information" />
+      <item name="Builds In Progress" url="ciee_ia_05_setting_up_infomodel/builds_in_progress.htm#TOC_Builds_In_Progress" />
+      <item name="Model Version Status" url="ciee_ia_05_setting_up_infomodel/model_version_status.htm#TOC_Model_Version_Status" />
+      <item name="Model Build Information" url="ciee_ia_05_setting_up_infomodel/model_build_information.htm#TOC_Model_Build_Information" />
+    </book>
+    <item name="Shortcut Menu" url="ciee_ia_05_setting_up_infomodel/shortcut_menu.htm#TOC_Shortcut_Menu" />
+  </book>
+  <item name="Quitting a Administration Session" url="ciee_ia_05_setting_up_infomodel/quitting_a_administration_session.htm#TOC_Quitting_a" />
+  <item name="Creating a Repository" url="ciee_ia_05_setting_up_infomodel/creating_a_repository.htm#TOC_Creating_a_Repository" />
+  <book name="Creating an Information Model" url="ciee_ia_05_setting_up_infomodel/creating_an_information_model.htm#TOC_Creating_an_Information" >
+    <item name="Customizing GetBuildLog.pl" url="ciee_ia_05_setting_up_infomodel/customizing_getbuildlog.pl.htm#TOC_Customizing_GetBuildLog" />
+  </book>
+  <book name="Starting a Full Model Build" url="ciee_ia_05_setting_up_infomodel/starting_a_full_model_build.htm#TOC_Starting_a_Full_Model" >
+    <item name="Scheduling Model Builds" url="ciee_ia_05_setting_up_infomodel/scheduling_model_builds.htm#TOC_Scheduling_Model_Builds" />
+  </book>
+  <item name="Starting a Model Version" url="ciee_ia_05_setting_up_infomodel/starting_a_model_version.htm#TOC_Starting_a_Model_Version" />
+</book>
+<book name="Managing an Information Model" url="ciee_ia_06_managing_infomodel/managing_an_information_model.htm#TOC_Managing_an_Information" >
+  <book name="Updating an Information Model Incrementally" url="ciee_ia_06_managing_infomodel/updating_an_information_model_incrementally.htm#TOC_Updating_an_Information" >
+    <item name="Step One: Prepare for an Incremental Model Build" url="ciee_ia_06_managing_infomodel/step_one_prepare_for_an_incremental_model_build.htm#TOC_Step_One_Prepare_for_an" />
+    <item name="Step Two: Configure Incremental Model Build Variables" url="ciee_ia_06_managing_infomodel/step_two_configure_incremental_model_build_variables.htm#TOC_Step_Two_Configure" />
+    <item name="Step Three: Start the Incremental Model Build" url="ciee_ia_06_managing_infomodel/step_three_start_the_incremental_model_build.htm#TOC_Step_Three_Start_the" />
+  </book>
+  <item name="Resuming a Model Build" url="ciee_ia_06_managing_infomodel/resuming_a_model_build.htm#TOC_Resuming_a_Model_Build" />
+  <item name="Editing Model Configuration Information" url="ciee_ia_06_managing_infomodel/editing_model_configuration_information.htm#TOC_Editing_Model" />
+  <item name="Deleting Models and Model Versions" url="ciee_ia_06_managing_infomodel/deleting_models_and_model_versions.htm#TOC_Deleting_Models_and" />
+  <book name="Analyzing Logs and Debugging Models" url="ciee_ia_06_managing_infomodel/analyzing_logs_and_debugging_models.htm#TOC_Analyzing_Logs_and" >
+    <item name="Analyzing Model Build Output" url="ciee_ia_06_managing_infomodel/analyzing_model_build_output.htm#TOC_Analyzing_Model_Build" />
+    <book name="Parse Errors" url="ciee_ia_06_managing_infomodel/parse_errors.htm#TOC_Parse_Errors" >
+      <item name="Changing Your Compiler Code" url="ciee_ia_06_managing_infomodel/changing_your_compiler_code.htm#TOC_Changing_Your_Compiler" />
+      <item name="Customizing Working Directory Tracking" url="ciee_ia_06_managing_infomodel/customizing_working_directory_tracking.htm#TOC_Customizing_Working" />
+      <item name="Changing #include, Macro, or Compatibility Options" url="ciee_ia_06_managing_infomodel/changing_include,_macro,_or_compatibility_options.htm#TOC_Changing_include_Macro" />
+      <item name="Searching for #include Files" url="ciee_ia_06_managing_infomodel/searching_for_include_files.htm#TOC_Searching_for_include" />
+    </book>
+    <item name="Selecting a Parser Mode" url="ciee_ia_06_managing_infomodel/selecting_a_parser_mode.htm#TOC_Selecting_a_Parser_Mode" />
+    <item name="Running Autoflag Scripts" url="ciee_ia_06_managing_infomodel/running_autoflag_scripts.htm#TOC_Running_Autoflag_Scripts" />
+    <item name="Debugging Parse Errors" url="ciee_ia_06_managing_infomodel/debugging_parse_errors.htm#TOC_Debugging_Parse_Errors" />
+    <item name="Creating Preprocessed Output" url="ciee_ia_06_managing_infomodel/creating_preprocessed_output.htm#TOC_Creating_Preprocessed" />
+    <item name="Catastrophic Errors" url="ciee_ia_06_managing_infomodel/catastrophic_errors.htm#TOC_Catastrophic_Errors" />
+  </book>
+  <item name="Validating Your Model" url="ciee_ia_06_managing_infomodel/validating_your_model.htm#TOC_Validating_Your_Model" />
+  <item name="Stopping a Model Version" url="ciee_ia_06_managing_infomodel/stopping_a_model_version.htm#TOC_Stopping_a_Model_Version" />
+  <book name="Checking and Fixing Model Servers" url="ciee_ia_06_managing_infomodel/checking_and_fixing_model_servers.htm#TOC_Checking_and_Fixing" >
+    <item name="Scheduling Model Builds With crontab" url="ciee_ia_06_managing_infomodel/scheduling_model_builds_with_crontab.htm#TOC_Scheduling_Model_Builds1" />
+    <item name="Scheduling Model Builds With Windows Scheduler" url="ciee_ia_06_managing_infomodel/scheduling_model_builds_with_windows_scheduler.htm#TOC_Scheduling_Model_Builds2" />
+  </book>
+</book>
+<book name="Submission Check" url="ciee_ia_07_sub_check/submission_check.htm#TOC_Submission_Check" >
+  <item name="Submission Check Components" url="ciee_ia_07_sub_check/submission_check_components.htm#TOC_Submission_Check1" />
+  <item name="Submission Check Policy" url="ciee_ia_07_sub_check/submission_check_policy.htm#TOC_Submission_Check_Policy" />
+  <item name="Starting a Build Server" url="ciee_ia_07_sub_check/starting_a_build_server.htm#TOC_Starting_a_Build_Server" />
+</book>
+
+</tocdata>

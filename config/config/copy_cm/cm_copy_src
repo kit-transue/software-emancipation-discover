@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ -f $cm_workfile ] ; then
+  $PSETCFG/util/remove_file $cm_workfile
+fi
+
+echo "cp $cm_sysfile $cm_workfile"
+cp $cm_sysfile $cm_workfile
+chmod +w $cm_workfile 2> /dev/null
+

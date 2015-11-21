@@ -1,0 +1,12 @@
+CXXROOTS=\
+    CompilerOptions \
+    get_related_objs \
+    get_simple_name \
+    gettext \
+    sym_to_proj \
+    projModule_of_symbol \
+    filterButtonTable \
+    timer \
+    remove_subsys \
+    language
+

@@ -1,0 +1,180 @@
+#
+# File
+# ----
+#
+  dis_MenuAddMenuArgument AppFileMenu 			"qhelp="
+
+    dis_MenuAddItemArgument FileOpenItem   		"qhelp=Open a file or entity's definition"
+    dis_MenuAddItemArgument FileSaveItem   		"qhelp=Save a selected file"
+    dis_MenuAddItemArgument FileUpdateFileItem   	"qhelp=Parse a selected file, updating the Information Model"
+
+# File-> Source Control ->
+        dis_MenuAddItemArgument CM_Menu     	        "qhelp=Source Control Operations"
+        dis_MenuAddItemArgument CMCheckOutItem     	"qhelp=Check out selected source files"
+        dis_MenuAddItemArgument CMCheckInItem     	"qhelp=Check in selected source files"
+        dis_MenuAddItemArgument CMUndoCheckOutItem      "qhelp=Cancel check out of selected source files"
+        dis_MenuAddItemArgument CMLockItem              "qhelp=Prevent other users from checking in the selected source files"
+        dis_MenuAddItemArgument CMUnlockItem            "qhelp=Allow other users to check in the selected source files"
+
+# Software Evaluator
+
+
+dis_MenuAddItemArgument SEV_Menu             "qhelp=Manage QA Cockpit Sessions"
+dis_MenuAddItemArgument SEVOpen           "qhelp=Open a different session"
+
+dis_MenuAddItemArgument SEVSaveSession             "qhelp=Save this session"
+dis_MenuAddItemArgument SEVSaveSessionAs             "qhelp=Save this session with a different name"
+dis_MenuAddItemArgument SEVRemove            "qhelp=Remove Software Evaluator sessions"
+
+
+
+
+# Project
+      dis_MenuAddItemArgument SetHomeprojectItem	"qhelp=Select a new home project"
+      dis_MenuAddItemArgument ProjectScopeItem		"qhelp=Project Scope"
+
+    dis_MenuAddItemArgument FilePreferences	   	"qhelp=Set DISCOVER's preferences"
+    dis_MenuAddItemArgument BRViewCloseView		"qhelp=Close the current application"
+    dis_MenuAddItemArgument FileQuit			"qhelp=Exit DISCOVER"
+
+#
+# Edit
+# ----
+# 
+  dis_MenuAddMenuArgument EditMenu   			"qhelp="
+
+    dis_MenuAddItemArgument MemberCut			"qhelp=Remove the selected entities from a column, placing them in the clipboard"
+    dis_MenuAddItemArgument MemberCopy   		"qhelp=Copy the selected to the clipboard"
+    dis_MenuAddItemArgument MemberPaste		  	"qhelp=Paste the contents of the clipboard into the selected column"
+    dis_MenuAddItemArgument NewGroupItem  		"qhelp=Create a new group or subsystem containing the current selection"
+    dis_MenuAddItemArgument EdIMPACTsw  		"qhelp=Start Impact Analysis or switch to an existing Impact Analysis session"
+
+#
+# Extract Subsystems
+# ------------------
+#
+  dis_MenuAddMenuArgument ExtractMenu			"qhelp="
+
+    dis_MenuAddItemArgument EXRestoreSaveFile  		"qhelp=Load stored weights and parameters"
+    dis_MenuAddItemArgument EXOpenSaveFile  		"qhelp=Save the current weights and parameters without making them the default"
+    dis_MenuAddItemArgument EXSetDefaultFile  		"qhelp=Set the current weights and parameters as the Extract default"
+    dis_MenuAddItemArgument EXRestoreDefaultFile  	"qhelp=Reset the weights and parameters to the default"
+
+#
+# Impact/Propagate
+# ----------------
+
+#  dis_MenuAddMenuArgument ImpactMenu			"qhelp="
+#
+#    dis_MenuAddItemArgument CPAbandon			"qhelp=Close the current session without saving any changes"
+
+#
+# Subsystems
+# ----------
+
+  dis_MenuAddMenuArgument GroupMenu			"qhelp="
+
+    dis_MenuAddItemArgument GroupSave             	"qhelp=Save a subsystem to the Information Model"
+#   dis_MenuAddItemArgument GroupConvert          	"qhelp=Convert a pre-5.0 group to a subsystem (or a subsystem to a pre-5.0 group)"
+#   dis_MenuAddItemArgument GroupImpactAnalysis   	"qhelp=Rename a subsystem (invokes Impact/Propagate)"
+    dis_MenuAddItemArgument GroupDelete           	"qhelp=Delete a subsystem"
+#   dis_MenuAddItemArgument GroupIntersection     	"qhelp=Show only those entities that are members of each selected subsystem"
+#   dis_MenuAddItemArgument GroupUnion            	"qhelp=Show every entity contained in the selected subsystems"
+#   dis_MenuAddItemArgument GroupSubtractAB       	"qhelp=List the entities in A that do not also belong to B"
+#   dis_MenuAddItemArgument GroupSubtractBA       	"qhelp=List the entities in B that do not also belong to A"
+#   dis_MenuAddItemArgument GroupSetClients     	"qhelp=Set the selected subsystems in the Results column to be clients of the selected subsystems in the Subsystems column"
+#   dis_MenuAddItemArgument GroupSetServers     	"qhelp=Set the selected subsystems in the Results column to be servers of the selected subsystems in the Subsystems column"
+#   dis_MenuAddItemArgument GroupSetPeers       	"qhelp=Set the selected subsystems in the Results column to be peers  of the selected subsystems in the Subsystems column"
+#   dis_MenuAddItemArgument GroupSetUnrelated   	"qhelp=Remove any relations between subsystems selected in the Subsystems and Results column"
+    dis_MenuAddMenuArgument GroupElements		"qhelp="
+ 
+    dis_MenuAddItemArgument GroupMemberAdd		"qhelp=Add the selected entities to the selected subsystems"
+    dis_MenuAddItemArgument GroupMemberRemove		"qhelp=Remove the selected entities from the selected subsystems"
+    dis_MenuAddItemArgument GroupMemberReplace		"qhelp=Replace the contents of the selected subsystems with the selected entities"
+    dis_MenuAddItemArgument GroupMemberPublic 		"qhelp=Make the selected entities in the Results column public members of the selected subsystems"
+    dis_MenuAddItemArgument GroupMemberPrivate 		"qhelp=Make the selected entities in the Results column private members of the selected subsystems"
+
+    dis_MenuAddMenuArgument GroupExport  		"qhelp="
+
+    dis_MenuAddItemArgument GroupExportGrp		"qhelp=Export the selected subsystems to groups"
+
+    dis_MenuAddMenuArgument GroupImport  		"qhelp="
+
+    dis_MenuAddItemArgument GroupImportPackage 		"qhelp=Create subsytems from a Package session"
+
+#
+# Groups
+# ------
+
+  dis_MenuAddMenuArgument ExtGroupMenu			"qhelp="
+ 
+    dis_MenuAddItemArgument ExtGroupSave		"qhelp=Save the selected groups to the Information Model"
+    dis_MenuAddItemArgument ExtGroupRename		"qhelp=Rename the selected groups"
+    dis_MenuAddItemArgument ExtGroupDelete		"qhelp=Delete the selected groups"
+
+      dis_MenuAddMenuArgument ExtGroupElements		"qhelp="
+
+        dis_MenuAddItemArgument ExtGroupElementsAdd	"qhelp=Add the selected entities to the selected groups"
+	dis_MenuAddItemArgument ExtGroupElementsRemove	"qhelp=Remove the selected entities from the selected groups"
+	dis_MenuAddItemArgument ExtGroupElementsAssign	"qhelp=Replace the contents of the selected groups with the selected entities"
+
+      dis_MenuAddMenuArgument ExtGroupExport		"qhelp="
+
+        dis_MenuAddItemArgument ExtGroupExportSubsystem	"qhelp=Export the selected groups to subsystems"
+        dis_MenuAddItemArgument ExtGroupExportFile	"qhelp=Export the selected groups to a text file"
+
+#   dis_MenuAddItemArgument ExtGroupRefresh		"qhelp=Refresh the contents of the Active Groups column"
+
+#
+# Partition
+# ---------
+
+  dis_MenuAddMenuArgument PartitionMenu			"qhelp="
+
+    dis_MenuAddItemArgument SuggestRelatedEntitiesItem	"qhelp=Suggest entity types to move from within the same source file as the target entity"
+
+#
+# Views
+# -----
+
+  dis_MenuAddMenuArgument ViewMenu			"qhelp="
+
+    dis_MenuAddItemArgument CallTreeView		"qhelp=Create a Tree Diagram for the selected entity"
+    dis_MenuAddItemArgument InheritanceView		"qhelp=Create an Inheritance Diagram for a selected class or structure"
+    dis_MenuAddItemArgument RelationsView		"qhelp=Create an Entity Relation Diagram for the selected C++ class"
+    dis_MenuAddItemArgument DataChartView		"qhelp=Create a Data Chart for the selected C structure"
+    dis_MenuAddItemArgument OutlineView			"qhelp=Show the current entity in an outline format"
+    dis_MenuAddItemArgument FlowChartView		"qhelp=Show the current entity as a logical flow chart"
+    dis_MenuAddItemArgument SubsystemView		"qhelp=Display the selected subsystem within a graphical view"
+
+#
+# Windows
+# -------
+
+  dis_MenuAddMenuArgument HistoryMenu		"qhelp="
+
+    dis_MenuAddItemArgument WindowBROWSERsw	"qhelp=Query your entities' interrelationships and dependencies"
+    dis_MenuAddItemArgument GraphView		"qhelp=Find the paths between functions"
+    dis_MenuAddItemArgument WindowMETRICsw	"qhelp=Query entity metrics"
+
+# Report
+      dis_MenuAddItemArgument WindowAutoDoc	"qhelp=Generate a detailed report on your entities"
+      dis_MenuAddItemArgument WindowINVENTORYsw	"qhelp=Generate summary statistics about your entities"
+
+# Reengineer
+      dis_MenuAddItemArgument WindowDORMANTsw	"qhelp=Find unused, dormant code"
+      dis_MenuAddItemArgument WindowEXTRACTsw	"qhelp=Create subsystems logically grouping your code based on user-defined parameters"
+      dis_MenuAddItemArgument WindowPARTITIONsw	"qhelp=Move entities and their dependencies between files"
+      dis_MenuAddItemArgument WindowSIMPLIFYHsw	"qhelp=Streamline the header files a source file needs"
+      dis_MenuAddItemArgument WindowGROUPsw	"qhelp=Manage subsystems"
+
+    dis_MenuAddItemArgument Y2KBROWSERsw	"qhelp=Use powerful Taskflow software"
+
+#
+# Help
+# ----
+
+  dis_MenuAddMenuArgument HelpMenu			"qhelp="
+
+      dis_MenuAddItemArgument HelpContentsItem		"qhelp="
+      dis_MenuAddItemArgument HelpAboutDiscover		"qhelp="

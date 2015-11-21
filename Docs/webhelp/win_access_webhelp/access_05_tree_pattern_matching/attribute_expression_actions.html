@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Attribute Expression Actions</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 13.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Attribute Expression Actions</b></p>
+<p class="p2">Access provides a mechanism for evaluating Tcl commands as the attribute expression is being parsed. These commands are called <i>actions</i>. Actions can be used to influence the success of an attribute expression, or they can be executed purely as a side effect, making them useful for debugging and also for TPM Change Propagation. While actions can be used in any attribute expression, they are most useful in TPM expressions, hence their introduction here. Actions have the following syntax:</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">{ command }</span><span class="s3">            </span>Neutral action—execute <span class="s2">command</span>.<br>
+<span class="s1">               </span>Always succeeds.</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">[ command ]</span><span class="s3">   </span><span class="s1">         </span>Emphatic action—execute <span class="s2">command</span>.<br>
+<span class="s1">               </span>Succeeds if the return value of <span class="s2">command</span> is not an<br>
+<span class="s1">               </span>empty string or zero.</p>
+<p class="p2">The following expression uses actions to display the number of children a node has:</p>
+<p class="p4">{ set x 0 } -&gt; r(, { incr x }) nil { puts $x }</p>
+<p class="p2">The variable <span class="s2">x</span> is incremented each time a child is encountered. When there are no more children, the last term outputs the value of <span class="s2">x</span> to the user’s terminal.</p>
+</body>
+</html>

@@ -1,0 +1,86 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+May 3, 1994, N.Bhowmik
+
+     
+
+        
+
+                             ParaSkecth Outline
+
+
+            1. The tool emulates common drawing tools in appearance (only). It consists of a pull down menu bar attached to default viewer shell and a default palette. More than one pre fabricated palettes are supported and can be selected from the menu. Similarly multiple views (sketches) can be opened and drawn on simultaneously. However, only one palette may be used for a sketch.
+
+            2. A palette consists of entities and connectors such that they have pre-defined shapes and sizes. Entities and connectors are selected via mouse click from the palette and `dropped` on the viewer shell. If an entity (or connector) is selected from the palette and subsequently the LMouseButton (say) is clicked several times on the viewer shell, that entity is drawn on all these locations. To draw a different entity, the user must select a another component from the palette.
+
+            Entity:
+
+            a. Has pre-defined shape and size. Can also be customized.
+
+            b. Corresponds to (or is-associated-with) one or more 'paraset entity' such that the paraset entity may or may not physically exist at the time the sketch is created.
+
+            c. Has the capability to draw itself. Encapsulates all information about its size, color , font etc.
+
+            d. Allows text insertion. Inserted text, if longer than the size of the entity, is hidden partially. Text may be typed in or selected from elsewhere and inserted via mouse click.
+
+            e. Remembers the number and position of the connectors pointing to or from it so that they may be re-drawn if required.
+
+            f. Allows re-alignment with one or more entities.
+
+            Connectors:
+
+            a. Has pre-defined shape. Is customizable.
+
+            b. Corresponds to a 'paraset link' (referenced by, contained in etc.).
+
+            c. Has a source and target which may be entities or connectors. Both source and target must be defined (selected via mouse click) for a connector to be drawn. No dangling connectors are allowed. Appropriate error message message must be issued in such an event.
+
+            d. May be re-positioned if required (in case of overlapping etc.).
+
+            e. Default positioning is from the center of an entity.
+
+            3. More than one pre-fabricated palettes are supported such that each palette reflects a popular design methodology (Booch, Yourdon etc.). Provision should be made to allow a user to create his/her own palette if so desired.
+
+            4. Define a paraset entity - 'Diagram'. Save a sketch as a .pset.
+
+            5. An old sketch is regenerated, not restored from memory.
+
+            6. Suggested UI toolkit: Interviews.
+
+             
+
+             
+
+             
+
+             
+
+             
+
+             

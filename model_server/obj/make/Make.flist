@@ -1,0 +1,84 @@
+CROOTS=\
+    gettime \
+
+
+CXXROOTS=\
+    BooleanTree.h \
+    NotifySoft \
+    Rel_descrip \
+    RelSentinel.h \
+    SoftAssoc.h \
+    SoftId.h \
+    appMarker.h \
+    app_get_header \
+    int_to_string \
+    objArr.h \
+    objArr_Int.h \
+    objCollection_h \
+    objCopy \
+    objDb.h \
+    objDictionary \
+    objNameTable.h \
+    objOp \
+    objOper_aux \
+    objOper_h \
+    objPropagate.h \
+    objRegenerator.h \
+    objRelation.h \
+    objReport \
+    objSet.h \
+    objTree.h \
+    obj_copy_member \
+    obj_mem \
+    obj_print \
+    rel_walk \
+    relArr \
+    representation.h \
+    string_to_int \
+    transaction \
+    tree_merge \
+    tree_time \
+
+
+LEXROOTS=str_to_int
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/assoc/include \
+-I$(BUILD_SRC_ROOT)/model_server/assoc/include \
+-I$(LOCAL_SRC_ROOT)/model_server/cmd/include \
+-I$(BUILD_SRC_ROOT)/model_server/cmd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ldr/include \
+-I$(BUILD_SRC_ROOT)/model_server/ldr/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/report/include \
+-I$(BUILD_SRC_ROOT)/model_server/report/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ste/include \
+-I$(BUILD_SRC_ROOT)/model_server/ste/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view/include \
+-I$(BUILD_SRC_ROOT)/model_server/view/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \

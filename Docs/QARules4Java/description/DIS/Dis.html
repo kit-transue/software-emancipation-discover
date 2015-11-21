@@ -1,0 +1,45 @@
+<html>
+<body>
+
+<p><b>DIS - Define Initial capacity for <i>StringBuffer</i>.</b></p>
+
+<p>The 'StringBuffer' constructor will create a character array of a default size,
+typically 16.  If <i>StringBuffer</i> exceeds it's capacity, <i>StringBuffer</i> has to
+allocate a new character array with a larger capacity, copy the old contents
+into the new array, and eventually discard the old array.  In many situations
+you can tell in advance how big your <i>StringBuffer</i> is likely to be.  In that
+case, reserve enough capacity during construction and prevent the
+<i>StringBuffer</i> from ever needing expansion.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class DIS {<br>
+&nbsp; void oper () {<br>
+&nbsp; &nbsp; <font color='red'> StringBuffer buffer = new StringBuffer(); </font><br>
+&nbsp; &nbsp; buffer.append ("hello");<br>
+&nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Provide initial capacity for <i>StringBuffer</i>.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+
+public class DIS {<br>
+&nbsp; void oper () {<br>
+&nbsp; &nbsp; <font color='blue'> StringBuffer buffer = new StringBuffer(MAX);</font><br>
+&nbsp; &nbsp; buffer.append ("hello");<br>
+&nbsp; }<br>
+&nbsp; private final int MAX = 100;<br>
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Dov Bulka, "Java Performance and Scalability Volume 1: Server-Side Programming
+Techniques"<br> Addison Wesley, ISBN: 0-201-70429-3 p.30 - 31</p>
+</body>
+</html>

@@ -1,0 +1,2 @@
+#!/bin/sh -f
+exec $PSETHOME/bin/slay $*

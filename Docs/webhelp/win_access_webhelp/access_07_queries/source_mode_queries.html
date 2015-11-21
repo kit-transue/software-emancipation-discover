@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Source Mode Queries</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana; color: #ff6262}
+    span.s1 {color: #000000}
+    span.s2 {font: 9.0px 'Times New Roman'; color: #000000}
+    span.s3 {font: 12.0px Verdana; text-decoration: underline}
+    span.s4 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Source Mode Queries</b></p>
+<p class="p2">During the model build process, C/C++ programs are transformed by the C preprocessor prior to syntactic analysis by the compiler. Access components covered so far—Access, TPM, Change Propagation—are primarily concerned with compiler’s view of your source: DIScover understands what all your macros expand to, where your include files come from, what overloaded operator to call, and so on.</p>
+<p class="p2">However, there is a different perspective on the source—the one developers see every day. It is the flat-text, string-of-characters, edit with an editor model of the source, complete with confusing macros, conditionally compiled code, comments, and so on.</p>
+<p class="p2">DIScover connects these two perspectives with its source mode tree, a mapping between the source text, and the elements in the information model. The source mode tree is how DIScover identifies information model entities from text selections in the editor.</p>
+<p class="p2">This book covers the following topics:</p>
+<p class="p3"><span class="s1">•</span><span class="s2">   <a href="../access_07_queries/smt_structure.html#XREF_SMT_structure"><span class="s3">SMT Structure</span></a></span></p>
+<p class="p3"><span class="s1">•</span><span class="s2">   <a href="../access_07_queries/obtaining_an_smt_node.html#XREF_Obtaining_an_SMT_Node"><span class="s3">Obtaining an SMT Node</span></a></span></p>
+<p class="p3"><span class="s1">•</span><span class="s2">   <a href="../access_07_queries/smt_navigation.html#XREF_SMT_Navigation"><span class="s3">SMT Navigation</span></a></span></p>
+<p class="p3"><span class="s1">•</span><span class="s2">   <a href="../access_07_queries/smt_attributes.html#XREF_SMT_Attributes"><span class="s3">SMT Attributes</span></a></span></p>
+<p class="p3"><span class="s1">•</span><span class="s2">   <a href="../access_07_queries/smt_cp_operations.html#XREF_SMT_CP_Operations"><span class="s3">SMT/CP Operations</span></a></span></p>
+<p class="p2">The Abstract Syntax Tree (AST) penetrates all the conditional compilation (<span class="s4">#ifdef</span>s and <span class="s4">#includes</span>) and macro expansion to the actual as-built core of your code. At times, however, you need to understand how the preprocessor is affecting your source. For this you need the Source Mode Tree (SMT).</p>
+</body>
+</html>

@@ -1,0 +1,37 @@
+
+
+Fixes to GDB to handle cfront mangle problems.
+
+
+cfront mangles a local variable by appending "__num"
+to a local variable, where "num" is a block level
+number. That is, if var is a local variable, after cfront
+it becomes var__num. cfront also mangles class members by
+attaching a tag-name to its members, where the tag-name is
+cfront's internal encoding of the class name.
+
+The current version of GDB (as of writing this note, we have
+GDB-4.12) can not handle cfront mangling mechanism.
+
+Two specific changes have been made to GDB to handle the
+cfront mangling problems. One change is made inside function
+lookup_block_symbol() which performs symbol matching within
+a given block. This change allows GDB to perform symbol
+matching not only in its original form but also in its
+demangled form. Thus, GDB can now recognize local variables.
+The following example illustrates the case in point.
+
+Let x be a local variable within block 11. Then, after
+cfront, x becomes x__11. When the user enters "print x",
+GDB searches through relavent blocks to match "x". In
+particular, in block 11, GDB attempts to match "x" with
+"x__11" as well as with cfront_demangle(x__11) which returns
+"x".
+
+The second change is made inside function search_struct_field()
+which performs field name matching within a given struct or
+class. The change is simply to allow the field name matching
+with tag-name removed.
+
+The above two changes are in files symtab.c and valops.c,
+respectively.

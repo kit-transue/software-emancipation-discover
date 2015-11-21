@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Changing #include, Macro, or Compatibility Options</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px 'Courier New'; background-color: #eaf4ff}
+    p.p5 {margin: 0.0px 1.0px 8.0px 1.0px; font: 13.0px Tahoma; color: #af0a16}
+    p.p6 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; color: #ff6262}
+    span.s1 {font: 11.0px 'Courier New'}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 11.0px Verdana}
+    span.s4 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Changing #include, Macro, or Compatibility Options</b></p>
+<p class="p2">If you have multiple compilers to support, look at <span class="s1">trycompiler.pl</span>, <span class="s1">trygcc.pl</span>, and <span class="s1">compilerid.pl</span>; these scripts choose potential compilers and are located in <span class="s1">&lt;CodeIntegrityInstalldir&gt;/mb</span>.</p>
+<p class="p2">Once you select the compiler code, the remainder of the configuration is driven by a compiler-specific file from <span class="s1">&lt;CodeIntegrityInstalldir&gt;/lib</span>. These use XML structure and are named for their compiler code. For example, if you are dealing with a build log from the Sun C++ compiler, the relevant file is <span class="s1">&lt;CodeIntegrityInstalldir&gt;/lib/sunccpp.xml</span>.</p>
+<p class="p3"><b>Note: </b><span class="s1">ntcl.xml</span> and <span class="s1">gcc.xml</span> only determine whether the compilation is in C or C++ mode. Once this occurs, the files pass the remaining information to <span class="s1">ntclc.xml</span>, <span class="s1">ntclcpp.xml</span>, <span class="s1">gccc.xml</span>, or <span class="s1">gcccpp.xml</span>.</p>
+<p class="p2">In any of these files, the line you need to modify appears at the beginning of the file, right after the dashed line. The line begins with a <span class="s2">C</span>, <span class="s2">CPP</span>, and so on to indicate the language, then command line options are passed to the parser. Here you can add or remove the <span class="s2">-I</span> or <span class="s2">-D</span> directives to change the search for include files, or to change the set of predefined macros. This is also where the parser’s compatibility options are set.</p>
+<p class="p4"><span class="s3"><b>Note: </b></span>&lt;CodeIntegrityInstalldir&gt;/lib/valid_compiler_options_edg.dat<span class="s3"> contains a list of valid compiler options.</span></p>
+<p class="p5"><b>Related Topics</b></p>
+<p class="p6"><span class="s4"><a href="../ia_06_managing_infomodel/to_obtain_a_list_of_compiler_flags_for_your_source_code.html#XREF_To_obtain_a_list_of">To obtain a list of compiler flags for your source code</a></span></p>
+</body>
+</html>

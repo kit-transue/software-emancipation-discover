@@ -1,0 +1,1959 @@
+/*************************************************************************
+* Copyright (c) 2015, Synopsys, Inc.                                     *
+* All rights reserved.                                                   *
+*                                                                        *
+* Redistribution and use in source and binary forms, with or without     *
+* modification, are permitted provided that the following conditions are *
+* met:                                                                   *
+*                                                                        *
+* 1. Redistributions of source code must retain the above copyright      *
+* notice, this list of conditions and the following disclaimer.          *
+*                                                                        *
+* 2. Redistributions in binary form must reproduce the above copyright   *
+* notice, this list of conditions and the following disclaimer in the    *
+* documentation and/or other materials provided with the distribution.   *
+*                                                                        *
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    *
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      *
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  *
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   *
+* HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, *
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       *
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  *
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  *
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    *
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
+*************************************************************************/
+#include <wchar.h>
+
+#include <vport.h>
+ 
+#include vstartupHEADER
+#include vstdlibHEADER
+#include vsessionHEADER
+#include vserviceHEADER
+#include vscrapHEADER
+#include vdasservHEADER
+#include vstdioHEADER
+
+#include <signal.h>
+#include "Application.h"
+
+#ifdef SERVER
+#include <tcl.h>
+#endif /* SERVER */
+ 
+#ifndef _WIN32
+#ifndef sun5
+typedef void (*SIG_TYP)(int);
+#endif
+#endif
+
+static int Block(vsessionStatement *statement)
+{
+#ifndef _WIN32
+    SIG_TYP old = signal(SIGALRM,SIG_IGN);
+#endif
+    int retval = statement->Block(NULL);
+#ifndef _WIN32
+    signal(SIGALRM,old);
+#endif
+    return retval;
+}
+
+typedef void async;
+typedef char* _charptr;
+typedef vstr* _vstrptr;
+
+#define g_push(s) {vscrapSetArrayCount(real_result,array_index2+1);vscrapSetElementAt(real_result,array_index2,s);array_index2++;}
+#define g_take() sarg? vscrapGetElementAt(sarg,array_index++): 0
+ 
+static vscrap*  marshall_char(char x){return vscrapFromCharacter(x);}
+static vscrap*  marshall_short(short x){return vscrapFromInteger((int)x);}
+static vscrap*  marshall_int(int x){return vscrapFromInteger(x);}
+static vscrap*  marshall_float(float x){return vscrapFromFloat(x);}
+static vscrap*  marshall_double(double x){return vscrapFromFloat(x);}
+static vscrap*  marshall__charptr(const char *x){if (!x)x="";vstr*_x=vstrClone((vchar*)x);vscrap* s=vscrapFromString(_x);vstrDestroy(_x);return s;}
+static vscrap*  marshall__vstrptr(_vstrptr x){if (!x)x=(_vstrptr)"";return vscrapFromString(x);}
+ 
+static void demarshall_char(char* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetCharacter(s);delete s;
+    } else { 
+        *x = '\0'; 
+    } 
+} 
+ 
+static void demarshall_short(short* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_int(int* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_float(float* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+static void demarshall_double(double* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+ 
+extern "C" char* strdup(const char*);
+static void demarshall__charptr(char** x, vscrap* s) 
+{ 
+    if (s) { 
+        vstr*y = vstrCloneScribed(vscrapScribeString(s));delete s;
+        *x = strdup((char*)y);
+        vstrDestroy(y);
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static void demarshall__vstrptr(vstr** x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vstrCloneScribed(vscrapScribeString(s));delete s;
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static vscrap *answer_scrap;
+
+
+static void std_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+    vscrap *sync_answer_scrap = NULL;
+
+    switch (vsessionStatement::GetEventCode (event)) {
+        case vsessionStatementEVENT_COMPLETED:
+	    statement->GetReturnValue(statement, &sync_answer_scrap);
+	    statement->SetData(sync_answer_scrap);
+	    break;
+	case vsessionStatementEVENT_CANNOT_SEND:
+	    printf ("*** cannot send!\n");
+	    Application::SetCannotSend(vTRUE);
+	    break;
+	case vsessionStatementEVENT_END_SESSION:
+	    printf ("*** end session!\n");
+	    break;
+	case vsessionStatementEVENT_FAILED:
+	    printf ("*** failed!\n");
+	    break;
+    }
+}
+
+static void std_async_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+
+    Application::DecrementCount();
+}
+
+static Application* DISui_app;
+typedef vstr *dyn_vstrptr;
+ 
+#ifdef SERVER
+#include "ggeneric.h"
+#include "gviewer.h"
+#include "gview.h"
+#include "ginterp.h"
+#include "grtlClient.h"
+#include "glayer.h"
+#include "geditorLayer.h"
+#include "shelltextitem.h"
+#include "gString.h"
+#include "ggenConfirmDialog.h"
+#include "gglobalFuncs.h"
+#include "gapl_menu.h"
+#include "gfileChooser.h"
+
+extern vdialogItem* find_item_recurs(vdialogItemList* itemList, const vname* tagName);
+extern void dis_server_notification(char *str);
+extern int gala_global_eval(char *str);
+
+
+vscrap* marshall_dyn_vstrptr(dyn_vstrptr& string)
+{
+  if (!string) 
+    string = vstrCloneScribed( vcharScribeLiteral("") );
+  vscrap *data = vscrapFromString( string );
+  vstrDestroy( string ); 
+  return data;  
+}
+
+#else
+
+void demarshall_dyn_vstrptr(dyn_vstrptr* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vstrCloneScribed(vscrapScribeString(s));delete s;
+    } else { 
+        *x = 0;
+    } 
+}
+
+#endif
+
+vscrap* marshall_dyn_vstrptr(dyn_vstrptr& x);
+void demarshall_dyn_vstrptr(dyn_vstrptr* x, vscrap* s);
+
+
+
+/*----------------------------- gc_rtl_refresh ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_rtl_refresh (Application* app, int id)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_rtl_refresh in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_rtl_refresh (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_rtl_refresh"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_rtl_refresh (int id)
+{
+    rtlClient* rtlc = rtlClient::find (id);
+    if (rtlc == NULL)
+	return;
+
+    rtlc->update ();
+}
+
+void gc_rtl_refresh_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_rtl_refresh (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    gc_rtl_refresh (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_rtl_refresh (Application* app, int id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_create_layer ------------------------------*/
+
+#ifdef CLIENT
+int rcall_gc_create_layer (Application* app, int type)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_create_layer in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_create_layer (Application* app, int type)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_create_layer"));
+          g_push(marshall_int(type));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_gc_create_layer (Application* app, int type)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int gc_create_layer (int type)
+{
+    return 0;
+}
+
+void gc_create_layer_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int type;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_create_layer (Application* app, int type)\n");
+    demarshall_int (&type, g_take());
+
+    int return_val = gc_create_layer (type);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_create_layer (Application* app, int type)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_close_layer ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_close_layer (Application* app, int id)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_close_layer in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_close_layer (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_close_layer"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_close_layer (int id)
+{
+}
+
+void gc_close_layer_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_close_layer (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    gc_close_layer (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_close_layer (Application* app, int id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_set_layer_name ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_set_layer_name (Application* app, int layer, _vstrptr name)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_set_layer_name in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_set_layer_name (Application* app, int layer, _vstrptr name)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_set_layer_name"));
+          g_push(marshall_int(layer));
+          g_push(marshall__vstrptr(name));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_set_layer_name (int layer, _vstrptr name)
+{
+}
+
+void gc_set_layer_name_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int layer;
+    _vstrptr name;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_set_layer_name (Application* app, int layer, _vstrptr name)\n");
+    demarshall_int (&layer, g_take());
+    demarshall__vstrptr (&name, g_take());
+
+    gc_set_layer_name (layer,name);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_set_layer_name (Application* app, int layer, _vstrptr name)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_set_layer ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_set_layer (Application* app, int id)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_set_layer in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_set_layer (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_set_layer"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_set_layer (int id)
+{
+    Layer* layer = Layer::find_layer (id);
+    if (layer) {
+        layer->getView()->MakeCurrent();
+    }	
+}
+
+void gc_set_layer_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_set_layer (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    gc_set_layer (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_set_layer (Application* app, int id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_display_message ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_display_message (Application* app, _vstrptr msg)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_display_message in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_display_message (Application* app, _vstrptr msg)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_display_message"));
+          g_push(marshall__vstrptr(msg));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_display_message (_vstrptr msg)
+{
+    Viewer::GetFirstViewer()->DisplayMessage (msg);
+}
+
+void gc_display_message_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr msg;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_display_message (Application* app, _vstrptr msg)\n");
+    demarshall__vstrptr (&msg, g_take());
+
+    gc_display_message (msg);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_display_message (Application* app, _vstrptr msg)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_create_view_layer ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_create_view_layer (Application* app, int client_id, _vstrptr name)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_create_view_layer in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_create_view_layer (Application* app, int client_id, _vstrptr name)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_create_view_layer"));
+          g_push(marshall_int(client_id));
+          g_push(marshall__vstrptr(name));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_create_view_layer (int client_id, _vstrptr name)
+{
+    viewLayer* vl = new viewLayer;
+    vl->setTitle (name);
+    
+    Viewer* vr = Viewer::GetFirstViewer();
+    View* v = vr->find_target_view();
+    if (!v) {
+	v = vr->find_view_for_layer ();
+	if (!v)
+	    v = vr->find_view (vr->GetViewCode());
+    }
+    
+    if (v)
+       vl->displayInView(v);
+}
+
+void gc_create_view_layer_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int client_id;
+    _vstrptr name;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_create_view_layer (Application* app, int client_id, _vstrptr name)\n");
+    demarshall_int (&client_id, g_take());
+    demarshall__vstrptr (&name, g_take());
+
+    gc_create_view_layer (client_id,name);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_create_view_layer (Application* app, int client_id, _vstrptr name)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_open_file ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_open_file (Application* app, _vstrptr name)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_open_file in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_open_file (Application* app, _vstrptr name)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_open_file"));
+          g_push(marshall__vstrptr(name));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_open_file (_vstrptr name)
+{
+    viewLayer* vl = viewLayer::findViewLayer (name);
+    if (!vl) {
+ 	vl = new viewLayer;
+        vl->setTitle (name);
+    }
+
+    Viewer* vr = Viewer::GetFirstViewer();
+    View* v = vr->find_target_view();
+    if (!v)
+       v = vr->find_view (vr->GetViewCode());
+
+    if (v)
+       vl->displayInView(v);
+	
+}
+
+void gc_open_file_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr name;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_open_file (Application* app, _vstrptr name)\n");
+    demarshall__vstrptr (&name, g_take());
+
+    gc_open_file (name);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_open_file (Application* app, _vstrptr name)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_close_file ------------------------------*/
+
+#ifdef CLIENT
+async rcall_gc_close_file (Application* app, _vstrptr name)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call gc_close_file in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_gc_close_file (Application* app, _vstrptr name)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("gc_close_file"));
+          g_push(marshall__vstrptr(name));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async gc_close_file (_vstrptr name)
+{
+    viewLayer* vl = viewLayer::findViewLayer (name);
+    if (vl) 
+	delete vl;
+}
+
+void gc_close_file_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr name;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_gc_close_file (Application* app, _vstrptr name)\n");
+    demarshall__vstrptr (&name, g_take());
+
+    gc_close_file (name);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_gc_close_file (Application* app, _vstrptr name)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- access_shell_set_result ------------------------------*/
+
+#ifdef CLIENT
+async rcall_access_shell_set_result (Application* app, int id, _charptr pszTag, _charptr pszResult)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call access_shell_set_result in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_access_shell_set_result (Application* app, int id, _charptr pszTag, _charptr pszResult)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("access_shell_set_result"));
+          g_push(marshall_int(id));
+          g_push(marshall__charptr(pszTag));
+          g_push(marshall__charptr(pszResult));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async access_shell_set_result (int id, _charptr pszTag, _charptr pszResult)
+{
+  shellTextItem* item = NULL;
+  Pane *pane = NULL;
+  Layer *lr = Layer::find_layer( id );
+  if( lr )
+    pane = lr->getPane();
+  if( pane )
+  {
+    const vname * name = vnameInternGlobal( (vchar*) pszTag );
+    if( name )
+    {
+      item = shellTextItem::CastDown(pane->FindItem (name));
+      //if item is not a direct child of the pane, traverse all children
+      if( !item )
+        item = shellTextItem::CastDown(find_item_recurs(pane->GetItemList(), name));
+    }
+  }
+  if( item )
+  {
+    item->UnblockInput();
+    item->Respond((const vchar *)pszResult);
+  }
+  if( pszResult )
+    free( pszResult );
+}
+
+void access_shell_set_result_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    _charptr pszTag;
+    _charptr pszResult;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_access_shell_set_result (Application* app, int id, _charptr pszTag, _charptr pszResult)\n");
+    demarshall_int (&id, g_take());
+    demarshall__charptr (&pszTag, g_take());
+    demarshall__charptr (&pszResult, g_take());
+
+    access_shell_set_result (id,pszTag,pszResult);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_access_shell_set_result (Application* app, int id, _charptr pszTag, _charptr pszResult)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- send_to_global_client_eval ------------------------------*/
+
+#ifdef CLIENT
+int rcall_send_to_global_client_eval (Application* app, _vstrptr str)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call send_to_global_client_eval in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_send_to_global_client_eval (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("send_to_global_client_eval"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_send_to_global_client_eval (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int send_to_global_client_eval (_vstrptr str)
+{
+  return gala_global_eval((char *)str);
+}
+
+void send_to_global_client_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_send_to_global_client_eval (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    int return_val = send_to_global_client_eval (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_send_to_global_client_eval (Application* app, _vstrptr str)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- send_to_global_client_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_send_to_global_client_eval_async (Application* app, _vstrptr str)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call send_to_global_client_eval_async in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_send_to_global_client_eval_async (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("send_to_global_client_eval_async"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async send_to_global_client_eval_async (_vstrptr str)
+{
+  gala_global_eval((char *)str);
+}
+
+void send_to_global_client_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_send_to_global_client_eval_async (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    send_to_global_client_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_send_to_global_client_eval_async (Application* app, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- send_notification_string_to_client ------------------------------*/
+
+#ifdef CLIENT
+int rcall_send_notification_string_to_client (Application* app, _vstrptr str)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call send_notification_string_to_client in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_send_notification_string_to_client (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("send_notification_string_to_client"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_send_notification_string_to_client (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int send_notification_string_to_client (_vstrptr str)
+{
+#ifdef _WIN32
+  dis_server_notification((char *)str);
+#endif
+  return 1;
+}
+
+void send_notification_string_to_client_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_send_notification_string_to_client (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    int return_val = send_notification_string_to_client (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_send_notification_string_to_client (Application* app, _vstrptr str)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- get_rtl_info ------------------------------*/
+
+#ifdef CLIENT
+int rcall_get_rtl_info (Application* app, int& last_sel, int& elements, int& results, dyn_vstrptr& scope)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call get_rtl_info in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_get_rtl_info (Application* app, int& last_sel, int& elements, int& results, dyn_vstrptr& scope)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("get_rtl_info"));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+        demarshall_int(&last_sel, g_take());
+        demarshall_int(&elements, g_take());
+        demarshall_int(&results, g_take());
+        demarshall_dyn_vstrptr(&scope, g_take());
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_get_rtl_info (Application* app, int& last_sel, int& elements, int& results, dyn_vstrptr& scope)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int get_rtl_info (int& last_sel, int& elements, int& results, dyn_vstrptr& scope)
+{
+  //0 indicates success, 1 indicates failure
+  int nRet = 1;
+  Viewer* vr;
+  View *v;
+  Viewer::GetExecutingView (vr, v);
+  if (vr && v) 
+  {
+
+    rtlClient *last_rtl = NULL, *elem_rtl = NULL, *res_rtl = NULL;
+    Tcl_Interp *interp = NULL;
+
+    //First, get last global selection RTL Id. If it is not set,
+    //set last_sel to  -1 (the function will still succeed)
+    Layer *l = v->GetLayer();		  
+    if( l )
+      interp = l->getInterp ();
+    if( interp )
+    {
+      char* rtl = Tcl_GetVar (interp, "GLOBAL_LastRTL", TCL_GLOBAL_ONLY);
+      if( rtl )
+        last_rtl = rtlClient::find (atoi(rtl));
+    }
+    if( last_rtl )
+      last_sel = last_rtl->getServerId();
+    else
+      last_sel = -1;
+
+    //Get project scope from a text item
+    vtextitem *pr_scope = vtextitem::CastDown((vdialogItem *)v->FindItem( 
+                                    (vchar *)"BROWSER_ProjectScope" ));
+    if( pr_scope )
+      scope = pr_scope->GetTextAsString(); //scope will be destroyed
+                                           //by marshall_dyn_vstrptr()
+    else
+      nRet = 0;
+
+    //Get Elements RTL id
+    elem_rtl = rtlClient::CastDown((vdialogItem *)v->FindItem( 
+                                    (vchar *)"ElementsList" ));
+    if( elem_rtl )
+      elements = elem_rtl->getServerId();
+    else
+    {
+      elements = -1;
+      nRet = 0;
+    }
+
+    //Get Results RTL id
+    res_rtl = rtlClient::CastDown((vdialogItem *)v->FindItem( 
+                                    (vchar *)"ResultsList" ));
+    if( res_rtl )
+      results = res_rtl->getServerId();
+    else
+    {
+      results = -1;
+      nRet = 0;
+    }
+  }
+  return nRet;
+}
+
+void get_rtl_info_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int last_sel;
+    int elements;
+    int results;
+    dyn_vstrptr scope;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_get_rtl_info (Application* app, int& last_sel, int& elements, int& results, dyn_vstrptr& scope)\n");
+
+    int return_val = get_rtl_info (last_sel,elements,results,scope);
+
+    g_push(marshall_int(last_sel));
+    g_push(marshall_int(elements));
+    g_push(marshall_int(results));
+    g_push(marshall_dyn_vstrptr(scope));
+
+    if (Application::traceMode)
+        printf ("---< rcall_get_rtl_info (Application* app, int& last_sel, int& elements, int& results, dyn_vstrptr& scope)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- get_selection_rtl ------------------------------*/
+
+#ifdef CLIENT
+int rcall_get_selection_rtl (Application* app)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call get_selection_rtl in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_get_selection_rtl (Application* app)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("get_selection_rtl"));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_get_selection_rtl (Application* app)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int get_selection_rtl ()
+{
+  int nRet = -1;
+  Viewer* vr;
+  View *v;
+  Viewer::GetExecutingView (vr, v);
+  if (vr && v) 
+  {
+    rtlClient *last_rtl = NULL;
+    Tcl_Interp *interp = NULL;
+
+    Layer *l = v->GetLayer();		  
+    if( l )
+      interp = l->getInterp ();
+    if( interp )
+    {
+      char* rtl = Tcl_GetVar (interp, "GLOBAL_LastRTL", TCL_GLOBAL_ONLY);
+      if( rtl )
+        last_rtl = rtlClient::find (atoi(rtl));
+    }
+    if( last_rtl )
+      nRet = last_rtl->getServerId();
+  }
+  return nRet;
+}
+
+void get_selection_rtl_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+
+    if (Application::traceMode)
+        printf ("+++< rcall_get_selection_rtl (Application* app)\n");
+
+    int return_val = get_selection_rtl ();
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_get_selection_rtl (Application* app)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- get_activate_elements_rtl ------------------------------*/
+
+#ifdef CLIENT
+int rcall_get_activate_elements_rtl (Application* app)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call get_activate_elements_rtl in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_get_activate_elements_rtl (Application* app)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("get_activate_elements_rtl"));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_get_activate_elements_rtl (Application* app)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int get_activate_elements_rtl ()
+{
+	int nRet = -1;
+
+	Viewer::GetFirstViewer()->bring_to_top();
+  if( Tcl_Eval( g_global_interp, "dis_layer -open DialogLayer Browser -reuse" ) 
+          == TCL_OK && Tcl_Eval( g_global_interp, 
+					"dis_activate_notebook_page ModelBrowser" ) == TCL_OK )
+	{
+  
+		Viewer* vr;
+		View *v;
+		Viewer::GetExecutingView (vr, v);
+		if (vr && v) 
+		{
+			rtlClient *elem_rtl = rtlClient::CastDown((vdialogItem *)v->FindItem( 
+																			(vchar *)"ElementsList" ));
+			if( elem_rtl )
+				nRet = elem_rtl->getServerId();
+		}
+	}
+  return nRet;
+}
+
+void get_activate_elements_rtl_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+
+    if (Application::traceMode)
+        printf ("+++< rcall_get_activate_elements_rtl (Application* app)\n");
+
+    int return_val = get_activate_elements_rtl ();
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_get_activate_elements_rtl (Application* app)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_display_string_OK_cancel ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_display_string_OK_cancel (Application* app, _charptr title, _charptr prompt_str, _charptr err_msg, dyn_vstrptr& result)
+{
+    DISui_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_display_string_OK_cancel in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_display_string_OK_cancel (Application* app, _charptr title, _charptr prompt_str, _charptr err_msg, dyn_vstrptr& result)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_display_string_OK_cancel"));
+          g_push(marshall__charptr(title));
+          g_push(marshall__charptr(prompt_str));
+          g_push(marshall__charptr(err_msg));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+        demarshall_dyn_vstrptr(&result, g_take());
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_display_string_OK_cancel (Application* app, _charptr title, _charptr prompt_str, _charptr err_msg, dyn_vstrptr& result)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_display_string_OK_cancel (_charptr title, _charptr prompt_str, _charptr err_msg, dyn_vstrptr& result)
+;
+
+void dis_display_string_OK_cancel_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _charptr title;
+    _charptr prompt_str;
+    _charptr err_msg;
+    dyn_vstrptr result;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_display_string_OK_cancel (Application* app, _charptr title, _charptr prompt_str, _charptr err_msg, dyn_vstrptr& result)\n");
+    demarshall__charptr (&title, g_take());
+    demarshall__charptr (&prompt_str, g_take());
+    demarshall__charptr (&err_msg, g_take());
+
+    int return_val = dis_display_string_OK_cancel (title,prompt_str,err_msg,result);
+
+    g_push(marshall_dyn_vstrptr(result));
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_display_string_OK_cancel (Application* app, _charptr title, _charptr prompt_str, _charptr err_msg, dyn_vstrptr& result)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_choose_file_simple ------------------------------*/
+
+#ifdef CLIENT
+_charptr rcall_dis_choose_file_simple (Application* app, _charptr title)
+{
+    DISui_app = app;
+    _charptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_choose_file_simple in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_choose_file_simple (Application* app, _charptr title)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_choose_file_simple"));
+          g_push(marshall__charptr(title));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__charptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_choose_file_simple (Application* app, _charptr title)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_charptr dis_choose_file_simple (_charptr title)
+{
+  return (char *)choose_file_simple( title );
+}
+
+void dis_choose_file_simple_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _charptr title;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_choose_file_simple (Application* app, _charptr title)\n");
+    demarshall__charptr (&title, g_take());
+
+    _charptr return_val = dis_choose_file_simple (title);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_choose_file_simple (Application* app, _charptr title)\n");
+    g_push(marshall__charptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval ------------------------------*/
+
+#ifdef CLIENT
+static _vstrptr rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISui_app = app;
+    static _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static _vstrptr dis_servereval (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    static vstr* myresult = NULL;
+    if (!myapp) 
+	myapp = DISui_app;
+    int e = myapp->eval((vchar*)str);
+    myresult = NULL;
+    myresult = myapp->getEvalResult();
+    return myresult;
+}
+
+
+static void dis_servereval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_servereval (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval_async ------------------------------*/
+
+#ifdef CLIENT
+static async rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval_async in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval_async"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static async dis_servereval_async (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    if (!myapp) 
+	myapp = DISui_app;
+    int e = myapp->eval((vchar*)str);
+    return;
+}
+
+
+static void dis_servereval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    dis_servereval_async (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISui_eval ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_DISui_eval (Application* app, _vstrptr str)
+{
+    DISui_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISui_eval in DISui - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISui_eval (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISui_eval"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_DISui_eval (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_DISui_eval (_vstrptr str)
+{
+    int e = DISui_app->eval((vchar*)str);
+    static vstr* result = NULL;
+    result = DISui_app->getEvalResult();
+    return result;
+}
+
+
+void dis_DISui_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISui_eval (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_DISui_eval (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISui_eval (Application* app, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISui_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_DISui_eval_async (Application* app, _vstrptr str)
+{
+    DISui_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISui_eval_async in DISui - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISui_eval_async (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISui_eval_async"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_DISui_eval_async (_vstrptr str)
+{
+   int e = DISui_app->eval((vchar*)str);
+}
+
+
+void dis_DISui_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISui_eval_async (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    dis_DISui_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISui_eval_async (Application* app, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+#ifdef SERVER
+
+    static int serverInited = 0;
+
+void DISuiServerInit(){
+    DISui_app = Application::findApplication("DISui");
+    if (!serverInited) {
+	serverInited = 1;
+    }
+}
+
+
+vscrap* DISuiServer(    vservicePrimitive *primitive,
+    vsession          *session,
+    vscrap            *scrapArgs)
+{
+    DISuiServerInit();
+
+    DISui_app = Application::findApplication(session);
+    vscrapArray *sarg=0;
+    int array_index,max_index,array_index2;
+    vstr *command;
+    primitive->GetArgs(scrapArgs,&sarg);
+    array_index=0;array_index2=0;
+    max_index=vscrapGetArrayCount(sarg);
+    demarshall__vstrptr (&command, g_take());
+    vscrap *real_result=vscrapCreateArray();
+
+    if (strcmp((char*)command, "gc_rtl_refresh") == 0) gc_rtl_refresh_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_create_layer") == 0) gc_create_layer_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_close_layer") == 0) gc_close_layer_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_set_layer_name") == 0) gc_set_layer_name_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_set_layer") == 0) gc_set_layer_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_display_message") == 0) gc_display_message_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_create_view_layer") == 0) gc_create_view_layer_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_open_file") == 0) gc_open_file_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "gc_close_file") == 0) gc_close_file_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "access_shell_set_result") == 0) access_shell_set_result_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "send_to_global_client_eval") == 0) send_to_global_client_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "send_to_global_client_eval_async") == 0) send_to_global_client_eval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "send_notification_string_to_client") == 0) send_notification_string_to_client_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "get_rtl_info") == 0) get_rtl_info_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "get_selection_rtl") == 0) get_selection_rtl_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "get_activate_elements_rtl") == 0) get_activate_elements_rtl_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_display_string_OK_cancel") == 0) dis_display_string_OK_cancel_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_choose_file_simple") == 0) dis_choose_file_simple_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISui_eval") == 0) dis_DISui_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISui_eval_async") == 0) dis_DISui_eval_async_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+
+    vscrap *temp= primitive->MakeReturnScrap(session,real_result);
+    if (real_result) delete real_result;
+    if (command) vstrDestroy (command);
+    if (sarg) delete sarg;
+    return temp;
+}
+
+#endif /* SERVER */

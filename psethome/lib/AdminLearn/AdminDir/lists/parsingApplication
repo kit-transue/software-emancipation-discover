@@ -1,0 +1,1 @@
+aCompiler -DUNCONDITIONAL_MEMBER -I../h parsingApplication/src/src1.c

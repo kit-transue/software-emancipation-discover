@@ -1,0 +1,15 @@
+#!/bin/sh
+tmpdifffile="${TMPDIR:=/usr/tmp}/cm_diff.$$"
+sccs diffs -r$cm_version $cm_workfile 2>&1 > $tmpdifffile
+lines="`wc -l $tmpdifffile`"
+cat $tmpdifffile
+if [ "$lines" -lt 3 ]; then
+  echo "No differences."
+  exitstatus="0"
+else
+  exitstatus="1"
+fi
+
+rm $tmpdifffile
+
+exit $exitstatus

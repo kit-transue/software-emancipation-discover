@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Accessing Symbol Attributes</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 12.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Accessing Symbol Attributes</b></p>
+<p class="p2">Recall that ast_nodes are different from symbols, and many symbol attributes return empty when applied to ast_nodes. This is true for the <span class="s1">args</span> attribute, for example:</p>
+<p class="p3">apply args main<br>
+(int,char**)<br>
+apply args [data node main]<br>
+{}<br>
+apply args [data symbol [data node main]]<br>
+(int,char**)</p>
+<p class="p2">When creating an attribute expression that applies to ast_nodes, it is often useful to be able to access the attributes for the symbol that corresponds to the data node. You can query symbol attributes by preceding the attribute name with “<span class="s2">s.</span>”: this converts the ast_node to a symbol (temporarily) and returns the value of the attribute:</p>
+<p class="p3">apply s.args [data node main]<br>
+(int,char**)</p>
+</body>
+</html>

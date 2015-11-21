@@ -1,0 +1,9 @@
+#ADMINDIR=/users/tatiana/New_Learn/AdminDir
+#HOST=10.19.0.4
+X 303 /extract_shared $sharedSrcRoot/extract_FLDX_1011 /extract $sharedModelRoot/pmod/extract/extract_shared.pmod.sym_FLDX_1001
+  N 0 /extract_shared/src $sharedSrcRoot/extract/src_FLDX_1011 /extract/src NULL
+    s 0 /extract_shared/src/extract.c $sharedSrcRoot/extract/src/extract.c_FLDX_1000 /extract/src/extract.c $sharedModelRoot/pset/extract/src/extract.c.pset_FLDX_1000
+    h 0 /extract_shared/src/global_vars.h $sharedSrcRoot/extract/src/global_vars.h_FLDX_1000 /extract/src/global_vars.h $sharedModelRoot/pset/extract/src/global_vars.h.pset_FLDX_1000
+    h 0 /extract_shared/src/proto.h $sharedSrcRoot/extract/src/proto.h_FLDX_1000 /extract/src/proto.h $sharedModelRoot/pset/extract/src/proto.h.pset_FLDX_1000
+    s 0 /extract_shared/src/sys1.c $sharedSrcRoot/extract/src/sys1.c_FLDX_1000 /extract/src/sys1.c $sharedModelRoot/pset/extract/src/sys1.c.pset_FLDX_1000
+    s 0 /extract_shared/src/sys2.c $sharedSrcRoot/extract/src/sys2.c_FLDX_1000 /extract/src/sys2.c $sharedModelRoot/pset/extract/src/sys2.c.pset_FLDX_1000

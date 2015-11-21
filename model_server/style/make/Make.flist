@@ -1,0 +1,63 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    styAppCategory \
+    styAppStyle \
+    styCategory \
+    stySlot \
+    stySlotTable \
+    styStyle \
+    sty_category_handler \
+    sty_category_interface \
+    sty_default_tables \
+    sty_style_handler \
+    style_copy_member \
+    style_hooks \
+    style_restore \
+    style_test \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/gra/include \
+-I$(BUILD_SRC_ROOT)/model_server/gra/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ldr/include \
+-I$(BUILD_SRC_ROOT)/model_server/ldr/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/report/include \
+-I$(BUILD_SRC_ROOT)/model_server/report/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/search/include \
+-I$(BUILD_SRC_ROOT)/model_server/search/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ste/include \
+-I$(BUILD_SRC_ROOT)/model_server/ste/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ste_disstub/include \
+-I$(BUILD_SRC_ROOT)/model_server/ste_disstub/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_OODT/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_OODT/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view/include \
+-I$(BUILD_SRC_ROOT)/model_server/view/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view_rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/view_rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \

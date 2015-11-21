@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<p><b>UIOE - Unnecessary 'instanceof' Evaluations</b></p>
+
+<p>Checks that the runtime type of the left-hand side
+expression is the same as the one specified on the
+right-hand side.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class UIOE {<br>
+&nbsp; &nbsp; void operation () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Animal animal;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Monkey monkey;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if (<font color='red'> animal instanceof Animal </font>) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; doSomething1(animal);<br>
+&nbsp; &nbsp; &nbsp; &nbsp; } <br>
+&nbsp; &nbsp; &nbsp; &nbsp; if ( <font color='red'> monkey instanceof Animal </font>) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; doSomething2(monkey);<br>
+&nbsp; &nbsp; &nbsp; &nbsp; } <br>
+&nbsp; &nbsp; }<br>
+}<br>
+class Animal {}<br>
+class Monkey extends Animal {}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Remove unnecessary checks
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class UIOE {<br>
+&nbsp; &nbsp; void operation () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Animal animal;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Monkey monkey;<br>
+<font color='blue'>
+&nbsp; &nbsp; &nbsp; &nbsp; doSomething1(animal);<br>
+&nbsp; &nbsp; &nbsp; &nbsp; doSomething2(monkey);<br>
+</font>
+&nbsp; &nbsp; }<br>
+}<br>
+class Animal {}<br>
+class Monkey extends Animal {}
+</code></p></nobr>
+
+</body>
+</html>

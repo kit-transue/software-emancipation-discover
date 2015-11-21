@@ -1,0 +1,18 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    DAGHandler \
+    DAGraph \
+    DGDataAccess \
+    DGNode \
+    DGNodeData \
+    DGPathFilter \
+    DGPathHandler \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/debug/include \
+-I$(BUILD_SRC_ROOT)/model_server/debug/include \
+-I$(LOCAL_SRC_ROOT)/model_server/search/include \
+-I$(BUILD_SRC_ROOT)/model_server/search/include \

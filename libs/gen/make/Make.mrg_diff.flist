@@ -1,0 +1,16 @@
+CXXROOTS=\
+    charstream \
+    genString \
+    genTmpfile \
+    globals \
+    vpopen \
+
+CPP_INCLUDES=\
+    -I$(LOCAL_SRC_ROOT)/machine/include\
+    -I$(BUILD_SRC_ROOT)/machine/include\
+    -I$(LOCAL_SRC_ROOT)/stream_message/include\
+    -I$(BUILD_SRC_ROOT)/stream_message/include\
+    -I$(LOCAL_SRC_ROOT)/model_server/process/include \
+    -I$(BUILD_SRC_ROOT)/model_server/process/include
+    
+

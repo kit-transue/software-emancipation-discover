@@ -1,0 +1,14 @@
+#!/bin/sh
+echo "rm -f $cm_workfile"
+rm -f $cm_workfile
+lockfile="`dirname $cm_revision_file`/p.`basename $cm_workfile`"
+if [ -f $lockfile ] ; then
+  grep "$USER" $lockfile
+  if [ $? -eq 0 ] ; then
+    rm -f $lockfile
+  fi
+fi
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterput ] ; then
+  $cm_optscripts/cm_afterput &
+fi
+exit 0

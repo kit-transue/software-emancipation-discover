@@ -1,0 +1,37 @@
+<html>
+<body>
+
+<p><b>GCGCB - GC - <i>getClipBounds()</i> should not be called too often.</b></p>
+
+<p>The <i>getClipBounds()</i> method always returns a new rectangle, thereby allocating
+more memory every time the method is called.  This causes the garbage collector to be very busy.
+NOTE:  Only methods with more than one <i>getClipBounds()</i> call will be reported.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class GCGCB {<br>
+&nbsp; public void paint(Graphics g) {<br>
+&nbsp; &nbsp; int firstColLine = g.getClipBounds().x;<br>
+&nbsp; &nbsp; <font color='red'> int lastColLine = g.getClipBounds().x + g.getClipBounds().width;</font><br>
+&nbsp; }<br>
+}
+</code></nobr></p>
+
+<p><b>Tip:</b>
+Reuse objects.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class GCGCB {<br>
+&nbsp; public void paint(Graphics g) {<br>
+&nbsp; &nbsp; <font color='blue'> Rectangle rec = g.getClipBounds();</font> &nbsp; &nbsp; &nbsp;&nbsp;// instantiate an object, rec<br>
+&nbsp; &nbsp; int firstColLine = rec.x; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// reuse "rec"<br>
+&nbsp; &nbsp; int lastColLine = rec.x + rec.width; &nbsp; &nbsp; // reuse "rec"<br>
+&nbsp; }<br>
+}
+</code></nobr></p>
+
+</body>
+</html>

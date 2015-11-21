@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<p><b>MI - Minimize Instantiation</b></p>
+
+<p>Object instantiation is one of the costlier operations in Java. The fewer objects you have to create, the faster your
+program will be run. By the way, each object instantiation ultimatelly results in increased garbage collection time.</p>
+
+<p><b>Note:</b><br>
+ &nbsp;The more parent classes there are of the class being instantiated, the costlier the instantiation time.
+ </p>
+
+<p><b>Tip:</b>
+ Many classes from Collection API do support the <b><i>clear()</i></b> operation to remove all elements in collection.
+</p>
+
+<hr>
+<!-- ======== START OF CLASS DATA ======== -->
+<h2><font size="-1">java.util</font><br>
+Interface Collection</h2>
+<dl>
+  <dt><b>All Known Subinterfaces:</b>
+  <dd><a href="http://java.sun.com/j2se/1.4/docs/api/java/beans/beancontext/BeanContext.html">BeanContext</a>,
+    <a href="http://java.sun.com/j2se/1.4/docs/api/java/beans/beancontext/BeanContextServices.html">BeanContextServices</a>,
+    <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/List.html">List</a>,
+    <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/Set.html">Set</a>, <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/SortedSet.html">SortedSet</a></dd>
+</dl>
+<dl>
+  <dt><b>All Known Implementing Classes:</b>
+  <dd><a href="http://java.sun.com/j2se/1.4/docs/api/java/util/AbstractCollection.html">AbstractCollection</a></dd>
+</dl>
+<hr>
+<h3>clear</h3>
+<pre>public void <b>clear</b>()</pre>
+<dl>
+  <dd>Removes all of the elements from this collection (optional operation).
+    This collection will be empty after this method returns unless it throws an
+    exception.
+    <p>&nbsp;</p>
+  <dd>
+    <dl>
+      <dt><b>Throws:</b>
+      <dd><code><a href="http://java.sun.com/j2se/1.4/docs/api/java/lang/UnsupportedOperationException.html">UnsupportedOperationException</a></code>
+        - if the <tt>clear</tt> method is not supported by this collection.</dd>
+    </dl>
+  </dd>
+</dl>
+<hr>
+<p><em><b>Java<sup><font size="-2">TM</font></sup>&nbsp;2&nbsp;Platform Std.&nbsp;Ed. v1.3.0 Documentation</b></em></p>
+</body>
+</html>

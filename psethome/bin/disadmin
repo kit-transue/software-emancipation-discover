@@ -1,0 +1,3 @@
+#!/bin/sh
+DISMBDIR=${DISMBDIR:=$PSETHOME/mb}; export DISMBDIR
+$PSETHOME/bin/disperl $DISMBDIR/admin.pl $*

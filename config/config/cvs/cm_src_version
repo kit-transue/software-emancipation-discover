@@ -1,0 +1,2 @@
+#!/bin/sh
+$PSETCFG/util/cvs_src_version

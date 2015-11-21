@@ -1,0 +1,39 @@
+<html>
+<body>
+
+<p><b>BTIJDC - Bad Tag In JavaDoc Comments</b></p>
+
+<p>This rule verifies code against accidental use of improper JavaDoc tags.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.audit;<br>
+/** Class BTIJDC<br>
+&nbsp; * <font color='red'>@BAD_TAG_1</font><br>
+&nbsp; * @version 1.0 08-Jan-2000<br>
+&nbsp; * @author TogetherSoft<br>
+&nbsp; */<br>
+public class BTIJDC {<br>
+&nbsp; &nbsp; /**<br>
+&nbsp; &nbsp; &nbsp; &nbsp;* Attribute attr<br>
+&nbsp; &nbsp; &nbsp; &nbsp;* <font color='red'>@BAD_TAG_2</font><br>
+&nbsp; &nbsp; &nbsp; &nbsp;* @supplierCardinality 0..*<br>
+&nbsp; &nbsp; &nbsp; &nbsp;* @clientCardinality 1<br>
+&nbsp; &nbsp; &nbsp; &nbsp;*/<br>
+&nbsp; &nbsp; private int attr;<br>
+&nbsp; &nbsp; /** Operation oper<br>
+&nbsp; &nbsp; &nbsp; * <font color='red'>@BAD_TAG_3</font><br>
+&nbsp; &nbsp; &nbsp; * @return int<br>
+&nbsp; &nbsp; &nbsp; &nbsp;*/<br>
+&nbsp; &nbsp; public int oper () {}<br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+Replace misspelled tags. Or if your JavaDoc tool (doclet, etc.) uses some non-standard tags, add them
+to the list of valid tags.
+</p>
+
+
+</body>
+</html>

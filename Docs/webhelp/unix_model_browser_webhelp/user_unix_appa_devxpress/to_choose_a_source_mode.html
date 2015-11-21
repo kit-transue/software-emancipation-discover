@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>To choose a source mode</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 48.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 6.7px 72.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 11.0px Verdana}
+    span.s4 {font: 13.0px Helvetica}
+    span.s5 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>To choose a source mode</b></p>
+<p class="p2">From the Mode list, choose a source mode option:</p>
+<p class="p3">•<span class="s1">   </span><b>No Transform</b> (default) assumes the client process is mapped to the server process and the information model source files are available.</p>
+<p class="p3">•<span class="s1">   </span><b>Transform</b> enables file name remapping. If the machine running your Developer Xpress session (client process) uses a different naming convention for files than the host (server process), you must use the <b>Transform</b> function to specify the mapping of file names between the server and client processes.</p>
+<p class="p3">In Transform mode, Developer Xpress uses the values of the <span class="s2">ServerSrcRoot</span>, <span class="s2">SharedSrcRoot</span>, and <span class="s2">PrivateSrcRoot</span> preferences to translate file names. The translation is a simple text substitution, so it is sensitive to case. DIScover stores paths internally with forward slashes, so these should be used in the various SrcRoot paths.</p>
+<p class="p4"><span class="s3"><b>a</b></span><span class="s1"><b>   </b></span>Select<span class="s4"> </span><b>Transform</b> to enable file name remapping.</p>
+<p class="p4">The text boxes labeled <span class="s2">ModelSrcRoot</span>, <span class="s2">SharedSrcRoot</span>, and <span class="s2">PrivateSrcRoot</span> become available.</p>
+<p class="p4"><span class="s3"><b>b</b></span><span class="s1"><b>   </b></span>In the <span class="s2">ServerSrcRoot</span> field, type the base path within which the source files can be found by the <span class="s2">model_server</span>. It is possible that a future version of Developer Xpress will support the server’s reporting of the path it accesses the source to the client by; currently, this is not possible.</p>
+<p class="p4"><span class="s3"><b>c</b></span><span class="s1"><b>   </b></span>In the <span class="s2">SharedSrcRoot</span> field, type the base path within which shared (not checked out) files can be found on the client side.</p>
+<p class="p4"><span class="s3"><b>d</b></span><span class="s1"><b>   </b></span>In the <span class="s2">PrivateSrcRoot</span> field, type the base path within which private (checked out) files can be found on the client side. Following are some guidelines to follow when setting the mode and the SrcRoot preferences:</p>
+<p class="p5">•<span class="s1">   </span>If the CM system is Rational ClearCase, then <span class="s2">SharedSrcRoot</span> and <span class="s2">PrivateSrcRoot</span> should be set to the same value, since under Rational ClearCase checking out a file does not change the path it is accessed by. Transform mode is only necessary if the server sees the source in a different location than the client. If the CM systems is RCS, then Transform is always necessary, the <span class="s2">SharedSrcRoot</span> should be set to the location of the files in the shared area, and the <span class="s2">PrivateSrcRoot</span> should be set to their location in the private area.</p>
+<p class="p5">•<span class="s1">   </span>If the client is on Windows and the server is on Unix, or vice versa, Transform mode is necessary, because paths on NT are all prefixed by a drive letter. Similarly, if the client and server are both on NT, but the source is mounted on different drives on the two machines, Transform is required. In either case, no preference should be left blank. For instance, if the Unix server sees the source in <span class="s5">/frog/...</span> and the NT client sees it in <span class="s5">f:/frog/...</span>, then you should set the <span class="s2">ServerSrcRoot</span> to <span class="s2">/</span> and the <span class="s2">SharedSrcRoot</span> should be set to <span class="s2">f:/</span>.</p>
+<p class="p5">•<span class="s1">   </span>If the server and client are both on Unix but see the source in different locations, Transform mode is necessary. For instance, the source may reside in the directory <span class="s5">/frog</span> on the machine <span class="s2">toad</span>, which is also the machine the server is running on. In this case, the (remote) client might see the source as <span class="s5">/net/toad/frog/...</span>, while the server sees it as <span class="s5">/frog/....</span> In this case, the <span class="s2">ServerSrcRoot</span> should again be set to <span class="s2">/</span> and you should set the <span class="s2">SharedSrcRoot</span> to <span class="s5">/net/toad/</span>.</p>
+<p class="p4"><span class="s3"><b>e</b></span><span class="s1"><b>   </b></span>To return to your Developer Xpress session, click <b>OK</b>.</p>
+<p class="p3">•<span class="s1">   </span><b>Server Source</b> transfers the source file from the server to the client when you want to view that source file in your text editor. If you run Developer Xpress on a client without shared source files, choose this option.</p>
+<p class="p6"><b>Note: </b>If your source mode is set to <b>Server Source</b>, you cannot choose a CM system. CM commands are not applicable to models that do not have available source files.</p>
+</body>
+</html>

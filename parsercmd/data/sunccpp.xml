@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- To verify these defaults, use CC -dryrun filename. -->
+<cmdline nameintro="-" unrecognized="warning"><alternate nameintro="+"/>
+<compilername>Sun WorkShop C++</compilername>
+CPP
+    --no_warnings
+    --allow_error_directive
+    --sun
+    --nonconst_ref_anachronism
+    -D__DISCOVER__
+    -D__cplusplus=199711L
+    -D_WCHAR_T=
+    -D_BOOL
+    -D__STDC__=0
+    -D__SunOS_%1%
+    -D__SUNPRO_CC=0x500
+    -Dunix
+    -Dsun
+    -Dsparc
+    -D__sparc
+    -D__unix
+    -D__sun
+    -D__BUILTIN_VA_ARG_INCR
+    -D__PRAGMA_REDEFINE_EXTNAME
+    -D__SVR4
+    -D__SUNPRO_CC_COMPAT=5
+    -D__builtin_va_alist=(*(char*)0)
+    -D__builtin_va_arg_incr(X)=X
+    --c++
+    -I/usr/include
+    -I-
+<translate>                                                   <!-- Add 'unrecognized="1"' here if log uses backslash-quote. -->
+  <option name="D"    immarg="1" separg="1">-D%</option>      <!-- Define preprocessor symbol X -->
+  <option name="E"    noarg="1">-E</option>                   <!-- Compile source through preprocessor only, output to stdout -->
+  <option name="H"    noarg="1"></option>                     <!-- Print path names of included files -->
+  <option name="I"    immarg="1">-I%</option>                 <!-- Add directory dir to INCLUDE and #include file search path -->
+  <option name="P"    noarg="1">-E</option>                   <!-- Compile source through preprocessor only, output to .i file -->
+  <option name="Qoption ccfe" separg="1"></option>            <!-- (no correspondence) Pass option X on to program ccfe -->
+  <option name="Qoption cpp"  separg="1"></option>            <!-- (no correspondence) Pass option X on to program cpp -->
+  <option name="qoption ccfe" separg="1"></option>            <!-- (no correspondence) Pass option X on to program ccfe -->
+  <option name="qoption cpp"  separg="1"></option>            <!-- (no correspondence) Pass option X on to program cpp -->
+  <option name="U"    immarg="1">-U%</option>                 <!-- Delete initial definition of preprocessor symbol X -->
+  <option name="Xm"   noarg="1">--dollar</option>             <!-- Support dollar character in C++ identifiers  -->
+  <option name="dryrun" noarg="1"></option>                   <!-- Show compiler commands built by driver, no compilation -->
+  <option name="features" immarg="1"></option>                <!-- (no correspondence) Enables/disables various C++ language features -->
+  <option name="pta"  noarg="1">--instantiate all</option>    <!-- Instantiate whole template class -->
+  <option name="xwe"  noarg="1"></option>                     <!-- Convert all warnings to errors -->
+
+  <option name="o" separg="1"/>                               <!-- output file -->
+  <option name="Qdir" separg="1"/>
+  <option name="Qpath" separg="1"/>
+  <option name="Qoption c++filt" separg="1"/>                 <!-- Pass option X on to program c++filt -->
+  <option name="Qoption cat" separg="1"/>                     <!-- Pass option X on to program cat -->
+  <option name="Qoption cg" separg="1"/>                      <!-- Pass option X on to program cg -->
+  <option name="Qoption fbe" separg="1"/>                     <!-- Pass option X on to program fbe -->
+  <option name="Qoption iropt" separg="1"/>                   <!-- Pass option X on to program iropt -->
+  <option name="Qoption ld" separg="1"/>                      <!-- Pass option X on to program ld -->
+  <option name="Qoption prog" separg="1"/>                    <!-- Pass options list to compilation phase <prog> -->
+  <option name="Qoption tdb_link" separg="1"/>                <!-- Pass option X on to program tdb_link -->
+  <option name="qoption c++filt" separg="1"/>                 <!-- Pass option X on to program c++filt -->
+  <option name="qoption cat" separg="1"/>                     <!-- Pass option X on to program cat -->
+  <option name="qoption cg" separg="1"/>                      <!-- Pass option X on to program cg -->
+  <option name="qoption fbe" separg="1"/>                     <!-- Pass option X on to program fbe -->
+  <option name="qoption iropt" separg="1"/>                   <!-- Pass option X on to program iropt -->
+  <option name="qoption ld" separg="1"/>                      <!-- Pass option X on to program ld -->
+  <option name="qoption tdb_link" separg="1"/>                <!-- Pass option X on to program tdb_link -->
+  <option name="Qproduce" separg="1"/>                        <!-- Produce file of given type -->
+  <option name="qproduce" separg="1"/>                        <!-- Produce file of given type -->
+  <option name="R" immarg="1" separg="1"/>                    <!-- Build runtime search path list into executable -->
+  <option name="qpath" separg="1"/>                           <!-- Look for compiler passes in directory X first -->
+  <option name="targ" separg="1"/>                            <!-- Set target architecture to arch-type -->
+  <option name="xinline" immarg="1"/>                         <!-- Same as -inline, takes file names in brackets. -->
+
+  <option intro="+" name="d" noarg="1"/>                      <!-- Do not expand inline functions -->
+  <option intro="+" name="e0" noarg="1"/>                     <!-- virtual table external but only declared -->
+  <option intro="+" name="e1" noarg="1"/>                     <!-- virtual table external and defined -->
+  <option intro="+" name="p" noarg="1"/>                      <!-- Disallow anachronistic constructs -->
+  <option intro="+" name="w2" noarg="1"/>                     <!-- Print warnings for all code potentially in error -->
+  <option intro="+" name="w" noarg="1"/>                      <!-- Print extra warnings where necessary -->
+</translate>
+    -I%0%/include/CC
+    -I%0%/include/CC/std
+    -I%0%/include/CC/rw7
+    -I%0%/include/cc
+</cmdline>

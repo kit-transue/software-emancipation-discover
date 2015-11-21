@@ -1,0 +1,612 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "include\resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""CBrowserFrame.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "CBrowserFrame OLE Control Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "CBROWSERFRAME\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "CBROWSERFRAME.OCX\0"
+            VALUE "ProductName", "CBrowserFrame OLE Control Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON    DISCARDABLE     "res/CBrowserFrame.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BROWSERFRAME        BITMAP  DISCARDABLE     "res/CBrowserFrameCtl.bmp"
+IDB_ARROWRIGHT          BITMAP  DISCARDABLE     "res/ArrowRight.bmp"
+IDB_ARROWLEFT           BITMAP  DISCARDABLE     "res/ArrowLeft.bmp"
+IDB_ARROWUP             BITMAP  DISCARDABLE     "res/ArrowUp.bmp"
+IDB_ARROWDN             BITMAP  DISCARDABLE     "res/ArrowDown.bmp"
+IDB_AND                 BITMAP  DISCARDABLE     "res/And.bmp"
+IDB_OR                  BITMAP  DISCARDABLE     "res/Or.bmp"
+IDB_FILTERLIST          BITMAP  DISCARDABLE     "res/FilterList.bmp"
+IDB_FILTERWIZARD        BITMAP  DISCARDABLE     "res/FilterWizard.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ATTRIBUTES DIALOGEX 0, 0, 216, 183
+STYLE DS_MODALFRAME | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Attributes Setup"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,162,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,84,162,50,14
+    LISTBOX         IDC_SOURCEATTR,7,19,87,137,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_DESTATTR,122,19,87,137,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<",IDC_ONE_TO_SOURCE,98,89,19,17,BS_BITMAP,
+                    WS_EX_CLIENTEDGE
+    PUSHBUTTON      ">",IDC_ONE_TO_DEST,98,64,19,17,BS_BITMAP,
+                    WS_EX_CLIENTEDGE
+    CTEXT           "Available Attributes",IDC_STATIC,7,7,86,11,SS_SUNKEN
+    CTEXT           "Selected Attributes",IDC_STATIC,123,7,86,11,SS_SUNKEN
+    PUSHBUTTON      "Apply",IDAPPLY,159,162,50,14
+END
+
+IDD_FILTERWIZARD DIALOG DISCARDABLE  0, 0, 250, 234
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_ATTRIBUTE,15,33,187,102,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_ARGUMENT,14,92,189,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_OPERATION,15,63,187,65,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Tab3",IDC_TABEXPRESSION,"SysTabControl32",TCS_BUTTONS,
+                    11,167,226,14
+    CTEXT           "Attribute",IDC_STATIC,15,18,186,12,SS_SUNKEN
+    CTEXT           "Operation",IDC_STATIC,15,48,187,12,SS_SUNKEN
+    CTEXT           "Argument",IDC_STATIC,15,78,188,12,SS_SUNKEN
+    EDITTEXT        IDC_EDITEXPRESSION,7,200,236,15,ES_AUTOHSCROLL | 
+                    ES_READONLY
+    LTEXT           "Results shown as  Access expression:",IDC_STATIC,9,188,
+                    127,8
+    PUSHBUTTON      "Add to results",IDC_ADDBUTTON,10,130,72,14
+    PUSHBUTTON      "Remove from results",IDC_REMOVEBUTTON,89,130,72,14
+    PUSHBUTTON      "Change results",IDC_CHANGEBUTTON,167,130,72,14
+    CONTROL         "And",IDC_AND,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
+                    WS_TABSTOP,37,112,40,12
+    CONTROL         "Or",IDC_OR,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
+                    WS_TABSTOP,86,112,40,12
+    GROUPBOX        "",IDC_STATIC,7,159,236,26
+    LTEXT           "Use",IDC_STATIC,14,114,22,11
+    LTEXT           "to merge with result.",IDC_STATIC,131,113,95,9
+    LTEXT           "Results as flowchart:",IDC_STATIC,9,151,128,9
+    GROUPBOX        "Attributte logical operation",IDC_STATIC,7,7,236,141
+END
+
+IDD_FILTERLIST DIALOG DISCARDABLE  0, 0, 220, 229
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_SAVELIST,7,19,206,114,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Saved Filters",IDC_STATIC,7,9,88,9
+    EDITTEXT        IDC_NAMEEDIT,7,150,206,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMANDEDIT,7,182,206,15,ES_AUTOHSCROLL
+    LTEXT           "Filter Name",IDC_STATIC,7,137,108,10
+    LTEXT           "Filter Command",IDC_STATIC,7,170,110,9
+    PUSHBUTTON      "Add",IDC_ADDBUTTON,7,207,50,15
+    PUSHBUTTON      "Remove",IDC_REMOVEBUTTON,63,207,50,15
+    PUSHBUTTON      "Change",IDC_CHANGEBUTTON,121,207,50,15
+END
+
+IDD_SORT DIALOGEX 0, 0, 212, 209
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Complex Sort Setup"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,188,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,81,188,50,14
+    LISTBOX         IDC_SOURCE,7,24,86,160,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Available Attributes",IDC_STATIC,9,12,77,10
+    LISTBOX         IDC_DESTINATION,120,24,85,160,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Sorting order",IDC_STATIC,127,12,73,9
+    PUSHBUTTON      "",IDC_ADD,96,78,22,20,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_REMOVE,96,105,22,20,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Apply",IDAPPLY,155,188,50,14
+    CONTROL         "",IDC_DECENDING,"Button",BS_AUTOCHECKBOX | BS_BITMAP | 
+                    BS_CENTER | BS_VCENTER | BS_PUSHLIKE | WS_TABSTOP,98,150,
+                    17,16
+    CONTROL         "Check1",IDC_ACENDING,"Button",BS_AUTOCHECKBOX | 
+                    BS_BITMAP | BS_CENTER | BS_VCENTER | BS_PUSHLIKE | 
+                    WS_TABSTOP,98,168,17,15
+END
+
+IDD_ABOUTBOX_CBROWSERFRAME DIALOG DISCARDABLE  34, 22, 260, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About CBrowserFrame Control"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,20,20
+    LTEXT           "CBrowserFrame Control, Version 1.0",IDC_STATIC,40,10,
+                    170,8
+    LTEXT           "Copyright © 1998, ",IDC_STATIC,40,25,170,8
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+END
+
+IDD_PROPPAGE_CBROWSERFRAME DIALOG DISCARDABLE  0, 0, 250, 62
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of CBrowserFrame Control on this dialog.",
+                    IDC_STATIC,7,25,229,16
+END
+
+IDD_GROUPSVIEW DIALOG DISCARDABLE  0, 0, 230, 120
+STYLE WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,13,12,20,18
+    CONTROL         "",IDC_GROUPS,"{1487DD54-1CB6-11D2-AEF0-00A0C9B71DC4}",
+                    WS_TABSTOP,7,7,167,106
+    PUSHBUTTON      "New",IDC_NEW,175,7,48,16
+END
+
+IDD_SUBSYSVIEW DIALOG DISCARDABLE  0, 0, 230, 120
+STYLE WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_SUBSYSTEMS,"{26C03863-0D33-11D2-AEE9-00A0C9B71DC4}",
+                    WS_TABSTOP,7,7,167,106
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,13,12,40,18
+    PUSHBUTTON      "New",IDC_NEW,175,7,48,16
+END
+
+IDD_SUBSYSCREATE DIALOG DISCARDABLE  0, 0, 120, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Subsystem"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,61,45,50,14
+    LTEXT           "New Subsystem Name",IDC_STATIC,9,11,101,11
+    EDITTEXT        IDC_EDIT,7,25,103,13,ES_AUTOHSCROLL
+END
+
+IDD_NEWFILTER DIALOG DISCARDABLE  0, 0, 186, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Filter"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_FILTEREDIT,7,23,172,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,63,45,50,14
+    LTEXT           "Enter the new filter name:",IDC_STATIC,7,10,172,9
+END
+
+IDD_ADDTPM DIALOGEX 0, 0, 306, 218
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TPM Expression Editor"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,197,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,64,197,50,14
+    EDITTEXT        IDC_CURRENTEDIT,7,78,293,35,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_NAMEEDIT,7,19,293,12,ES_AUTOHSCROLL
+    LTEXT           "Name:",IDC_STATIC,7,7,85,9
+    EDITTEXT        IDC_NEWEDIT,7,137,293,43,ES_MULTILINE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTEDIT,7,46,293,12,ES_AUTOHSCROLL
+    LTEXT           "Comment:",IDC_STATIC,7,34,85,9
+    LTEXT           "Current TPM expression:",IDC_STATIC,7,67,106,8
+    LTEXT           "New TPM expression:",IDC_STATIC,9,126,106,8
+    PUSHBUTTON      "Update From Selection",IDC_FROMSELECTION,213,180,87,16,
+                    0,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_CHANGE,146,117,20,18,BS_BITMAP,WS_EX_CLIENTEDGE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ATTRIBUTES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 209
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_FILTERWIZARD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 226
+    END
+
+    IDD_FILTERLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 213
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_SORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 205
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 202
+    END
+
+    IDD_ABOUTBOX_CBROWSERFRAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_PROPPAGE_CBROWSERFRAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_GROUPSVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 113
+    END
+
+    IDD_SUBSYSVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 113
+    END
+
+    IDD_SUBSYSCREATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 113
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+
+    IDD_NEWFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+
+    IDD_ADDTPM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 300
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 211
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_GROUPSVIEW DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x031a, 0x0000, 0x02ff, 0x0000, 0x0000, 
+0x0000, 
+    IDC_GROUPS, 0x376, 21, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x19f1, 0x0000, 0x11c7, 0x0000, 0x0002, 
+0x0000, "\000" 
+    0
+END
+
+IDD_SUBSYSVIEW DLGINIT
+BEGIN
+    IDC_SUBSYSTEMS, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x19f1, 0x0000, 0x11c7, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x7972, 0x6552, 0x7573, 0x746c, 0x4373, 0x7274, 
+0x316c, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0634, 0x0000, 0x02ff, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_BROWSERFRAME        "BrowserFrame Control"
+    IDS_CBROWSERFRAME_PPG   "BrowserFrame Property Page"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CBROWSERFRAME_PPG_CAPTION "General"
+    IDS_INFO                " %ld from %ld, %ld selected."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NAME_COLUMN         "Name"
+    IDS_FILE_COLUMN         "File"
+    IDS_EXTENTION_COLUMN    "Extention"
+    IDS_LINE_COLUMN         "Line"
+    IDS_TYPE_COLUMN         "Type"
+    IDS_ARGNUM_COLUMN       "Arguments amount"
+    IDS_ARGS_COLUMN         "Arguments"
+    IDS_KIND_COLUMN         "Kind"
+    IDS_LANGUAGE_COLUMN     "Language"
+    IDS_MODELFILE_COLUMN    "Model File"
+    IDS_CYCLCOMPLEXITY_COLUMN "Cyclomatic Complexity"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_MYERCOMPLEXITY_COLUMN "Myer Complexity"
+    IDS_SUPERCLASSES_COLUMN "Superclasses"
+    IDS_SUBCLASSES_COLUMN   "Subclusses"
+    IDS_SIZE_COLUMN         "Size"
+    IDS_DEPTH_COLUMN        "Depth"
+    IDS_DANGLINGELSEIF_COLUMN "Dangling Else If's"
+    IDS_DEFLESSSWITCH_COLUMN "Defaultless switches"
+    IDS_START_COLUMN        "Starting line"
+    IDS_RETURN_COLUMN       "Returns"
+    IDS_LINESAMOUNT_COLUMN  "Lines"
+    IDS_UNCOMMENTAMOUNT_COLUMN "Uncommented Lines"
+    IDS_EXECUTABLEAMOUNT_COLUMN "Executable Lines"
+    IDS_IFSAMOUNT_COLUMN    "IF's"
+    IDS_LOOPSAMOUNT_COLUMN  "Loops"
+    IDS_SWITCHESAMOUNT_COLUMN "Switches"
+    IDS_DEFAULTAMOUNT_COLUMN "Defaults"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_STATUS_COLUMN       "Status"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NAME_COMMAND        "name"
+    IDS_FILE_COMMAND        "fname"
+    IDS_EXTENTION_COMMAND   "fname"
+    IDS_LINE_COMMAND        "line"
+    IDS_TYPE_COMMAND        "type"
+    IDS_ARGNUM_COMMAND      "numargs"
+    IDS_ARGS_COMMAND        "args"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_KIND_COMMAND        "kind"
+    IDS_LANGUAGE_COMMAND    "language"
+    IDS_MODELFILE_COMMAND   "psetfile"
+    IDS_CYCLCOMPLEXITY_COMMAND "met_CC"
+    IDS_MYERCOMPLEXITY_COMMAND "met_MYERS"
+    IDS_SUPERCLASSES_COMMAND "met_FANIN"
+    IDS_SUBCLASSES_COMMAND  "met_FANOUT"
+    IDS_SIZE_COMMAND        "met_BYTES"
+    IDS_DEPTH_COMMAND       "met_DEPTH"
+    IDS_DANGLINGELSEIF_COMMAND "met_DANG_EI"
+    IDS_DEFLESSSWITCH_COMMAND "met_DANG_SW"
+    IDS_START_COMMAND       "met_START_LN"
+    IDS_RETURN_COMMAND      "met_RETURNS"
+    IDS_LINESAMOUNT_COMMAND "met_LOC"
+    IDS_UNCOMMENTAMOUNT_COMMAND "met_ULOC"
+    IDS_EXECUTABLEAMOUNT_COMMAND "met_XLOC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_IFSAMOUNT_COMMAND   "met_IFS"
+    IDS_LOOPSAMOUNT_COMMAND "met_LOOPS"
+    IDS_SWITCHESAMOUNT_COMMAND "met_SWITCHES"
+    IDS_DEFAULTAMOUNT_COMMAND "met_DEFAULTS"
+    IDS_STATUS_COMMAND      "status"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NAME_TYPE           "string"
+    IDS_FILE_TYPE           "string"
+    IDS_EXTENTION_TYPE      "string"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_LINE_TYPE           "integer"
+    IDS_TYPE_TYPE           "string"
+    IDS_ARGNUM_TYPE         "integer"
+    IDS_ARGS_TYPE           "string"
+    IDS_KIND_TYPE           "string"
+    IDS_LANGUAGE_TYPE       "string"
+    IDS_MODELFILE_TYPE      "string"
+    IDS_CYCLCOMPLEXITY_TYPE "integer"
+    IDS_MYERCOMPLEXITY_TYPE "integer"
+    IDS_SUPERCLASSES_TYPE   "integer"
+    IDS_SUBCLASSES_TYPE     "integer"
+    IDS_SIZE_TYPE           "integer"
+    IDS_DEPTH_TYPE          "integer"
+    IDS_DANGLINGELSEIF_TYPE "integer"
+    IDS_DEFLESSSWITCH_TYPE  "integer"
+    IDS_START_TYPE          "integer"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_RETURN_TYPE         "integer"
+    IDS_LINESAMOUNT_TYPE    "integer"
+    IDS_UNCOMMENTAMOUNT_TYPE "integer"
+    IDS_EXECUTABLEAMOUNT_TYPE "integer"
+    IDS_IFSAMOUNT_TYPE      "integer"
+    IDS_LOOPSAMOUNT_TYPE    "integer"
+    IDS_SWITCHESAMOUNT_TYPE "integer"
+    IDS_DEFAULTAMOUNT_TYPE  "integer"
+    IDS_STATUS_TYPE         "string"
+    IDS_FIELDMESSAGE        "Argument field empty or wrong type"
+    IDS_FIELDCAPTION        "Filter Wizard Error:"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_OP_INT              ">  Grater Then"
+    IDS_OP_INT2             "<  Less Then"
+    IDS_OP_INT3             "=  Equal To"
+    IDS_OP_INT4             "!= Not Equal"
+    IDS_OP_INT5             ">= Grater OrEqual"
+    IDS_OP_INT6             "<= Less Or Equal"
+    IDS_OP_STR              "String starts with, case sensitive"
+    IDS_OP_STR2             "String starts with, case insensitive"
+    IDS_OP_STR3             "String equal to, case sensitive"
+    IDS_OP_STR4             "String equal to, case insensitive"
+    IDS_OP_STR5             "String contains, case sensitive"
+    IDS_FMT_INT             "%s > %s"
+    IDS_FMT_INT2            "%s < %s"
+    IDS_FMT_INT3            "%s == %s"
+    IDS_FMT_INT4            "%s != %s"
+    IDS_FMT_INT5            "%s >= %s"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_FMT_INT6            "%s <= %s"
+    IDS_FMT_STR             "strncmp(%s,""%s"",%d)==0"
+    IDS_FMT_STR2            "strnicmp(%s,""%s"",%d)==0"
+    IDS_FMT_STR3            "strcmp(%s,""%s"")==0"
+    IDS_FMT_STR4            "strnicmp(%s,""%s"")==0"
+    IDS_FMT_STR5            "strstr(%s,""%s"")!="""""
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "CBrowserFrame.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

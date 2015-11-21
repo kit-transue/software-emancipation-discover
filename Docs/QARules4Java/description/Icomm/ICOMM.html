@@ -1,0 +1,52 @@
+<html>
+<body>
+
+<p><b>ICOMM - Inaccessible Constructor Or Method Matches</b></p>
+
+<p>Overload resolution only considers constructors and methods are visible at the point
+of the call. If however, all the constructors and methods were considered, there may
+be more matches. This rule is violated in this case.</p>
+
+<p>
+Imagine that ClassB is in a different package than ClassA.
+Then the allocation of ClassB violates this rule since the
+second constructor is not visible at the point of the allocation,
+but it still matches the allocation (based on signature).
+Also the call to oper in ClassB violates this rule since the second
+and the third declarations of oper is not visible at the point
+of the call, but it still matches the call (based on signature).
+</p>
+
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class ClassA {<br>
+&nbsp; &nbsp; public ClassA (int param) {}<br>
+&nbsp; &nbsp; <font color='red'>ClassA (char param) {} </font><br>
+&nbsp; &nbsp; <font color='red'>ClassA (short param) {} </font><br>
+&nbsp; &nbsp; public void oper (int param) {}<br>
+&nbsp; &nbsp; <font color='red'>void oper (char param) {} </font><br>
+&nbsp; &nbsp; <font color='red'>void oper (short param) {} </font><br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Either give such methods or constructors equal visibility or change their signature.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class ClassA {<br>
+&nbsp; &nbsp; ClassA (int param) {}<br>
+&nbsp; &nbsp; <font color='blue'>public</font> ClassA (char param) {} <br>
+&nbsp; &nbsp; <font color='blue'>public</font> ClassA (short param) {} <br>
+&nbsp; &nbsp; public void oper (int param) {}<br>
+&nbsp; &nbsp; void <font color='blue'>doOper</font> (char param) {} <br>
+&nbsp; &nbsp; void <font color='blue'>doOper</font> (short param) {} <br>
+}
+</code></p></nobr>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+*psetPrefs.cCompiler:			cc
+*psetPrefs.cDefines:		-D__inline__= -D__signed__= -D__sparc__ -D__sparc -D__linux -D__STRICT_ANSI__ -D__STDC__=0 -D__NO_MATH_INLINES -DHAS_STRFTIME
+*psetPrefs.cDfltHdrSuffix:		.h
+*psetPrefs.cDfltSrcSuffix:		.c
+*psetPrefs.cFlags:			-w --no_microsoft
+*psetPrefs.cHdrSuffix:			.h
+*psetPrefs.cIncludes:
+*psetPrefs.cStyle:			0
+*psetPrefs.cSuffix:			.c .h
+
+*psetPrefs.cPlusCompiler:		CC
+*psetPrefs.cPlusDefines:	-D__inline__= -D__signed__= -D__sparc__ -D__sparc -D__linux -D__STRICT_ANSI__ -D__STDC__=0 -D__NO_MATH_INLINES -DHAS_STRFTIME
+*psetPrefs.cPlusDfltHdrSuffix:		.H
+*psetPrefs.cPlusDfltSrcSuffix:		.C
+*psetPrefs.cPlusFlags:			-w --no_microsoft
+*psetPrefs.cPlusHdrSuffix:		.H .h .hpp .hxx
+*psetPrefs.cPlusIncludes:
+*psetPrefs.cPlusSuffix:			.cxx .C .H .h
+
+*psetPrefs.makefileTargets:	Default:all:install:executable:makefile:clean
+
+*psetPrefs.PutTrackBugs:		0
+*psetPrefs.configuratorCopy:	
+*psetPrefs.configuratorCustomDirectory:	
+*psetPrefs.configuratorDelete:	
+*psetPrefs.configuratorDiff:	
+*psetPrefs.configuratorGet:	
+*psetPrefs.configuratorLock:	
+*psetPrefs.configuratorMergeBackups:	1
+*psetPrefs.configuratorOptionalScriptsDir:	
+*psetPrefs.configuratorPut:	
+*psetPrefs.configuratorPutLocks:	1
+*psetPrefs.configuratorRemovePsets:	0
+*psetPrefs.configuratorStat:	
+*psetPrefs.configuratorSystem:		rcs
+*psetPrefs.configuratorTerse:		0
+*psetPrefs.configuratorUnlock:	
+*psetPrefs.configuratorUseLocks:	1
+*psetPrefs.configuratorUseSoftLinks:	0
+
+*psetPrefs.acceptSyntaxErrors:		yes
+*psetPrefs.debugCppOutputFile:		$ADMINDIR/tmp/CPPOutputFile
+*psetPrefs.debugShowMakeRuleOutput:	yes
+*psetPrefs.debugEnvSave:		no
+
+*psetPrefs.envVariablesList:	
+*psetPrefs.executableTimer:		/bin/time
+*psetPrefs.getModel:			no
+*psetPrefs.putModel:			no
+*psetPrefs.doPassDependency:		yes
+*psetPrefs.doPassHeaders:		yes
+*psetPrefs.doPassSaveProj:              yes
+*psetPrefs.doPassSaveRoot:              yes
+
+*psetPrefs.logFileDir:			$ADMINDIR/log
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileMonitor:		yes
+*psetPrefs.logFileNameFixed:    	yes
+*psetPrefs.logFileBuildCompress:	no
+*psetPrefs.logFileUserDelete:		yes
+*psetPrefs.logPrefValues:		no
+
+*psetPrefs.msgLogger:			yes
+*psetPrefs.DIS_msg.UseMsgLogger:	1
+
+*psetPrefs.nameCompany:	"UPSPRING Software, Inc., Burlington MA"
+*psetPrefs.nameDiscoverAdministrator:	"For Learn model support: support@setech.com, 781-359-3400"
+*psetPrefs.pdfFileBuild:		$ADMINDIR/pdf/build.pdf
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/user.pdf
+*psetPrefs.privateModelRoot:		$ADMINDIR/model/private
+*psetPrefs.privateSrcRoot:		$ADMINDIR/../private
+*psetPrefs.groupsPath:		      $ADMINDIR/groups
+
+*psetPrefs.projectList:			xip_shared ttt_shared xcalentool_shared package_shared extract_shared sysinclude 
+*psetPrefs.projectParallel:		no
+
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/../src
+
+*psetPrefs.DIS_model.GenerateY2KInfo:	2
+*psetPrefs.DIS_model.SaveMetrics:	1
+*psetPrefs.DIS_model.Strings_Enabled:	1
+*psetPrefs.DIS_model.LocalVars_Enabled:	1
+*psetPrefs.DIS_model.Instances_Enabled:	1
+*psetPrefs.DIS_model.Ast_Enabled:	1
+*psetPrefs.doBuildDFA:			yes
+
+*psetPrefs.vfbEnable:			1
+*psetPrefs.DIS_msg.LogErrorMessages:	1
+*psetPrefs.DIS_msg.LogWarningMessages:	1
+*psetPrefs.DIS_msg.LogInformativeMessages:	1
+*psetPrefs.DIS_msg.LogDiagnosticMessages:	1
+*psetPrefs.DIS_msg.LogDuringImport:	1
+*psetPrefs.DIS_msg.LogDuringCompile:	1
+*psetPrefs.DIS_msg.LogDuringPropagate:	1

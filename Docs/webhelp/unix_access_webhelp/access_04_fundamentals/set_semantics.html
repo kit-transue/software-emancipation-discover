@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Set Semantics</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Set Semantics</b></p>
+<p class="p2">As a data container, you should think of Access sets as arrays, not as sets. Elements in sets are ordered and may contain duplicates. Members are accessible using integer offsets using the syntax, <span class="s1">setname/index1 [setname/index2...]</span>. Indices begin at 1, not 0.</p>
+<p class="p3"><b>Note: </b>There is an alternate syntax for identifying elements in a set: use the set name followed by a list of integers. Even the set name is optional—if omitted, the integers are applied to the result of the last command. This abbreviated syntax is best relegated to interactive Access sessions.</p>
+<p class="p2">Access sets are passed by reference and are reference counted. The standard Tcl mechanisms for creating new references to objects—the <span class="s1"><b>set</b></span> command and passing variables as arguments to procedures—work with sets. The only way to modify a set is to add elements to it using <span class="s1"><b>sappend</b></span>. Sets are not copy-on-write; changes made using <span class="s1"><b>sappend</b></span> are seen in all variables that reference that set. Use <span class="s1"><b>set_copy</b></span> to create a “deep-copy” of a set.</p>
+</body>
+</html>

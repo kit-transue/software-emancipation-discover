@@ -1,0 +1,45 @@
+CROOTS=\
+		ComboBox
+CPPROOTS=\
+		Impact\
+		ClassActions\
+		EnumActions\
+		FieldActions\
+		FunctionActions\
+		ImpactAction\
+		ImpactActionsSet\
+		ImpactComponent\
+		IMAttachment\
+		InterfaceActions\
+		MacroActions\
+		ModuleActions\
+		TemplateActions\
+		TypedefActions\
+		UnionActions\
+		VariableActions\
+		RenameAction\
+		ChangeTypeAction\
+		AddFieldAction\
+		RemoveFieldAction\
+		RemoveMethodAction\
+		ChangeBaseClassAction\
+		AddBaseInterfaceAction\
+		RemoveBaseInterfaceAction\
+		ChangePermissionsAction\
+		AddEnumValueAction\
+		RemoveEnumValueAction\
+		ChangeArgumentsAction\
+		ArgumentsTable\
+		AddMethodAction\
+		CheckList\
+		EntityInfo\
+		ResultsTree\
+		QueryResult\
+		Permissions\
+		Report\
+		ChangeBodyAction\
+		AddBaseClassAction\
+		RemoveBaseClassAction
+
+
+

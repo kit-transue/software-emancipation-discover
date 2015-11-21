@@ -1,0 +1,247 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+psethome (OK)
+- Not part of "build" -- only the installer
+- Only used for building "learn" models?
+- Some libs reference GPL
+- Should be ok to just remove this prior to shipping
+
+nameserver (OK)
+dish (OK)
+flex (OK)
+- to make dis_flex.exe on Windows, flex on Unix
+- Some changes to source
+- *Should* just be able to drop Berkeley flex in FLEX/..., or supply with BSD
+  license intact.
+- Drop from build, provide flex.skel for "installer"
+- Customer expected to provide executable in our $BINDIR
+
+aset_jfe (OK)
+- Create with EDG JFE code -- MANY CHANGES 
+- depends on md5
+- patch created
+
+dis_sql (OK)
+- Depends on nihcl (Freely available copyright free)
+- Depends on machine
+- Source is heavily hacked "Software Emancipation Technology, Inc." 
+- src contains a GPL-branded yylex file from GNU Bison -- seems unused
+
+model_server:model_server
+pset_server:model_server
+- Too many copyrighted sources to list here, extensively modified and
+  extremely convoluted build system.  Yuck.
+- Depends on:
+ads/
+gen/
+if_parser/
+machine/
+nameserver/
+nihcl/
+osport/
+stream_message/
+xxinterface/
+
+emacs_integration (OK)
+
+vs_integration (OK)
+
+jbuilder_integration (OK)
+
+grep (OK)
+- Only used for grep.exe, egrep.exe in $BIN
+- Move to thirdparty area
+
+mrg_update (OK)
+- Depends on:
+gen/
+machine/
+nameserver/
+nihcl/
+stream_message/
+update/
+
+mrg_diff (OK)
+- Depends on:
+diff/ (not GNU diff)
+gen/
+machine/
+nihcl/
+
+mrg_ui (OK)
+- Depends on:
+gen/
+machine/
+mtk/
+nameserver/
+stream_message/
+
+sevreporter
+- Depends on:
+ads/
+gd/
+gdchart/
+osport/
+source/
+- gd, gdchart included source is copyrighted (patch?)
+- gd 1.3 is a hacked LZW-free lib.  Replacing this with gd 1.8.4 requires
+  also building zlib.  Furthermore, none of the gif translation functions
+  are present.
+- gdchart is a beta that depends on gd
+- ads points to gala, which should be ok.
+
+canceldialog (OK)
+
+ifext (OK)
+- Depends on:
+gen/
+nameserver/
+nihcl/
+stream_message/
+
+simplify  (OK)
+- Depends on:
+ads/
+if_parser/
+machine/
+osport/
+source/
+
+aset_CCcc (OK)
+- Links with MD5
+- Source copyright EDG
+- Depends on:
+md5/
+nameserver/
+project_pdf/
+stream_message/
+xxinterface/
+- patch created
+
+dis_path (OK)
+- Depends on:
+pdf in model_server
+
+disperl (OK, I think)
+- Depends on:
+ads/
+osport/ (Gala?)
+
+dismb (OK)
+- Depends on:
+ads/
+osport/ (gala?)
+source/
+
+dislite (OK)
+- Depends on:
+/nameserver
+
+mail (OK)
+
+wakeup (OK)
+
+tcl:dis_tcl8.3 (OK)
+tk:dis_tk8.3 (OK)
+- Looks like pristine 8.3 code
+- Removed to thirdparty source area
+
+vim:vim-5.3
+- Hacked copy of VIM 5.3
+
+discovermdi:newntui (OK)
+
+serverstart (OK)
+
+serverspy (OK)
+
+admintool (OK)
+- Depends on:
+dish/
+nameserver/
+
+checklist (OK)
+- Depends on:
+/nihcl
+
+setfork (OK)
+- Depends on gala/ntfork/osport, which has no copyright
+
+parsercmd (OK)
+- Depends on:
+/nameserver
+/stream_message
+
+cmdriver (OK)
+- Depends on:
+/devxlauncher
+/nameserver
+
+cmdish (OK)
+- Depends on:
+/devxlauncher
+/nameserver
+
+pdfgen (OK)
+- Depends on /nameserver, /stream_message
+
+scandsp (OK)
+- Depends on /nameserver, /stream_message
+
+pathcvt (OK)
+
+devxlauncher (OK)
+- TCL scripts contain non-binding copyrights
+
+ci_environment (OK)
+- Depends on:
+/scandsp
+/machine
+
+mbdriver (OK)
+
+log_presentation (OK)
+
+spawnprocess (OK)
+
+md5 (OK)
+- Source is slightly modified
+- Supplied as md5 executable
+- imported lib for:
+./aset_CCcc/libs/md5
+./aset_jfe/libs/md5
+- Default files from RSA build fine with a single diff to a header
+- patch created
+
+ciadmin:adminui
+- Supply as stand-alone?
+
+emacsAdapter (OK)
+
+devxAdapter (OK)

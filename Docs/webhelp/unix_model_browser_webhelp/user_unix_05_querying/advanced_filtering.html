@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Advanced Filtering</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p7 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 13.0px Helvetica}
+    span.s3 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Advanced Filtering</b></p>
+<p class="p2">As you learned in the previous book, you can apply filters to narrow the display of query results. Sorting query results, showing/hiding results that match a specified string, and manipulating how your filter list displays are perhaps the most straightforward and most commonly used of the filtering options. However, DIScover provides you with added flexibility to filter lists using Access expressions and custom filters.</p>
+<p class="p2">The following paragraphs describe the options available in the <b>Filter List</b> dialog box: <b>Predefined Filters</b>, <b>Use Format Expression</b>, and <b>Match Expression</b>.</p>
+<p class="p2">The <b>Predefined Filters </b>region consists of the filter selection and configuration option menus. The <b>Filter selection</b> menu allows you to select a list filter to apply. The <b>Configure</b> menu allows you to access the following administrative options:</p>
+<p class="p3">•<span class="s1">   </span><b>Create New Filter</b> invokes a dialog box that prompts you to select a name for the new filter, then creates that filter when you click <b>OK.</b></p>
+<p class="p3">•<span class="s1">   </span><b>Rename Filter</b><span class="s2"> </span>invokes a dialog box that prompts you to enter a new name for the current filter, then renames the filter when you click <b>OK</b>.</p>
+<p class="p3">•<span class="s1">   </span><b>Save Filter</b> saves the current filter and adds its name to the filter selection menu, enabling you to use the filter in subsequent DIScover sessions.</p>
+<p class="p3">•<span class="s1">   </span><b>Delete Filter </b>deletes the current filter, removing its name from the filter selection menu. You cannot restore deleted filters.</p>
+<p class="p2">The <b>Use Format Expression</b> region enables you to add information and formatting instructions to the characteristics in each line of the resulting list. Do so by entering the desired information in the corresponding text field.</p>
+<p class="p2">For example, suppose that in the <b>Format List</b> region you have specified <span class="s3">Entity Name</span> and <span class="s3">Size in Bytes</span> to appear in the resulting list, and have specified the following string in the <b>Use Format Expression</b> text field:</p>
+<p class="p4">% Size: %</p>
+<p class="p2">The percent symbols represent the characteristics that you specified in the<b> Format List</b> region, in the same order that they appear (top to bottom). The following depicts a typical resulting list item:</p>
+<p class="p5"><br></p>
+<p class="p6"><img src="./tmp089491.jpg" alt="tmp089491.jpg"></p>
+<p class="p7"> </p>
+<p class="p2">The <b>Match Expression</b> region enables you to display items that match Access expressions (typically attributes). You can specify an expression by entering it in the corresponding text field. For example, when filtering a list of files or functions, you can enter the expression <span class="s3">met_BYTES&gt;1024</span> in this field to generate a list containing only those files or functions whose size exceeds 1 kilobyte.</p>
+</body>
+</html>

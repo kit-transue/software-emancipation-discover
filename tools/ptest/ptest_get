@@ -1,0 +1,72 @@
+#!/bin/sh
+#boris
+
+if [ $# -eq 0 ]; then
+	echo ""
+	echo "    ptest_get Test [script1 , ... , scriptN]"
+	echo ""
+	echo "ptest_get copies a specified Test in $HOME area"
+	echo "Test  - is a source test directory"
+        echo "script1 , ... , scriptN  - scripts of interest"
+        echo "If no scripts specified, all scripts are copied"
+	exit 0
+fi
+
+the_test="$1"
+
+if [ ! -d "$the_test" ] ; then
+	echo "$the_test is not a directory"
+	exit 1
+fi
+
+shift
+flag="1"
+if [ $# -gt 0 ]; then
+	echo "Scripts to copy:"
+	for scrpt in $@
+	do
+		echo "    $the_test/$scrpt"
+		if [ ! -r "$the_test/$scrpt" ]; then
+			if [ "$flag" -eq "1" ]; then
+				flag="$the_test/$scrpt"
+			fi
+		fi
+	done
+else
+	echo "All scripts are used"
+fi
+
+if [ ! "$flag" -eq "1" ]; then
+	echo "***Error $the_test/$scrpt does not exist"
+	exit 1
+fi
+
+dirname=`basename $the_test`
+if [ -d "$HOME/$dirname" ]; then
+	echo "Directory $HOME/$dirname exists" 
+fi
+
+echo ""
+echo "===>"
+ptest_copy $the_test $HOME/$dirname
+
+if [ $? = 0 ]; then
+	cd "$HOME/$dirname"
+	\rm *~
+	if [ $# -gt 0 ]; then
+		for f in $@
+		do
+			if [ -r "$f" ]; then
+				mv "$f" "$f.tmp_p"
+			fi
+		done
+		\rm -f *.ccc
+		for f in *.tmp_p
+		do
+			mv "$f" `basename "$f" ".tmp_p"` 
+		done
+	fi
+fi
+echo "ptest_get is done"
+exit
+

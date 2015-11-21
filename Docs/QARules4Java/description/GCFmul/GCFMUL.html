@@ -1,0 +1,25 @@
+<html>
+<body>
+
+<p><b>GCFMUL - GC - <i>finalize()</i> method should not unregister listeners</b></p>
+
+<p>The <i>finalize()</i> method gets only called when there are no more references
+to the object.  If the listeners are removed in the <i>finalize()</i> method the
+object will not be removed during garbage collection.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class GCFMUL extends Panel {<br>
+&nbsp; public void finalize() {<br>
+&nbsp; &nbsp; <font color='red'> remove (_button);</font><br>
+&nbsp; &nbsp; super.finalize();<br>
+&nbsp; }<br>
+&nbsp; private Button _button = new Button();<br>
+}</nobr></code></p>
+
+<p><b>Tip:</b>
+Do not call methods that remove listeners in the <i>finalize()</i> method body.</p>
+
+</body>
+</html>

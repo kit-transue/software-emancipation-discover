@@ -1,0 +1,9 @@
+CXXROOTS=\
+    charstream \
+    genString \
+    genStringPlus \
+    genTmpfile \
+    globals \
+    vpopen \
+
+

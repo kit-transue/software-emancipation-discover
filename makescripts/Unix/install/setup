@@ -1,0 +1,469 @@
+#
+# Post installation setup script for DIScover
+#
+# Performs a number of post-installation tasks after DIScover
+# is installed to a target location.  It is not intended to be invoked
+# directly, though it is not an error to do so.
+#
+# Dependencies:
+#   This script depends on the the following:
+#
+#   o The current UID must be running a shell with the HOME environment
+#     variable exported
+#   o A bourne-compatible POSIX shell (sh, ksh, bash)
+#   o The standard POSIX tools available in the current PATH
+#   o DISPLAY must be set to point to a valid X-Window server [optional]
+# 
+# Copyright 2002 by Mortice Kern Systems Inc. All rights reserved.
+#
+# This Software is unpublished, valuable, confidential property of
+# Mortice Kern Systems Inc.   Any use or disclosure of this Software
+# without the express written permission of Mortice Kern Systems Inc.
+# is strictly prohibited.
+#
+# $Author: Dmitry Ryachovsky (dmitry) $
+# $Revision: 1.16 $
+#
+
+# Variables -- modify as necessary
+INSTALLDIR=`pwd`	# Present working dir at run-time
+DATE=`date '+%d%b%y'`	# e.g., "18Mar03"
+ERR=0			# Set if a warning was issued
+USERHOME=$HOME		# If HOME="", we fix this later
+DISHOME=$USERHOME/dislite
+LOGFILE="$INSTALLDIR/install_log_${DATE}.$$"
+
+# Put our tools on the PATH
+PATH=$PATH:$INSTALLDIR/bin
+
+# Set basic JAVA vars
+JRE_HOME=$INSTALLDIR/jre
+JAVA=$JRE_HOME/bin/java
+
+# Admin UI variables
+ICPORT=IntegrityClient.port=31002 # Default Integrity Client listen port
+
+# Switches
+AUTORUN=false		# true if we should skip the query to run
+QUIET=false		# true if we should log only to the logfile
+DOCIADMIN=true		# true if we are to post-install for the Admin UI
+DOMODELSETUP=true	# true if we are  to run the IC to setup a model
+
+# Handy functions
+
+#
+# fail -- issue a failure message and exit with a non-zero
+#
+fail()
+{
+	echo "Error: $1" | tee -a $LOGFILE
+	echo "Setup cannot recover or continue.  Please see"
+	echo "$LOGFILE"
+	echo "for possible failure indications."
+
+	ERR=1
+	exeunt
+}
+
+#
+# logger -- log a message to the $LOGFILE
+# This is not the only entry point to the logfile.  For the sake of
+# simplicity we also log elsewhere when appropriate.
+#
+# The intention is to call logger in this manner:
+#   logger "Where we are" "What we are doing"
+#
+# This function expects quoted strings!
+#
+logger()
+{
+	DATE=`date '+%d%b%y %H:%M:%S'`
+	echo "[$DATE] $1: $2" >> $LOGFILE
+}
+
+#
+# warn -- issue a warning message (unless QUIET is enabled), and log it 
+# for reference.  Save the fact that we warned for the return code.
+#
+warn()
+{
+	if [ "$QUIET" = "true" ]
+	then
+		echo "Warning: $1" >> $LOGFILE
+	else
+		echo "Warning: $1" | tee -a $LOGFILE
+	fi
+	ERR=1
+}
+
+#
+# debug -- test routine to test all functions
+#
+debug()
+{
+	# TODO: enumerate all the functions in here
+	return 0
+}
+
+#
+# exeunt -- exit the script, performing any last chance cleanup
+# This should be the only place we exit from
+#
+exeunt ()
+{
+	logger "Setup" "---End---"
+
+	if [ "$ERR" != "0" ]
+	then
+		echo "DIScover post-installation setup script finished with warnings."
+		echo "All warnings and errors were logged to: $LOGFILE"
+	fi
+	
+	echo "$0 finished."
+
+	exit $ERR
+}
+
+#
+# yesno() -- query the user for a yes/no answer, looping until we get
+# some reasonable answer.  The prompt indicates what the default value
+# is if one just hits the Enter key.
+#
+# Accepts a single argument ('y' for "yes", anything else for "no") which
+# determines the "default" value when the input is an empty string.  
+# Calling it w/o args means the empty string is assumed to be a "yes" answer.
+#
+# Returns with a non-zero for any value of "no", 0 for "yes"
+#
+yesno()
+{
+	# Set the default value for the empty string
+	if [ "$1" = "y" -o "$1" = "Y" -o -z "$1" ]
+	then
+		DEFAULT=0
+		YNPROMPT=" [Y/n] "
+	else
+		DEFAULT=1
+		YNPROMPT=" [y/N] "
+	fi
+
+	# Loop until we get reasonable input
+	DONE=false
+	printf "$YNPROMPT"
+	while [ "$DONE" = "false" ]
+	do
+		DONE=true
+		# use the simplest form of read
+		read CONFIRM
+
+		case $CONFIRM in
+			"" )
+				return $DEFAULT ;;
+			y* | Y*)
+				return 0 ;;
+			n* | N*)
+				return 1 ;;
+			*)
+				echo "Please choose one of 'yes' or 'no'"
+				DONE=false ;;
+		esac
+	done
+}
+
+### END of functions
+
+
+#
+# Execution proper starts here
+#
+logger "Setup" "---Start---"
+logger "Setup" "Post installation script invoked as $0 $*"
+
+# Really simple option processing
+while [ $# -gt 0 ]
+do
+	case $1 in
+		-a)
+		AUTORUN=true;;
+		-q)
+		QUIET=true ;;
+		-c)
+		DOCIADMIN=false ;;
+		-m)
+		DOMODELSETUP=false ;;
+		*)
+		;; # No usage; just ignore everything else
+	esac
+	shift
+done
+
+#
+# Ensure expected variables are set to reasonable defaults
+#
+if [ -z  "$USERHOME"  -o  ! -d "$USERHOME" ]
+then
+	USERHOME=$INSTALLDIR
+	warn "The environment variable HOME is not set.  Using $USERHOME"
+fi
+
+# Check for XServer at DISPLAY, toggle off model setup if it's not there
+if [ -x "$INSTALLDIR/bin/xopen" -a -z "$DISPLAY" ]
+then
+	$INSTALLDIR/bin/xopen $DISPLAY >/dev/null 2>/dev/null
+	if [ $? -ne 0 ]
+	then
+		logger "Setup" "No XServer detected at $DISPLAY"
+		DOMODELSETUP=false
+	fi
+fi
+
+# Don't setup CIE Client setup, or invoke the model setup on HP-UX 10
+# This should be the only OS-specific setup we have to do
+OSTYPE=`uname`
+OSREV=`uname -r | cut -f2 -d"."`
+if [ "$OSTYPE" = "HP-UX" -a "$OSREV" = "10" ]
+then
+	logger "Setup" "Not installing the CIE Client on $OSTYPE $OSREV"
+	DOCIADMIN=false
+	logger "Setup" "Not invoking the model setup on $OSTYPE $OSREV"
+	DOMODELSETUP=false
+fi
+
+
+# Ask the user if they want to run this script; abort otherwise
+if [ "$AUTORUN" != "true" ]
+then
+	echo ""
+	echo "DIScover Setup"
+	echo "-----------------------------------"
+	echo "This installer can automatically set up your DIScover environment     and settings.  If you want the installer to continue with this setup, type      'yes' and press the 'Return' or 'Enter' key.  If you do not want the            installer to do this, type 'no'and press 'Enter'.  You can issue a              'control-C' to exit this script at any time."
+	echo ""
+	printf "Do you want to continue with this setup?"
+
+	# If "no", just exit cleanly, otherwise fall-through
+	yesno
+	if [ $? -ne 0 ]
+	then
+		logger "Setup" "Terminated by user"
+		exeunt
+	fi
+fi
+
+# Install "dialogs" start here
+
+#
+# Ask if we should setup the CI Admin UI
+#
+if [ "$DOCIADMIN" = "true" -a "$AUTORUN" != "true" ]
+then
+	echo ""
+	echo "Install DIScover Administration Client"
+	echo "--------------------------------------------"
+	echo "This installer can set up the DIScover Administration Client   for you by creating a startup file and copying a configuration file to your     home directory.  Existing files will not be overwritten."
+	echo ""
+	printf "Do you want to let the installer configure the CI Administration Client?"
+
+	yesno
+	if [ $? -eq 0 ]
+	then
+		DOCIADMIN=true
+	else
+		DOCIADMIN=false
+	fi
+fi
+
+#
+# Ask if we are to launch the CIE client to create a model repository
+#
+if [ "$DOMODELSETUP" = "true" -a "$AUTORUN" != "true" ]
+then
+	echo ""
+	echo "Create DIScover Model Repository"
+	echo "--------------------------------------"
+	echo "Setup can launch the DIScover Client to let you create a Code             Integrity model repository.  You will need a license file reference and build   server hostname to make a repository.  You can do this at another time if that  is more convenient.   This action requires that an X-Windows server be          avaliable."
+	echo ""
+	
+	printf "Do you want to invoke the DIScover Client and create a model              repository?"
+	
+	yesno
+	if [ $? -eq 0 ]
+	then
+		DOMODELSETUP=true
+	else
+		DOMODELSETUP=false
+	fi
+fi
+
+### END Startup
+
+#
+# Ensure user wants to continue
+#
+if [ "$AUTORUN" != "true" ]
+then
+	echo ""
+	echo "Ready to perform actions"
+	echo "------------------------"
+	echo "Setup is ready to perform the actions you have chosen."
+	echo ""
+	printf "Do you want to continue?"
+
+	yesno
+	if [ $? -ne 0 ]
+	then
+		logger "Setup" "Terminated by user"
+		exeunt
+	fi
+fi
+
+# 
+# CI Admin UI setup
+#
+# For the CI Admin UI to work, we need an .rc file placed in $HOME and
+# the startup file created with the correct arguments
+#
+if [ "$DOCIADMIN" = "true" ]
+then
+      COMPONENT="CIAdmin"
+      logger $COMPONENT "---Start---"
+
+      # Administration files we will be passing around
+      CIECLIENT_LOG=CIEClient.log
+      CIE_CLASSPATH=$INSTALLDIR/lib/CIAdmin.jar
+      CIE_CLIENT_RC=$INSTALLDIR/CIEClientSite.rc
+
+      # Massage the text strings that will go into the envset file
+      LOG_FILE_LINE="LOG_FILE=$CIECLIENT_LOG "
+      CIE_COMMAND_LINE="CIE_COMMAND=$JAVA -Xmx256M -Xms256M -classpath \"$CIE_CLASSPATH\" -Dswemancipation.CIEClient.siterc=\"$CIE_CLIENT_RC\" -Djava.library.path=\"$INSTALLDIR/bin\" -Dswemancipation.IntegrityClient.rootResourceLocation=file:\"$INSTALLDIR/resources\" swemancipation.cie.daemon.CIEClient "
+
+      # determine if an envset file already exists.  If so, save this one as a
+      # backup and let the user review and/or rename it as appropriate.
+      ENVSET=$INSTALLDIR/bin/envset
+      echo "Saving the DIScover Client setup file as $ENVSET"
+      if [ -f "$ENVSET"  ]
+      then
+	      # envset file already exists, so don't clobber it
+	      ENVSET=$ENVSET.$$
+	      warn "The DIScover environment file already exists.  Saving the environment file as $ENVSET"
+      fi
+
+      # write out the envset file with the values we've calculated
+      echo $LOG_FILE_LINE > $ENVSET
+      echo $CIE_COMMAND_LINE >> $ENVSET
+
+      # Create the personal .rc file, but don't clobber it if it exists
+      # Save it in our share directory for future reference.
+      if [ ! -f "$DEST" ]
+      then
+	      CIE_CLIENT_RC=$USERHOME/.CIEClient.rc
+	      echo "Saving the DIScover Client personal rc file as $CIE_CLIENT_RC"
+      else
+	      mkdir $INSTALLDIR/share/ciadmin
+	      CIE_CLIENT_RC=$INSTALLDIR/share/ciadmin/.CIEClient.rc
+	      warn "Personal configuration file already exists in your home directory.  Saving this file as $CIE_CLIENT_RC."
+      fi
+      echo "$ICPORT" > $CIE_CLIENT_RC
+
+      logger $COMPONENT "---End---"
+
+fi # $DOCIADMIN = true
+
+### END CI Admin UI Setup
+
+#
+# Model Setup
+# 
+# Really, we only want to do this for "admin" type users, but we do not
+# have the concept of custom install types for UNIX at this time
+#
+
+if [ "$DOMODELSETUP" = "true" ]
+then
+	COMPONENT="ModelSetup"
+	logger $COMPONENT "---Start---"
+
+	# Launch the CIE client
+	logger $COMPONENT "Trying to start up the CI Client daemon..."
+	echo "Starting up the DIScover Administration Client..."
+	cie createrepository -g
+
+	# Was there an error?  Non-zero means an error, but "255" means
+	# user cancelled.
+	RET=$?
+	if [ $RET -ne 0 -a $RET -ne 255 ]
+	then
+		warn "DIScover Administration Client daemon failed. The process returned: $RET"
+	fi
+
+	# TODO: Be smarter about whether we have to do this or not
+	# Blindly exit the client, but in the background so we can 
+	# let this script continue.  Could this orphan the process?
+	logger $COMPONENT "Trying to exit the CI Client daemon..."
+	cie exit -Y 2> /dev/null &
+
+	logger $COMPONENT "---End---"
+fi # Model Setup
+
+### END Model Setup
+
+#
+# Setup Developer Xpress
+#
+COMPONENT="DevXPress"
+logger $COMPONENT "---Start---"
+
+# Set up integratedEditors.txt
+# This file resides in the current user's HOME directory, and contains
+# at least one line pointing to gvim.
+logger $COMPONENT "Creating integratedEditors.txt"
+
+# First, determine if we have a good $HOME/dislite directory
+if [ ! -d "$DISHOME" ]
+then
+	# Warn if this fails, as it may indicate other problems
+	mkdir $DISHOME
+	RET=$?
+	if [ $RET -ne 0 ]
+	then
+		DISHOME=$USERHOME
+		warn $COMPONENT "Setup is unable to create the dislite directory; using $DISHOME"
+	fi
+fi
+
+# Create filespec based on the DISHOME we decide on, and check we don't
+# clobber an existing file
+EDFILE=$DISHOME/integratedEditors.txt
+
+if [ -r "$EDFILE" ]
+then
+	EDFILE=$DISHOME/integratedEditors.$$
+	logger $COMPONENT "Found existing integratedEditors.txt file -- using $EDFILE"
+fi
+
+# We always know gvim is available
+echo "gVIM gvim $INSTALLDIR/bin/vim -g" > $EDFILE
+
+# Now we have to search for other candidates on the user's PATH
+# GNU Emacs
+OUT=`which emacs | cut -f1 -d' '`
+if [ ! "$OUT" = "no" ]
+then
+	echo "Emacs emacs $OUT -l $INSTALLDIR/lib/dislite/dislite.el" >> $EDFILE
+fi
+
+# Borland JBuilder
+OUT=`which jbuilder | cut -f1 -d' '`
+if [ ! "$OUT" = "no" ]
+then
+	echo "\"Borland JBuilder\" JBuilder $OUT" >> $EDFILE
+fi
+
+logger $COMPONENT "---End---"
+### END Developer XPress
+
+#
+# Exit, cleaning up all logs always leaving a return code
+#
+exeunt
+
+### EOF

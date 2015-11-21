@@ -1,0 +1,238 @@
+
+    S.E.T. CODING STANDARDS, v1: WMM, 92-11-19
+
+        See also: code_stds_TOC; general TOC
+
+        Introduction
+
+            The following coding standards are to be observed in all new and revised code produced at Software Emancipation Technology. The purpose of these rules is not to produce mindless conformity; each rule below was included because of specific problems that result when it is not followed.
+
+            This list is not exhaustive, nor is it intended to be. In general, where legitimate stylistic differences exist, the intent is to leave that choice to the individual developer. If important rules have been inadvertently omitted (I would be surprised if that were not the case), please let me know and they will be added in future versions of this document.
+
+            The rules range from mechanical (``put public members of classes first'') to abstract (``expect the unexpected''). Some are generally applicable to all programming or all C++ programming; some are specific to SET. All are important. Please try hard to keep them in mind as you code; the result will be fewer bugs initially and less hair-pulling during maintenance and enhancement. We may become slightly less productive initially in short-term measures like the number of modules checked in per week, but the investment of time will pay off many times over in the longer run.
+
+        Programming-in-the-Small Issues
+
+            Comment your code.
+
+                At least the following comments should be present in all SET code:
+
+                -- A comment at the start of each file describing in general terms the contents of the file
+
+                -- A comment at the end of the file with the $Log RCS macro
+
+                -- A comment before each function definition, class or enumeration declaration, and group of file-scope variables describing the entity(s) in some detail
+
+                -- A comment before each major section of code inside a function describing the case or portion of the algorithm handled in the following code
+
+                In addition, comments should be supplied explaining any tricky or nonobvious code. A good rule of thumb is that a portion of code deserves a comment if it would take more than ten seconds or so for a generally-well-informed newcomer to the code to figure out what is going on.
+
+                The fundamental consideration is that your code _will_ be read and maintained at some point by someone other than yourself (and most of us don't have perfect memory, either). In light of this fact, you should write whatever comments are necessary to make that future maintainer immediately productive and unlikely to introduce new bugs because of a lack of understanding of critical details of your code.
+
+            Follow a consistent formatting convention.
+
+                It doesn't matter very much whether tab stops are two, three, or four spaces, just that the pattern in your code is consistent and increasing spacing indicates increasing nesting. One way to do this is to use c++-mode.el by adding the line ``(load "/usr/local/lib/emacs/local/use-c++-mode")'' to your ~/.emacs file (read the ``use-c++-mode.el'' file for details on customization). Another possibility is to use indent++ to reformat existing code; see the man page. Don't be afraid to use blank lines to separate your code and declarations into logical chunks.
+
+            Do not check in code that generates compile-time warnings.
+
+                Warnings are an indication of potential problems; if you simply ignore a warning, there's a good chance that your code will do something you do not expect. Even ``innocuous'' warnings about code you are sure is safe and correct should also be eliminated, for a couple of reasons. First, the next person that compiles that routine may have no idea whether the warning is significant or not and will have to go through the same analysis you did to convince him/herself that it's harmless. Second, real problems can hide among the innocuous warnings; if you're accustomed to ignoring compiler warnings for a given file, there's a good likelihood that you will miss a new warning relating to the code you just added.
+
+            In general, write short functions instead of long ones.
+
+                Long functions (more than will fit on a printed page) are frequently hard to understand and modify. Occasionally long functions are justified (a ``switch'' statement with many small cases, for instance), but they should be the exception rather than the rule.
+
+            Use manifest (symbolic) constants instead of magic numbers.
+
+                Often the name of a constant can give valuable clues regarding its nature, even without reading the explanatory comment (which is still required, of course). Furthermore, named constants help avoid confusion between logically distinct constants that happen to have the same numeric value.
+
+                Constant names should be written using only upper-case letters to distinguish them from other names. (This rule applies to all named constants, not just #defined ones -- see the rule below, ``Use C++ features instead of preprocessor features...'')
+
+            Use ``#if 0'' to disable sections of code.
+
+                The major justifiable use of the preprocessor in C++, apart from file inclusion, is conditional compilation. Conditional compilation is preferable to ``commenting out'' a section of code because there is no possibility of accidental interactions with nested comments, and it's easy to find the end of the affected region. Of course, each section of code disabled in this way should be annotated with a comment describing why the code was disabled and under what circumstances it should be reenabled.
+
+            Give each variable a separate declaration statement.
+
+                This rule is particularly important when declaring pointers; ``int* p1, p2;'' declares p2 as an int, not a pointer to an int.
+
+            ``Switch'' statements on enum values should not have a ``default:'' label; all others should.
+
+                The reason for omitting ``default:'' in enum-based switches is that errors frequently occur as a result of adding a value to an enumeration and failing to add a corresponding case to a switch statement. Some compilers will issue a warning upon encountering an enum-based switch with some values unrepresented; a ``default:'' label suppresses those warnings. (Of course, virtual functions are generally to be preferred to switching on type fields for a great variety of reasons: they are more efficient, less error prone, etc.)
+
+                Non-enum switch statements, however, should have a ``default:'' label, if for no other reason than to reassure a reader that error handling has been considered while writing the code. (Even if the ``default:'' case is empty, a comment saying ``no processing required'' is better than simply falling through with no explanation.)
+
+            Code following ``case'' labels must end in ``break'' or ``/* FALLTHROUGH */''.
+
+                Again, the issue is communicating the intent to the reader; an uncommented fall-through case leaves open the question of whether it was intentional or accidental.
+
+            Use ``goto'' sparingly or not at all.
+
+                Essentially the only acceptable use of ``goto'' is as an error exit from a deeply nested context to cleanup code at the end of a function.
+
+            Use more-specific alternatives to ``int'' when possible.
+
+                ANSI C and C++ define the type ``size_t'' for use as array bounds, string lengths, allocation sizes, etc. ParaSET defines a ``bool'' type for logical truth values. Even though these are only synonyms for other types, the intent is made clearer for the reader when the more specific type name is used.
+
+            C++ Feature Usage
+
+                Follow established conventions for declaration order within a class.
+
+                    Unless there is a compelling reason to do otherwise, classes should be arranged with all public members first, then protected members, and finally private members. Within each grouping, nested types (including enumerations) should be declared first, followed by data members, followed by constructors and destructor, followed by other member functions. Static members should be grouped together, rather than interspersed among ordinary members. For non-trivial classes, a blank line should separate each grouping from the one following it.
+
+                    The reason for this rule is to maximize the efficiency of the reader of the code. More people will be using the class, typically, than will be working with its implementation, hence the public (interface) members should be presented first and private members relegated to the end of the class where ordinary users will not have to read them. Within each access section, it is easier to find items of interest if the order of presentation is predictable.
+
+                Do not declare any public data members in a class.
+
+                    It is much easier to change the implementation of a class if all accesses are via member functions. Changing a member function to simulate the old interface is much less work than finding and changing all existing references. Inline access functions are as efficient as direct data manipulation, yet preserve the abstractness of the interface in case changes are required.
+
+                Use inline functions sparingly.
+
+                    Using inline functions can significantly speed up a program, but they have drawbacks, as well. A change to an inline function requires recompiling every file in which it is used, unlike ordinary functions. Overuse of inline functions can cause code bloat, since inline expansions usually generate more instructions per invocation than the corresponding function call. If the compiler cannot perform inline expansion of a function (for instance, if the definition is too complex), it will probably create a local copy of the function in every file in which the function is used.
+
+                    In general, functions should only be made inline if there is a good reason to do so -- i.e., either analysis of the algorithm or (better) performance metering indicates that the call to the function is a bottleneck.
+
+                Do not define inline member functions inside the class declaration.
+
+                    Inline member functions should be defined in the header file, just as they would be in the .C file except prefixed with the keyword ``inline.'' For instance (sorry for the lack of formatting): ``class X { public: int f(); }; inline int X::f() { Initialize(X::f); ReturnValue(2); }''
+
+                    There are three reasons for this rule. The first is that defining member functions inside the class clutters up the class definition, especially for multi-line member functions (which all of ours will be because of use of the Initialize() macro). It is much more important for a reader to be able to see clearly the entire interface your class provides than to be distracted by the relatively trivial implementation detail that a particular member function is inline.
+
+                    Second, it is substantially easier to switch between inline and non-inline implementations if the code is structured this way -- a simple cut and paste instead of a more elaborate editing job if the inline function definition is part of the class declaration.
+
+                    The third reason for the rule is that it reduces the incentive for indiscriminately making member functions inline. If it is permitted to define member functions inside class declarations, the temptation is to do so for all small member functions, regardless of whether there is a performance reason for it or not, simply because it's less typing. This rule removes that temptation.
+
+                Encapsulate global variables, constants, enumerations, and types in a class.
+
+                    Global variables have always been error prone; C++ static class members significantly reduce the problems.
+
+                Provide copy constructors and assignment operators where necessary.
+
+                    Copy constructors and assignment operators are generally necessary in any class whose destructor frees memory. Use the initializer section of the constructor definition instead of assignments in the body to initialize base classes and members. (For more information about copy constructors, see the files /users/misc/copy_constructor*. Note that since that document was written, the requirement for defining the copy constructor in Relational classes has been removed.)
+
+                Every destructor should be virtual.
+
+                    The only exception to this rule is in classes that are intended never to be used as base classes, i.e., which have no virtual functions and for which inheritance does not make sense.
+
+                Use ``const'' wherever possible.
+
+                    Member functions that do not modify the object for which they are invoked should be declared const (e.g., ``class X { public: int val() const; }; int X::val() const { return 5; };''). Pointer and reference arguments whose target objects are not modified by the function should be declared const (e.g., ``Obj* lookup(const char*);''). This practice helps both the compiler in optimization and the human reader in comprehension.
+
+                    Sometimes it is difficult to do this in ParaSET code, since many interfaces that should be const are not. It is better to use const in your code and use a cast to strip the const-ness in calls where it is necessary than to further pollute ParaSET by not using const in your interface!
+
+                    One particular use of const is as a replacement for call-by-value parameters; often a great deal of overhead can be avoided by using ``const TYPE&'' (a const reference) instead of an ordinary call-by-value parameter, which requires copying.
+
+                Use C++ features instead of preprocessor features whenever possible.
+
+                    Preprocessor names are not scoped like ordinary names, and macro arguments with side effects frequently cause unanticipated behavior. C++ integer constants (e.g., ``const size_t SIZE = 512;'') are usable in all contexts in which a preprocessor variable can be used, without the scope violations. (Within a class, nested constants are defined using an unnamed enumeration, e.g., ``enum { SIZE = 512 };''.) Inline functions are usually just as efficient as function-style macros, without the multiple-evaluation surprises of macros.
+
+                Be careful not to mix malloc/realloc/free with new/delete on a single object.
+
+                    There is no guarantee in any implementation that storage allocated with one method can be deallocated with the other; mixing the two regimes in ParaSET is extremely likely to crash if the ASET_MEMORY_DEBUG environment variable is set.
+
+                Use ``delete [] p;'' to free an array allocated with ``new type[count].''
+
+                    This rule applies even to character strings, but it is absolutely necessary when freeing arrays of objects with destructors.
+
+            File Usage
+
+                Declare every function in exactly one header file, and #include the header where the function is defined.
+
+                    A frequent source of errors in C is mismatch between the supplied and expected arguments to a function. C++ provides type-safe linkage (usually implemented via name mangling), so the problem is greatly reduced for C++ functions. ``extern "C"'' functions, however, disable type-safe linkage, so the error can still occur.
+
+                    THERE SHOULD BE _NO_ extern FUNCTION DECLARATIONS IN .C FILES. _ALL_ functions are to be declared in header (.h) files. If a function you need to call is not declared in any .h file, it is your responsibility to add the declaration to an existing header or to create a new header for it.
+
+                    All .C files containing a function definition must #include the .h file containing the declaration of that function. The reason for this rule is to enable the compiler to check that the declaration and definition match; it does no good to check calls against the declaration if the declaration does not reflect the definition.
+
+                    A similar rule applies to classes used in more than one file and (if any are allowed -- and they shouldn't be, as mentioned above) global variables.
+
+                Protect header files against multiple inclusion.
+
+                    Each #include file must be enclosed in a #ifndef/#define/#endif sequence to prevent multiple declarations and the like in case the file is included more than once in a given compilation unit. To speed compilations, you should also enclose the #include lines themselves in an #ifndef/#endif pair, testing for the preprocessor variable used by that header file; much of the overhead in a compilation is simply opening and closing header files.
+
+                    If the only use of a class in a header file is to declare pointer or reference arguments and return values in function declarations, another way to avoid compilation overhead is to simply use a forward declaration of the class name, e.g., ``RelClass(classname);'' for Relational classes, or ``class classname;'' for others. (The full class declaration, and hence the #include, is required for inheritance, invoking member functions, etc.)
+
+                Follow accepted file-usage conventions in defining member functions and static data members.
+
+                    Each class should be declared in its own header file, called ``classname.h'', or several together in a common header file. If a class is declared in a header file ``X.h,'' the member functions and static data members of that class should be defined in a file named ``X.h.C''. Collecting similar member functions from several classes into a different file adds more confusion than clarity. The template files /users/misc/template.h and /users/misc/template.C provide useful skeletons for many of the elements required in newly-defined files.
+
+        Programming-in-the-Large Issues
+
+            Program defensively.
+
+                Many of the bugs we have encountered in ParaSET are the result of not spending enough effort thinking through all the possible input values, environmental states, usage patterns, etc., of the functions we write. We make unjustified assumptions that some object is always related to exactly one other object, for instance, never zero or three, or that tokens are never separated by comments. Time spent in advance listing our assumptions and discarding the incorrect ones will be richly repaid, not only by not having to spend the time later fixing the bugs but, more importantly, by having happier customers who aren't burned by the bugs in the first place and thus are better references for our product.
+
+            Consider the broader implications of every change.
+
+                Many of the bugs we have encountered in ParaSET are the result of making modifications that break other code: a return value is different, a list isn't maintained any more, an SMT tree has a slightly different shape, and suddenly some features of the product stop working. If you make a change that invalidates the assumptions of other code, it is your responsibility to correct that code as well (or, if it's outside your competence, to discuss the change with the owner of the affected code before the change is made). The cross-reference features of ParaSET (or usym, or TAGS, or, at worst, grepping through the source) will find most of the places that need to be considered; ``I didn't think anybody used that'' is not an excuse. Again, an ounce of prevention is worth a pound of cure in avoiding grief for ourselves and our customers.
+
+            Test thoroughly after changes.
+
+                Don't just test that the new functionality you put in works; make sure that the old functionality still works. Don't just test the simple, straightforward case, assuming that the harder cases will work, too; there's a good chance they won't! It's a given that our customers will do things with (to) our product that we can't imagine -- but we mustn't use that as an excuse for not trying! Asking someone else to try to ``break'' your code is also a good exercise.
+
+        SET-Specific Rules
+
+            Follow established naming conventions.
+
+                In general, ParaSET classes follow Smalltalk naming rules (no underscores, the first letter of each word is capitalized except for the first word of a multi-word name). Member functions and variables are more C-like: all lower case with words separated by underscores.
+
+                Single-character variable names are acceptable as the index variables of short (less than ten lines or so) loops; otherwise, names should be sufficiently spelled-out, without confusing abbreviations, that a casual reader can accurately guess the use of a variable from its name.
+
+            Use type-safe downcasting (the ``checked_cast(type,value)'' macro).
+
+                ``Downcasting'' is the term used for converting a pointer or reference to a base class into a pointer or reference to a derived class (for example, converting from a RelationalPtr to an smtNodePtr). If the pointer involved does not actually point to an object of the target type (e.g., it actually pointed to a rmtNode instead of an smtNode), disaster usually follows sooner or later.
+
+                C++, as currently defined, provides no facilities to determine whether a given downcast is valid or not. However, all SET classes derived from Relational have a runtime type identification capability that can be used for this purpose. By the end of this week, a new macro will be added to perform a type-safe downcast, and all existing code will be updated to use it. The macro, ``checked_cast(type,value),'' will check that the conversion from ``value'' to ``type*'' is valid; if so, the result of the macro is the converted value, otherwise an error will be thrown.
+
+                All new code written for ParaSET _MUST_ use the ``checked_cast(type,value)'' macro for all conversions to pointers to classes derived from Relational. That is, any code that would have been written ``(Foo*)p'' or ``FooPtr(p)'' must now be written ``checked_cast(Foo,p).'' This practice will enable us to catch mistaken identities immediately rather than at some much later time from which backtracking may be very difficult. The only exceptions to this rule are in cases where the identity of the object involved is already conclusively established (for instance, in the member functions of a type-safe container class or immediately after an ``is_XXX'' check on the pointer involved).
+
+            Use Initialize() in every function.
+
+                The first line of each function must be ``Initialize(function_name);'' this practice now applies to constructors and destructors as well. (It is no longer necessary to use the Return and ReturnValue macros.) The reason for this rule is that these macros provide call-stack tracebacks during error reporting and performance metering data when requested.
+
+                There are no exceptions to this rule, even for inline access member functions; if the member function is invoked via an invalid pointer, it's better to see the member function on the traceback instead of simply its caller. Efficiency is not an issue, since the overhead can easily be disabled for production code via compilation options.
+
+                Additional macros are available for customizing error checking and debugging output; these include IF, Assert, and DBG. See MG for details.
+
+            Do not use fork(), popen(), or system().
+
+                The overhead of these system functions is too high to allow their use within ParaSET. The ParaSET functions vfork(), vpopen(), vpclose(), and v_system() should be used instead.
+
+            Surround any English-language string constants with the TXT() macro.
+
+                This macro (defined in the header systemMessages.h) enables translation of messages into other languages. The degree of success we will enjoy in international sales is directly related to how well we can customize ParaSET to the local environment, and using this macro is a necessary first step. For more details, see the file /users/misc/message_system_use.
+
+            Use the RCS change log facility.
+
+            Every .C and .h file should have, in a comment section at the end of the file, a line of the form ``$LOG: filename,v $''. {Note that LOG should acutally be "Log", and is changed here only to allow this document to be checked in.} This line will enable the insertion of the modification history of the file so it is easy to see who did what and when, in case questions arise. (This line is automatically provided by the template files /users/misc/template.C and /users/misc/template.h, which also provide other useful skeletal elements.)
+
+            If this facility is to be useful, however, _EVERY_ check-in _MUST_ be accompanied by a description of the purpose of the change and a brief summary of what was done. You don't have to write a book for every change; something like ``Fix bug 1234: process right subtree before left in XYZ::fff()'' is sufficient. Empty log messages, or ones that just say ``Fix bug'' or ``Add new features,'' are not acceptable.
+
+            Use the ``Close Description'' field of the bugtool.
+
+            Whenever you fix a bug, use ``Insert Field'' in the bugtool to add a ``Close Description'' field for the bug. The information added to this field should include:
+
+            -- The nature of the bug
+
+            -- A brief description of what was done to fix it
+
+            -- The file(s) and function(s) in which the fix was implemented
+
+            The description of the nature of the bug should indicate the origin of the bug, as well as the specific characteristics of the defect. The following categories of errors may prove helpful in writing the description:
+
+            -- Specification error: the requirements changed or were inadequately understood.
+
+            -- Design error: the design did not adequately address the requirements.
+
+            -- Coding error: a logic error, uninitialized variable, omitted case, typographical error, etc. Be specific.
+
+            -- Supporting code changed: a change to other code had unanticipated side effects resulting in this bug.
+
+            The reason for requiring this additional documentation is not to make busywork or to establish ``blame'' for bugs; instead, this information, collected over time, can provide a valuable diagnostic tool for finding and correcting defects in our development process, ultimately enabling us to deliver a higher-quality product to our customers. Please take the time required; it will pay off.
+
+            Additional reading:
+
+            The file /users/misc/coding_stds.doc contains an early version of SET-specific coding guidelines; some aspects covered here only lightly or not at all are described in detail in this document.
+
+            Two employees of Ellemtel Telecommunication Systems Laboratories in Sweden have produced an extensive paper describing their internal coding standards. I have placed a paper copy in the library, and an on-line Postscript version can be found in /users/misc/c++-rules.ps if you'd like your own copy. Many of the topics discussed here are covered in greater detail in this document, although I do not completely agree with some of their conclusions.
+
+            I have a book, _C++ Programming Guidelines_, by Tom Plum and Dan Saks. Again, there are points with which I disagree, but it is worthwhile to consider their point of view. See me if you'd like to examine this book.

@@ -1,0 +1,39 @@
+<html>
+<body>
+
+<p><b>AHISM - Avoid Hiding Inherited Static Methods</b></p>
+
+<p>Detects when inherited static operations are
+hidden by child classes.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class Monkey extends Animal {<br>
+&nbsp; &nbsp; <font color='red'>void oper1() {} </font><br>
+&nbsp; &nbsp; <font color='red'>static void oper2() {} </font><br>
+}<br>
+class Animal {<br>
+&nbsp; &nbsp; static void oper1() {}<br>
+&nbsp; &nbsp; static void oper2() {}<br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+Rename either ancestor or descendant class operations
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class Monkey extends Animal {<br>
+&nbsp; &nbsp; <font color='blue'>void anOper1 () {} </font><br>
+&nbsp; &nbsp; <font color='blue'>static void anOper2 () {} </font><br>
+}<br>
+class Animal {<br>
+&nbsp; &nbsp; static void oper1() {}<br>
+&nbsp; &nbsp; static void oper2() {}<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

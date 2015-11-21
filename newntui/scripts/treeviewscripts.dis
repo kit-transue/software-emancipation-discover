@@ -1,0 +1,200 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+#####################################################################################
+# This function will be used in all graphical views to remove some elements from
+# the global array
+#####################################################################################
+proc graph_copy_element { elementID } {
+}
+
+#####################################################################################
+# This function will be called from the function call tree view to place all selected
+# elements into the tree view global server array. It will be possible to call
+# "create_calltree_childs" function every time we need to expand call tree node.
+# This function will return "\n" separated 1-based set indexes of the newly 
+# inserted elements. It will remove all elements from the global server array
+# first.
+#####################################################################################
+proc set_calltree_selection { selection } {
+global TreeView
+ 
+     set TreeView [nil_set] 
+     set result ""
+     foreach node $selection {
+	     set sz [size $TreeView]
+		 incr sz
+         append result $sz
+	     append result "\n"
+         sappend $TreeView $node
+     }
+     return $result
+}
+
+#####################################################################################
+# This function will be called from the function call tree view to create a list of
+# functions used by the function already in the global array "TreeView" referenced
+# by it's index. It will place all results into the same global array and will
+# return the "\n" separated string with the result indexes". All indexes are 1-based.
+#####################################################################################
+proc create_calltree_children { parentID } {
+global TreeView
+  
+     set node [set_copy $TreeView $parentID]
+     set childs [uses -functions $node]
+     set result ""
+     foreach child $childs {
+	     set sz [size $TreeView]
+		 incr sz
+         append result $sz
+	     append result "\n"
+         sappend $TreeView $child
+     }
+     return $result
+}
+
+
+
+#####################################################################################
+# This function will be called from the function call tree view to create a list of
+# functions uses the function already in the global array "TreeView" referenced
+# by it's index. It will place all results into the same global array and will
+# return the "\n" separated string with the result indexes". All indexes are 1-based.
+#####################################################################################
+proc create_calltree_parents { parentID } {
+global TreeView
+  
+     set node [set_copy $TreeView $parentID]
+     set childs [filter kind=="funct" [where used $node]]
+     set result ""
+     foreach child $childs {
+	     set sz [size $TreeView]
+		 incr sz
+         append result $sz
+	     append result "\n"
+         sappend $TreeView $child
+     }
+     return $result
+}
+
+
+######################################################################################
+# This script will return the amount of children for this node
+######################################################################################
+proc test_calltree_parents { parentID } {
+global TreeView
+   set result [size [filter kind=="funct" [where used $TreeView $parentID]]]
+   return $result
+}
+
+######################################################################################
+# This script will return the amount of children for this node
+######################################################################################
+proc test_calltree_children { parentID } {
+global TreeView
+   set result [size [uses -functions $TreeView $parentID]]
+   return $result
+}
+
+
+#####################################################################################
+# This function will be called from the function call tree to find relations. Right
+# now it is the stub returning nothing because we have no additional relations
+# on this graph. This function will receve the node index and will return the
+# 4-digits tags separated by "\n" in the format 
+# <source node id> <source field id> <target node id> <target field id>
+#####################################################################################
+proc create_calltree_relations { nodeID } {
+     set result "";
+	 return $result
+}
+
+
+#####################################################################################
+# This function will extract readable node name to show on the graph.
+#####################################################################################
+proc extract_calltree_nodename { nodeID } {
+global TreeView
+
+   set result [name $TreeView $nodeID]
+   return $result
+}
+
+
+#####################################################################################
+# This function will return the node icon index
+#####################################################################################
+proc extract_calltree_nodeimage { nodeID } {
+global TreeView
+
+   if { [public $TreeView $nodeID] == 1 } {
+      set result "0"
+	  return $result
+   }
+   if { [protected $TreeView $nodeID] == 1 } {
+      set result "1"
+	  return $result
+   }
+   if { [private $TreeView $nodeID] == 1 } {
+      set result "2"
+	  return $result
+   }
+   set result "3"
+   return $result
+}
+
+
+#####################################################################################
+# This function will create a node fields
+# Now works as stub because no fields available in the call tree view
+#####################################################################################
+proc create_calltree_fields { nodeID } {
+   set result ""
+   return $result
+}
+
+
+
+#####################################################################################
+# This function will extract readable node field name to show on the graph.
+# Now works as stub because no fields available in the call tree view
+#####################################################################################
+proc extract_calltree_fieldname { fieldID } {
+   set result ""
+   return $result
+}
+
+
+#####################################################################################
+# This function will return the node icon index
+# Now works as stub because no fields available in the call tree view
+#####################################################################################
+proc extract_calltree_fieldimage { fieldID } {
+global TreeView
+   set result "0"
+   return $result
+}

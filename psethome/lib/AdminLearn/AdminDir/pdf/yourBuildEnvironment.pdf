@@ -1,0 +1,20 @@
+ProjectSeven : $sharedSrcRoot <-> /seven
+{
+
+  * {
+    **.[ch]
+  }
+
+}
+
+ruleShared : $sharedSrcRoot <-> /ruleShared {
+
+
+  $sharedSrcRoot/(1)/(2).o	: $sharedSrcRoot/(**)/(*).([chCH])/%/.pset		=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  $sharedSrcRoot/(1).o		: $sharedSrcRoot/(*).([chCH])/%/.pset			=> $sharedModelRoot/pset/(1).(2).pset
+
+  ""				: $sharedSrcRoot/(**)/(*).(doc)/%/.pset			=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  ""				: $sharedSrcRoot/(**).pmod/%/.pmoddir			=> $sharedModelRoot/pmod/(1).pmod
+
+}
+

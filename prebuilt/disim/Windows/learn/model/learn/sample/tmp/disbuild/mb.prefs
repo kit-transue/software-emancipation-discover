@@ -1,0 +1,277 @@
+#
+#  dismb preferences
+#
+*psetPrefs.MBscratch:			yes
+*psetPrefs.MBflagsReuse:		yes
+*psetPrefs.MBparallelHosts:		
+*psetPrefs.MBremoteEnvVarList:		MODELNAME ADMINDIR PSETHOME DISMBDIR sharedSrcRoot sharedModelRoot LM_LICENSE_FILE DISPLAY
+*psetPrefs.MBremoteEval:		
+*psetPrefs.MBheartBeat:			no
+*psetPrefs.MBiffCompressExe:		
+*psetPrefs.MBiffUnCompressExe:		
+*psetPrefs.MBiffCompressExt:		
+*psetPrefs.MBavoidFork:			
+*psetPrefs.MBsyncTimeCheck:		yes
+*psetPrefs.MBproceedAfterCrash:		no
+*psetPrefs.MBverbose:			no
+*psetPrefs.MBcontinue:			no
+*psetPrefs.MBstopAfter:			
+*psetPrefs.MBforceIFCleanup:		no
+*psetPrefs.MBforceCleanup:		yes
+*psetPrefs.MBdebugSizes:		no
+*psetPrefs.MBcountLines:		no
+*psetPrefs.configuratorSystem:		
+*psetPrefs.getModel:			no
+*psetPrefs.putModel:			no
+*psetPrefs.doBuildDFA:			no
+*psetPrefs.DIS_model.DoMergePass:	no
+*psetPrefs.doPassDefectLink:		
+*psetPrefs.acceptSyntaxErrors:		yes
+*psetPrefs.debugShowMakeRuleOutput:	yes
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileDir:			C:/TEMP/learn/sample/log
+*psetPrefs.logFileUserDelete:		no
+*psetPrefs.logFileMonitor:		yes
+*psetPrefs.logFileNameFixed:		yes
+*psetPrefs.sharedSrcRoot:		D:\Program Files\swemancipation/prebuilt/source/learn
+*psetPrefs.sharedModelRoot:		C:/TEMP/learn/sample/model
+*psetPrefs.privateSrcRoot:		C:/TEMP
+*psetPrefs.privateModelRoot:		C:/TEMP
+*psetPrefs.pdfFileBuild:		C:/TEMP/learn/sample\pdf\build.pdf
+*psetPrefs.DIS_model.SaveMetrics:	1
+*psetPrefs.DIS_model.GenerateY2KInfo:	0
+*psetPrefs.DIS_model.Instances_Enabled:	1
+*psetPrefs.DIS_model.LocalVars_Enabled:	1
+*psetPrefs.cDfltSrcSuffix:		.c
+*psetPrefs.cPlusDfltSrcSuffix:		.C
+*psetPrefs.ELS.MBuserEvalFile:		
+*psetPrefs.ELS.sql.Suffix:		.sql .spb .sps .ff .fp .fpp .sf .sp .spp
+*psetPrefs.ELS.sql.Flags:		
+*psetPrefs.ELS.java.Suffix:		.java .class .zip .jar .jproxy
+*psetPrefs.ELS.java.Flags:		
+*psetPrefs.MBdoPassCache:		no
+*psetPrefs.MBdoPassAnalysis:		yes
+*psetPrefs.MBdoPassParse:		yes
+*psetPrefs.MBdoPassUpdate:		yes
+*psetPrefs.MBdoPassFinalize:		yes
+*psetPrefs.MBptestRunning:		no
+*psetPrefs.MBasetExecutable:		
+*psetPrefs.MBqueryTclScript:		
+*psetPrefs.queryOutputFile:		C:/TEMP/learn/sample/tmp/query.out
+*psetPrefs.parserBriefDiagnostics:	no
+*psetPrefs.MBlogStatus:			no
+*psetPrefs.MBcleartool:			
+*psetPrefs.MBQarTclScript:		
+*psetPrefs.MBincludeAllHdrs:		yes
+*psetPrefs.MBgeneratePdf:		yes
+*psetPrefs.MBmultipleIFFs:		no
+*psetPrefs.MBanalysisMethod:		TS
+*psetPrefs.MBmaximumJavaGroupSize:	500
+*psetPrefs.excludedDirectories:		
+*psetPrefs.makefileDir:			.
+*psetPrefs.makePath:			C:\MSDEV\BIN\NMAKE.EXE
+*psetPrefs.rtlFileStat:			0
+*psetPrefs.steEditMode:			0
+*psetPrefs.PutTrackBugs:		0
+*psetPrefs.version:			1
+*psetPrefs.gdbPath:			
+*psetPrefs.steSuffix:			.txt
+*psetPrefs.rshProjInvoker:		
+*psetPrefs.configurator:		D:/Program Files/swemancipation/bin/configurator
+*psetPrefs.configuratorLock:		
+*psetPrefs.configuratorUnlock:		
+*psetPrefs.configuratorPut:		
+*psetPrefs.configuratorGet:		
+*psetPrefs.configuratorDiff:		
+*psetPrefs.configuratorCustomDirectory:	
+*psetPrefs.configuratorOptionalScriptsDir:
+*psetPrefs.configuratorCreate:		
+*psetPrefs.configuratorCopy:		
+*psetPrefs.configuratorDelete:		
+*psetPrefs.configuratorDoBackups:	1
+*psetPrefs.configuratorObsolete:	
+*psetPrefs.configuratorPutLocks:	1
+*psetPrefs.configuratorFastPutMerge:	0
+*psetPrefs.configuratorGetWithComments:	0
+*psetPrefs.configuratorRemovePsets:	0
+*psetPrefs.configuratorStat:		
+*psetPrefs.configuratorTerse:		0
+*psetPrefs.configuratorUnget:		
+*psetPrefs.configuratorUseSoftLinks:	0
+*psetPrefs.configuratorUseLocks:	0
+*psetPrefs.PreserveFilenameCase:	0
+*psetPrefs.pdfFileUser:			C:/TEMP/learn/sample\pdf\user.pdf
+*psetPrefs.projectParallel:		no
+*psetPrefs.defaultPDF:			C:/TEMP/learn/sample\pdf\user.pdf
+*psetPrefs.doPassDependency:		yes
+*psetPrefs.doPassHeaders:		yes
+*psetPrefs.doPassSaveProj:		yes
+*psetPrefs.doPassSaveRoot:		yes
+*psetPrefs.debugDiscoverExecPath:	
+*psetPrefs.debugEnvSave:		no
+*psetPrefs.executableTimer:		
+*psetPrefs.logFileCompress:		no
+*psetPrefs.logPrefValues:		no
+*psetPrefs.msgLogger:			yes
+*psetPrefs.nameCompany:			"YOURCOMPANY"
+*psetPrefs.nameDiscoverAdministrator:	"Tech Support, support@yourcompany.com"
+*psetPrefs.cPlusDfltHdrSuffix:		.H
+*psetPrefs.cPlusCompiler:		CPP
+*psetPrefs.cPlusFlags:			
+*psetPrefs.cPlusSuffix:			.C .cc .cpp .cxx .H .hpp .hxx
+*psetPrefs.cPlusHdrSuffix:		.H .hpp .hxx
+*psetPrefs.cPlusDefines:		
+*psetPrefs.cPlusIncludes:		
+*psetPrefs.cDfltHdrSuffix:		.h
+*psetPrefs.cCompiler:			C
+*psetPrefs.cFlags:			
+*psetPrefs.cSuffix:			.c .h .i
+*psetPrefs.cHdrSuffix:			.h .i
+*psetPrefs.cStyle:			0
+*psetPrefs.compilerIgnoreCase:		yes
+*psetPrefs.cIncludes:			
+*psetPrefs.cDefines:			
+*psetPrefs.cEsqlPp:			proc
+*psetPrefs.cPlusEsqlPp:			proc
+*psetPrefs.cEsqlSuffix:			.csql
+*psetPrefs.cPlusEsqlSuffix:		.cpsql
+*psetPrefs.cEsqlArgs:			
+*psetPrefs.cPlusEsqlArgs:		
+*psetPrefs.ELS.List:			java sql
+*psetPrefs.ELS.sql.FileIcon:		29
+*psetPrefs.ELS.java.FileIcon:		158
+*psetPrefs.ELS.EDG:			yes
+*psetPrefs.ELS.nonAscii.Suffix:		.class .zip .jar .pkapl
+*psetPrefs.cPlusDisabled:		
+*psetPrefs.cDisabled:			
+*psetPrefs.DIS_build.PRJ_Backups:	
+*psetPrefs.DIS_msg.MsgLogFile:		D:/Program Files/swemancipation\lib\messages.dat
+*psetPrefs.DIS_msg.UseMsgLogger:	0
+*psetPrefs.DIS_msg.LogErrorMessages:	1
+*psetPrefs.DIS_msg.LogWarningMessages:	1
+*psetPrefs.DIS_msg.LogInformativeMessages:1
+*psetPrefs.DIS_msg.LogDiagnosticMessages:1
+*psetPrefs.DIS_msg.LogDuringImport:	1
+*psetPrefs.DIS_msg.LogDuringCompile:	1
+*psetPrefs.DIS_msg.LogDuringPropagate:	1
+*psetPrefs.DIS_misc.ProblemTracking_enabled:
+*psetPrefs.DIS_misc.PT_custom_exe:	
+*psetPrefs.DIS_misc.PT_versions_exe:	
+*psetPrefs.DL.use_ProblemTracking:	0
+*psetPrefs.DL.input_file:		
+*psetPrefs.DL.defect_info_file:		
+*psetPrefs.DL.defect_info_file_delim:	,
+*psetPrefs.DL.defect_info_file_parse_quotes:1
+*psetPrefs.DL.defect_info_user_defined:	
+*psetPrefs.DL.defect_info_id_col:	0
+*psetPrefs.DL.defect_info_severity_col:	1
+*psetPrefs.DL.defect_info_priority_col:	2
+*psetPrefs.DL.defect_info_owner_col:	3
+*psetPrefs.DL.defect_info_assignee_col:	4
+*psetPrefs.DL.defect_info_close_col:	5
+*psetPrefs.DL.defect_info_open_col:	6
+*psetPrefs.DL.defect_info_status_col:	7
+*psetPrefs.DL.defect_info_reported_col:	8
+*psetPrefs.MaxClosureDepth:		0
+*psetPrefs.DIS_model.MultiplePsets:	0
+*psetPrefs.DIS_model.Strings_Enabled:	1
+*psetPrefs.DIS_model.Ast_Enabled:	1
+*psetPrefs.DIS_model.PRJ_Separator:	SPACE
+*psetPrefs.DIS_c.C_Parser:		D:/Program Files/swemancipation\bin\c-parser
+*psetPrefs.DIS_c.CPreprocessor:		D:/Program Files/swemancipation\bin\aset_cpp
+*psetPrefs.DIS_c.Cpp_Logfile:		
+*psetPrefs.DIS_cp.Cp_Parser:		D:/Program Files/swemancipation\bin\cp-parser
+*psetPrefs.DIS_env.Home:		\
+*psetPrefs.DIS_env.Host:		TATIANA2K
+*psetPrefs.DIS_env.Printer:		
+*psetPrefs.DIS_env.UserLoginName:	tatiana
+*psetPrefs.DIS_env.UserRealName:	
+*psetPrefs.EnvVarChars:			
+*psetPrefs.DIS_editor.EditorPath:	
+*psetPrefs.DIS_graphics.Symbols_DataFile:D:/Program Files/swemancipation\lib\symbols.dat
+*psetPrefs.DIS_viewer.Menus_DataFile:	D:/Program Files/swemancipation\lib\pset_server.menus
+*psetPrefs.DIS_viewer.PopupMenus_DataFile:D:/Program Files/swemancipation\lib\pset_server.pmenus
+*psetPrefs.DIS_viewer.QuickHelp_DataFile:D:/Program Files/swemancipation\lib\pset_server.qhelp
+*psetPrefs.after-class-decl:		
+*psetPrefs.after-class-def:		
+*psetPrefs.after-func-decl:		
+*psetPrefs.after-func-def:		
+*psetPrefs.after-member-decl:		
+*psetPrefs.after-member-def:		
+*psetPrefs.after-struct:		
+*psetPrefs.before-class-decl:		
+*psetPrefs.before-class-def:		
+*psetPrefs.before-func-decl:		
+*psetPrefs.before-func-def:		
+*psetPrefs.before-member-decl:		
+*psetPrefs.before-member-def:		
+*psetPrefs.before-struct:		
+*psetPrefs.buttonbarCalltree:		
+*psetPrefs.buttonbarClass:		
+*psetPrefs.buttonbarDatachart:		
+*psetPrefs.buttonbarERD:		
+*psetPrefs.buttonbarSMT:		
+*psetPrefs.buttonbarSSBrowser:		
+*psetPrefs.buttonbarSSMap:		
+*psetPrefs.buttonbarSTE:		
+*psetPrefs.buttonbarVisible:		
+*psetPrefs.c-hdr-file-bottom:		
+*psetPrefs.c-hdr-file-top:		
+*psetPrefs.c-src-file-bottom:		
+*psetPrefs.c-src-file-top:		
+*psetPrefs.cpp-hdr-file-bottom:		
+*psetPrefs.cpp-hdr-file-top:		
+*psetPrefs.cpp-src-file-bottom:		
+*psetPrefs.cpp-src-file-top:		
+*psetPrefs.func-final:			
+*psetPrefs.func-init:			
+*psetPrefs.installRoot:			D:/Program Files/swemancipation
+*psetPrefs.makefileTargets:		clean
+*psetPrefs.member-def-final:		
+*psetPrefs.member-def-init:		
+*psetPrefs.miniBrowserHistory:		15
+*psetPrefs.miniBrowserTitles:		1
+*psetPrefs.paraDocCommandLine:		D:/Program Files/swemancipation\bin\wordserver.exe
+*psetPrefs.paraDocName:			Word
+*psetPrefs.priv-decl:			
+*psetPrefs.prot-decl:			
+*psetPrefs.pub-decl:			
+*psetPrefs.relation-src-definition:	
+*psetPrefs.relation-src-header:		
+*psetPrefs.relation-src-member:		
+*psetPrefs.relation-trg-definition:	
+*psetPrefs.relation-trg-header:		
+*psetPrefs.relation-trg-member:		
+*psetPrefs.subsys_setting_file:		D:/Program Files/swemancipation\lib\subsysPrefs.default
+*psetPrefs.ADMINDIR:			D:/Program Files/swemancipation\prebuilt\template
+*psetPrefs.doPassProj:			yes
+*psetPrefs.projectList:			/example/inc /example/src
+*psetPrefs.projectListHeaders:		/example/inc
+*psetPrefs.projectListDependency:	
+*psetPrefs.projectHome:			/example/src
+*psetPrefs.forgive:			0
+*psetPrefs.Simplify.Verbose:		0
+*psetPrefs.Simplify.PrintScreen:	0
+*psetPrefs.Simplify.NoComments:		0
+*psetPrefs.Simplify.NoSubstitutions:	0
+*psetPrefs.Simplify.UseShortSubNames:	0
+*psetPrefs.Simplify.VerifyExclusionsCmd:
+*psetPrefs.Simplify.LogFile:		
+*psetPrefs.SubmissionCheck.Enabled:	1
+*psetPrefs.SubmissionCheck.SourceList:	
+*psetPrefs.SubmissionCheck.Procedures:	
+*psetPrefs.SubmissionCheck.Enforce:	1
+*psetPrefs.SubmissionCheck.Filter:	BaseLibrary
+*psetPrefs.SubmissionCheck.AnalyzeChanges:1
+*psetPrefs.SubmissionCheck.MailExecPath:/bin/mail
+*psetPrefs.SubmissionCheck.CheckinLog:	
+*psetPrefs.SubmissionCheck.Libraries:	
+*psetPrefs.SubmissionCheck.Policy:	D:/Program Files/swemancipation/lib/baselib.sc
+*psetPrefs.QACockpit.BaseLibrary:	D:/Program Files/swemancipation/lib/baselib.sc
+*psetPrefs.QACockpit.AttributeFilter:	0
+*psetPrefs.branch_list:			checkedout main
+*psetPrefs.TPM.diffFileRoot:		
+*psetPrefs.groupsPath:			C:/TEMP/groups
+*psetPrefs.logFileBuildCompress:	no
+*psetPrefs.MBparallelHosts.parse:	TATIANA2K:4
+*psetPrefs.vfbEnable:			0

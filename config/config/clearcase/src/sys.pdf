@@ -1,0 +1,49 @@
+local : $HOME <-> /local
+{ **.c }
+
+sys : $SYSBASE <-> /aset {
+    .rtl : src/paraset/.rtl <-> .rtl {*.rtl}
+
+    ^src/paraset/gtol
+    ^src/paraset/mixed
+    ^src/paraset/trash
+
+    src/paraset/(gpi) {
+      * {
+	*.[cCh]
+        }
+    }
+    src/paraset/(ui) {
+      * {
+	*.[cClyh]
+        *.if
+	psetPrefs.default
+        }
+    }
+
+    src/paraset/(*) {
+        include { *.h }
+        src    { *.[Ccly]}
+    }
+
+    src/(Docs) {
+    	*.txt
+    }
+
+    $SYSBASE/include/*.h [[ -> ]]
+  
+}
+
+__rule001 : / [[ R ]] <-> /__rule001 
+{
+    /make : /(**)/%/.makemf => "cd /(1);make includes makemf"
+
+    /(1)/obj/$ARCH/(2)/(3)/(4)/(5).o : /(**)/src/(*)/(*)/(*)/(*).([hcC])/%/.pset => 
+                                                     /(1)/src/(2)/(3)/(4)/(5).(6).pset
+    .pmod : /(**)/(*).pmod/%/.pmoddir  =>  /paraset/pmod/(2).pmod
+
+    $SYSBASE/include/*.h [[ -> ]]
+
+    $SYSBASE/obj/$ARCH/(1)/(2)/(3) : $SYSBASE/src/(*)/(*)/(*)/(*).[cC]/%/.make => 
+      "cd $SYSBASE/obj/$ARCH/(1)/(2)/(3);make -n FORCE=FORCE BASE=$SYSBASE (4).o"
+}

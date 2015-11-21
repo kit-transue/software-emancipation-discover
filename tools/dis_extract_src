@@ -1,0 +1,147 @@
+#!/bin/sh
+# Created By : Kariappa.C.G
+# Date: Thu Dec 26 11:20:49 EST 1996
+
+UsageInfo ()
+{
+  echo ""
+  echo "USAGE : $0 [-v] <cpp file> <target directory> <sharedsrcroot>"
+  echo ""
+  exit 1
+}
+
+# Check to see if the first argument is help 
+[ "-help" = $1 -o "-h" = $1 ] && UsageInfo
+
+# Check to see if it has the correct number of arguments with verbose option
+if [ "-verbose" = $1 -o "-v" = $1 ]
+then 
+   verbose=true
+   shift
+fi
+
+[ ! 3 = `echo $#` ] && UsageInfo
+
+# Inititalize the variables
+cppfile=$1
+targetdirectory=$2
+sharedsrcroot=$3
+
+file_list=$2/file_list
+tmpsrc=$targetdirectory/extracted_src
+tar_file=$tmpsrc.tar
+
+# Check to see if all the variables exist
+if [ ! -f $cppfile -o ! -r $cppfile ]
+then
+   echo ""
+   echo "FATAL: cppfile = $cppfile is not readable or does not exist"
+   echo ""
+   exit
+fi
+
+if [ ! -d $sharedsrcroot -o ! -r $sharedsrcroot ]
+then
+   echo ""
+   echo "FATAL: directory sharedsrcroot = $sharedsrcroot is not readable or does not exist"
+   echo ""
+   exit 1
+fi
+
+# Isuue warning if target directory does not exist
+
+if [ ! -d $targetdirectory ]
+then
+   mkdir -p $targetdirectory
+   if [ 0 != $? ]
+   then
+     echo ""
+     echo "FATAL: Could not create target directory $targetdirectory"
+     echo ""
+     exit 1
+   fi
+fi
+
+# Get the name of the source file 
+
+name_of_source=` head -1 $cppfile | awk '{ print $3 }' | sed 's/.*://' | sed 's/"//' `
+
+# Check to see if the user wants to abort or not
+echo ""
+echo "This program creates $targetdirectory which will contain"
+echo "a tar file that contains a copy of your source files. Please"
+echo "send the tar file to Technical support. If you would like the"
+echo "following source file and its include files"
+echo ""
+echo $name_of_source
+echo ""
+echo "to be subject to a non discloser agreement please contact SET"
+echo "Technical Support E-mail support@setech.com Ph# (617)-863-8900." 
+echo "After SET has completed diagnosis of your problem all source"	
+echo "files will be destroyed. Do you wish to continue? [Y/N]"
+
+read answer
+
+if [ $answer != "Y" ]
+then
+   if [ $answer != "y" ]
+   then
+       echo "Will not create the directory" 
+       exit
+   fi
+fi
+
+touch $file_list
+\rm -rf $file_list $tmpsrc/* $tar_file*
+
+# Create the list of files in the tmp directory from the cpp output
+grep '^#' $cppfile | grep -v '#pragma' |grep -v '#ident'|  awk '{ print $3 }' | sed -e 's/.*://' -e 's/"//'g | sort -u  > $file_list
+
+echo ""
+echo "Copying ..."
+echo ""
+
+
+# Create the directory structure
+for name_of_file in  `cat $file_list`
+do
+    os=`uname -s`
+    if [ "$os" = "HP-UX" ] 
+    then
+      echo $name_of_file | grep -q `echo $sharedsrcroot`  
+    else
+      echo $name_of_file | grep -s `echo $sharedsrcroot`
+    fi
+
+    if [ 0 = $? ]
+    then
+           tmp_variable=`echo $name_of_file | sed -e "s@$sharedsrcroot@@g"`
+           tmp_variable_1=`echo $tmp_variable | sed "s@^.@@"`
+           local_directory=`dirname $tmp_variable_1`
+    else
+           dir=`dirname $name_of_file`
+           local_directory=`echo $dir | sed "s@^.@@`
+    fi
+    mkdir -p $tmpsrc/$local_directory
+    [ "$verbose" = "true" ] && echo "$name_of_file"
+    file=`basename $name_of_file`
+    cp $name_of_file $tmpsrc/$local_directory/$file          
+done
+
+echo ""
+echo "Done"
+echo ""
+
+#Create a tar file in the target directory
+cd $targetdirectory
+echo "tar cf $tar_file $tmpsrc ..."
+tar cf $tar_file `basename $tmpsrc`	
+echo "compress $tar_file ..."
+compress $tar_file
+
+#Remove temporary file
+\rm -rf $tmpsrc $file_list
+
+# Footer
+echo "The compressed tarfile $tar_file.Z has been created"
+echo ""

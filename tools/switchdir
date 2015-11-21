@@ -1,0 +1,117 @@
+#!/bin/csh
+##########
+#
+# switchdir
+#
+##### Notes
+#
+# 1. This uses the env. var. target_dir, which is usually
+#    set by the 'to' alias or the to_atria script.
+#
+##### History
+#
+# 11/27/95 tlw - Moved to /paraset/tools and added this header.
+#
+##########
+
+
+
+if ($target_dir == "src") then
+    setenv old_target_dir `pwd`
+    set new_target_dir=`pwd | sed "s/obj\/$ARCH/src/"`
+    set new_target_dir=`echo $new_target_dir | sed "s/pend/src/"`
+    cd $new_target_dir
+else if ($target_dir == "pend") then
+    setenv old_target_dir `pwd`
+    set new_target_dir=`pwd | sed "s/obj\/$ARCH/pend/"`
+    set new_target_dir=`echo $new_target_dir | sed "s/src/pend/"`
+    cd $new_target_dir
+else if ($target_dir == "obj") then
+    setenv old_target_dir `pwd`
+    set new_target_dir=`pwd | sed "s/src/obj\/$ARCH/"`;
+    cd $new_target_dir
+else if ($target_dir == "sys") then
+    if ( $?old_target_dir) then
+        setenv old_target_dir `pwd`
+        set new_target_dir=`pwd | sed "s%$BASE%$SYSBASE%"`; 
+        cd $new_target_dir
+    else
+	cd $SYSBASE
+    endif
+else if ($target_dir == "user") then
+    if ( $?old_target_dir) then
+        setenv old_target_dir `pwd`
+        set new_target_dir=`pwd | sed "s%$SYSBASE%$BASE%"`;
+        cd $new_target_dir
+    else
+	cd $BASE
+    endif
+else if ($target_dir == "back") then
+    set new_target_dir = `pwd`
+    cd $old_target_dir
+    setenv old_target_dir $new_target_dir
+else if ($target_dir == "1.1.x") then
+    echo "1.1.x no longer supported."
+else if ($target_dir == "2.0.x") then
+    echo "2.0.x no longer supported."
+else if ($target_dir == "integ") then
+    setenv OLDBASE $BASE
+    setenv BASE $SYSBASE
+    setenv OLDHOME $home
+    set h=$BASE
+    chdir $h
+    cd $h
+else if ($target_dir == "base") then
+    setenv BASE $OLDBASE
+    set h=$OLDHOME
+    chdir $h
+    cd $h
+else if ($target_dir == "build") then
+    set day_stamp="`date +%a.%h.%d | tr A-Z a-z`"
+    set log_dir=""
+    foreach num (20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1)
+        if ( -d /users/builder/integ/$day_stamp.$num ) then
+            set log_dir=$day_stamp.$num
+	    break
+        endif
+    end
+    if ( "$log_dir" == "" ) then
+	set log_dir="`ls -dt /users/builder/integ/???.???.??.? /users/builder/integ/???.???.??.?? | head -1`"
+	set log_dir="`echo $log_dir | sed 's%/users/builder/integ/%%'`"
+    endif
+    if ( "$log_dir" != "" ) then
+	setenv in $log_dir
+	set new_target_dir="/users/builder/integ/$log_dir"
+	cd $new_target_dir
+    else
+	echo "No regular integration build logs found."
+    endif
+else if ($target_dir == "cross") then
+    set day_stamp="cross.`date +%a.%h.%d | tr A-Z a-z`"
+    set log_dir=""
+    foreach num (20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1)
+        if ( -d /users/builder/integ/$day_stamp.$num ) then
+            set log_dir=$day_stamp.$num
+	    break
+        endif
+    end
+    if ( "$log_dir" == "" ) then
+	set log_dir="`ls -dt /users/builder/integ/cross.* | head -1`"
+	set log_dir="`echo $log_dir | sed 's%/users/builder/integ/%%'`"
+    endif
+    if ( "$log_dir" != "" ) then
+	setenv in $log_dir
+	set new_target_dir="/users/builder/integ/$log_dir"
+	cd $new_target_dir
+    else
+	echo "No cross integration build logs found."
+    endif
+else
+    echo "Target ""$target_dir"" not recognized"
+endif
+
+
+
+
+
+##########     end of switchdir     ##########

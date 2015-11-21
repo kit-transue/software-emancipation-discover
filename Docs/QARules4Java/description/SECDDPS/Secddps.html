@@ -1,0 +1,22 @@
+<html>
+<body>
+
+<p><b>Securty - Don't depend on Package Scope.</b></p>
+
+<p>Package-level access is not secure enough for security.  Java packages are
+not closed (meaning that new elements can be added to them, even at program
+runtime). As a result, an attacker can potentially introduce a new class
+inside your packages and use this new class to access the things you thought
+you hide.</p>
+
+<p><b>Tip:</b>
+Do not rely on package-level access.  Make your class, method, field to have
+least access as possible.</p>
+
+<p><b>REFERENCE</b></p>
+<p>Statically Scanning Java Code: Finding Security Vulnerabilities.<br>
+John Viega, Gary McGraw, Tom Mutdosch, and Edward W. Felten<br>
+IEEE SOFTWARE September/October 2000</p>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+PATH2BS=${BUILD_SRC_ROOT}
+if [ -d ${LOCAL_SRC_ROOT}/makescripts/Unix ]; then
+  MAKELIB=${LOCAL_SRC_ROOT}/makescripts/Unix
+elif [ -d ${BUILD_SRC_ROOT}/makescripts/Unix ]; then
+  MAKELIB=${BUILD_SRC_ROOT}/makescripts/Unix
+fi
+admin_root=${MAKELIB}
+TOOLDIR=${MAKELIB}/../bin
+
+OBJ_ROOT=${DEST}
+OBJ_RT=${DEST}
+
+YACC="${TOOLDIR}/${ARCH}/bison -y"
+BISON_SIMPLE=${TOOLDIR}/${ARCH}/bison.simple
+BISON_HAIRY=${TOOLDIR}/${ARCH}/bison.hairy
+# This doesn't exist anyewhere
+INTEGDB=/net/oxen/vol03/dbase/builder
+INTEGVT="$INTEGDB/integ_logs/vt_log"
+INTEGVS="$INTEGDB/integ_logs/vt_status"
+GMAKE=${TOOLDIR}/${ARCH}/gmake

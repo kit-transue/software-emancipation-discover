@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+if [ $cm_file_type = "NOT_SRC" ] ; then
+    $PSETCFG/cm_setup_src $1 $2 $3 $4 $5
+    exit 0
+fi
+
+wf=$2 # working file
+wd=$1 # working dir
+sf=$4
+sd=$3
+
+echo $sd/$sf >&1

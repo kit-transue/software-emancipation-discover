@@ -1,0 +1,204 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+
+FROM: Natarajan Balasundara.
+DATE: 18 Aug 1995.
+TO: Kevin Saltzman, Alexander Harlap.
+CC: Michael Brook.
+
+-----------------------SYSTEM DOCUMENT---------------------------------
+
+
+	The section that follow are concerned with:
+	
+	1. Builds
+	2. Tests.
+	3. Adding users and Systems.
+	4. Backups.
+	5. Physical media, documentation and installation ares for
+	   various software.
+        6. Phone number.
+
+
+1.0 Build related contab entries and scripts:
+---------------------------------------------
+
+	The build sequence, build logs, and disk space for builds are described
+	below.
+
+	1.1 Build sequence
+        ------------------
+	- Builds are started from a crontab entry on pragma  for user builder.
+
+	- The calling sequence of scripts on [ machine, user ]  are as shown
+          below.
+	  (Note that integrate.sh and lockvob.sys below recursively call 
+	  themselves):
+
+		/paraset/tools/builder/integrate.cron [ pragma, builder ]	
+		           |
+			   v
+		 /paraset/tools/builder/integrate.sh  [ pragma, builder ]
+		    |                           |
+		    v                           |
+/users/builder/bin/lockvob.sys			|
+  |		         |                      |
+  |		         |                      |
+  v                      |                      |	
+  /users/vobadm/lockvob  |                      |--------|
+ [pragma, vobadm]        |		        v        v
+  			 v	      /paraset/tools/builder/integrate.slave 
+/users/builder/bin/lockvob.sys		      [(tweety,loner), builder]
+[(tweety,pragma,loner), builder]
+				     
+	1.2 Build Logs	
+	--------------
+
+	- The build logs are in directories under /users/builder/integ
+	  and /ParaSET/tools/builder. The log files/directories details 
+	  are as follows:
+
+	 1. make_aset log is in directory <machine><Month>-<Date>.<number> 
+	    under /users/builder/integ. This directory has a file <ARCH>.
+            <ARCH> file has the logfile name in it for detailed build.
+
+	 2. integrate.sh logs are in <Day>.<Month>.<Date>.<numbder>.platform
+            under /users/builder/integ.
+	   
+	 3. log.<Machine>.<Month>.<Date>.95.<Time> under 
+	    /ParaSET/tools/builder has information about ALL
+	    make_asets run by any user including  builder.
+
+	 4. Reference time info for various versions are listed in
+	     /ParaSET/tools/builder/integ_logs/vt_log.
+
+       1.3 Disk space for builds
+       -------------------------
+
+	  All the build space required have as their root
+	  /net/pragma/pvob/paraset.
+
+	 The build space for various platforms is as follows:
+
+	 Sun4-O: 		xi:/local/makepool 
+	 Sun4-g: 		pragma:/compile/makepool
+	 Sun5-O and Sun5-g:     tweety:/compile/makepool
+	 hp700-O:		loner:/compile
+         hp700-g:		pragma:/pvob
+
+	If it becomes necessary to delete some versions of the 
+	builds when the disk space runs low, one can find out 
+	all the version numbers of builds currently accessed by
+	any view by running /users/builder/bin/vtree_show.
+	
+	Versions that are not accessed by any view can then be deleted.
+
+	1.3 Release to R&D Customer
+        ---------------------------
+		Release to R&D after a build is installed in install.new.tmp
+	on pragma, tweety, or loner for sun4, sun5, and hp700 can be
+	made from electra. 
+	To release these to all of R&D:
+		- log into electra as builder.
+		- Get into an atria view(sun4,sun5,or hp700).
+		- release.sh <sun4|sun5|hp700>
+		
+	A customer release can only be made from an already existing
+       installation area.Use script /paraset/tools/builder/customer_release.sh.
+	  
+2. Tests:
+---------
+		-Demo tests are run from crontab entries for user account 
+		  dtest on pragma, tweety, and  loner.
+
+		- Once demo test is complete, this creates a flag under 
+		  /users/btest/States.
+		
+		- crontab entry for btest on pragma,loner, and tweety start
+		  regression tests depending on the existence of OK flags
+	          under /users/btest/States.
+		
+		- Regression test results go on {sun4,sun5,hp700} machines
+		  under /net/{pragma,tweety,loner}/compile/test_output 
+		 respectively.
+		- Regression tests use display on a different machine.
+                  The DISPLAY for a platform can be found looking inside
+                  .cshrc for user btest.
+		
+		- State of the system can be inspected by running
+		  /users/btest/bin/Fill-Table which produces a printed output.
+
+			
+3. Adding new Systems:
+----------------------
+	The patch cables are in the room where the hubs are.
+
+4.  Adding new users:
+---------------------
+
+	Password file is /var/yp/passwd ON electra.
+	However, when you add a new user, dont just run make but:
+	
+	make passwd DIR=/var/yp
+	
+	Better yet, run passwd as root and change password of a user
+	to what it currently is. This will automatically update NIS password
+	entry correctly.
+
+5. Phyical media and Documentation:
+-----------------------------------
+	- Most of the CDROMs and media are next to pragma.
+	- Autoplan is installed in light:/port/aplan.
+	- Oracle is installed in   electra:/home
+	- The physical documentation are either in the library area
+	  or in the Steel Cupboard next to aharlap.
+	- The 8mm tapes are in my desk on the 2 and third drawers on 
+	  left.
+	- The "Hardware" such as screw drivers are either in the cupboard
+	  or the steelcase next to aharlap.
+
+
+6. Backups:
+-----------
+	- Source is backed up on tape from pragma from a crontab entry for root.
+	- Source is also saved in text format outside vob under under 
+          /net/tweety/pools++/src-backup everyday.
+	- All the individual user views are backed up from a cron entry 
+	  for builder on tweety under /net/tweety/export/home/ViewSave.
+	- Since there is a symbolic link /users/ViewSave to /net/tweety/export/
+          home/ViewSave, the views are automatically backed up tape also.
+        - The Daily backup media are on the tape drive above pragma. Someone
+	  needs to change the media every day.
+	- Weekend media can be taken out of my desk.
+
+6. Phone number
+---------------
+
+
+-----------------------END SYSTEM DOCUMENT---------------------------------

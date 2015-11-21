@@ -1,0 +1,68 @@
+#!/bin/sh
+echo "Running: $0"
+mypid=$$
+thishname=`hostname`
+input=/usr/tmp/input.$thishname.$$
+envfile=/net/oxen/vol02/tmp/ptest_env.$thishname.$$
+
+# A machine/display name of "any" will find the first avail machine.
+# A when of now will disregard any time constrains on machines.
+hname=$thishname
+dname=any
+when=whenever
+
+
+# Use the display variable if set.
+[ -n "$DISPLAY" ] && {
+	dname=`echo $DISPLAY | awk 'BEGIN {FS=":"} { print $1 }'`
+}
+
+# ** gets expanded by the shell! So I made == instead.
+pwv=`cleartool pwv -short | tr "*" "=" `
+[ -z "$pwv" -o "$pwv" = "== NONE ==" ] && { 
+	echo "$0: View is not set.  Exiting"
+	exit 1; 
+}
+
+while true 
+do
+if [ "$1" = "-machine" ] ; then
+   hname=$2
+   shift  ;  shift
+elif [ "$1" = "-display" ] ; then
+   dname=$2
+   shift  ;  shift
+elif [ "$1" = "-when" ] ; then
+   when=$2
+   shift  ;  shift
+elif [ "$1" = "-view" ] ; then
+   pwv=$2
+   shift  ;  shift
+else
+	break;
+fi
+done
+
+
+ptest_get_display $dname $Arch $when $mypid $thishname > $input
+[ $? -eq 1 ] && exit 1;
+read display dlfile < $input
+
+ptest_get_machine  $hname $Arch now $mypid $thishname > $input
+[ $? -eq 1 ] && exit 1;
+read machine mlfile < $input
+
+DISPLAY=$display
+export DISPLAY
+
+cmd="/usr/atria/bin/cleartool setview -login -exec '${PROJ_ROOT}/tools/ptest/ptest_restore_exec $envfile ptest_all $*' $pwv"
+
+env | grep -v PURIFYOPTIONS | grep -v TERM | grep -v CVIEW > $envfile
+grep PSETTEST $envfile
+echo "rsh $machine $cmd"
+
+rsh $machine $cmd
+
+rm -f $mlfile $dlfile $input $envfile
+
+

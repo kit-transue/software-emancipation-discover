@@ -1,0 +1,28 @@
+<html>
+<body>
+
+<p><b>NAICE - No Assignments In Conditional Expressions</b></p>
+
+<p>Use of assignment within conditions makes the source code hard to understand.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+if ( (<font color='red'>dir = new File(targetDir)</font>).exists() ) { <br>
+&nbsp; &nbsp; // do something<br>
+}
+</code></p></nobr>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+<font color='blue'>
+dir = new File(targetDir);<br>
+</font>
+if ( <font color='blue'>dir</font>.exists() ) { <br>
+&nbsp; &nbsp; // do something<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

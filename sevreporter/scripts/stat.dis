@@ -1,0 +1,257 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc stat:calc { src attr } {
+  if { $attr == "incl" } {
+    set cmd {size [ get_include_files $elem ]}
+  } else {
+    set cmd $attr
+    append cmd { $elem }
+  }
+
+  set min -1
+  set max 0
+  set n 0.0
+  set total 0.0
+
+  foreach elem $src {
+    set val [ eval $cmd ]
+
+    if { $val != -1 } {
+      set n [ expr $n + 1.0 ]
+      set total [ expr $total + $val ]
+      if { $val < $min || $min == -1 } { set min $val }
+      if { $val > $max } { set max $val }
+    }
+  }
+
+  if { $min == -1 } { set min 0 }
+  set avg [ expr $n ? (round(1000 * $total / $n) / 1000.0) : 0.0 ]
+
+  # re-iterating is much faster than using an intermediate list:
+  set std 0.0
+
+  foreach elem $src {
+    set val [ eval $cmd ]
+
+    if { $val != -1 } {
+      set std [ expr ($val - $avg) * ($val - $avg) + $std ]
+    }
+  }
+
+  set std [ expr $n ? (round(1000 * sqrt($std) / $n) / 1000.0) : 0.0 ]
+  return [ list $min $max $avg $std $total $n ]
+}
+
+proc stat:file_tloc { src args } {
+
+  set files [ sev_elem_pool "$src" defines file ]
+  set ret [ stat:calc $files met_LOC  ]
+
+  return $ret
+}
+
+proc stat:file_uloc { src args } {
+
+  set files [ sev_elem_pool "$src" defines file ]
+  set ret [ stat:calc $files met_ULOC ]
+
+  return $ret
+}
+
+proc stat:file_xloc { src args } {
+
+  set files [ sev_elem_pool "$src" defines file ]
+  set ret [ stat:calc $files met_XLOC ]
+
+  return $ret
+}
+
+proc stat:file_incl { src args } {
+
+  set files [ sev_elem_pool "$src" defines file ]
+  set ret [ stat:calc $files incl ]
+
+  return $ret
+}
+
+proc stat:func_tloc { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_LOC ]
+
+  return $ret
+}
+
+proc stat:func_uloc { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_ULOC ]
+
+  return $ret
+}
+
+proc stat:func_xloc { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_XLOC ]
+
+  return $ret
+}
+
+proc stat:func_cc { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_CC ]
+
+  return $ret
+}
+
+proc stat:func_myers { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_MYERS ]
+
+  return $ret
+}
+
+proc stat:func_depth { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_DEPTH ]
+
+  return $ret
+}
+
+proc stat:func_ret { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_RETURNS ]
+
+  return $ret
+}
+
+proc stat:func_dei { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_DANG_EI ]
+
+  return $ret
+}
+
+proc stat:func_ifs { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_IFS ]
+
+  return $ret
+}
+
+proc stat:func_loops { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_LOOPS ]
+
+  return $ret
+}
+
+proc stat:func_sw { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_SWITCHES ]
+
+  return $ret
+}
+
+proc stat:func_sw_dang { src args } {
+
+  set funcs [ sev_elem_pool "$src" defines function ]
+  set ret [ stat:calc $funcs met_DANG_SW ]
+
+  return $ret
+}
+
+proc stat:class_fanout { src args } {
+
+  set classes [ sev_elem_pool "$src" defines class ]
+  set ret [ stat:calc $classes met_FANOUT ]
+
+  return $ret
+}
+
+proc stat:class_fanin { src args } {
+
+  set classes [ sev_elem_pool "$src" defines class ]
+  set ret [ stat:calc $classes met_FANIN ]
+
+  return $ret
+}
+
+proc stat:functions {src args} {
+    set x [defines -functions $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:classes {src args} {
+    set x [defines -classes $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:unions {src args} {
+    set x [defines -unions $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:variables {src args} {
+    set x [defines -variables $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:strings {src args} {
+    set x [defines -strings $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:typedefs {src args} {
+    set x [defines -typedefs $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:enums {src args} {
+    set x [defines -enums $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:macros {src args} {
+    set x [defines -macros $src]
+	return "[size $x] [size $x] [size $x]"
+}
+
+proc stat:templates {src args} {
+    set x [defines -templates $src]
+	return "[size $x] [size $x] [size $x]"
+}

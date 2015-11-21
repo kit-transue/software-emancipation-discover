@@ -1,0 +1,28 @@
+RulesShared : $sharedSrcRoot <-> /__ruleShared {
+
+
+  $sharedSrcRoot/(1)/(2).o	: $sharedSrcRoot/(**)/(*).([chCH])/%/.pset		=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  $sharedSrcRoot/(1)/(2).o	: $sharedSrcRoot/(*).([chCH])/%/.pset			=> $sharedModelRoot/pset/(1).(2).pset
+
+  ""				: $sharedSrcRoot/(**)/(*).(doc)/%/.pset			=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  ""				: $sharedSrcRoot/(**).pmod/%/.pmoddir			=> $sharedModelRoot/pmod/(1).pmod
+  ""				: $sharedSrcRoot/(**).c/%/.make				=> "echo cc"
+  ""				: $sharedSrcRoot/(**).C/%/.make				=> "echo CC"
+  ""				: $sharedSrcRoot/(**).cpp/%/.make			=> "echo CC"
+
+}
+
+RulesPrivate : $privateSrcRoot <-> /__rulePrivate {
+
+
+  $privateSrcRoot/(1)/(2).o	: $privateSrcRoot/(**)/(*).([chCH])/%/.pset		=> $privateModelRoot/pset/(1)/(2).(3).pset
+  $privateSrcRoot/(1)/(2).o	: $privateSrcRoot/(*).([chCH])/%/.pset			=> $privateModelRoot/pset/(1).(2).pset
+
+  ""				: $privateSrcRoot/(**)/(*).(doc)/%/.pset		=> $privateModelRoot/pset/(1)/(2).(3).pset
+  ""				: $privateSrcRoot/(**).pmod/%/.pmoddir			=> $privateModelRoot/pmod/(1).pmod
+  ""				: $privateSrcRoot/(**).c/%/.make			=> "echo cc"
+  ""				: $privateSrcRoot/(**).C/%/.make			=> "echo CC"
+  ""				: $privateSrcRoot/(**).cpp/%/.make			=> "echo CC"
+
+}
+

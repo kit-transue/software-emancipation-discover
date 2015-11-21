@@ -1,0 +1,149 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Integration Procedures
+Feb 28, 1994 - revised 3/16/94
+
+
+Motto: Integration is easy (as long as nothing goes wrong :).
+
+You can run integration on either pragma or power.  During the day I like to use
+power as long as it's not being used for something else.
+
+=====================================
+
+To integrate:
+
+1) Check free space          ???? how much is needed for what parts ????
+
+2) Kick off the integration
+
+        > rlogin pragma -l builder                     (or use power)
+        > to integ
+        > integrate
+
+3) watch for errors
+
+4) Let it finish
+
+=====================================
+
+The command 'integrate' executes a script that works as follows:
+
+        1) Uses quickpendcheck.sh to build a script that will merge the pending area
+
+        2) Executes the script created above
+
+        3) 'make all' for sun4-O
+
+        4) 'make all' for sun4-g
+
+        5) merge_newlibs.sh to release the new libraries
+
+        6) 'make set aset.install' for sun4-O
+
+        7) 'make set' for sun4-g
+
+        8) 'make aset.pure' for sun4-O
+
+        9) 'make aset.pure' for sun4-g
+
+After each of the 'make' steps, the output logs are grepped for errors and if any
+are found, the integration is aborted.  Once the errors are corrected, you can
+execute the rest of the steps by hand (no fun), or just type 'integrate' to start
+all over again (easier).
+
+-----------#ifdef 0
+It used to be that:
+The least automated part of integration is the handling of new files.
+During the merge phase of every integration, there are warning messages
+printed out for files that do not already exist in the integration area.
+Most of these messages are for new .pset files.  You have to scan through
+these messages and look for any new header or source files.  The .pset
+warnings can be ignored.  If you have new header files, you will need to
+do a 'make includes' in the corresponding directory. New source files
+require a 'make makemf' for both (all?) architectures. I know, I know: this
+should all be automated.  It happens so rarely, and I'm already used to
+dealing with it this way so I have not had much incentive to fix it.
+Someday soon (yea, right).
+
+Anyways, just check the output from the script right after the pending information
+is printed and right before "Makeall...".  If you see something that needs fixing,
+you can suspend the script with ctrl-Z, execute the make makemf/includes, and then
+"fg" the script again (step 2 above).
+-----------#endif
+
+When you integrate, a directory is created to store all the log files and scripts
+for that integration.  These directories are stored in ~builder/integ. The name of
+the directory is always printed out by the integration script. It looks something like:
+
+        wed.feb.09.1
+        thu.feb.17.1
+        thu.feb.17.2
+
+The number after the date is the sequential number of that integration for that day.
+You can type 'to build' to go to the latest integration directory for today. If no
+integrations have been done today, you will be told 'No build logs found for today'.
+
+Inside this directory you may find any of the following files:
+
+        makeall.log		- output from the building of the libraries
+        makeset.log		- output from the linking of the executables
+        merge_newlibs.log	- boring output regarding libs that were released
+        pend.stats		- summary of files found in the pending area
+        qp.source		- script that performed source merge
+        qp.source.log		- results from executing qp.source
+        CFG.log			- RCS log of files checked in (w/comments)
+
+If you would like to integrate up to the point just before the libraries are
+released for general use, you can go to the build logs directory and do 'touch halt'.
+The integration script looks for the file 'halt' and aborts before releasing the
+libraries if it exists.
+
+I always like to use two windows while integrating.  I use one to run/monitor the
+integrate command itself, and I use the other one to do a tail -f on whatever
+log file the integration is currently writing to.  Command for the latter:
+      to build
+      tail -f makeall.log
+
+The integration script (integration.sh) and all the other scripts it uses can be found
+in the directory $TOOL/builder.
+
+You can check to see what is in the pending area with the following command:
+
+        $TOOL/builder/quickpendcheck.sh >/dev/null
+
+This will generate the same report seen when integrating. The redirection to /dev/null
+is because the script reports to stderr while writing a script to perform the merge
+to stdout.  Normally, the integration script redirects stdout to qp.source and executes
+it.
+
+After a successful integration, you will want to create a fresh install.new so that
+people can use it. I'll explain that in another document.
+
+
+-jef

@@ -1,0 +1,6 @@
+./ifext/ifext.mak:	$(PATH2BS)/extlib/NT/xerces-c_1.lib
+./model_server/make/Windows/model_server.mak: $(PATH2BS)/extlib/NT/vgalaxy_vc6.lib libcmt.lib libcimt.lib wsock32.lib\
+./model_server/make/Windows/model_server.mak: $(PATH2BS)/extlib/NT/vgalaxy_vc6.lib netapi32.lib comctl32.lib /nologo\
+./model_server/make/Windows/pset_server.mak: $(PATH2BS)/extlib/NT/vgalaxy_vc6.lib libcmt.lib libcimt.lib wsock32.lib\
+./model_server/make/Windows/pset_server.mak: $(PATH2BS)/extlib/NT/vgalaxy_vc6.lib netapi32.lib comctl32.lib /nologo\
+./model_server/make/Windows/pset_server.mak:	$(PATH2BS)/extlib/NT/xerces-c_1.lib 

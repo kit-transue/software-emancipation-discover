@@ -1,0 +1,64 @@
+#include "Application.h"
+
+    Application* app = new Application;
+    delete app;
+
+Server:
+
+    Application* app = new Application;
+    delete app;
+
+    app->registerService (const char* group, const char* service, Server);
+    app->unregisterService ();
+
+Client:
+
+    Application* app = new Application;
+    delete app;
+
+    app->connect (const char* group, const char* service);
+    app->disconnect ();
+
+    int code = app->eval (vstr*);
+    vstr* = app->getEvalResult();
+
+    return_value = rcall_name (Application*, args);
+
+Associative memory:
+
+    app->associate (const char* name, const char* data);
+    app->disAssociate (const char* name);
+    const char* assoc = app->getAssociation (const char* name);
+
+galgen:
+
+    galgen <service_name.spec >service_name.C
+
+	1. Compile with -DSERVER for server code
+	1. Compile with -DCLIENT for client code
+
+format of service_name.spec:
+
+		service service_name
+
+		#include <stdio.h>		// #include is copied as is
+
+		!int bar_global_var;    	// copy global defs starting with !
+
+		@ int eval (vstr* str)  	// Service looks like C++ but with @
+		{
+    		    return bar_app->eval (str);	// local app interpreter
+		}
+
+		@ int message ()
+		{
+    		    printf ("here here here\n");
+    		    return 55;
+		}
+		
+		@ async computation (int arg)	// Asynchronous
+		{
+    		    printf ("The arg is %d\n", arg);
+    		    sleep (5);
+    		    printf ("server computation done\n");
+		}

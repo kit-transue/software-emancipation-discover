@@ -1,0 +1,126 @@
+=======================
+Function: dis_message()
+Date:     08/20/96 
+By:       abover
+=======================
+
+- Modifications have been made to the function dis_message() to support the 
+  storage of messages in an external database. To send messages to the user 
+  during an interactive session or batch update, please use the function 
+  dis_message() instead of:
+
+	printf
+        fprintf
+        OSapi_fprintf
+        cout
+        cerr
+        clog
+
+- To add a new message:
+
+  	1. Add an entry to the messages database (ascii file).
+  	2. Add a call to dis_message() in your source.
+
+- The message file has the following format:
+
+  	key:value
+
+  	The key is the string that dis_message() uses to access a particular
+  	message. You must specify the key as the third argument to dis_message().
+
+  	The value field is a format string (identical to what you would pass 
+  	as the first argument to printf()) ending with a newline. (To add newlines 
+  	or tabs to your messages, use escape sequences in the value field; e.g.
+  	\n, \t.)
+ 
+- Prototype (from /discover/include/messages.h):
+
+  	void dis_message(char *help_context, systemMessageType msg_type, char *msg_key, ...);
+
+- Arguments to dis_message()
+
+  	Help context:
+
+		The help context is a magic string that must be obtained from the documentation
+        	department. If your message does not need a help context, this arg may be 
+        	NO_HELP_CONTEXT or simply NULL. For more information on using help contexts,
+        	please see someone in the UI group.
+
+  	Message type:
+
+  		The message type can be any one of the following (from systemMessages.h):
+
+		enum systemMessageType
+		{
+    	  	  MSG_DIAG,
+    	  	  MSG_INFORM,
+    	  	  MSG_WARN,
+   	  	  MSG_ERROR,
+    	 	  MSG_STATUS,
+    	  	  MSG_WORKING,
+    	 	  MSG_STDERR
+		};
+
+  	Message Key:
+
+		The key is a string that represents your message (identical to the contents of the
+        	"key" field in the database).
+
+- A typical message:
+
+  Database entry: 
+	
+	M_BADFLOWCHART:%s: empty file. Cannot build Flowchart view.
+  
+  Function call: 
+	
+	dis_message(C_FLOWCHART, MSG_WARN, "M_BADFLOWCHART", fname);
+
+- Output of dis_message():
+    
+    	The output may go to the message logger, status bar, stderr or log file 
+    	depending on the type of the message, whether we are in an interactive or 
+    	batch session, and what the user has set for his preferences (specific 
+    	policy is dictated by the UI designers). If the message logger were off, 
+    	the above function call might output the following text to stderr:
+
+    	Warning: /public/src/a.c: empty file. Cannot build Flowchart view.
+
+    	When messages are being printed to stderr, the type arg to dis_message 
+        determines what string is prepended to the message (e.g. "MSG_ERROR" produces 
+        messages prefixed with the string "Error: ").
+
+    	If this message were going to the message logger, the type of the message
+    	would show up at the top of the logger.
+
+	If "MSG_STDERR" were specified as the type, the message would be printed
+        to stderr with no prefix. 
+
+- If the key you specified as your second argument could not be found in the database, 
+  it is used as the format string. For instance:
+
+  	dis_message(NULL, MSG_ERROR, "No file named %s!", fname);
+
+  Would output something like this following to the appropriate location:
+
+  	Error: No file named /some/file!
+ 
+- More examples:
+
+  Function Calls:
+
+	dis_message("Pset.Gen.File.NoPerms", MSG_ERROR, "Insufficient_Permissions_to_Modify_File", fname);
+	dis_message("Pset.Gen.Memory.UseReserved", MSG_WARN, "W_GEN_ReservedAlloc", sz, arena_size);
+	dis_message("Pset.Gen.Memory.NotEnough", MSG_ERROR, "GEN_FailedAlloc", sz, arena_size);
+
+  Corresponding Database Entries:
+
+	Insufficient_Permissions_to_Modify_File: Cannot Modify file: \"%s\" (Insufficient Permissions)\n
+	W_GEN_ReservedAlloc:allocated from reserved memory: %d bytes, total arena: %d
+        GEN_FailedAlloc:failed to allocate: %d bytes, total arena: %d
+
+- DISCOVER looks for the messages file in: $PSETHOME/lib/messages.dat. The environment
+  variable "PSET_MSG_FILE" has been provided for your own debugging purposes and can 
+  be used to override the default messages file in $PSETHOME/lib.
+
+- Clearcase location: /paraset/data/messages.dat

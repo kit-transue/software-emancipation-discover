@@ -1,0 +1,30 @@
+<cmdline nameintro="-">
+<!-- Test of:
+	%
+	%%
+	%n%
+	list from environment
+	in option, -I% and -I %
+-->
+<!-- Try with:
+       parsercmd percent.xml "/home/scott/MKS stuff" another
+       xx.y -I sepSEPsep -iimm -pct -arg
+     and with TEST_VAL set to "abc 123:():T"
+     and with TEST_VAL2 set to "abc 123;();T"
+     result (may vary on Windows vs. Unix) is one line:
+        arg is another a percent: % -I sepSEPsep -iimm % per%cent %
+        arg is "/home/scott/MKS stuff" -L "abc 123" -L "()" -L T
+        "-Iabc 123" "-I()" -IT
+     On Windows, all of the args containing % should come out quoted.
+-->
+arg is %1% a percent: %%
+ <translate>
+  <option name="I" separg="1">-I %</option>
+  <option name="i" immarg="1">-i%</option>
+  <option name="pct" noarg="1">%% per%%cent %%</option>
+  <option name="arg" noarg="1">arg is %0%</option>
+ </translate>
+ <list getenv="TEST_VAL" separator=":">-L %</list>
+ <list getenv="TEST_VAL2" separator=";">-I"%"</list>
+</cmdline>
+

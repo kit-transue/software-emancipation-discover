@@ -1,0 +1,207 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+    Project: Change Propagation Improvements [10/04/93 14:30]
+
+    Document Authors: Trung, MG.
+
+    Functional description
+
+    This project will extend the current ParaSET propagation framework to make it truly usable. 
+
+    Improvements to the framework will provide end users with fine-grain control over the propagation process, including: 
+
+    o A generic Impact Analyzer for pre-, present, and post-propagation analysis.
+
+    o Object- and file-level propagation manipulation.
+
+    o Error recovery.
+
+    o Suspend, Resume, and Undo during the propagation session.
+
+    o User-assisted change (that is, changes overseen by the user, as opposed to massive, ParaSET batch changes).
+
+    o Save and Restore of the internal state of propagation.
+
+    In addition to framework improvements, this project will also reimplement improved Rename and Change Arguments functionality.
+
+    Justification
+
+    1. Programmers do not seriously use the current propagation implementation for fear of damaging their code.
+
+    2. The current framework does not provide a generic Impact Analyzer (that is, an analyzer that can be invoked and used outside of the context of a propagation operation).
+
+    3. This project will also provide a framework for future propagation actions beyond Rename and Change Arguments, such as pattern-based function argument changes, member function moves, inheritance changes, etc.
+
+    Design description:
+
+    Propagation will now have two stages:
+
+    o Pre-propagation stage -- In this stage, users collect objects to be changed, with the help of ParaSET in certain cases such as inheritance, overloading, etc., as well as with processing inputs.
+
+    o Main propagation stage -- This stage consists of three relatively independent functional areas: Impact Analyzer, user interaction, and propagation interface.
+
+    In addition to these framework stages, this project will also implement (reimplement) the specific functions of Rename and Change Arguments.
+
+    Pre-propagation Stage
+
+        The pre-propagation stage will provide a user interface providing object selection features as follows:
+
+    o A list of suggested entities that should be changed along with selected objects. (Such as virtual functions, overloaded functions, etc.)
+
+    o A selection mechanism for final propagation.
+
+    o An input mechanism for new changes to the selection list.
+
+    o An OK button that will activate the generic Impact Analyzer and allow generic user interaction on all selected objects.
+
+    o An Apply button which is similar to OK, but which is restricted to a subset of Selection. [Editor's note: Sorry, I still don't understand this wording...bfrederi]
+
+    o An ImpactAnalyzer button that activates the generic Impact Analyzer.
+
+    Main Propagation Stage
+
+        The main propagation stage will provide the following three utilities  to operate upon the selections made during the pre-propagation stage:
+
+        1. Generic Impact Analyzer
+
+            The generic Impact Analyzer provides the following features and options for selected objects:
+
+            o A list of files needed for propagation, with icons showing status such as "local", "loaded", "locked", etc.
+
+            o A list of files that need recompilation before propagation can begin.
+
+            o A list of files that need recompilation after propagation.
+
+            o A list of tokens (possibly sorted by line number) per file that will be changed (hard associations) or that require notification (soft associations).
+
+            o A list of entities per file that will be affected by changing this object (that is, a list of entities that use this object).
+
+        2. Generic User Interaction
+
+            Generic user interaction features will include:
+
+            o Apply -- 
+
+            - If the selection is a file, apply propagation to the whole file. This will simulate the behavior of EMACS query-replace/replace.
+
+            - If the selection is an object in a file, apply propagation to that object only. If this is the last object in the file, finish propagation to the file (apply to internal objects is activated)
+
+            - manual apply: User can select an object and manually edit that object.
+
+            o OK -- Start global propagation.
+
+            o Cancel -- Remove dialogbox from screen.
+
+            o Fetch -- Fetch a file, do not change the loaded status.
+
+            o Load -- Bring a file into memory (same as double-clicking on a file).
+
+            o Unload -- Remove a file from memory.
+
+            o Reparse -- Reparses specified entities; selection is made through a dialogbox similar to the current File->Save All dialogbox.
+
+            o Suspend -- Stop propagation temporarily.
+
+            o Resume -- Resume a previous propagation session (could be run by -batch).
+
+            o Undo -- Abandon all changes made so far during a propagation session.
+
+        3. Propagation interface
+
+            The propagation interface provides the following features and options:
+
+            o A status list of files showing: 
+
+            -- files that have already been propagated to
+
+            -- files that have not yet been propagated to
+
+            -- the current file
+
+            o A list of files which have failed propagation.
+
+            o A list of tokens per file which have failed propagation.
+
+            o The ability to focus on selected objects (following "standard ParaSET browser" conventions).
+
+            o Error recovery from a system crash, similar in operation to Resume.
+
+            o Auto Save and Restore of the propagation data presented in the status list described above:
+
+            -- Apply changes to all objects per file simultaneously
+
+            Note: You cannot have more than one propagation session at a time.
+
+         
+
+    Implementation of Rename and Change Arguments
+
+        <Editor's note: the following two sections need much more detail. -- bfrederi>
+
+        Rename
+
+            Rename will apply to all objects.
+
+        Change Arguments
+
+            Change Arguments will still not propagate to functions within macros.
+
+    Task assignments
+
+    MB Constraints: project start 9/27; Code freeze 11/12;
+
+    Project Constraints:  Functional spec + UI design 9/27 -> 10/4 (1wk); Design Spec + UI implementation + Document 10/4 -> 10/11 (1wk); Coding + Test script 10/11 -> 10/25 (2wk); Project preliminary testing 10/25 -> 11/1 (1wk); Testing 11/1 -> 11/12 (2wk).
+
+    Pero: suspend, recovery, reparse, auto Save/Restore propagation data and files lists, prevent overlap of different propagation sessions.
+
+    Dave: Impact analysis information, maintain propagation RTLs, input handling, 
+
+    Andrea: UI implementation, test script, UI coding (focus, selection, etc), testing
+
+    Trung: Functional spec, UI design (?), project integration, OK, apply, fetch, load/unload, undo, resume, user assist change for failed apply.
+
+    MG: Functional spec, UI design, Assist in Design spec.
+
+    Bruce: Document, test script
+
+    VIII. Project Schedule:
+
+    9/27 ->10/4 (1wk): Trung + MG: Functional spec + UI design; Dave + Pero: Learn current propagation mechanism;
+
+    10/4 -> 10/11 (1wk): Trung + Pero + Dave: Design spec; Bruce: Documentation; Andrea: UI implementation
+
+    10/11 -> 10/25 (2wk): Trung + Pero + Dave: Coding; Bruce + Andrea: test script.
+
+    10/25 -> 11/1 (1wk): Trung + Pero + Dave: Project prelim testing. Project submission.
+
+    11/1 -> 11/12 (2wk): Trung + Pero + Dave: Testing, bugs fixing; 
+
+     
+
+     

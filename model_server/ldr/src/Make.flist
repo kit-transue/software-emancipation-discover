@@ -1,0 +1,33 @@
+CROOTS=\
+
+
+CPROOTS=\
+    delete_node_views \
+    inheritanceSymTreeHdr \
+    insert_ldr_headers \
+    ldr.h \
+    ldrBrowserHierarchy.h \
+    ldrClipboard.h \
+    ldrDCHierarchy.h \
+    ldrERDHierarchy.h \
+    ldrFuncCallNode.h \
+    ldrHeader.h \
+    ldrHierarchy.h \
+    ldrList.h \
+    ldrNode.h \
+    ldrOODT.h \
+    ldrRTLHierarchy.h \
+    ldrRTLNode.h \
+    ldrScrapbook.h \
+    ldrSelection.h \
+    ldrSmodNode.h \
+    ldrSmodShort.h \
+    ldrSmtFlowchart.h \
+    ldrSmtHierarchy.h \
+    ldrSmtSte_h \
+    objRawLdr_h \
+    rebuildControl \
+    symbolLdrHeader.h \
+    symbolLdrTree.h \
+
+

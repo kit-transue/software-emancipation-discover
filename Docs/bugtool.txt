@@ -1,0 +1,59 @@
+Using Bugtool
+=============
+
+1. Running bugtool: Bugtool runs under X windows, so you'll need to make sure that your
+                    DISPLAY variable is set to a valid host. To execute bugtool, run the 
+                    script /ParaSET/tools/bugtool (it should already be in your path). 
+
+2. Viewing bugs: Once bugtool loads up, you will see a table of bugs. Each row in the table 
+                 constitutes a separate bug and contains several descriptive fields separated
+                 by spaces. The default layout of these fields is as follows: 
+
+ 		 bug #   severity   assignee   state   subsystem   title
+
+                 You may choose a different layout for the bug fields by selecting one of the
+                 layouts under the Format pulldown menu. Some layouts may display more information
+                 than others. 
+ 
+                 You can sort the bug list by clicking on the Sort/filter button, choosing a field 
+                 to sort by, selecting either Ascending or Descending from the main window, 
+                 and finally clicking on the Sort button. Bugs can be filtered from the list 
+                 by choosing a sort/filter field, entering a filter expression in the Expression 
+                 text box, and pressing Filter. Wildcards may be used in filter strings. Certain
+                 common filter operations can be found under the Filter pulldown menu.     
+                 
+                 To view all of the information concerning a certain bug up close, double click on 
+                 the bug in the main window. This will bring up a smaller window containing all 
+                 the information pertaining to the bug you selected. If a certain entry in the bug's
+                 description is too long to read, click on it, and then press the Edit button. 
+                 Doing this will bring up a text window that you can scroll through.
+
+Editing bugs: To edit an existing bug, double click on it to view it up close and click on the 
+              Locked option. This will ensure that no one will be able to modify the bug at 
+              the same time as you. If you get an error message, then someone else already has the 
+              bug locked. Once you have the bug locked, click on the field you want to change, and 
+              enter the new text in the box to the left of the edit button. If you need more space  
+              for your description, click on edit and hit "Ok" once you've finished entering your
+              text. Do this for as many fields as you like. You can also add new fields by selecting
+              an item from the Insert field menu. Some of these fields, like SubmitDateR&D will 
+              have default values that you may not need to change. To save your changes click on 
+              Store; to discard the modifications hit Cancel. 
+
+              Beware, you may not change the priority of a bug (unless you happen to be Michael Brook), 
+              and certain fields will only accept a pre-defined set of values. For example, the 
+              Subsystem field must be a valid subsystem, and the assignee field must be a valid
+              username.
+
+Adding new bugs: To add a new bug, click on Session -> New Bug and follow the instructions for editing
+                 an existing bug. 
+
+Usage notes: When submitting a bug, you need to add the following two fields to the bug entry: 
+             SubmitDateR&D and CloseDescription. When creating or modifying entries, be sure 
+             to use appropriate values for the Severity and Priority (correct values are listed 
+             in another document), and make sure you enter the correct Subsystem name (these are 
+             listed in another document as well; the names are also hard-coded so you can take a look 
+             at /ParaSET/bugtool/src/client/legalfields.C).   
+
+Misc: You can save and print the list from the "Session" menu. Choosing Save will pipe the bugs to
+      $HOME/bugtool.list. 
+

@@ -1,0 +1,10 @@
+ParaDOCS : $PSETHOME/lib/online_docs <-> /ParaDOCS
+{
+    doc/TOP/(Index.txt)
+    doc/TOP/(TOP_Table_of_Contents.txt)
+    doc/TOP/(help_context_links.txt)
+    doc/TOP/(*)
+    {
+        (*.txt)
+    }
+}

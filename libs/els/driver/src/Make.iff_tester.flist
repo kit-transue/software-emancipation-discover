@@ -1,0 +1,17 @@
+CPROOTS = \
+     fileSorter \
+     flagGenerator \
+     gmaker \
+     iffConsumer \
+     iffParser \
+     iffProducer \
+     langIffProducer \
+     language \
+     ldfInfo \
+     modelBuilder \
+     parserIffConsumer
+
+ifeq "$(ARCH)" "hp700"
+CC=/bin/cc -Aa +a1
+endif        
+

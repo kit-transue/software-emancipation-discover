@@ -1,0 +1,137 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+This is a plan for delivering software related to PSET_MULTIPLE
+discover functionality.  It describes the functionality requested from
+me (ljb) by project leader (mg). The plan is based on meeting held on
+10/18/1995, 14:30.
+
+The purpose of this phase of PSET_MULTIPLE project is to provide
+proper change propagation functionality for source files which contain
+#ifdef directives, and which in addition are part of multiple
+projects. The projects "see" different versions of the source files
+because each project provides its own compilation flags, which result
+in different source code being produced by the preprocessor. Therefore
+although the source code is formally identical for all projects, the
+parse tree (SMT tree) produced by the parser differs because of #ifdef
+directives and compilation flags.
+
+Example:
+
+File a.c:
+
+#ifdef DISTANCE_1
+
+float distance(float *x, float* y, n)
+{
+   float distance;
+
+   distance = 0;
+   for (i = 0; i <= n-1; i++)
+     distance = distance+(x[i]-y[i])*(x[i]-y[i]); 
+   distance = sqrt(distance);
+
+   return distance;
+}
+
+#endif
+
+#ifdef DISTANCE_2
+
+float distance(float *x, float* y, n)
+{
+   float distance;
+
+   distance = 0;
+   for (i = 0; i <= n-1; i++)
+     distance = distance+abs(x[i]-y[i]);
+
+   return distance;
+}
+
+#endif
+
+Say project 1 has compilation flag -DDISTANCE_1, and project 2 has
+compilation flag -DDISTANCE_2. Then DISCOVER parser will "see" just
+the first version of function distance for project 1, and just the
+second version of the function for project 1. Suppose that change
+propagation is requested for function distance (for example, rename to
+Distance). Then, if the change is requested when home project is
+project 1, only the first version would be renamed. Likewise only the
+second version would be renamed if change propagation is requested
+when home project is project 2. The requirement for this phase of
+PSET_MULTIPLE project is to propagate the change to both parts of
+source code.
+
+The PSET_MULTIPLE functionality realized so far (10/31/1995) enables
+user to checkout the same source file (together with the multiple pset
+files) into multiple projects. However the desired changes to #ifdef
+parts of the code are not propagated properly.
+
+The way to achieve the proper change propagation effect is to
+propagate partial changes to pset files corresponding to the projects,
+and then merge the results and write them into the final source
+file. In the above example, the function name distance would be
+changed to Distance for project 1 inside #ifdef DISTANCE_1 part of the
+source code, through pset file for project 1. Likewise, the function
+name distance would be changed to Distance for project 2 inside #ifdef
+DISTANCE_2 part of the source code, through pset file for project
+2. Finally, these two source codes would be merged (in this case
+automatic merge will be guaranteed to work, because the changes are
+disjoint) and written back to the original source.
+
+The above change propagation functionality should also work for files
+which are not common to multiple projects (i.e., files which are
+proprietary to projects). Presumably, such files shouldn't need to
+employ the #ifdef since they are part of just one project, but the
+functionality should nevertheless be provided. In other words, changes
+should be propagated to all parts of the source file, those which are
+actually "seen" in this project after preprocessing, and those which
+are not.
+
+Additional requirement is related to the Scan mode of the
+Browser. Currently implemented functionality of PSET_MULTIPLE shows
+multiple logical names of the same source file in Elements column (in
+other words, the one source file appears multiple times in this
+column, however under different logical names). Since there is
+actually one physical file, it is requested that selection (clicking
+on one of these file names) automatically selects all other logical
+file names corresponding to the one file. Double clicking on any of
+these logical names loads the one which corresponds to the current
+home project.
+
+Plan:
+
+1. Analysis of the problem and design of solution: 0.5 weeks.
+
+2. Implementation: 2 weeks.
+
+   2.1. Scan mode (selection and loading) 0.5 weeks
+   2.2. Change propagation                1.5 weeks
+
+3. Testing: 0.5 weeks.
+

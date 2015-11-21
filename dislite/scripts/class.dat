@@ -1,0 +1,28 @@
+MENU    Class 0
++       Constructors 0 get_constructors
++	"Methods" 0  get_member_func_nocdtor
++       "All Methods" 0 get_accessible_methods
++       "Inherited Methods" 2 get_inherited_methods
++	"Sub Classes" 0 get_sub_classes
++	"Super Classes" 4 get_super_classes
++       "Base Super Classes" 0 leaf_super
++       "Leaf Sub Classes"   0 leaf_sub
++       "All Super Classes" 7  closure_super
++       "All Sub Classes"   5  closure_sub
+
+MENU    Method 1
++       "Class"         0 get_class_of_method
++	"Sub Methods"   0 "get_method sub"
++	"Super Methods" 4 "get_method super"
++       "Base  Super Method" 0  leaf_super
++       "Leaf Sub Methods"   0 leaf_sub
++       "All Super Methods" 7  closure_super
++       "All Sub Methods"   5  closure_sub
++	 Overrides       1 method_overrides
++	 Overloads       0 method_overloads
++       "Where Called"   0 where_called
+
+SOURCE
+proc get_member_func_nocdtor args {
+	filter !cdtor [get_member_functions $args]
+}

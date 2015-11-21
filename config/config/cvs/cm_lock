@@ -1,0 +1,3 @@
+#!/bin/sh -f
+echo "Lock does not exist in CVS
+exit 0

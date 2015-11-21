@@ -1,0 +1,401 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+SUBJECT: A proposal for ParaPACKAGE
+
+
+	Several separate subsystems will be developed:
+
+1. Call graph extraction (5 -- 6 weeks),
+
+	This subsystem will take user application as the input
+and produce a representation of the directed graph of calls. A
+vertex in such graph will be a routine in the user application,
+and a directed edge will represent the call.
+
+	Architecture
+
+	ParaDEBUG debugging environment will be used to provide
+the interactive mode of "packaging". An interface will be
+developed to provide access to ParaPACKAGE functionality. As a
+part of such interface, there will be a way to specify user's
+executable, and other interactive opearations (the beginning of
+an application A(i), the end of an application A(i), etc.).
+ParaDEBUG application interface will be used to either start, or
+to attach to the existing executable, as well as for the other
+(internal) operations of setting breakpoints, performing "finish"
+operation, and obtaining the stack frame data. A robust symbol
+table management will be developed. The symbol table will be used
+to identify all functions in the executable, with their
+corresponding addresses, for the purpose of setting breakpoints,
+and identifying system (library) routines.
+
+	A) ParaDEBUG debugging environment (0-1 week)
+	
+	The advantages of using this debugging environment come
+from the interface nature of the subsystem. There is at least
+one "raw" (underlying) debugger available for each platform
+(operating system) that runs ParaSET. There is already a high-level
+application interface for obtaining necessary information.
+
+	The drawback is that symbol table management has to be
+handled by ParaPACKAGE (the similar way that mixed mode needs to
+provide foreign object addresses to the interpreter). The 
+performance of the initial setup of breakpoints per each function
+(without system, and library calls) will not be comparable to
+some other debugger dependent method. Also, the performance of the
+user application under the specified conditions of "break" and
+"continue" should be quantified. However, note that as the user
+process of packaging progresses, the all traversed functions need
+not be interrupted (the breakpoints will be removed).
+
+	B) Symbol table management (1 week)
+
+	The symbol table handler needs to provide access to
+addresses of all functions in the executable. In case of C++,
+the access to the demangled names is necessary. The demangled
+names will be used to find the corresponding functions in the
+ParaSET model (statically obtained information). The user is
+responsible to provide the compiler specific demangler, like
+"c++filt" (except for "gcc").
+
+	The user does not have to create the symbol table
+prior to invoking ParaPACKAGE. On the contrary, if there is
+no symbol table available, the one will be created in place
+(similar to shared libraries support for the mixed mode).
+
+	The first implementation of the handler for object
+code reading will be based on the utility "nm". The choice of
+database will be the internal "B+ tree" (the same data structure
+will be used to store the edges of the Call-Tree graph).
+
+	C) The interface to ParaDEBUG functionality (2 weeks)
+
+	An interface that uses ParaDEBUG application layer and
+interacts with the kernel of ParaPACKAGE will be developed. This
+interface will include the placement of "paraDebug_request"s of
+various kinds: setting breakpoints, obtaining frame information
+in the third format, evaluating expressions, starting a debugger
+session, halting the user program, resuming execution of the
+user program, etc.
+
+	This interface will also provide ParaPACKAGE with the
+status of the debugger session, as well as with the routines
+for debugger operations to the rest of the product (ParaPACKAGE).
+
+	D) The kernel of Call graph extraction (2 weeks)
+
+	This will be a part of the Call graph extraction that
+controls user interaction during packaging, graphical user
+interface for packaging, and direct control over the subsystems
+as described in A, B, and C. It is controlled by the kernel of
+ParaPACKAGE.
+
+	It provides functionality such as "start packaging",
+"end packaging", and "record an application". "record an
+application" moves the recorded data from the temporary place
+to a permanent storage (specified file). "record an application"
+implicitly calls "end packaging", where as "end packaging"
+allows breaks during the interactive process. Also, "record
+an application" calls "start packaging" after the succesfull
+recording. "start packaging" resets the start of recording.
+
+	Interrupting packaging, as well as quitting the process
+will be provided. After the succesfull extraction, the files
+that contain extracted information are made available to the
+kernel of ParaPACKAGE. One of the files will be automatically
+generated, and will contain information about the packaging
+session: names of extracted applications, time stamp, project
+description file (.pdf), and object index (symbol table). The
+file that is generated in such way constitutes a ParaPACKAGE
+session file (.psf).
+
+	An application interface on ".psf" files will be
+developed for the purpose of "editing" their elements. "editing"
+would include operations like: insert an application to a ".psf"
+file, remove an application from a ".psf" file, and move an
+application to another ".psf" file (the system will check if
+the ".psf" files are compatible).
+
+2. Call graph partition (8 -- 8+x weeks),
+
+	This subsystem will take the call graph specifications
+as the input, and produce the specified partition. The graphs
+will be intersected to produce a set of subsystems. The user can
+specify the degree of partitioning (see Figure 1).
+
+	(n = 3)
+
+		  [E] [F]         -level 2
+	[A]  [B]  [..C..]   [D]   -level 1
+	[---- SHARED (all) ---]   -level 0
+
+
+	Partitioned into: { A, B, E, F, D }
+
+
+	Figure 1
+
+	Architecture
+
+	A) Graphical user interface for the ".psf" files (2 weeks)
+
+	As a part of the initial partition, user will be
+presented with the list of available ParaPACKAGE sessions. Each
+session can be opened and examined. In addition, user will be able
+to graphically move, and merge different sessions that are
+compatible.
+
+	The user will be able to select only one session for
+partitioning. By default, the extraction will assume the 2-level 
+partition, as shown in Figure 1. However, it will be customizable.
+
+	B) Root finder for the specified application (1 week)
+
+	The root finder should be viewed as a pre-processor for the
+incomplete graph. The graph will be incomplete if the user attached
+to the running application, rather than ran it from within
+ParaPACKAGE (consequently, ParaDEBUG). The "attach" is a desirable
+mode of packaging initiation for complex (multi-process, large-scale)
+applications.
+
+	It will obtain necessary information about parents of the
+application roots from the static information in the model. The input
+will be a ".psf" file, and the output is absorbed by the such
+modified applications defined in the ".psf" file.
+
+	C) Initial data graph (1 week)
+
+	This part of the product will generate a data graph for
+the given application in a ParaPACKAGE session. This data partition
+is based on the static analysis (information in the model).
+
+	For each function call in the given application, information
+about the referenced data is recorded. This information is obtained
+from the corresponding ParaSET model. Note that no transitive closure
+on the data graph will be applied; it may result in the incorrect
+expansion of the call graph.
+
+	D) Call and Data graph closure (2 -- 2+x weeks)
+
+	The closure will guarantee that the information in the call
+graph as well as in the data graph is valid and complete.
+
+	The transitive closure on the existing call and the data graph
+will be performed (based on the static information in the model). The
+set A will denote the difference of vertices (functions) between such
+created graph, and the existing one (one that was extracted in the
+first place). If the set A is empty, then there is no need to compute
+the closure. Otherwise, the user will be consulted on input parameters
+to the iterative method of computing the closure.
+
+	a) User input (2 weeks)
+
+	The user will be presented with the list of functions each of
+which needs to be verified as reachable from the existing call graph.
+The user can edit this list in form of adding new elements, selecting
+the existing elements as reachable, and/or removing the specified
+elements. Adding new elements will provide support for such "C++"
+features as "inline" functions.
+
+	A function that represents the root of a suggested (packaged)
+application is presented to the user. Depending on its arguments, the
+user is given the option to either set the range for the root or to
+specify the set of discrete values. Note that if the root does not
+take any arguments, no iteration will be performed.
+
+	b) Iterations (x weeks)
+
+	A similar environment to that of the "Call graph extraction"
+is created. The root function and the functions in the set A (need to
+be verified) are selected to be interrupted (breakpoints). Depending
+on the application, the root is evaluated for different input values
+until either the all input values are exhausted or there are no more
+functions to be verified.
+
+	Note that information from some other tools could be used to
+make the graphs complete. This could be profilers, script generators,
+etc (e.g., X-runner log files; UNIX "gprof" profiler output).
+
+	The existing specification in the ".psf" file is updated with
+the newly acquired information.
+
+	E) The partition itself (2 weeks)
+
+	The partition will generate a subsystem graph of functional
+and data dependencies. The number of generated subsystems may be
+specified by the user (the degree of partitioning; see Figure 1).
+This part of the product will also generate description of each
+packaged application in terms of created subsystems.
+
+FLOW CONTROL: The subsystem "Call graph partition" could be considered
+	independent of other parts of ParaPACKAGE. The input to this
+	subsystem is a ".psf" file. The flow of control could be
+	viewed as a five-stage process (not a pipeline): A-B-C-[D-E].
+	However, at the stage (D) the user will be able to cancel
+	further processing because the task may be time-consuming. In
+	case of the canceled "Call and Data graph closure" the user
+	will also be able to force ParaPACKAGE to consider the current
+	state of the graph as valid and complete.
+
+3. Data structures and utilities (2 weeks)
+
+	The standard B+ tree will be implemented for the random
+access files. Partial, as well as the complete loading of the tree (to
+fast access memory) will be provided. This data structure will be used
+for the symbol table management, and for the storage of edges of the
+call graph.
+
+	Other general purpose data structures like arrays, and queues
+will be used from the existing "debug" libraries.
+
+4. The kernel of ParaPACKAGE (3.5 weeks)
+
+	The kernel will control interface to the outside world such
+as user interface, application interface of ParaPACKAGE, and manage
+various parts of the product (ParaPACKAGE).
+
+	Architecture
+
+	A) User interface (1 week)
+
+	There will be a set of menu items that will invoke "Package"
+(which will bring a dialog box that will assist user during the
+process of packaging), "Partition" (which will bring a dialog box
+that will assist user during the process of choosing the session to
+partition, editing of the selected session, and starting/suspending
+the partitioning itself), and "Report" (this option will provide a
+range of reports that could be generated: ascii description of the
+partition, an update of the ParaSET model, etc.).
+
+	B) Error handler (2.5 days)
+
+	The error handling will be similar to that of ParaDEBUG; each
+failure to process is accompanied by an error message. The messages
+are tagged, and the corresponding help context is available to the
+user. The format will be "<text of message> (PK.<t><n>)", where <t>
+can be a warning (W), an error (E), or a status (S) message.
+
+	C) Application interface to ParaPACKAGE (7 days)
+
+	An interface in form of high-level function calls that will
+provide external access to ParaPACKAGE functionality. The routines
+will allow process control of ParaPACKAGE subsystems: perform graph
+extraction, report available partitions, etc.
+
+	D) Globals for ParaPACKAGE and data definition (3 days)
+
+	The global functions and the needed data for the product will be
+defined here.
+
+5. Package report (2 weeks)
+
+	This subsytem will present the details of the repackaged
+application in the specified format (user readable, ParaSET internal,
+etc.).
+
+
+	SUMMARY
+	-------
+
+	ParaPACKAGE will physically be a part of ParaSET. Logically,
+there will be an application interface that does not require the
+various subsystems of ParaSET to be in the same executable. The
+interface will need READ access to ParaSET model, and access to
+ParaDEBUG functionality (application layer). Also, a part of ParaSET
+GUI building interface will be used.
+
+	Partial description of ParaPACKAGE invokation is described in
+the task 4.A ("Package", "Partition", and "Report"). One user can
+perform packaging process on various executables, and leave the actual
+partition control to somebody else (a product engineer). Unlike the
+partitioning process, the packaging does not require function-level
+knowledge of the system that is being partitioned. The "Report" feature
+presents the user with the results of packaging, as well as the option
+to export the information to the corresponding ParaSET model. The
+subsystem itself does not write to the model, it rather exports data
+in a recognized format to ParaSET.
+
+Projected Development Time
+--------------------------
+
+20.5 -- 21.5+x weeks, where "x" is the time of task 2.D.b, and needs to
+be determined. Depending on the selected method of performing iterations,
+as well as the interfacing with other tools, the value of "x" may be
+between 2 -- 4 weeks.
+
+
+Task Development Dependencies
+-----------------------------
+
+TASK 3 (pero)                         TASK 1.B (r|s)
+---------------                       ---------------
+--- 2 weeks ---                       --- 1 week ----
+---------------                       ---------------
+
+TASK 4.D (pero)
+---------------
+--- 3 days ----
+---------------
+
+TASK 4.B (pero)
+---------------
+--- 2.5 days --
+---------------
+
+TASK 4.C (pero)
+---------------
+--- 7 days ----
+---------------
+
+TASK 1.D (pero)    TASK 4.A (q)
+---------------    ---------------
+--- 2 weeks ---    --- 1 week ----
+---------------    ---------------
+
+TASK 1.C (pero)    TASK 2.A (q)       TASK 2.B (r)      TASK 2.C (s)
+---------------    ---------------    ---------------   ---------------
+--- 2 weeks ---    --- 2 weeks ---    --- 1 week ----   --- 1 week ----
+---------------    ---------------    ---------------   ---------------
+
+TASK 2.E (pero)    TASK 2.D.a (q)     TASK 2.D.b (r)    TASK 5
+---------------    ---------------    ---------------   ---------------
+--- 2 weeks ---    --- 2 weeks ---    --- x weeks ---   --- 2 weeks ---
+---------------    ---------------    ...............   ---------------
+                                      ---------------
+
+NOTE: It is desirable that resource "q" is strong in the area of the
+      building GUI by using internal ParaSET interfaces; it is also
+      desirable that one of the resources "r", or "s" is familiar with
+      the interface to ParaSET model.
+
+Parallelized Development Time
+-----------------------------
+
+10.5 -- 11.5+(x-2) weeks, where "x" is the time of task 2.D.b. This
+projection does not include lost time due to integration of software at
+various stages, and communications time (should be around +10%).

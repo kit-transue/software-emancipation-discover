@@ -1,0 +1,44 @@
+all:  client_object.o libdiapi.sl browser_members.i
+	echo 'Made all objects.'
+
+obj/api: obj/api.o obj/api_util.o
+	cc $(CFLAGS) -o obj/api obj/api.o obj/api_util.o
+
+obj/api.o: $(SRC)/api.l
+	lex -t $(SRC)/api.l > obj/api.c
+	cc $(CFLAGS) -c obj/api.c -o obj/api.o
+
+obj/api_util.o: $(SRC)/api_util.c
+	cc $(CFLAGS) -c $(SRC)/api_util.c -o obj/api_util.o
+
+client_object.o: obj/api $(SRC)/SPEC
+	obj/api <$(SRC)/SPEC 
+	mv client.c obj/client.c
+	rm -f server.c
+	cc $(CFLAGS) -c -o obj/client.o obj/client.c 
+	cc $(CFLAGS) -c -o obj/comm.o $(SRC)/DI_communication.c 
+	ld -r -o client_object.o obj/comm.o obj/client.o 
+	
+libdiapi.sl: obj/api $(SRC)/SPEC $(SRC)/extension.c
+	obj/api <$(SRC)/SPEC 
+	cat  server.c $(SRC)/extension.c > obj/server.c
+	rm -f server.c
+	rm -f client.c
+	cc $(CFLAGS) -c +z -o obj/server.o obj/server.c 
+	make -f $(SRC)/Makefile.hp700 -k -s errorfree 
+	mv server.o obj/server.o
+	ld -b -o libdiapi.sl obj/server.o
+
+clean:
+	rm -rf ./*
+
+browser_members.i: $(SRC)/SPEC
+	$(SRC)/genmembers.sh <$(SRC)/SPEC  > browser_members.i	
+
+errorfree:
+	cc $(CFLAGS) -c +z obj/server.c 
+
+
+
+
+

@@ -1,0 +1,90 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+October 30, 2000:  This file is superseded by 
+/paraset/data/images/README.TXT.  Go there instead.
+
+How to update the splash screen:
+
+As of today, we have  new procedure for updating splash screens:
+
+This will be a pain in the ass, but will hopefully outlive gala and our usage of Galaxy
+
+
+Here's how to do it:
+1) check out the file /paraset/data/images/splash.psd
+2) find a machine with PhotoShop 3.0 or higher; use that to edit the image.
+3) The image currently consists of roughly 22 layers. The two that get changed most often are the
+DateLayer and the 
+VersionLayer
+4) To change one of these,  first select it (read the Help on Layers if you don't know how to do this).  Using the lasso tool lasso the offending text
+5) Using the Type tool, type in new text.  Note that the font for the Version number is Garamond (30 pt, I believe).
+6) Save the file.
+
+Now here is where the fun begins:
+The intersection between the set of image formats that PhotoShop will export, and those that Galaxy's VRE will import is the null set.  Consequently you will need to use an intermediate graphics program--e.g. Corel Photo-Paint.
+
+7) File...Save A Copy as--pick EPS (or Tiff)
+8) open the .eps file in Photo-Paint  Choose Image__Convert
+pick 8 bit.
+pick custom
+pick 16 colors.
+save it as 
+splash16.bmp
+repeat with 65536 colors.
+save it as
+splash65.bmp
+
+Now you should have
+two bitmapped images.
+
+To import them into the VRE:
+open the relevent vr file (/paraset/src/clients/splash/src/splash.vr
+or /paraset/src/clients/gala/src/gala.vr)
+find the dialog with the splash screen
+open the properties submenu of that dialog by clicking on the little triangle.
+go to ObjectList--open it.
+Inside you will find an image object labelled '0'
+open it.
+Using the Image menu, import the new splash screen.
+Save the VR file.
+you are now done!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

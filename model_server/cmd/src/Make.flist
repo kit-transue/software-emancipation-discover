@@ -1,0 +1,35 @@
+YLPPROOTS= \
+	cmd_regression
+
+
+CROOTS=\
+
+
+CPROOTS=\
+    assist.h \
+    cmd \
+    cmd.h \
+    cmd_cfe \
+    cmd_cfm \
+    cmd_cft \
+    cmd_cfu \
+    cmd_enums.h \
+    cmd_error \
+    cmd_exec \
+    cmd_flags \
+    cmd_gen \
+    cmd_group \
+    cmd_interp \
+    cmd_look_up \
+    cmd_save \
+    cmd_shell \
+    cmd_shell_dialog \
+    cmd_shell_menu \
+    cmd_ste \
+    cmd_string \
+    cmd_ui \
+    cmd_validate \
+    exec_own_func \
+    thunks \
+
+

@@ -1,0 +1,419 @@
+#!/bin/sh
+#
+# External references
+#
+# STATUS	system status
+# projList	List of projects to be built
+# pdfNameList	List of PDF files for these projects
+#
+
+. `util.sh -which`
+. `modelutil.sh -which`
+
+
+initialize ()
+{
+	if [ -z "$PSETHOME" ] ; then
+	  PSETHOME=`discover -where`
+	  export PSETHOME
+	fi
+
+	# create list of directories to check in when we're done:
+	PSET_CM_TOCI=${TMPDIR:-/usr/tmp}/toCheckin.$$
+	# truncate the checkin list
+	echo > $PSET_CM_TOCI
+	# export PSET_CM_TOCI for use by cm_create_internal:
+	export PSET_CM_TOCI
+
+	# export configurator system for cm scripts called, but not via discover:
+	PSETCFG="$PSETHOME/config/clearcase"
+	export PSETCFG
+}
+
+cleanup ()
+{
+	# checkin all directories checked out or created in the process:
+	for x in `cat $PSET_CM_TOCI` ; do
+		cleartool ci -nc $x
+	done
+	rm $PSET_CM_TOCI
+}
+
+run_in_background ()
+{
+	# Run command $1 in background, if background operation is desired.
+	# This indirection is desirable should the user want to limit the
+	# number of background processes.  This function can monitor the number
+	# of active children, and wait if necessary for some children to finish
+	# before starting new children
+
+	#eval $1 &
+	eval $1
+}
+
+# make a clearcase directory out of a view-private one:
+# has the side-effect of checking in an element if it isn't already
+mkccdir () {
+	# $1 is the directory to be converted
+	# must be passed as absolute path, so we can move up to the root using 'dirname'
+	MCDTarget=$1
+	MCDCurrent=$MCDTarget
+
+	# because this function can rearrange the directory structure, it should be
+	# particularly careful about error diagnosis and recovery!
+
+	# check arguments
+	if echo $1 | egrep -v '^/' > /dev/null
+	then
+		ERROR "mkccdir called with non-absolute path $MCDTarget"
+		exit 1
+	fi
+
+	# move up until we find a clearcase element:
+	while cleartool describe -s $MCDCurrent | grep -v @@ > /dev/null ; do
+		MCDCurrent=`dirname $MCDCurrent`
+		if [ "$MCDCurrent" = / ] ; then
+			echo "Attempted to make directory element $MCDTarget outside of vob"
+			return 1
+		fi
+	done
+
+	# move back down to the target:
+	while [ $MCDCurrent != $MCDTarget ] ; do
+		MCDNew=`echo $MCDTarget | sed "s@\($MCDCurrent/[^/]*\).*@\1@"`
+		checkout $MCDCurrent
+		if [ $? -ne 0 ]
+		then
+			ERROR "mkccdir: Checkout of $MCDCurrent failed.  Cannot make $MCDTarget into element"
+			return 1
+		fi
+		# I'd like to do a test -e, but it's an SVR5 thing, and won't work on BSD
+		if [ -r $MCDCurrent/temp$$ ]
+		then
+			ERROR "mkccdir: $MCDCurrent/temp$$ already exists.  Something has probably gone wrong in this directory earlier.  Aborting attempt to make $MCDTarget into element rather than making matters worse."
+			return 1;
+		fi
+		mv $MCDNew $MCDCurrent/temp$$
+		if [ $? -ne 0 ]
+		then
+			ERROR "mkccdir: Could not rename view-private directory $MCDNew.  Aborting attempt to create directory element $MCDTarget."
+			return 1
+		fi
+		# make sure the private directory wasn't eclipsing a real directory:
+		if [ -r $MCDNew ]
+		then
+			if [ -d $MCDNew ]
+			then
+				checkout $MCDNew
+			else
+				ERROR "mkccdir: directory $MCDNew seems to have eclipsed something unknown!  It cannot be made into an element.  Its original contents can be found in $MCDCurrent/temp$$."
+				return 1
+			fi
+		else
+			cleartool mkdir -nc $MCDNew
+			if [ $? -ne 0 ] 
+			then
+				ERROR "mkccdir: could not create directory element $MCDNew.  The contents of $MCDCurrent/temp$$ should be placed in $MCDNew after the error is corrected."
+				return 1
+			fi
+			cleartool protect -chmod a+wrx $MCDNew
+		fi
+		#mv $MCDCurrent/temp$$/* $MCDNew
+		# "mv x/* y" fails on a large number of files in x:
+		for x in `ls $MCDCurrent/temp$$`; do
+			mv $MCDCurrent/temp$$/$x $MCDNew
+		done
+		rmdir $MCDCurrent/temp$$
+		echo $MCDNew >> $PSET_CM_TOCI
+		MCDCurrent=$MCDNew
+	done
+}
+
+checkout () {
+	# $1 is the item to check out.
+	# if it's not checked out, do so and add it to the list of files to checkin
+	# if it is checked out, don't do anything (and don't complain)
+	# usually used for directories to prevent co/ci thrashing
+	LOCALRET=0
+	if cleartool describe -s $1 | grep -v CHECKEDOUT > /dev/null ; then
+		echo $1 >> $PSET_CM_TOCI
+		cleartool co -nc $1
+		LOCALRET=$?
+	fi
+	return $LOCALRET
+}
+
+uncheckout_removed_files () {
+	# stdin contains file/pset pairs of psets that are "checkedout but removed".
+	# uncheck them out so the view is clean
+	while read cm_workfile cm_c_file
+	do
+		if [ -f $cm_workfile ] ; then
+			echo "hmm"
+			# error: this file thought to be removed, but now it exists?
+		else
+			if (cleartool describe -s $cm_workfile 2> /dev/null | grep @@) ;
+		 	then
+				cleartool unco -rm $cm_workfile
+			#else
+				# surprising error: thought this was an element!
+			fi
+		fi
+	done
+}
+
+
+makeMapFilesForProj () {
+	# $1 is project to build
+	# $2 is pdf that contains this project
+	# also uses lspriv maps to sort into required actions
+	toCheckInProjName=$1
+	pdfFile=$2
+
+	LOG "Creating pdf map for project $toCheckInProjName"
+	BNAME=`echo /$toCheckInProjName | tr / _`
+	PDFMAP_TMP=$PDFMAP_EXISTS/$BNAME.pdfmap$$
+	# this PDF_MAP is used in following line to create psets, but also when saving pmods!
+	discover -batch -pdf $pdfFile  -pdf_prt /$toCheckInProjName 2> $PDFMAP_TMP.full
+
+	# MODULES are only pset files.  This isn't used for pmods.
+	# Create file containing source/pset pairs, sorted by pset name (important for joins)
+	grep 'MODULE:' $PDFMAP_TMP.full | tr "()" "  " | awk '{ print $3, $5 }' | sort +1 > $PDFMAP_TMP.psets
+
+	echo "Calculating targets for pset checkin of project $toCheckInProjName"
+	
+	# first element is source file; second is pset file.  Sorted by pset.
+
+	join -j1 2 $PDFMAP_TMP.psets $PDFMAP_EXISTS/lspriv_co      > $PDFMAP_TMP.lspriv_co
+	join -j1 2 $PDFMAP_TMP.psets $PDFMAP_EXISTS/lspriv_corm    > $PDFMAP_TMP.lspriv_corm
+	join -j1 2 $PDFMAP_TMP.psets $PDFMAP_EXISTS/lspriv_nonelem > $PDFMAP_TMP.lspriv_nonelem
+}
+
+
+checkin_pmods ()
+{
+	# $1 is pdf_prt map file output
+	PDFMAP=$1
+
+	grep 'PROJECT:' $PDFMAP | tr "()" "  " | awk '{ print $5 }' | 
+	while read line
+		do
+		sym_name="$line.sym"
+		ind_name="$line.ind"
+		lin_name="$line.lin"
+		dfa_name="$line.dfa"
+		prj_name="$line.prj"
+		met_name="$line.met"
+	        root_prj_name=`dirname $line`/`basename $line | awk -F. '{print $1 ".pmod.prj"}'`	
+		if [ "$root_prj_name" = "$prj_name" -o ! -w "$root_prj_name" ]; then root_prj_name=""; fi
+		if [ -w "$sym_name" ] ; then
+			if [ -w "$ind_name" ] ; then
+				aux_line=`basename $line`
+				proj=`echo $aux_line | sed 's/.pmod.*$//' | tr '.' '/' | sed 's-^-/-'`
+				submit_bug=0
+	                        /bin/csh -f $PSETHOME/bin/ptest_checkpmod $proj $1
+				if [ $? -ne 0 ] ; then
+	                        	cleartool unco -keep $sym_name
+	                        	cleartool unco -keep $ind_name
+					if [ -w "$prj_name" ]; then cleartool unco -keep $prj_name; fi
+					if [ -w "$met_name" ]; then cleartool unco -keep $met_name; fi
+					echo " uncheckout $pmod , pmod corrupt"
+	            		else
+					for pmod in $sym_name $ind_name $prj_name $root_prj_name $met_name $lin_name $dfa_name
+					do
+						if [ $submit_bug -ne 0 ] ; then
+							continue
+						fi
+						version="`cleartool ls -short $pmod | sed -e '/.*@@.*/!d' -e 's%.*@@%%'`"
+						echo $version
+						if [ "$version" = "" ]; then
+							# This is a new pmod and needs mkelem done to it
+	      						dir="`dirname $pmod`"
+							# If the directory isn't in clearcase, put it in:
+							if (cleartool describe -s $dir | grep -v @@) ; then
+								mkccdir $dir
+							fi
+	      						checkout $dir
+	      						cleartool mkelem -ci -nc -eltype compressed_file $pmod
+						else
+		    					# this points to the previous version (.../LATEST)
+		    					prevver="`dirname $version`/LATEST"
+							submit_bug=0
+		    					# see if the pmod has changed
+		    					cmp -s $pmod $pmod@@$prevver
+		    					if [ $? -ne 0 ]; then
+		    						cleartool ci -nc $pmod
+								if [ $? -ne 0 ] ; then
+									submit_bug=1
+								fi
+								echo " checkin $pmod"
+		  					else
+		    						cleartool unco -rm $pmod
+								echo " uncheckout $pmod"
+		  					fi
+						fi
+						# if ind checkin failed, roll back the sym ci:
+						if [ $submit_bug -ne 0 ]; then
+							if [ $pmod = $ind_name ] ; then
+								cleartool rmver -force $sym_name
+							        if [ -f "$prj_name" ]; then cleartool rmver -force $prj_name; fi
+							        if [ -f "$met_name" ]; then cleartool rmver -force $met_name; fi
+							fi
+						fi
+	 	  			done
+					submit_bug=0
+				fi
+			fi
+		fi	
+	done
+}
+
+	
+checkin_elem_psets ()
+{
+	# takes stream of lines, each with two columns: first is pset; second is source
+	echo "Starting checkin for checkedout pset elements"
+	while read cm_workfile cm_c_file
+		do
+		# check to see if file exists:
+		if [ -f $cm_workfile ]; then
+			export cm_c_file
+			export cm_workfile
+			$PSETCFG/cm_put_pset
+		else  # this is most unexpected.  These files should be ready for checkin
+			ERROR "Could not find file $cm_workfile.  At the start of checkin, it was an existing checkedout file!"
+			exit 1;
+		fi
+	done
+}
+
+checkin_new_psets ()
+{
+	# takes stream of lines, each with two columns: first is pset; second is source
+	echo "Starting checkin for view private objects"
+	
+	while read cm_workfile cm_c_file
+		do
+		# check to see if file exists:
+		if [ -f $cm_workfile ]; then
+			# make sure this directory is in clearcase
+			dir=`dirname $cm_workfile`
+			if (cleartool describe -s $dir | grep -v @@) ; then
+				# this is really an error condition--should have been made in the non-parallel section!
+				mkccdir $dir
+			fi
+			export cm_c_file
+			export cm_workfile
+			$PSETCFG/cm_put_pset
+		else  # pset may be element, removed because of parse errors:
+			ERROR "Could not find file $cm_workfile.  At the start of checkin, it was an existing view private file!"
+			exit 1;
+		fi
+	done
+}
+
+
+cm_PutModel ()
+{
+	# prepare maps:
+	# This will create list of files for each project, split into those
+	# that are view-private, those that are checked out.  This makes
+	# checkin more efficient.
+
+	# create cache of which files are view-private, which are checkedout, etc:
+	# perhaps tmp is not the best place to put this file--should discriminate based on $$?
+	PDFMAP_EXISTS="$ADMINDIR/tmp"
+	export PDFMAP_EXISTS
+
+	# sort is important, since we're going to do joins later....
+	cleartool lspriv                                        | sort             > $PDFMAP_EXISTS/lspriv
+	grep "\[checkedout\]" $PDFMAP_EXISTS/lspriv             | awk '{print $1}' > $PDFMAP_EXISTS/lspriv_co
+	grep "\[checkedout but removed\]" $PDFMAP_EXISTS/lspriv | awk '{print $1}' > $PDFMAP_EXISTS/lspriv_corm
+	grep -v "\[checkedout" $PDFMAP_EXISTS/lspriv            | awk '{print $1}' > $PDFMAP_EXISTS/lspriv_nonelem
+
+	# simply issue a familiar diagnostic:
+	toCheckInProjNameList=`ProjectList2ProjNameList`
+	LOG "CHECKIN PROJECT LIST: $toCheckInProjNameList"
+
+	# now create a project map for each of the projects:
+	toCheckInProjHostList=`ProjectList2HostList`
+	for  toCheckInHostName in $toCheckInProjHostList
+	do
+		projHost=$toCheckInHostName;
+
+		toCheckInProjNameList=`ProjectList2ProjNameList`
+		for toCheckInProjName in $toCheckInProjNameList
+		do
+			# figure out which pdf this project lives in...
+			if [ "`echo $pdfNameList | wc -w`" -eq 1 ]; then
+				pdfFile=$pdfNameList
+			else
+				pdfFile=`grep -l $toCheckInProjName $pdfNameList`
+			fi
+
+			# ...and generate a file list for it:
+			if [ "$pdfFile" != "" ]
+			then
+				makeMapFilesForProj $toCheckInProjName $pdfFile
+			else
+				FATAL "cm_PutModel: project ($toCheckInProjName) can not be found in PDF file(s) ($pdfNameList)"
+			fi
+		done
+	done
+
+
+	# REAL CHECKING IN BEGINS HERE!
+
+	# Start checking in all those files that don't require directory creation:
+	# Do this in a project-parallel basis:
+	for projFileList in $PDFMAP_EXISTS/*.pdfmap$$.lspriv_co
+	do
+		LOG "Starting parallel checkin of checked out elements using $projFileList."
+		run_in_background "cat $projFileList  | checkin_elem_psets"
+	done
+
+	# while the safe parallel stuff is going on, do the sequential pset stuff:
+	# checkout/make all pset directories that will require element addition:
+	LOG "Creating/checking out directories for new pset elements"
+	# nasty sed expression is basically 'dirname $1', if you forgive the liberty with syntax
+	for dirName in `cat $PDFMAP_EXISTS/*.pdfmap$$.lspriv_nonelem | sed 's/\([^ ]*\)\/[^ \/]*.*/\1/' | sort | uniq`
+	do
+		mkccdir $dirName
+	done
+	LOG "Finished creating/checking out directories for new pset elements"
+
+	# Now that non-parallel work is done, checkin/mkelem files on a project-parallel basis:
+	for  projFileList in $PDFMAP_EXISTS/*.pdfmap$$.lspriv_nonelem
+	do
+		LOG "Starting parallel creation of new psets in $projFileList."
+		run_in_background "cat $projFileList | checkin_new_psets $actionLog"
+	done
+
+	# uncheckout files that seem to have been removed:
+	for  projFileList in $PDFMAP_EXISTS/*.pdfmap$$.lspriv_corm
+	do
+		LOG "Starting parallel unco of removed psets in $projFileList."
+		run_in_background "cat $projFileList | uncheckout_removed_files $actionLog"
+	done
+
+	# and finally wrap up the pmods sequentially:
+	LOG "Checking in pmod directories"
+	for  projFileList in $PDFMAP_EXISTS/*.pdfmap$$.full
+	do
+		checkin_pmods $projFileList
+	done
+	LOG "Finished checking in pmod directories"
+
+	# wait for all processes to finish before continuing
+	wait
+
+	# then clean up the files we've left:
+#	rm -f $PDFMAP_EXISTS/*.pdfmap$$.*
+}
+
+initialize
+cm_PutModel
+cleanup
+LOG "cm_PutModel finished"
+exit $STATUS
+

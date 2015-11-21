@@ -1,0 +1,16 @@
+*subsysPrefs.NumberOfSubsystems:2
+*subsysPrefs.Function call:10
+*subsysPrefs.Data reference:10
+*subsysPrefs.Instance of:10
+*subsysPrefs.Argument type:10
+*subsysPrefs.Return type:10
+*subsysPrefs.Contains:10
+*subsysPrefs.Friend of:15
+*subsysPrefs.Subclass of:10
+*subsysPrefs.Member of:15
+*subsysPrefs.File Name Prefix:10
+*subsysPrefs.Logical Name Level:10
+*subsysPrefs.FileName_Prefix_Count:0
+*subsysPrefs.LogicName_Level_Count:0
+*subsysPrefs.Threshold:15
+*subsysPrefs.ExistingSubsystems:Ignore Membership

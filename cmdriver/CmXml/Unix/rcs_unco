@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+#  Undo Check Out file, which resides in RCS.
+#
+#  Arguments:
+#    $1 - file
+#
+
+
+# Set RCSHOME environment variable if it is not exist.
+# It is directory where RCS's executables are resided.
+if [ -z "${RCSHOME}" ] ; then
+  RCSHOME=${PSETHOME}/bin
+  export RCSHOME
+fi
+
+
+# Undo check out the given file.
+${RCSHOME}/rcs -I -u "$1"
+
+
+# Save the exit code. We will return it from tsis script.
+res=$?
+
+
+# Remove private copy.
+rm "$1"
+
+
+# Propagate error code from RCS's executable to our client.
+exit $res
+
+# END OF FILE.
+

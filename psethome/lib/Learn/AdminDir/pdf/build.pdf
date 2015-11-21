@@ -1,0 +1,52 @@
+(1)_shared : $sharedSrcRoot/(extract) [[ W ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(xip) [[ W ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(ttt) [[ W ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(package) [[ W ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(xcalentool) [[ W ]] <-> /(1) {
+  * {
+    *.c *.cursor *.el *.h *.icon *.xbm
+  }
+}
+
+(1) : $PSETHOME/lib/Learn/src/(sysinclude) [[ W ]] <-> /(1) {
+  *
+  * {
+    *
+    * {
+      *
+    }
+  }
+}
+
+__ruleShared : $sharedSrcRoot <-> /__ruleShared {
+  $sharedSrcRoot/(1)/(2)	: $sharedSrcRoot/(**)/(*)/*.([chCH])/%/.make
+    => "$ADMINDIR/bin/get_flags (1) (3)"
+
+  ""	: $sharedSrcRoot/(**)/(src)/(*).([chCH])/%/.pset	=> $sharedModelRoot/pset/(1)/(2)/(3).(4).pset
+  ""	: $sharedSrcRoot/(**)/(*).([chCH])/%/.pset		=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  ""	: $PSETHOME/lib/Learn/src/(**)/(*).([chCH])/%/.pset	=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  ""	: $sharedSrcRoot/(**)/(*).(cursor|el|icon|xbm)/%/.pset	=> $sharedModelRoot/pset/(1)/(2).(3).pset
+
+  ""	: $sharedSrcRoot/(**).pmod/%/.pmoddir			=> $sharedModelRoot/pmod/(1).pmod
+  ""	: $PSETHOME/lib/Learn/src/(**).pmod/%/.pmoddir		=> $sharedModelRoot/pmod/(1).pmod
+}

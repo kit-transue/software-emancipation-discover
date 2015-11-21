@@ -1,0 +1,21 @@
+#!/bin/sh 
+tmpdifffile="${TMPDIR:=/usr/tmp}/cm_diff.$$"
+
+# perform diff 
+tmptextfile="${TMPDIR:=/usr/tmp}/cm_file.$$"		# Temporary file
+get -p -r$cm_version $cm_revision_file > $tmptextfile 2>/dev/null 	# Extract the specified rev file
+diff $cm_workfile $tmptextfile 2>&1 > $tmpdifffile	# Do the diff
+rm $tmptextfile						# Remove temporary rev file
+
+lines="`wc -l $tmpdifffile`"
+cat $tmpdifffile
+if [ "$lines" -lt 3 ]; then
+  echo "No differences."
+  exitstatus="0"
+else
+  exitstatus="1"
+fi
+
+rm $tmpdifffile
+
+exit $exitstatus

@@ -1,0 +1,22 @@
+<Para <PgfTag `troff1'>
+	<ParaLine # Begin Para's ParaLines.
+	<Font <FFamily `Times'> <FSize 10> <FPlain Yes>>
+	<String `$E: $A'>
+	<Char HardReturn>><ParaLine
+	> # End Paraline.
+> # End Para.
+<Para <PgfTag `troff2'>
+	<ParaLine # Begin Para's ParaLines.
+	<Font <FFamily `Times'> <FSize 10> <FPlain Yes>>
+	<String `$T'>
+	<Font <FSize 12> <FBold Yes>>
+	<String `$N'>
+	<Font <FSize 10> <FPlain Yes>>
+	<String `$O'>
+	<Char HardReturn>><ParaLine
+	<Font <FSize 8>>
+	<String `$[F'>
+	<Font <FSize 10>>
+	<Char HardReturn>><ParaLine
+	> # End Paraline.
+> # End Para.

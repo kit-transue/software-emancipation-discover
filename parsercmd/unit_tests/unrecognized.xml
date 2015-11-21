@@ -1,0 +1,31 @@
+<!-- Test of:
+	unrecognized="1"
+	unrecognized="0"
+	translation blocks
+-->
+<!-- Try with:
+        x.c -one -nine -seven -three -uone -five -three -seven -utwo -one -nine
+     Result is:
+        one one two three three four -uone five -utwo six seven seven eight nine nine
+-->
+<cmdline nameintro="-">
+ <translate unrecognized="0">
+  <option name="one" noarg="1">one</option>
+ </translate>
+two
+ <translate>
+  <option name="three" noarg="1">three</option>
+ </translate>
+four
+ <translate unrecognized="1">
+  <option name="five" noarg="1">five</option>
+ </translate>
+six
+ <translate unrecognized="0">
+  <option name="seven" noarg="1">seven</option>
+ </translate>
+eight
+ <translate>
+  <option name="nine" noarg="1">nine</option>
+ </translate>
+</cmdline>

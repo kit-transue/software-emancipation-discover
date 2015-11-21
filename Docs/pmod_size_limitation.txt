@@ -1,0 +1,204 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Subject: Addressing pmod file size limitation.
+Prepared by: Denis Peleshchuk
+Date: 7/9/98
+
+16MB limitation is caused by the fact that currently only 3 bytes of Link
+class (dd/include/Link.h) are used to store offset inside the pmod (the 
+other byte is used to store direction - 1 bit, and type of link - 7 bits).
+
+The simple solution of adding one more byte to Link class is the easiest to
+implement, but not very efficient because it would cause average pmod size
+to increase by almost 25%. 
+
+There is one more serious flaw in the current design of pmod's. Because  
+links and symbols are stored in the same pmod, inserting new links causes 
+fragmentation and almost every time a new link needs to be added, an lt_next 
+link is needed as well. lt_next link is not used to store any useful 
+information, but rather to simply point to the location of the next link for 
+the same symbol. Ideally, all the links for the same symbol should follow 
+each other, but with the current structure it is not possible because symbols 
+cannot be easily moved inside pmod. Effectivley, every link takes not 4 bytes,
+but 8 bytes right now.
+
+A simple example demonstrates this problem:
+
+Suppose here is what we have in pmod.sym at some moment in time:
+		 -----------
+		|  Symbol1  |
+		 -----------
+		| LinkFor1_1| 
+		 -----------
+		| last_link |
+		 -----------
+		|  Symbol2  |
+		 -----------
+		| LinkFor2_1|
+		 ----------- 
+		| last_link |
+		 -----------
+
+If now we want to add a new link for Symbol1, we cannot add it after 
+LinkFor1_1 because it would change offsets to Symbol2. Instead, we have
+to add it at the end:
+		 -----------
+		|  Symbol1  |
+		 -----------
+		| LinkFor1_1| 
+		 -----------
+		|  lt_next  | ---
+		 -----------	 |
+		|  Symbol2  |	 |
+		 -----------	 |
+		| LinkFor2_1|	 |
+		 ----------- 	 |
+		| last_link |	 |
+		 -----------	 |
+		| LinkFor1_2|<---
+		 -----------
+		| last_link |
+		 -----------
+
+After making some tests on Discover model, we found that almost 50% of all
+links in pmod.sym are these lt_next links. Taking into concideration that
+pmod's have many more links than symbols, we could save about 40% by simply
+getting rid of these links. It would also speed up the process of finding
+links in pmod if links for one symbol followed each other without using
+lt_next links.
+
+Alex Harlap suggested the following solution. In stead of having pmod.ind
+and pmod.sym, we are going to have pmod.sym to store symbols and pmod.lnk
+to store links. All the links for one symbol will follow each other inside
+pmod.lnk. Instead of storing an offset to a symbol, a link is going to
+store an index into array of symbols inside pmod.sym.
+
+The size of Link class is going to stay the same: 4 bytes. By using 1 byte
+for link type, we have 3 bytes left to store an index of a symbol. Thus we
+can address 16,777,216 symbols which should be more than enough. For 
+comparison, our project for aset contains 32,427 symbols.
+
+The size of xrefSymbol class is going to be increased a little to store some
+additional information, but the total pmod.sym + pmod.lnk size will be more
+than 30% less then old pmod size because of removing lt_next links and
+considering that pmods tipically have many more links than symbols.
+
+Here are exact numbers for existing aset.pmod.sym:
+
+                        Count           Size
+Symbols                 32427           921783
+Links                   856760          3427040
+Normal links            434940          1739760
+Jump links              389393          1557572
+Last links              32427           129708
+Total                                   4348823
+
+The size of every symbol will increase by 6 bytes, so the size of all symbols
+(or the size of new pmod.sym) will be 921,783 + 6 * 32,427 = 1,116,345 bytes.
+Since we get rid of all jump links, we save 1,557,572 bytes. The total size
+of links in pmod.lnk will be 3,427,040 - 1,557,572 = 1,869,468 bytes. The
+size of pmod.sym + pmod.lnk will be 2,985,813 bytes or about 69% of currect
+pmod.sym size.
+
+Below are basic declarations for new xrefSymbol and Link classes:
+
+class xrefSymbol {
+  unsigned char flags_byte; // is_def, is_static, has_def_file
+
+  // unsigned int attributes : 3; 
+  unsigned char attr_byte_0;
+  unsigned char attr_byte_1;
+  unsigned char attr_byte_2;
+
+  // unsigned int index : 3; index in array of symbols (in pmod.sym)
+  unsigned char index_byte_0;
+  unsigned char index_byte_1;
+  unsigned char index_byte_2;
+
+  // unsigned int offset_to_start_link; in pmod.lnk
+  unsigned char link_byte_O;
+  unsigned char link_byte_1;
+  unsigned char link_byte_2;
+  unsigned char link_byte_3;
+
+  unsigned char kind;
+
+  char symbol_name[5];
+};
+
+class Link {
+
+  unsigned char link_index_byte_0;// lt;
+
+  // unsigned int index : 3; index in array of symbols (in pmod.sym)
+  unsigned char link_index_byte_1;
+  unsigned char link_index_byte_2;
+  unsigned char link_index_byte_3;
+}
+
+xrefSymbol class stores an offset to the first link for a particular symbol 
+inside pmod.lnk. By using 4 bytes, we can address 4GB. Thus we have two 
+limitations:
+
+Total number of links: 4GB/4B = 1G > 1,000,000,000
+Total number of symbols: 16MB = 16,777,216
+
+Again, comparing it to the number we have for aset pmod: about 32000 symbols 
+and about 430,000 links, this should be more than enough.
+
+Major classes affected by this change: xrefSymbol, XrefTable, Link. 
+
+From ~aharlap/assorted/pmod_limitatins.txt:
+
+  At the time of loading pmod array of structures will be created :
+ 
+  struct Index {
+    int sym_offset; // offset of symbol in pmod.sym file
+    genArrOf(Link) * new_links; // initialized to zero;
+  };
+
+  At same time hashtable of symbols (name - key) will be created.
+
+  New symbols will be inserted in pmod.sym
+
+  New links, created by modelbuild, will be inserted in array of new_links.
+  They will be dumped into pmod.lnk periodically.
+  Such way will eliminate "jump" links.
+
+
+
+
+
+
+
+
+
+
+
+
+

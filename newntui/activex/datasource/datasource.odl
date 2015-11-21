@@ -1,0 +1,76 @@
+// DataSource.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (DataSource.tlb) that will become a resource in
+// DataSource.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(077B20DB-0934-11D2-AEE6-00A0C9B71DC4), version(1.0),
+  helpstring("DataSource OLE Control module"), control ]
+library DATASOURCELib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CDataSourceCtrl
+
+	[ uuid(077B20DC-0934-11D2-AEE6-00A0C9B71DC4),
+	  helpstring("Dispatch interface for DataSource Control"), hidden ]
+	dispinterface _DDataSource
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CDataSourceCtrl)
+			[id(1)] boolean ServerLock;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CDataSourceCtrl)
+			[id(2)] BSTR AccessSync(BSTR* command);
+			[id(3)] BSTR AccessOutput(BSTR* query);
+			[id(4)] BSTR AccessDish(BSTR* query);
+			[id(5)] void SetSource(BSTR name, boolean alone);
+			[id(6)] void AcceptNotification(BSTR resStr);
+			[id(7)] void RejectNotification();
+			[id(8)] boolean IsServerBusy();
+			[id(9)] boolean IsConnectionLost();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CDataSourceCtrl
+
+	[ uuid(077B20DD-0934-11D2-AEE6-00A0C9B71DC4),
+	  helpstring("Event interface for DataSource Control") ]
+	dispinterface _DDataSourceEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CDataSourceCtrl)
+			[id(1)] void ServerNotification(BSTR str);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CDataSourceCtrl
+
+	[ uuid(7CA41F77-091C-11D2-AEE6-00A0C9B71DC4),
+	  helpstring("DataSource Control"), control ]
+	coclass DataSource
+	{
+		[default] dispinterface _DDataSource;
+		[default, source] dispinterface _DDataSourceEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

@@ -1,0 +1,43 @@
+How To Apply a Patch from SET to Your Discover
+==============================================
+
+1. Look into the Discover distribution you want to patch. Find the README file.
+   For Example, if you want to patch the $PSETHOME directory, look for the
+   $PSETHOME/README file. 
+
+2. If you don't have this file. Your patch level is base (or 00). 
+   If you see the file, go to the bottom of the README file. Get the 
+   largest (latest) patch No. you see. That is your current patch level.
+
+3. Anonymous FTP to set.cybercom.net . 
+
+4. Get the shell script apply_patch in pub/patches/bin if you don't have it 
+   in your $PSETHOME/bin.
+   
+5. Go to pub/patches/"platform"/"release"
+
+6. Look for the patch files you need and get them. For example, if your
+   current patch level is 02, you may want to get 03.tar.Z, 04.tar.Z ...
+   If you patched all of them, your discover distribution will be
+   identical with the latest Discover ship tape.
+
+7. Quit FTP. Uncompress the patch files.
+
+8. Untar the tar file with the command "tar xf the_tar_file_name". Now you
+   should see directories like 03, 04, etc.
+
+9. cd to where you installed the Discover, like "$PSETHOME". Run apply_patch 
+   script. It will ask you for the path of the patch you want to apply.
+   Then you type in the path like /"path"/03 . Hit <return>. The script 
+   will apply this patch and update README for you.
+
+   Please make sure that you apply the patches one by one and in the 
+   right order. If your current patch level is n, always apply patch n+1 next.
+
+10. check the README file.
+
+11. Repeat step 9 and 10.
+
+If you have any questions regarding the patch applying. Please call SET tech 
+support at 617-863-5588.
+  

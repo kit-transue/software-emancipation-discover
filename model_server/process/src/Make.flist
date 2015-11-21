@@ -1,0 +1,17 @@
+CROOTS=\
+    process_stub \
+    remangle \
+    shared_list \
+    signature \
+    so_shared \
+    tty \
+
+
+CXXROOTS=\
+    MemSeg.h \
+    SymManager.h \
+    finiteStateMachine \
+    mManager.h \
+    shared_malloc \
+
+

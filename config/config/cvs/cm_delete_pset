@@ -1,0 +1,4 @@
+#!/bin/sh -f
+set -e
+
+rm -f $cm_workfile

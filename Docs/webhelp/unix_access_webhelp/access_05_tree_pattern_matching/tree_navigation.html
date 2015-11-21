@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Tree Navigation</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Tree Navigation</b></p>
+<p class="p2">In <span class="s1"><b>tree filter</b></span> and <span class="s1"><b>tree find</b></span> expressions, the result set is the set of nodes that match the attribute expression. For <span class="s1"><b>tree navigate</b></span>, the result set is the set of nodes that were current when the attribute expression succeeded. For example, if you captured the results of the “functions that take int as their first parameter” query, and wanted to know the name of that parameter when the function was declared, <span class="s1"><b>tree navigate</b></span> can be used to capitalize on the work already done by the <span class="s1"><b>tree find</b></span> operation:</p>
+<p class="p3">set interesting_functions [tree find {function_decl -&gt; , type == "int"} /xip</p>
+<p class="p3">tree navigate {-&gt; , -&gt; ,} $interesting_functions</p>
+<p class="p4">returns</p>
+<p class="p3">1 argc local_id 2000 4 ‘argc’<br>
+2 argc local_id 4768 4 ‘argc’<br>
+3 pipe_num local_id 7667 8 ‘pipe_num’</p>
+<p class="p3">4 x local_id 4458 1 ‘x’<br>
+5 x1 local_id 4787 2 ‘x1’</p>
+<p class="p2">However, the preceding example demonstrates inefficiency in two ways. First, with some creative work, the variable names could have been determined in the first pass using <span class="s1"><b>tree find</b></span>, for example:</p>
+<p class="p3">tree find {local_id type == "int" &lt;- parm_decl -- global_id &lt;- function_decl } /xip</p>
+<p class="p2">But this scans all the nodes in <span class="s2">/xip</span>; something that has already been done in the original <span class="s1"><b>tree find</b></span>. If you are looking for both answers—the functions and their parameter names—it is much more efficient to find one, then get to the other via tree navigation. Second, a TPM expression is probably not the best way to find the functions that take an <span class="s1">"int"</span> as their first parameter; this is already stored in the signature of the function, which is available from Access queries. An Access query would avoid scanning the tree altogether, leaving only a relatively efficient tree navigate to find the names of the parameters.</p>
+</body>
+</html>

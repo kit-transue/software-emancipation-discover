@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "rm -f $cm_workfile"
+rm -f $cm_workfile
+
+exit 0

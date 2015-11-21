@@ -1,0 +1,90 @@
+
+    S.E.T. CODING STANDARDS, v1: WMM, 92-11-19
+
+        Introduction
+
+        Programming-in-the-Small Issues
+
+            Comment your code.
+
+            Follow a consistent formatting convention.
+
+            Do not check in code that generates compile-time warnings.
+
+            In general, write short functions instead of long ones.
+
+            Use manifest (symbolic) constants instead of magic numbers.
+
+            Use ``#if 0'' to disable sections of code.
+
+            Give each variable a separate declaration statement.
+
+            ``Switch'' statements on enum values should not have a ``default:'' label; all others should.
+
+            Code following ``case'' labels must end in ``break'' or ``/* FALLTHROUGH */''.
+
+            Use ``goto'' sparingly or not at all.
+
+            Use more-specific alternatives to ``int'' when possible.
+
+            C++ Feature Usage
+
+                Follow established conventions for declaration order within a class.
+
+                Do not declare any public data members in a class.
+
+                Use inline functions sparingly.
+
+                Do not define inline member functions inside the class declaration.
+
+                Encapsulate global variables, constants, enumerations, and types in a class.
+
+                Provide copy constructors and assignment operators where necessary.
+
+                Every destructor should be virtual.
+
+                Use ``const'' wherever possible.
+
+                Use C++ features instead of preprocessor features whenever possible.
+
+                Be careful not to mix malloc/realloc/free with new/delete on a single object.
+
+                Use ``delete [] p;'' to free an array allocated with ``new type[count].''
+
+            File Usage
+
+                Declare every function in exactly one header file, and #include the header where the function is defined.
+
+                    THERE SHOULD BE _NO_ extern FUNCTION DECLARATIONS IN .C FILES.
+
+                Protect header files against multiple inclusion.
+
+                Follow accepted file-usage conventions in defining member functions and static data members.
+
+        Programming-in-the-Large Issues
+
+            Program defensively.
+
+            Consider the broader implications of every change.
+
+            Test thoroughly after changes.
+
+        SET-Specific Rules
+
+            Follow established naming conventions.
+
+            Use type-safe downcasting (the ``checked_cast(type,value)'' macro).
+
+            Use Initialize() in every function.
+
+            Do not use fork(), popen(), or system().
+
+            Surround any English-language string constants with the TXT() macro.
+
+            Use the RCS change log facility.
+
+            Use the ``Close Description'' field of the bugtool.
+
+        Additional reading:
+
+            .

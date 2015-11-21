@@ -1,0 +1,52 @@
+#!/bin/csh
+##########
+#
+# to_atria {USER} {COMMAND} 
+#     Changes ClearCase view to first arg or $USER.
+#     Can also run a command.
+#
+##### Notes
+#
+# 1. This uses the 'to' alias defined in SET.cshrc.
+# 
+##### History
+#
+# 11/27/95 tlw - Moved to /paraset/tools and added this header.
+#
+##########
+
+if ( "$1" == "" ) then
+    set viewname="$USER"
+    if ( "$USER" == "builder" || "$USER" == "btest" || "$USER" == "ptest" ) then
+        set viewname="`DISArch`"
+    endif
+else
+    set viewname="$1"
+endif
+echo "Setting view to '$viewname'"
+
+to integ
+
+umask 0
+
+setenv PWV "$viewname"
+
+# Need to set the view name fist.
+set Old_View = $MY_VIEW
+setenv MY_VIEW $viewname
+
+if ( "$2" != "" ) then
+    cleartool setview -exec "$2" $viewname
+else
+    cleartool setview $viewname
+endif
+
+# Restore the viewname.
+setenv MY_VIEW $Old_View
+echo "Returning view to '$MY_VIEW'."
+
+
+
+
+
+##########     end of to_atria     ##########

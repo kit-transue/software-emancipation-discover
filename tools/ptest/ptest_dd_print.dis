@@ -1,0 +1,104 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+# ptest_dd_print.dis
+# provide a dish script that emulates the -A option to discover
+# usage: discover -batch -pdf ... -home ... -souce ptest_dd_print.dis
+# is equivalent to the former: discover -batch -pdf ... -home ... -A
+# The order of the output may differ slightly.
+
+proc dd_print_stat { kind_prefix instances } {
+	set total_instances 0
+	set defined_instances 0
+
+	foreach x $instances {
+		incr total_instances
+		set def_file [where defined $x]
+		# header files seem to not have a defining file: 
+		if { ![size $def_file] && [apply file $x ] } {
+			set def_file $x
+		}
+		if { [size $def_file] } {
+			incr defined_instances
+			puts stdout "$kind_prefix [name $x] : [name $def_file]"
+		} else {
+			puts stdout "$kind_prefix [name $x] : object definition does not exist"
+		}
+	}
+	puts stdout "${kind_prefix}_Total Instances  = $total_instances"
+	puts stdout "${kind_prefix}_Defined instances  = $defined_instances"
+}
+
+# now do what would have been done on the commandline:
+proc dd_print_all {} {
+	set home [home_proj]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_MODULE"
+	dd_print_stat f [ set_union \
+		[defines -modules $home] \
+		[uses -modules $home]]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_SUBSYSTEM"
+	dd_print_stat B [nil_set]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_FUNC_DECL"
+	dd_print_stat F [set_union \
+		[defines -functions $home] \
+		[uses -functions $home]]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_VAR_DECL"
+	dd_print_stat V [ set_union \
+		[defines -variables $home] \
+		[uses -variables $home]]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_CLASS"
+	dd_print_stat L [ set_union \
+		[defines -classes $home] \
+		[uses -classes $home] ]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_UNION"
+	dd_print_stat U [ set_union \
+		[defines -unions $home] \
+		[uses -unions $home] ]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_ENUM"
+	dd_print_stat E [ set_union \
+		[defines -enums $home] \
+		[uses -enums $home] ]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_TYPEDEF"
+	dd_print_stat T [ set_union \
+		[defines -typedefs $home] \
+		[uses -typedefs $home] ]
+
+	puts stdout "\n\nSYMBOL_TYPE : DD_MACRO"
+	dd_print_stat M [ set_union \
+		[defines -macros $home] \
+		[uses -macros $home] ]
+}
+
+dd_print_all

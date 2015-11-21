@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>Visual J++</compilername>
+java -w
+<translate>
+  <option name="cp"   separg="1">--classpath %</option>  <!-- sets effective CLASSPATH -->
+  <option name="cp:p" separg="1">--classpath %</option>  <!-- prepends arg to effective CLASSPATH -->
+  <option name="cp:a" separg="1">--classpath %</option>  <!-- appends arg to effective CLASSPATH -->
+  <option name="nowarn" noarg="1">-w</option>
+  <option name="w0" noarg="1">-w</option>
+  <option name="w1" noarg="1">-w</option>
+</translate>
+</cmdline>

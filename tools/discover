@@ -1,0 +1,784 @@
+#!/bin/sh
+#
+# discover
+#
+# wrapper script for invoking DIScover in interactive and batch sessions
+#
+
+
+# Support functions:
+
+Usage()
+{
+	echo 'Usage: discover [-where] [-psethome directory] [-batch]'
+	echo '       [-help|-h] [-d[isplay] X-display]'
+	echo '       [-pdf project-description]'
+	echo '       [-home home-project]'
+	echo '       [-tutor]'
+	echo '       [-learn]'
+	echo '       [-v] '
+	echo 'For other options specific to "-batch", see printed documentation.'
+	echo ''
+}
+
+
+Start_License_Server()
+{
+	echo "Warning: -start_server option is deprecated.  Use lmgrd -c license_file instead." 1>&2
+	if [ -n "${DIS_license_file}" ] ; then
+		if [ -r "${DIS_license_file}" ] ; then
+		    cat "${DIS_license_file}" | grep setechd | egrep '(DAEMON)|(VENDOR)' > /dev/null 2>&1
+		    if [ $? -ne 0 ] ; then
+			echo "setechd daemon is not present in the file ${DIS_license_file}" 1>&2
+			echo "Please specify the correct license file for DIScover." 1>&2
+			exit 1
+		    fi
+		else
+			echo "License file specified: ${DIS_license_file} does not exist." 1>&2
+			exit 1
+		fi
+		stat=`${PSETHOME}/bin/lmstat -c ${DIS_license_file} | grep setechd |tail -1| awk -F: '{print $NF}'`
+		if [ "${stat}" == "UP" ] ; then
+		     echo "License manager daemon is already running. License" 1>&2
+		     echo "files will only be reread for any modified lines. If you" 1>&2
+		     echo "really want to restart server, please shut down the "  1>&2
+		     echo "currently running servers down first using 'discover -stop_server'." 1>&2
+		     "${PSETHOME}/bin/lmreread" -c "${DIS_license_file}" > "${DIS_license_log}" 2>&1 &
+		     echo 'Rereading... (Check the log file "'"${DIS_license_log}"'")' 1>&2
+		 else
+		     $PSETHOME/bin/lmgrd -c "${DIS_license_file}" > "${DIS_license_log}" 2>&1 &
+		     echo 'Starting... (Check the log file "'"${DIS_license_log}"'")' 1>&2
+		fi
+	else # if DIS_license_file is not specified...
+	    stat=`${PSETHOME}/bin/lmstat | grep setechd | grep UP | awk -F: '{print $NF}'| uniq`
+	    if [ "${stat}" == "UP" ] ; then
+		echo "License manager daemon is already running. License" 1>&2
+		echo "files will only be reread for any modified lines. If " 1>&2
+		echo "you really want restart server, please shut down the "  1>&2
+		echo "currently running servers down first using 'discover -stop_server'." 1>&2
+		"${PSETHOME}/bin/lmreread"  > "${DIS_license_log}" 2>&1 &
+		echo 'Rereading... (Check the log file "'"${DIS_license_log}"'")' 1>&2
+	    else
+		for lic_file in `echo "${LM_LICENSE_FILE}" | tr : " "` ; do
+			if [ -f "${lic_file}" ] ; then
+				cat "${lic_file}" | grep setechd | egrep '(DAEMON)|(VENDOR)' > /dev/null 2>&1
+				if [ $? -eq 0 ] ; then
+					DIS_present=1
+				fi
+			fi
+		done
+		if [ -n "${DIS_present}" ] ; then
+			"${PSETHOME/bin/lmgrd}" > "${DIS_license_log}" 2>&1 &
+			echo 'Starting... (Check the log file "'"${DIS_license_log}"'")' 1>&2
+		else
+			echo "No line for setechd vendor daemon is present in any of the" 1>&2
+			echo "files in LM_LICENSE_FILE variable: ${LM_LICENSE_FILE}" 1>&2
+			exit 1
+		fi
+	    fi
+	fi
+}
+
+
+License_Command()
+{
+    if [ -n "${DIS_license_log}" ] ; then
+	DIS_license_log="/usr/tmp/code_integrity_lmgrd.log"
+    fi
+
+    echo "License file:           ${LM_LICENSE_FILE}" 1>&2
+
+    case "${DIS_license_command}" in
+	-start_server)
+		Start_License_Server
+		;;
+	-stop_server)
+		echo "Warning: -stop_server option is deprecated.  Use lmdown -c license_file instead." 1>&2
+		if [ -n "${DIS_license_file}" ] ; then
+			echo 'Stopping DIScover license server for "'"${DIS_license_file}"'"' 1>&2
+			"${PSETHOME}/bin/lmdown" -q -c "${DIS_license_file}"
+		else
+			echo 'Stopping DIScover license server using LM_LICENSE_FILE path' 1>&2
+			"${PSETHOME/bin/lmdown}" -q
+		fi
+		;;
+	-show_users)
+		echo "Warning: -show_users option is deprecated.  Use lmstat -a -c license_file instead." 1>&2
+		if [ -n "${DIS_license_file}" ] ; then
+			echo 'Showing users for license file  "'"${DIS_license_file}"'"' 1>&2
+	    		"${PSETHOME}/bin/lmstat" -a -c "${DIS_license_file}"
+		else
+			echo 'Showing users using LM_LICENSE_FILE path' 1>&2
+	    		"${PSETHOME}/bin/lmstat" -a
+		fi
+		;;
+	-show_log)
+		echo "Warning: -show_log option is deprecated." 1>&2
+		more "${DIS_license_log}"
+		;;
+    esac
+
+    # Do not run DIScover for the license server commands
+    exit 0
+}
+
+
+SetLimits()
+{
+   	if [ -z "${DIS_core}" ] ; then
+		ulimit -c 0
+	fi
+	case `${PSETHOME}/bin/DISarch` in
+		sun5)
+    			ulimit -n 256
+    			;;
+		hp700)
+    			;;
+		hp10)
+    			;;
+		irix6)
+    			;;
+		linux2)
+    			ulimit -n 256
+    			;;  
+  		*)
+    			echo 'DIScover: Warning - unrecognized kernel architecture ('`arch -k`')' 1>&2
+    			;;
+	esac
+}
+
+
+CheckResources()
+{
+	SWAP_MIN=70000
+	TMP_MIN=70000
+	case `${PSETHOME}/bin/DISarch` in
+	    hp10|hp700)
+		#SWAP_AVAIL=`/etc/swapinfo -ft| grep tot | awk '{print $4}'`  #need to be root to do this..
+		SWAP_AVAIL="${SWAP_MIN}"
+		TMP_AVAIL=`(cd "${TMPDIR}" ; /usr/bin/bdf . | tail -1 | awk '{print $(NF-2)}' )`
+		if [ -z "${TMP_AVAIL}" ] ; then
+			echo " DIScover: Unable to find available temporary" 1>&2
+			echo " space. Exiting." 1>&2
+			exit 1
+		fi
+		;;
+	    sun5)
+		SWAP_AVAIL=`/usr/sbin/swap -s | awk -F, '{print $2}' | awk '{print $1}' | sed 's/k//'`
+		if [ -z "${SWAP_AVAIL}" ] ; then
+			echo " DIScover: Unable to find available swap space." 1>&2
+			echo " Exiting." 1>&2
+			exit 1
+		fi
+		TMP_AVAIL=`(cd "${TMPDIR}"; /usr/ucb/df . | tail -1 | awk '{print $(NF-2)}')` 
+		if [ -z "${TMP_AVAIL}" ] ; then
+			echo " DIScover: Unable to find available temporary space." 1>&2
+			echo " Exiting." 1>&2
+			exit 1
+		fi
+		swapfs=`(cd "${TMPDIR}"; /usr/ucb/df .  | awk '{if (NR == 2 ) print $1}')`
+		tmpfs=`/usr/sbin/mount -p | awk '$4~/tmpfs/ {print $1 }' | xargs`
+		echo "${tmpfs}" | grep -w "${swapfs}" > /dev/null 2>&1
+		if [ $? -eq 0 ] ; then
+			echo " " 1>&2
+			echo "*ERROR*" 1>&2
+			echo "Temporary area for DIScover(${TMPDIR}) is allocated on" 1>&2
+			echo "swap. It is highly recommended that temporary space" 1>&2
+			echo "be allocated on a separate file system." 1>&2
+			echo "Exiting." 1>&2
+			echo " " 1>&2
+			exit 1
+		fi # status 1 -> match not found. status 2 -> '-w'
+		      # option not valid. continue in either case.
+		;;
+	    irix6)
+		SWAP_AVAIL_512b=`/sbin/swap -sb | awk -F, '{print $2}' | awk '{print $1}'`
+		SWAP_AVAIL_KB=`expr "${SWAP_AVAIL_512b}" / 2`
+		SWAP_AVAIL="${SWAP_AVAIL_KB}"
+		if [ -z "${SWAP_AVAIL}" ] ; then
+			echo " DIScover: Unable to find available swap space." 1>&2
+		fi
+		set TMP_AVAIL=`(cd "${TMPDIR}"; /usr/bin/df -k . | tail -1 | awk '{print $(NF-2)}')`
+		if [ -z "${TMP_AVAIL}" ] ; then
+			echo " DIScover: Unable to find available temporary space." 1>&2
+		fi
+		if [ -z "${PSET_EFS}" ] ; then
+			FS=`(cd "${TMPDIR}"; /usr/bin/df -k . | tail -1 | awk '{print $2}')`
+			if [ "${FS}" = "efs" ] ; then
+				echo "DIScover: Enabling efs compatibility mode." 1>&2
+				PSET_EFS=1 ; export PSET_EFS
+			fi
+		else
+			if [ "${PSET_EFS}" = "1" ] ; then
+				echo "DIScover: Enabling efs compatibility mode." 1>&2
+				#PSET_EFS=1  #already set
+			elif ( "${PSET_EFS}" == "0" ) then
+				echo "DIScover: Disabling efs compatibility mode." 1>&2
+				unset PSET_EFS
+			else
+				echo "DIScover: Invalid value for PSET_EFS - must" 1>&2
+				echo "          be either 0 (off) or 1 (on)." 1>&2
+				exit 1
+			fi
+		fi
+		;;
+	    linux2)
+		SWAP_AVAIL=`free -o -k | awk '/Swap:/ { print $2; }' `
+		if [ -z "${SWAP_AVAIL}" ] ; then
+			echo " DIScover: Unable to find available swap space." 1>&2
+		fi
+		TMP_AVAIL=`(cd "${TMPDIR}"; /bin/df . | tail -1 | awk '{print $(NF-2)}')` 
+		if [ -z "${TMP_AVAIL}" ] ; then
+	     		echo " DIScover: Unable to find available temporary space." 1>&2
+	     		echo "Exiting." 1>&2
+	     		exit 1
+	     	fi
+		;;
+	esac
+
+	if [ "${SWAP_AVAIL}" -lt "${SWAP_MIN}" ] ; then
+		SWAP_MB=`expr "${SWAP_AVAIL}" / 1000`
+		if [ "${SWAP_MB}" -lt 1 ] ; then
+			SWAP_MB="Less than 1"
+		fi
+		echo      " " 1>&2
+		echo      "*WARNING*" 1>&2
+		echo      "Swap space available(${SWAP_MB} MB) is less than " 1>&2
+		echo      "the minimum recommended(70 MB) for running DIScover" 1>&2
+		echo      " " 1>&2
+	fi
+
+	if [ "${TEMP_AVAIL}" -lt "${TEMP_MIN}" ] ; then
+		TEMP_MB=`expr "${TEMP_AVAIL}" / 1000`
+		if [ "${TEMP_MB}" -lt 1 ] ; then
+			TEMP_MB="Less than 1"
+		fi
+		echo	" " 1>&2
+		echo	"*WARNING*" 1>&2
+		echo	"Temporary space available(${TMP_MB} MB in ${TMPDIR})" 1>&2
+		echo	"is less than recommended(70 MB) for running DIScover" 1>&2
+		echo	" " 1>&2
+	fi
+}
+
+
+PrepareLearnOrTutorDirectory()
+{
+	# usage: PrepareLearnOrTutorDirectory Tutor|Learn location
+	PLOTD_kind=$1
+	PLOTD_location=$2
+	if [ ! -d  "${PLOTD_location}" ] ; then
+		mkdir -p "${PLOTD_location}"
+		if [ $? -ne 0 ] ; then
+			echo " Could not create ${PLOTD_kind} home directory ${PLOTD_location}" 1>&2
+			echo " Exiting." 1>&2
+			exit 1
+		fi
+	fi
+	if [ "${PLOTD_location}" != "${HOME}/CODEINTEGRITY/${PLOTD_kind}" ] ; then
+		# must set up symbolic link
+		if [ -d "${HOME}/CODEINTEGRITY/${PLOTD_kind}" ] ; then
+			if [ ! -h "${HOME}/CODEINTEGRITY/${PLOTD_kind}" ] ; then
+				mv "${HOME}/CODEINTEGRITY/${PLOTD_kind}" "${HOME}/CODEINTEGRITY/${PLOTD_kind}.prev"
+				echo " Moved existing ${PLOTD_kind} directory in ${HOME}/CODEINTEGRITY" 1>&2
+				echo " to ${HOME}/CODEINTEGRITY/${PLOTD_kind}.prev" 1>&2
+			fi
+		fi
+		if [ ! -d "${HOME}/CODEINTEGRITY" ] ; then
+			mkdir "${HOME}/CODEINTEGRITY"
+			if [ $? -ne 0 ] ; then
+				echo "Could not create ${HOME}/CODEINTEGRITY directory" 1>&2
+				echo "for ${PLOTD_kind} link." 1>&2
+				exit 1
+			fi
+		fi
+		ln -s "${PLOTD_location}" "${HOME}/CODEINTEGRITY/${PLOTD_kind}"
+		if [ $? -ne 0 ] ; then
+			echo "Could not  ln -s ${PLOTD_location} ${HOME}/CODEINTEGRITY/${PLOTD_kind}" 1>&2
+			echo "Please make ${HOME}/CODEINTEGRITY a writable directory." 1>&2
+			exit 1
+		fi
+	fi
+}
+
+
+SetupTutor()
+{
+	if [ -z "${DISTutorHome}" ] ; then
+		DISTutorHome="${HOME}/CODEINTEGRITY/Tutor"
+	fi
+	PrepareLearnOrTutorDirectory Tutor "${DISTutorHome}"
+
+ 	if [ `ls -i "${DISTutorHome}" | wc -l` -eq 0 ] ; then
+		echo "" 1>&2
+		echo "Installing the Tutor directory in ${DISTutorHome}" 1>&2
+		/bin/cp -r "${PSETHOME}/lib/Tutor/"* "${DISTutorHome}"
+		ln -s "${HOME}/CODEINTEGRITY/Tutor/local/basics/Makefile."`DISarch`  "${DISTutorHome}/local/basics/Makefile"
+		ln -s "${HOME}/CODEINTEGRITY/Tutor/local/debug/Makefile."`DISarch`  "${DISTutorHome}/local/debug/Makefile"
+		chmod -R u+w "${HOME}/CODEINTEGRITY/Tutor"
+		echo "Finished installing DIScover Tutorial." 1>&2
+	fi
+	echo "" 1>&2
+	echo "Starting Tutorial..." 1>&2
+	echo "" 1>&2
+	# DISTutorHome is important to aset:
+	export DISTutorHome
+	DIS_other_args="-prefs ${HOME}/CODEINTEGRITY/Tutor/tutor.prefs -noUserPrefs -P ${DISTutorHome}/tutor.pdf"
+}
+
+StartLearn()
+{
+	# Allow customized DISLearnHome
+	if [ -z "${DISLearnHome}" ] ; then
+   		DISLearnHome="${HOME}/CODEINTEGRITY/Learn"
+	fi
+	PrepareLearnOrTutorDirectory Learn "${DISLearnHome}"
+ 
+	ADMINDIR="${DISLearnHome}/AdminDir" ; export ADMINDIR
+
+	if [ ! -d "${ADMINDIR}" ] ; then
+		echo "" 1>&2
+		echo "Installing the Learn directory in $DISLearnHome..." 1>&2
+		echo "" 1>&2
+
+		if [ "`DISarch`" = "hp700" ] ; then
+			untar_opts=-xovf
+		else
+			untar_opts=-xvf
+		fi
+		cd "${PSETHOME}/lib/Learn" ; tar -cf - AdminDir private src/extract src/xip src/ttt src/xcalentool src/package | ( cd "${DISLearnHome}"; tar "${untar_opts}" -)
+		chmod -R u "${DISLearnHome}"
+
+		echo "" 1>&2
+		echo "Finished installing Learn." 1>&2
+		echo "" 1>&2
+	fi
+ 
+	echo "Starting Learn..." 1>&2
+	echo "" 1>&2
+
+	cd "${ADMINDIR}"
+	start_discover -prefs "${ADMINDIR}/prefs/build.prefs" -noUserPrefs
+	exit 0
+}
+
+
+# these scripts depend on output of locale-sensitive commands like 'date':
+LANG=C; export LANG
+
+checkopts=`dirname $0`
+if [ -z "${checkopts}" ] ; then
+	checkopts=check_opts
+else	
+	checkopts="${checkopts}/check_opts"
+fi
+
+if [ -z "${PSETHOME}" ] ; then
+    # Prepend "./" if necessary:
+    DIS_dir=`echo $0 | sed 's%^\([^/]\)%./\1%'` 
+    # Strip trailing "/*":
+    DIS_dir=`echo ${DIS_dir} | sed 's%^\(.*\)/.*$%\1%'`
+    if [ -z "${DIS_dir}" ]; then
+	DIS_dir="."
+    fi
+    PSETHOME=`(chdir "${DIS_dir}"; pwd) | sed -n 's%/bin$%%p'`
+    export PSETHOME
+fi
+
+if [ -z "${NO_OPT_CHECK}" ] ; then
+	"${checkopts}" $0 $*
+	if [ $? != 0 ] ; then
+		exit 1
+	fi
+fi
+
+#
+# Process command-line arguments: build "args" and "DIS_other_args"
+#
+DIS_other_args=""
+args=""
+
+if [ -n "${PSET_TEST_RUNNING}" ] ; then
+    DIS_other_args="${DIS_other_args} $t_sysPrefs"
+fi
+
+while [ $# -gt 0 ] ; do
+    case $1 in
+	--help|-h)
+		Usage
+		exit 0
+		;;
+	--version|-v)
+		DIS_version=1
+		;;
+	-where)
+		DIS_wheremode=1
+		;;
+	-psethome)
+		shift
+		if [ $# -gt 0 ] ; then
+			PSETHOME="$1"
+			export PSETHOME
+		else
+			echo "DIScover: psethome not specified" 1>&2
+			exit 1
+		fi
+		;;
+	-batch)
+		DIS_batchmode=1
+		;;
+	-tutor)
+		DIS_tutormode=1
+		;;
+	-learn)
+		DIS_learnmode=1
+		;;
+	-P)
+		shift
+		if [ $# -gt 0 ] ; then
+			pdffile=`echo $1 | sed "s%^\./%$cwd/%"`
+			DIS_other_args="${DIS_other_args} -pdf ${pdffile}"
+		else
+			echo "No PDF specified" 1>&2
+			exit 1
+		fi
+		;;
+	-verify_pdf)
+		# are we sure?
+		DIS_verifypdfmode=1
+		DIS_noepochmode=1
+		DIS_other_args="${DIS_other_args} $1"
+		;;
+	-pdf_prt)
+		DIS_noepochmode=1
+		DIS_other_args="${DIS_other_args} $1"
+		;;
+	-d|-display)
+		shift
+		if [ $# -gt 0 ] ; then
+			DISPLAY="$1"
+			export DISPLAY
+		else
+			echo "DIScover: display not specified" 1>&2
+			exit 1
+		fi
+		;;
+
+    ##########################
+    # License server options #
+    ##########################
+	
+	-start_server|-stop_server|-show_users|-show_log)
+		if [ -n "${DIS_license_command}" ] ; then
+			echo "discover: too many license commands (${DIS_license_command} and $1)" 1>&2
+			exit 1
+		else
+			DIS_license_command=$1
+		fi
+		;;
+	-license_file)
+		shift
+		if [ $# -gt 0 ] ; then
+			DIS_license_file="$1"
+		else
+			echo "DIScover: license file not specified" 1>&2
+			exit 1
+		fi
+		;;
+	-license_log)
+		shift
+		if [ $# -gt 0 ] ; then
+			DIS_license_log="$1"
+		else
+			echo "DIScover: license log not specified" 1>&2
+			exit 1
+		fi
+		;;
+
+    #####################
+    # Debugging options #
+    #####################
+
+	-core)
+		DIS_other_args="${DIS_other_args} $1"
+		DIS_core=1
+		;;
+	-exec)
+		shift
+		if [ $# -gt 0 ] ; then
+			aset="$1"
+		else
+			echo "DIScover: executable not specified" 1>&2
+			exit 1
+		fi
+		;;
+	*)
+		DIS_other_args="${DIS_other_args} $1"
+    esac
+
+    shift
+done
+
+if [ -n "${DIS_version}" ] ; then
+    DIS_other_args="--version"
+fi 
+
+
+#
+# Establish DIScover installation directory.
+#
+if [ -z "${DIS_wheremode}" ] ; then
+  echo "Installation directory:  ${PSETHOME}" 1>&2
+fi
+
+if [ -z "${PSETHOME}" ] ; then
+    echo 'DIScover: Cannot find a suitable value for $PSETHOME.' 1>&2
+    exit 1
+fi
+
+if [ ! -d "${PSETHOME}" ] ; then
+    echo 'DIScover: $PSETHOME = "'"${PSETHOME}"'" is not a directory.' 1>&2
+    exit 1
+fi
+
+#removing extra and trailing slashes
+PSETHOME=`echo "${PSETHOME}" | sed -e 's%//*%/%g' -e 's%/$%%'`
+export PSETHOME
+
+# Put our dynamic path directory onto the system end
+
+if [ -n "${LD_LIBRARY_PATH}" ] ; then
+	LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PSETHOME}/lib"
+else
+	LD_LIBRARY_PATH="${PSETHOME}/lib"
+fi
+export LD_LIBRARY_PATH
+
+if [ -n "${LD_LIBRARYN32_PATH}" ] ; then
+	LD_LIBRARYN32_PATH="${LD_LIBRARYN32_PATH}:${PSETHOME}/lib"
+else
+	LD_LIBRARYN32_PATH="${PSETHOME}/lib"
+fi
+export LD_LIBRARYN32_PATH
+
+if [ -n "${SHLIB_PATH}" ] ; then
+	SHLIB_PATH="${SHLIB_PATH}:${PSETHOME}/lib"
+else
+	SHLIB_PATH="${PSETHOME}/lib"
+fi
+export SHLIB_PATH
+
+
+# Bristol hyperhelp
+HHHOME="${PSETHOME}/lib/hyperhelp"; export HHHOME
+HLPPATH="${HHHOME}"; export HLPPATH
+HHFALLBACKS=1; export HHFALLBACKS
+HHQUIET=1; export HHQUIET
+
+#
+# Handle -where switch
+#
+if [ -n "${DIS_wheremode}" ] ; then
+    echo "${PSETHOME}" 1>&2
+fi
+
+#
+# get user name
+#
+if [ -x /usr/ucb/whoami ] ; then
+    USER=`/usr/ucb/whoami` ; export USER
+elif [ -x /usr/bin/whoami ] ; then
+    USER=`/usr/bin/whoami` ; export USER
+fi
+ 
+
+#
+# Extend the license manager path to include DIScover license data.
+#
+
+if [ -n "${DIS_license_file}" ] ; then
+	if [ -n "${LM_LICENSE_FILE}" ] ; then
+		echo "Overriding license path (${LM_LICENSE_FILE})" 1>&2
+	fi
+	LM_LICENSE_FILE="${DIS_license_file}" ; export LM_LICENSE_FILE
+elif [ -z "${LM_LICENSE_FILE}" ] ; then
+	if [ -r /usr/local/flexlm/licences/license.dat ] ; then
+		LM_LICENSE_FILE=/usr/local/flexlm/licences/license.dat ; export LM_LICENSE_FILE
+	else
+		LM_LICENSE_FILE="${PSETHOME}/lib/license.dat" ; export LM_LICENSE_FILE
+	fi
+fi
+
+
+#
+# Attach DIScover path to the end of the path
+#
+
+PATH="${PSETHOME}/bin:$PATH" ; export PATH
+
+if [ -n "${DIS_license_command}" ] ; then
+	License_Command
+	# not reached:
+	exit 1
+fi
+
+
+#
+# set default logfile
+#
+
+if [ -z "${PSET_LOGFILE}" ] ; then
+	if [ ! -d "${HOME}/CODEINTEGRITY" ] ; then
+		mkdir -p "${HOME}/CODEINTEGRITY"
+		if [ $? -ne 0 ] ; then
+			echo " Could not create ${HOME}/CODEINTEGRITY for writing log file" 1>&2
+			echo " DIScover exiting." 1>&2
+			exit 1
+		fi
+	fi
+	PSET_LOGFILE="${HOME}/CODEINTEGRITY/${USER}.log" ; export PSET_LOGFILE
+fi
+
+
+echo "Session log file:       ${PSET_LOGFILE}" 1>&2
+echo "Session log start" >> "${PSET_LOGFILE}"
+if [ $? -ne 0 ] ; then
+	echo " Could not write to the log file ${PSET_LOGFILE}" 1>&2
+	echo " DIScover exiting." 1>&2
+	exit 1
+fi
+
+RCSHOME="${PSETHOME}/bin" ; export RCSHOME
+DIFFHOME="${PSETHOME}/bin" ; export DIFFHOME
+PSETCFG="${PSETHOME}/bin" ; export PSETCFG
+
+#
+#	Report license file in its traditional location in log
+#
+echo "License file:           ${LM_LICENSE_FILE}" 1>&2
+
+
+SetLimits
+
+#
+#
+# Make sure an X display has been specified.
+#
+
+if [ -z "${DIS_wheremode}" -a -z "${DIS_batchmode}" -a -z "${DISPLAY}" ] ; then
+    echo 'DIScover: DISPLAY environment variable not set.' 1>&2
+    exit 1
+fi
+
+#
+#
+# Make sure that X display is accessible 
+#
+echo 'Checking DISPLAY...'
+${PSETHOME}/bin/xopen 1>/dev/null 2>&1
+if [ $? -eq 1 ] ; then
+    echo 'DIScover: DISPLAY is not accessible.' 1>&2
+    exit 1
+fi
+  
+#
+# Force use of DIScover XKeysymDB.
+#
+XKEYSYMDB="${PSETHOME}/lib/XKeysymDB" ; export XKEYSYMDB
+
+#
+# Determine Color or B/W resource file.
+#
+
+# if interactive mode...
+# if xwininfo -root  sed -n 's/^.* Depth: \([0-9]*\)$/\1/p' < 4
+# use bw app-defaults
+
+XENVIRONMENT="${PSETHOME}/lib/app-defaults/ParaSET-color" ; export XENVIRONMENT
+
+
+if [ -n "${DIS_tutormode}" ] ; then
+	SetupTutor
+	# DIS_other_args ready for tutor session
+fi
+
+if [ -n "${DIS_learnmode}" ] ; then
+	StartLearn
+	# not reached: StartLearn calls start_discover and then exits:
+	exit 0
+fi
+
+
+#
+# default for DIScover binary executable
+#
+
+if [ -z "${aset}" ] ; then
+	aset="${PSETHOME}/bin/aset"
+fi
+
+if [ -z "${TMPDIR}" ] ; then
+	TMPDIR=/usr/tmp ; export TMPDIR
+fi
+
+if [ -z "${HOST}" ] ; then
+	HOST=`uname -n` ; export HOST
+fi
+
+
+CheckResources
+
+day_stamp="`date +%a.%h.%d | tr A-Z a-z`"
+num=1
+while [ -d ${TMPDIR}/CODEINTEGRITY.${day_stamp}.${num} ] ; do
+	num=`expr ${num} + 1`
+done
+
+# the actual DIScover temp dir
+TMPDIR="${TMPDIR}/CODEINTEGRITY.${day_stamp}.${num}" ; export TMPDIR
+mkdir -p "${TMPDIR}"
+if [ ! -d "${TMPDIR}" ] ; then
+	echo "Unable to create temp directory ${TMPDIR}" 1>&2
+	exit 1
+elif [ ! -w "${TMPDIR}" ] ; then
+	echo "Temp directory ${TMPDIR} is not writable" 1>&2
+	exit 1
+else
+	echo "Temp directory:         ${TMPDIR}" 1>&2
+fi
+
+# check for Y2K availability:
+y2k_license=0
+lmstat -a | grep Y2K > /dev/null 2>&1
+if [ $? -eq 0 ] ; then
+    y2k_license=1
+fi
+
+
+#
+# Let's go!
+#
+
+if [ -n "${DIS_batchmode}" ] ; then
+    BM=1
+else
+    BM=0
+fi
+
+if [ -n "${DIS_version}" ] ; then
+    "${aset}" --version < /dev/null
+    exit_status=$?
+elif [ -n "${DIS_batchmode}" ] ; then
+    "${aset}" -batch ${DIS_other_args} </dev/null
+    exit_status=$?
+elif [ -n "${DIS_noepochmode}" ] ; then
+    "${aset}" ${DIS_other_args} </dev/null
+    exit_status=$?
+else 
+    "${aset}" -startEditor ${DIS_other_args}
+    exit_status=$?
+fi
+
+discover.reset 0 ${BM}
+
+exit ${exit_status}

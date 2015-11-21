@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>To change the list of recipients of the submission reports</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 12.0px 'Courier New'}
+    span.s4 {font: 12.0px 'Times New Roman'}
+    span.s5 {font: 11.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>To change the list of recipients of the submission reports</b></p>
+<p class="p2"><span class="s1"><b>1</b></span><span class="s2"><b>   </b></span>Set <span class="s3">mail_stl</span> to the list of recipients of the summary report.</p>
+<p class="p2"><span class="s1"><b>2</b></span><span class="s2"><b>   </b></span>Set <span class="s3">mail_dtl</span> <span class="s4">to </span>the list for the detailed report.</p>
+<p class="p3"><b>Note: </b>Separate addresses with spaces.</p>
+<p class="p4">The DIScover process, started by the build server, performs Submission Check when it is asked to check files, and determines which queries to run and how to execute them. By default, the Submission Check policy is stored in <span class="s3">&lt;CodeIntegrityInstalldir&gt;/lib/baselib.sc</span>. A different policy file can be specified by setting the <span class="s3">*psetPrefs.SubmissionCheck.Policy:&lt;filename&gt; </span>preference.<span class="s5"> </span>This allows you to make changes to the set of queries which are run during a check, or to the list of people to whom submission reports are sent, by copying the default file to a new location, editing it, and setting the Submission Check policy preference to reference the new version of the file.</p>
+<p class="p4">The policy file is stored in XML format as a tree of queries and can be edited using a text editor.</p>
+<p class="p4">An annotated excerpt from the policy file is as follows:</p>
+<p class="p5">&lt;root&gt; # Defines the policy</p>
+<p class="p5">&lt;folder&gt; # Defines a folder of queries</p>
+<p class="p5">&lt;name&gt;Test Coverage&lt;/name&gt; # Name of folder</p>
+<p class="p5">&lt;tag&gt;tcov&lt;/tag&gt; # Unique tag of folder</p>
+<p class="p5">&lt;enabled&gt;0&lt;/enabled&gt; # Disables whole folder</p>
+<p class="p5">&lt;query&gt; # Defines a query</p>
+<p class="p5">&lt;name&gt;File not covered&lt;/name&gt; # Name of query</p>
+<p class="p5">&lt;cmd&gt;testcov:cov_file&lt;/cmd&gt; # Cmd to run query</p>
+<p class="p5">&lt;tag&gt;cov_file&lt;/tag&gt; # Unique tag of query</p>
+<p class="p5">&lt;/query&gt; # End of query definition</p>
+<p class="p5">&lt;/folder&gt; # End of folder definition</p>
+<p class="p5">&lt;mail_stu&gt;1&lt;/mail_stu&gt; # Send summary report to user</p>
+<p class="p5">&lt;mail_dtu&gt;1&lt;/mail_dtu&gt; # Send detailed report to user</p>
+<p class="p5">&lt;mail_stl&gt;jhoyt@cosmos.com mkern@cosmos.com&lt;/mail_stl&gt;</p>
+<p class="p5"># Send summary report to</p>
+<p class="p5"># jhoyt@cosmos.com and mkern@cosmos.com</p>
+<p class="p5">&lt;mail_dtl&gt;cnorris@cosmos.com&lt;/mail_dtl&gt;# Send report to</p>
+<p class="p5"># cnorris@cosmos.com</p>
+<p class="p5">&lt;/root&gt; # End of policy definition</p>
+<p class="p4">You can disable entire filter sets or individual queries within them. You can also add new queries by adding query definitions in the policy file, complete with unique tags and commands to run. New queries should be put in a file named <span class="s3">user_scripts.dis</span><span class="s5"> </span>in the same directory as the policy file; this file is sourced if it exists and the policy file preference is set.</p>
+<p class="p4">The Submission Check policy file also contains the list of e-mail recipients of the submission reports. By default, the detailed submission report is sent to you, as the user running Submission Check. You can specify additional recipients of the detailed or summary reports as shown in the earlier example. On UNIX, Submission Check sends e-mail by calling mail and redirecting to it a file containing the subject and body of the mail message.</p>
+<p class="p4">This works on any UNIX system with e-mail installed in the path. On Windows, Submission Check follows the same procedure using its own client, which emulates UNIX mail. This connects to the existing e-mail system using Win 32’s e-mail API, so it depends on the availability of a functioning <span class="s3">MAPI.DLL</span>.</p>
+<p class="p4">Once the Submission Check policy is set, the next task is to start the model server and build server.</p>
+</body>
+</html>

@@ -1,0 +1,5 @@
+if [ "$USER" = "" ] ; then
+	echo "Unknown user"
+else
+	echo "$USER"
+fi

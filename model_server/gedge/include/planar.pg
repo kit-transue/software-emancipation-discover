@@ -1,0 +1,291 @@
+/******************************************************************************/
+/*                                                                            */
+/* Include-File 	PLANAR.PG					      */
+/*   									      */
+/* Letzte Aenderung     14.02.88					      */
+/*									      */
+/* Prozeduren zur Erzeugung der Beschreibung des planaren Graphen.            */
+/*									      */
+/******************************************************************************/
+
+
+
+/* Erzeuge eine leere Structur PLANAR_GRAPH.
+   Diese Struktur beschreibt spaeter den Aufbau des planaren Graphen
+   und die Frond-Menge, die geloescht worden ist.
+   ( Achtung : Die Menge der geloeschten Fronds ist nur ein Teilmenge
+               der Menge der geloeschten Kanten.
+   )
+*/
+
+PLANAR_GRAPH *CREATE_PGRAPH( GB )
+
+  UNDIR_GRAPH	*GB;			/* Zeiger auf einen biconnect Graph   */
+{
+  PLANAR_GRAPH	*PG;			/* Planarere Graph (noch leer)        */
+  int		i;			/* Laufvariable                       */
+
+  PG 	        = ( PLANAR_GRAPH *)malloc( sizeof( PLANAR_GRAPH ) );
+  PG->V         = GB->n;		/* Anzahl der Knoten                  */
+  PG->E         = 0;			/* Anzahl der Kanten initialisieren   */
+  PG->DEL_FROND = nil;			/* Liste der geloeschten FRONDS       */
+  
+  /* Erzeuge eine leere Umsetzungstabelle.
+     Diese Tabelle verwaltet die Umnummerierung des Graphen.
+     D.h. trans( Tiefennummer ) = echte Nummer (bzgl. GB) .
+  */
+  PG->trans  = ( int (*)[] )malloc( (1+GB->n) * sizeof( int ) );
+
+  /* Erzeuge fuer jeden Knoten eine Adjazenzliste. */
+  PG->AL = ( AL_LISTE ** )malloc( (1+PG->V) * sizeof( AL_LISTE ) );
+
+  /* Initialisierung der Adjazenzlisten. */
+  for ( i=1; i<=PG->V; i++ ) 
+      {  (*PG->AL)[ i ].x[0]   = nil;
+         (*PG->AL)[ i ].x[1]   = nil;
+         (*PG->AL)[ i ].father = 0;
+         (*PG->AL)[ i ].swap   = 0;
+      }
+
+  return( PG );
+
+} /* end of CREATE_PGRAPH */
+
+
+
+
+
+/* Fuege den Pfad s->..->v- ->w in den Graphen ein.
+*/
+
+void INSERT_PATH_IN_PG( PG, st, inside, side, mode, s,v,w )
+ 
+  PLANAR_GRAPH	*PG;			/* Planarer Graph                     */
+  STACK		*st;			/* Stack                              */
+  int           inside, side;		/* 0 = linke Seite,  1 = rechte Seite */
+  int		mode;                   /* 1   = Normaler Pfad                */
+					/* 2   = First-Cycle                  */
+                                        /* 3,4 = Special Path                 */
+  int 		s,v,w;                  /* Pfad s->..->v- ->w                 */
+{
+  void      	PUSH_ON_LR(); 		/* Frond auf linken bzw. rechten Stack*/
+  void       	PUSH_ON_S();     	/* Pfad auf den Stack der offenen Segm*/
+  void          TOP_OF_S();             /* Bestimme den Vaterpfad.            */
+
+  int		x, y;			/* Knotennummern                      */
+  int		ti, to;                 /* Knotennummer                       */
+  int		father_s, father_v,
+  		father_w;
+  int		dummy;
+  P_NODE	*PN;			/* Knoten in der Adjazenzliste von PG */
+  SPECIAL_FROND *SF;			/* Eine Frond eines special Path      */
+
+  /* Bestimme die letzte innere Kante s-->ti in AL( s ) */
+  if ( (*PG->AL)[ s ].x[ inside ] == nil )
+        ti = 0;
+  else  ti = (*PG->AL)[ s ].x[ inside ]->name;
+  /* Bestimme die letzte auessere Kante s-->to in AL( s ) */
+  if ( (*PG->AL)[ s ].x[ ( inside + 1 ) % 2 ] == nil )
+        to = 0;
+  else  to = (*PG->AL)[ s ].x[ ( inside + 1 ) % 2 ]->name;
+
+  if ( mode >= 3 ) 
+     {
+       TOP_OF_S( st, &father_s,&father_v, &father_w, &dummy );
+       /* Bei special Pathes wird die Frond nicht direkt in PG eingebaut, */
+       /* Sondern in den Stack fuer Special Fronds eingetragen.           */
+       SF       = ( SPECIAL_FROND * ) malloc ( sizeof( SPECIAL_FROND ) );
+       SF->w    = w;
+       SF->v    = v;
+       SF->s    = father_v;
+       SF->next = nil;
+       st->last_SF->next = SF;
+       st->last_SF       = SF;
+
+       y = v; 
+       x = (*PG->AL)[ y ].father;                        /* Frond auslassen */
+     }
+  else             
+     { 
+       y = w;
+       x = v; 
+     }
+
+  /* Pfad in PG einbauen. */
+  while ( x >= s )
+        {
+          PN       = ( P_NODE * ) malloc ( sizeof( P_NODE ) );
+          PN->name = y;
+          PN->next = (*PG->AL)[ x ].x[ side ];           
+
+          (*PG->AL)[ x ].x[ side ] = PN;
+
+          y = x;  x = (*PG->AL)[ x ].father;
+        } 
+
+  /* Stacks's noch auf den neuesten Stand bringen */
+  PUSH_ON_LR( st, side, mode, s,v,w, ti, to );
+  PUSH_ON_S ( st, side, s, v, w );
+
+} /* end of INSERT_PATH_IN_PG */
+
+
+
+
+
+
+/* Wenn der Graph PG fertig aufgebaut ist, dann muessen noch einige
+   Korrekturen durchgefuehrt werden.
+   1. Alle Unterbaeume, die als vertauscht markiert sind muessen
+      invertiert werden.
+   2. Anschliessend muessen all special Fronds, die im Stack fuer
+      special Fronds eingetragen wurden, noch in PG eingebaut werden.
+  
+   3. Die Listen der rechten Kanten, die noch von rechts nach links
+      geordnet sind, muessen invertiert werden.
+*/
+
+void CORRECT_PALM_TREE( PG, st )
+
+  PLANAR_GRAPH	*PG;			/* Planarere Graph                    */
+  STACK		*st;			/* Stack			      */
+{
+  void          RECURSION_CORRECT();   	/* Invertieren der Unterbaeume        */
+
+  P_NODE	*PN, *help1, *help2, *help3;
+  SPECIAL_FROND *SF;
+  int		v;
+  int		side;
+
+  /* zu 1.  Invertiere alle markierten Unterbaeume. */
+  RECURSION_CORRECT( PG, 1, 0 );
+
+  /* zu 2.  Nachtraeglicher Einbau der Special Fronds. */
+  SF = st->SF->next;
+  while ( SF != nil )
+        {
+          /* Bestimme zuerst die Seite, auf der die Frond liegen muss. */
+          /* D.h. Schaue wohin die Kante s-->w zeigt.                  */
+          help1 = (*PG->AL)[SF->s].x[0];
+          while ( help1 != nil && help1->name != SF->w ) help1 = help1->next;
+          if ( help1 == nil ) side = 1;
+          else                side = 0;
+
+          /* Die Frond wird am Ende der Liste AL(v).side angefuegt. */
+          PN       = ( P_NODE * ) malloc ( sizeof( P_NODE ) );
+          PN->name = SF->w;
+          PN->next = nil;
+
+          help1 = (*PG->AL)[ SF->v ].x[ side ];
+          if ( help1 == nil ) (*PG->AL)[ SF->v ].x[ side ] = PN;
+          else
+             {
+               while ( help1->next != nil ) help1 = help1->next;
+               help1->next = PN;
+             }
+
+          /* Loesche das erste Listenelement des Special-Frond-Stack. */
+          st->SF = SF->next;  free( SF );  SF = st->SF;
+        }
+
+  /* zu 3.  Invertiere alle rechten Kantenlisten. */
+  for( v = 1; v <= PG->V; v++ )
+     if ( (*PG->AL)[ v ].x[1] != nil )
+        {
+          /* Es gibt mindestens eine rechte Kanten. */
+          help1 = nil;
+          help2 = (*PG->AL)[ v ].x[1];
+          help3 = (*PG->AL)[ v ].x[1]->next;
+
+          while ( help3 != nil )
+                {
+                  help2->next = help1;
+                  help1       = help2;
+                  help2       = help3;
+                  help3       = help3->next;
+                }
+          
+          help2->next = help1;
+          (*PG->AL)[ v ].x[1] = help2;
+        }
+
+} /* end of CORRECT_PALM_TREE */
+
+
+
+
+
+/* Rekursives invertieren von markierten Unterbaeumen.
+*/
+
+void RECURSION_CORRECT( PG, v, flag )
+
+  PLANAR_GRAPH	*PG;			/* Planarer Graph		      */
+  int		v;              	/* Unterbaum ab dem Knoten v   	      */
+  int		flag; 			/* Wurde vorher schon vertauscht ?    */
+{
+  P_NODE	*help;
+  int		i;
+
+  /* Beachte, das 2 Invertierungsmarkierungen sich gegenseitig aufheben. */
+  if (  (*PG->AL)[ v ].swap + flag == 1 )
+     {
+        help                = (*PG->AL)[ v ].x[0];
+        (*PG->AL)[ v ].x[0] = (*PG->AL)[ v ].x[1];
+        (*PG->AL)[ v ].x[1] = help;
+        flag = 1;
+     }  
+  else flag = 0;
+  
+  (*PG->AL)[ v ].swap = 0;
+
+  /* Rekursive Fortsetzung. */
+  for ( i=0; i<=1; i++ )		        	 /* Fuer beide Seiten */
+      {
+        help = (*PG->AL)[ v ].x[i];
+        while ( help != nil )
+              { 
+		if ( help->name > v ) RECURSION_CORRECT( PG, help->name, flag );
+                help = help->next;
+              }
+      }
+
+} /* end of CORRECT_PALM_TREE */
+
+
+
+
+
+/* Gebe den Speicherplatz, den PG benoetigte wieder frei.
+*/
+
+void DELETE_PLANAR_GRAPH( PG )
+
+  PLANAR_GRAPH	*PG;			/* Planarer Graph		      */
+{
+  P_NODE	*PN;
+  int		side;
+  int		v;
+
+  for ( v = 1; v <= PG->V; v++ )	/* Fuer alle Knoten                   */
+   for ( side = 0; side <= 1; side ++ ) /* Fuer beide Kantenlisten	      */
+       {
+         PN = (*PG->AL)[ v ].x[ side ];
+         while ( PN != nil )
+               {
+                 (*PG->AL)[ v ].x[ side ] = PN->next;
+                 free( PN );
+                 PN = (*PG->AL)[ v ].x[ side ];
+               }
+       }
+
+  free( PG->AL    );
+  free( PG->trans );  
+  free( PG        );
+
+} /* end of DELETE_PLANAR_GRAPH */
+
+
+
+/* end of Include-File  PLANAR.PG */
+

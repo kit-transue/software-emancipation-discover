@@ -1,0 +1,190 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc xml_puts args {
+  if { [llength $args] == 1 } {
+     set text [lindex $args 0]
+     regsub -all ">" $text "\\&gt;" text
+     regsub -all "<" $text "\\&lt;" text
+     regsub -all "&" $text "\\&amp;" text
+     puts $text
+  } else { 
+     set text [lindex $args 1]
+     regsub -all ">" $text "\\&gt;" text
+     regsub -all "<" $text "\\&lt;" text
+     regsub -all "<" $text "\\&amp;" text
+     puts [lindex $args 0] $text
+  }
+}
+
+proc puttext { prefix text } { 
+    global res
+    lappend res "$prefix puts [list $text]"
+}
+proc putcomm { prefix text } { 
+    global res
+    lappend res "$prefix $text"
+}
+
+proc report_text { prefix text } {
+    global res
+    lappend res "$prefix puts -nonewline [list $text]"
+}
+
+proc generate_attrs attrs {
+    set ret ""
+    foreach {name val} $attrs {
+	append ret " $name = '$val'"
+    }
+    return $ret
+}
+proc report_elem { cind prefix indent tag attrs body } {
+    if { $tag=="ACCESSCOND" } {
+		set nind $cind
+		set npref $prefix 
+		append npref $indent
+		set cmd [lindex $attrs 1]
+	    regsub -all {\\} $cmd "" cmd
+		set cmd "if \[$cmd \$$cind \] \{"
+		putcomm $prefix $cmd
+		report_body $body $cind $npref $indent 
+		putcomm $prefix "\}"
+	} elseif { $tag=="ACCESSQUERY" } {
+		set nind $cind
+		incr nind
+		set npref $prefix 
+		set cmd [lindex $attrs 1]
+	    regsub -all {\\} $cmd "" cmd
+		set cmd "set $nind \[$cmd \$$cind \]"
+		putcomm $prefix $cmd
+		report_body $body $nind $npref $indent 
+	} elseif { $tag=="ACCESSLOOP" } {
+		set nind $cind
+		incr nind
+		set npref $prefix 
+		append npref $indent
+		set group [lindex $attrs 1]
+		if {$group==""} {
+			set cmd "foreach $nind \$$cind \{"
+		} else {	
+			set cmd "foreach $group $nind \$$cind \{ set $nind \[set_copy \$$cind \$$nind \]"
+		}
+		putcomm $prefix $cmd
+		report_body $body $nind $npref $indent 
+		putcomm $prefix "\}"
+    } elseif { $tag=="ACCESSCOMM" } {
+		set cmd [lindex $attrs 1]
+	    regsub -all {\\} $cmd "" cmd
+		set cmd "xml_puts \[$cmd \$$cind \]"
+	    putcomm $prefix $cmd
+    } elseif { $tag=="ACCESSSCRIPT" } {
+		set cmd [lindex $body 1]
+	    regsub -all "\\" $cmd "" cmd
+        putcomm "" $cmd
+    } else {
+        puttext $prefix "<$tag[generate_attrs $attrs]>"
+		report_body $body $cind $prefix $indent
+        puttext $prefix "</$tag>"
+    }
+}
+
+proc report_body { xml cind prefix indent } {
+    foreach { type arg1 arg2 arg3 } $xml {
+	switch -exact $type {
+	    parse:text {report_text $prefix $arg1}
+	    parse:elem {report_elem $cind $prefix $indent $arg1 $arg2 $arg3}
+	}
+    }
+}
+
+proc report:parse_xml { xml } {
+    global res
+    set res {}
+    report_body $xml 0 {} { }
+    return $res
+}
+
+proc report_generate_proc { xml {name report_proc}} {
+    proc $name 0 [join [report:parse_xml $xml] "\n"]
+    return $name
+}
+
+proc report_generate { xml args} {
+
+    set sel [eval set_copy $args]
+    if [size $sel]==0 {
+        puts "nothing selected"
+	return
+    }
+    set xml_tree [XML::parse $xml]
+    set pp [report_generate_proc $xml_tree]
+    $pp $sel
+}
+
+proc read_file { fn } {
+    set f [open $fn]
+    set buf [read $f]
+    close $f
+    return $buf
+}
+
+
+
+##############################################################################
+### Switch helper functions
+
+proc lt { op val var } {
+   if { ["$op" $var] < $val } {
+       return 1
+   } else {
+       return 0;
+   }
+}
+
+proc gt { op val var } {
+   if { ["$op" $var] > $val } {
+       return 1
+   } else {
+       return 0;
+   }
+}
+
+proc eq { op val var } {
+   if { ["$op" $var] == $val } {
+       return 1
+   } else {
+       return 0;
+   }
+}
+
+proc neq { op val var } {
+   if { ["$op" $var] != $val } {
+       return 1
+   } else {
+       return 0;
+   }
+}

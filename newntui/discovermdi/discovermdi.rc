@@ -1,0 +1,3903 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""DiscoverMDI.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#include ""afxolecl.rc""       // OLE container resources\r\n"
+    "#include ""afxolesv.rc""       // OLE server resources\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res/CodeRover.ico"
+IDR_DISCOVTYPE          ICON    DISCARDABLE     "res/DiscoverMDIDoc.ico"
+IDR_TPM                 ICON    DISCARDABLE     "res/icon2.ico"
+IDR_XML                 ICON    DISCARDABLE     "res/idr_tpm1.ico"
+IDR_DORMANT             ICON    DISCARDABLE     "res/ico00001.ico"
+IDR_QA                  ICON    DISCARDABLE     "res/idr_xml1.ico"
+IDR_SIMPLIFY            ICON    DISCARDABLE     "res/ico00002.ico"
+IDR_IMPACT              ICON    DISCARDABLE     "res/impact.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res/Toolbar.bmp"
+IDR_DISCOVTYPE_SRVR_IP  BITMAP  MOVEABLE PURE   "res/IToolbar.bmp"
+IDB_ARLEFT              BITMAP  DISCARDABLE     "res/ArrowLeft.bmp"
+IDB_ARRIGHT             BITMAP  DISCARDABLE     "res/ArrowRight.bmp"
+IDB_OR                  BITMAP  DISCARDABLE     "res/Or.bmp"
+IDB_FILTERWIZARD        BITMAP  DISCARDABLE     "res/FilterWizard.bmp"
+IDB_FILTERLIST          BITMAP  DISCARDABLE     "res/FilterList.bmp"
+IDB_ARROWUP             BITMAP  DISCARDABLE     "res/ArrowUp.bmp"
+IDB_ARROWRIGHT          BITMAP  DISCARDABLE     "res/ArrowRight.bmp"
+IDB_ARROWLEFT           BITMAP  DISCARDABLE     "res/ArrowLeft.bmp"
+IDB_ARROWDN             BITMAP  DISCARDABLE     "res/ArrowDown.bmp"
+IDB_AND                 BITMAP  DISCARDABLE     "res/And.bmp"
+IDB_COLLECT             BITMAP  DISCARDABLE     "res/bitmap1.bmp"
+IDB_FILTER              BITMAP  DISCARDABLE     "res/bmp00001.bmp"
+IDB_PATTERN             BITMAP  DISCARDABLE     "res/bmp00002.bmp"
+IDB_INSTANCES           BITMAP  DISCARDABLE     "res/bmp00003.bmp"
+IDB_ASSIGNMENTS         BITMAP  DISCARDABLE     "res/bmp00004.bmp"
+IDB_REPORT              BITMAP  DISCARDABLE     "res/bmp00005.bmp"
+IDB_QUERY               BITMAP  DISCARDABLE     "res/bmp00006.bmp"
+IDB_DIFF                BITMAP  DISCARDABLE     "res/bmp00007.bmp"
+IDB_NEWTASK             BITMAP  DISCARDABLE     "res/bmp00008.bmp"
+IDR_TPM                 BITMAP  DISCARDABLE     "res/bmp00009.bmp"
+IDB_XMLARGDLG           BITMAP  DISCARDABLE     "res/bmp00010.bmp"
+IDB_OUTDATED            BITMAP  DISCARDABLE     "res/bmp00011.bmp"
+IDB_CHANGETOCOMPILE     BITMAP  DISCARDABLE     "res/bmp00012.bmp"
+IDB_FILESNEEDED         BITMAP  DISCARDABLE     "res/bmp00014.bmp"
+IDB_COMPLETESEARCH      BITMAP  DISCARDABLE     "res/filesnee.bmp"
+IDB_FILESNEEDEDCOMPILE  BITMAP  DISCARDABLE     "res/bmp00013.bmp"
+IDB_FILESNEEDEDGET      BITMAP  DISCARDABLE     "res/bmp00015.bmp"
+IDB_FOLDER_CLOSED       BITMAP  DISCARDABLE     "res/bmp00016.bmp"
+IDB_QUERY1_OPEN         BITMAP  DISCARDABLE     "res/bmp00018.bmp"
+IDB_QUERY2_OPEN         BITMAP  DISCARDABLE     "res/query1_e.bmp"
+IDB_QUERY_OPEN_DIS      BITMAP  DISCARDABLE     "res/bmp00019.bmp"
+IDB_FOLDER_OPENED_DIS   BITMAP  DISCARDABLE     "res/bmp00020.bmp"
+IDB_FOLDER_OPENED       BITMAP  DISCARDABLE     "res/folder_o.bmp"
+IDB_FOLDER_CLOSED_DIS   BITMAP  DISCARDABLE     "res/folder_c.bmp"
+IDB_QUERY1_CLOSE        BITMAP  DISCARDABLE     "res/query1_o.bmp"
+IDB_QUERY2_CLOSE        BITMAP  DISCARDABLE     "res/query2_o.bmp"
+IDB_QUERY_CLOSE_DIS     BITMAP  DISCARDABLE     "res/query_di.bmp"
+IDR_QA                  BITMAP  DISCARDABLE     "res/xml1.bmp"
+IDB_PASTE               BITMAP  DISCARDABLE     "res/arright1.bmp"
+IDB_COPY                BITMAP  DISCARDABLE     "res/copy1.bmp"
+IDB_STOP                BITMAP  DISCARDABLE     "res/paste1.bmp"
+IDB_XMLCOMPONENT        BITMAP  DISCARDABLE     "res/report1.bmp"
+IDB_FONTS               BITMAP  DISCARDABLE     "res/stop1.bmp"
+IDB_SUBOK_SEL           BITMAP  DISCARDABLE     "res/suboksel.bmp"
+IDB_SUBOK_UNSEL         BITMAP  DISCARDABLE     "res/subokunsel.bmp"
+IDB_SUBOK_SEL_DIS       BITMAP  DISCARDABLE     "res/subokseldis.bmp"
+IDB_SUBOK_UNSEL_DIS     BITMAP  DISCARDABLE     "res/subokunseldis.bmp"
+IDB_SUBWARN_SEL         BITMAP  DISCARDABLE     "res/subwarnsel.bmp"
+IDB_SUBWARN_SEL_DIS     BITMAP  DISCARDABLE     "res/subwarn_dis.bmp"
+IDB_SUBWARN_UNSEL       BITMAP  DISCARDABLE     "res/subwarn_unsel.bmp"
+IDB_SUBWARN_UNSEL_DIS   BITMAP  DISCARDABLE     "res/subwarn_unsel_dis.bmp"
+IDB_SUBERROR_SEL        BITMAP  DISCARDABLE     "res/suberror_sel.bmp"
+IDB_SUBERROR_SEL_DIS    BITMAP  DISCARDABLE     "res/suberror_sel_dis.bmp"
+IDB_SUBERROR_UNSEL      BITMAP  DISCARDABLE     "res/suberror_unsel.bmp"
+IDB_SUBERROR_UNSEL_DIS  BITMAP  DISCARDABLE     "res/suberror_unsel_dis.bmp"
+IDB_FOLDER_ERROR_CLOSED BITMAP  DISCARDABLE     "res/folder_mark_closed.bmp"
+IDB_FOLDER_ERROR_OPENED BITMAP  DISCARDABLE     "res/folder_mark_opened.bmp"
+IDB_FOLDER_ERROR_CLOSED_DIS BITMAP  DISCARDABLE     "res/folder_m_cl_dis.bmp"
+IDB_FOLDER_ERROR_OPENED_DIS BITMAP  DISCARDABLE     "res/folder_m_op_dis.bmp"
+IDB_FOLDER_WARN_CLOSED  BITMAP  DISCARDABLE     "res/folder_w_closed.bmp"
+IDB_FOLDER_WARN_CLOSED_DIS BITMAP  DISCARDABLE     "res/folder_w_cl_dis.bmp"
+IDB_FOLDER_WARN_OPENED  BITMAP  DISCARDABLE     "res/folder_w_open.bmp"
+IDB_FOLDER_WARN_OPENED_DIS BITMAP  DISCARDABLE     "res/folder_w_op_dis.bmp"
+IDB_PUBLIC              BITMAP  DISCARDABLE     "res/public_func.bmp"
+IDB_PROTECTED           BITMAP  DISCARDABLE     "res/protect_func.bmp"
+IDB_PRIVATE             BITMAP  DISCARDABLE     "res/private_func.bmp"
+IDB_CLASSBMP            BITMAP  DISCARDABLE     "res/cl_bmp.bmp"
+IDB_RTOL                BITMAP  DISCARDABLE     "res/ltor.bmp"
+IDB_LTOR                BITMAP  DISCARDABLE     "res/rtol.bmp"
+IDB_BTOT                BITMAP  DISCARDABLE     "res/btot.bmp"
+IDB_TTOB                BITMAP  DISCARDABLE     "res/ttob.bmp"
+IDB_ONE2MANY_TOP        BITMAP  DISCARDABLE     "res/one2many_top.bmp"
+IDB_ONE2MANY_BOTTOM     BITMAP  DISCARDABLE     "res/one2many_bottom.bmp"
+IDB_ONE2MANY_LEFT       BITMAP  DISCARDABLE     "res/one2many_left.bmp"
+IDB_ONE2MANY_RIGHT      BITMAP  DISCARDABLE     "res/one2many_right.bmp"
+IDR_MAINFRAMEVIEWS      BITMAP  MOVEABLE PURE   "res/mainframvies.bmp"
+IDB_GRAPH_EXPAND        BITMAP  DISCARDABLE     "res/graph_expand.bmp"
+IDB_GRAPH_COLLAPSE      BITMAP  DISCARDABLE     "res/graph_collapse.bmp"
+IDB_NV_PUB_PROP         BITMAP  DISCARDABLE     "res/nv_bub_prop.bmp"
+IDB_NV_PROT_PROP        BITMAP  DISCARDABLE     "res/nv_prot_prop.bmp"
+IDB_NV_PRIV_PROP        BITMAP  DISCARDABLE     "res/nv_priv_prop.bmp"
+IDB_NV_PACK_PROP        BITMAP  DISCARDABLE     "res/nv_pack_prop.bmp"
+IDB_NV_PUB_FUNC         BITMAP  DISCARDABLE     "res/nv_pub_func.bmp"
+IDB_NV_PROT_FUNC        BITMAP  DISCARDABLE     "res/nv_prot_func.bmp"
+IDB_NV_PRIV_FUNC        BITMAP  DISCARDABLE     "res/nv_priv_func.bmp"
+IDB_NV_PACK_FUNC        BITMAP  DISCARDABLE     "res/nv_pack_func.bmp"
+IDB_VV_PUB_FUNC         BITMAP  DISCARDABLE     "res/vv_pub_func.bmp"
+IDB_VV_PROT_FUNC        BITMAP  DISCARDABLE     "res/vv_prot_func.bmp"
+IDB_VV_PRIV_FUNC        BITMAP  DISCARDABLE     "res/vv_priv_func.bmp"
+IDB_VV_PACK_FUNC        BITMAP  DISCARDABLE     "res/vv_pack_func.bmp"
+IDB_BROWSER_SPLIT       BITMAP  DISCARDABLE     "res/browser_split.bmp"
+IDB_BROWSER_PREV        BITMAP  DISCARDABLE     "res/browser_prev.bmp"
+IDB_BROWSER_NEXT        BITMAP  DISCARDABLE     "res/browser_next.bmp"
+IDB_BROWSER_PROJECTS    BITMAP  DISCARDABLE     "res/browser_projects.bmp"
+IDB_BROWSER_CATEGORIES  BITMAP  DISCARDABLE     "res/browser_categories.bmp"
+IDB_BROWSER_QUERIES     BITMAP  DISCARDABLE     "res/browser_queries.bmp"
+IDB_BROWSER_GROUPS      BITMAP  DISCARDABLE     "res/browser_groups.bmp"
+IDB_PROJECTS            BITMAP  DISCARDABLE     "res/myprojects.bmp"
+IDB_SIMPLIFY_ROOT       BITMAP  DISCARDABLE     "res/simplify_root.bmp"
+IDB_SIMPLIFY_CHECK      BITMAP  DISCARDABLE     "res/simplify_check.bmp"
+IDB_SIMPLIFY_UNCHECK    BITMAP  DISCARDABLE     "res/simplify_uncheck.bmp"
+IDB_SIMPLIFY_PERMANENT  BITMAP  DISCARDABLE     "res/simplify_permanent.bmp"
+IDB_SIMPLIFY_ROOT_SEL   BITMAP  DISCARDABLE     "res/simplify_root_sel.bmp"
+IDB_SIMPLIFY_CHECK_SEL  BITMAP  DISCARDABLE     "res/simplify_check_sel.bmp"
+IDB_SIMPLIFY_UNCHECK_SEL BITMAP  DISCARDABLE     "res/simplify_uncheck_sel.bmp"
+IDR_SIMPLIFY            BITMAP  DISCARDABLE     "res/simplify_bar.bmp"
+IDB_SIMPLIFY_UNPROCESSED BITMAP  DISCARDABLE     "res/simplify_unprocessed.bmp"
+IDB_SIMPLIFY_VISITED    BITMAP  DISCARDABLE     "res/simplify_visited.bmp"
+IDB_SIMPLIFY_UPDATED    BITMAP  DISCARDABLE     "res/simplify_updated.bmp"
+IDB_SIMPLIFY_PROCESSING BITMAP  DISCARDABLE     "res/simplify_processing.bmp"
+IDB_INSTANCE            BITMAP  DISCARDABLE     "res/outdated.bmp"
+IDB_ABOUT               BITMAP  DISCARDABLE     "res/About.bmp"
+IDR_IMPACT              BITMAP  DISCARDABLE     "res/impact.bmp"
+IDB_WAIT                BITMAP  DISCARDABLE     "res/wait.bmp"
+IDB_MODELIMAGES         BITMAP  DISCARDABLE     "res\\modelim.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 16
+BEGIN
+    BUTTON      ID_DORMANT
+    BUTTON      ID_QA
+    BUTTON      IDC_SIMPLIFY
+    BUTTON      IDC_IMPACT
+    BUTTON      ID_ACCESS
+    SEPARATOR
+    BUTTON      ID_TREEDIAGRAM
+    BUTTON      ID_INHERITANCE
+    BUTTON      ID_ERD
+    BUTTON      ID_OUTLINE
+    BUTTON      ID_DATACHART
+    BUTTON      ID_FLOWCHART
+    BUTTON      ID_CALLGRAPH
+END
+
+IDR_DISCOVTYPE_SRVR_IP TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+IDR_QA TOOLBAR DISCARDABLE  16, 16
+BEGIN
+    BUTTON      ID_QAOPEN
+    BUTTON      ID_QASAVE
+    BUTTON      IDC_SAVEREPORT
+    SEPARATOR
+    BUTTON      ID_QARESET
+    SEPARATOR
+    BUTTON      ID_QARUN
+    BUTTON      ID_QARUNSEL
+    SEPARATOR
+    BUTTON      ID_QABROWSE
+    SEPARATOR
+    BUTTON      IDC_IMATTACHMENT
+END
+
+IDR_MAINFRAMEVIEWS TOOLBAR DISCARDABLE  16, 16
+BEGIN
+    BUTTON      ID_OPENTREEDIAGRAM
+    BUTTON      ID_OPENINHERITANCE
+    BUTTON      ID_OPENERD
+    BUTTON      ID_OPENDATACHART
+    BUTTON      ID_OPENOUTLINE
+    BUTTON      ID_OPENFLOWCHART
+END
+
+IDR_SIMPLIFY TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_INCLUSION
+    BUTTON      ID_SIMPLIFY_UPDATE
+END
+
+IDR_IMPACT TOOLBAR DISCARDABLE  16, 16
+BEGIN
+    BUTTON      IDC_SAVEREPORT
+    SEPARATOR
+    BUTTON      IDC_IMATTACHMENT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Caliper",                     ID_QA
+        MENUITEM "Access terminal",             ID_ACCESS
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_DISCOVTYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Sen&d...",                    ID_FILE_SEND_MAIL
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM "Paste &Special...",           ID_EDIT_PASTE_SPECIAL
+        MENUITEM SEPARATOR
+        MENUITEM "Insert &New Object...",       ID_OLE_INSERT_NEW
+        MENUITEM "Lin&ks...",                   ID_OLE_EDIT_LINKS
+        MENUITEM "<<OLE VERBS GO HERE>>",       ID_OLE_VERB_FIRST
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Caliper",                     ID_QA
+        MENUITEM "Access terminal",             ID_ACCESS
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 ID_WINDOW_NEW
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_DISCOVTYPE_CNTR_IP MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Sen&d...",                    ID_FILE_SEND_MAIL
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    MENUITEM SEPARATOR
+    MENUITEM SEPARATOR
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 ID_WINDOW_NEW
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+END
+
+IDR_DISCOVTYPE_SRVR_EMB MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_DISCOVTYPE_SRVR_IP MENU PRELOAD DISCARDABLE 
+BEGIN
+    MENUITEM SEPARATOR
+    MENUITEM SEPARATOR
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_XML MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "New",                         ID_XMLNEW
+        MENUITEM "Open",                        ID_XMLOPEN
+        MENUITEM "Save",                        ID_XMLSAVE
+        MENUITEM "Save as ..",                  ID_XMLSAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&XML generation"
+    BEGIN
+        MENUITEM "Generate report",             ID_MAKEXML
+        MENUITEM "View report",                 ID_XMLPREVIEW
+        MENUITEM SEPARATOR
+        MENUITEM "Settings",                    ID_XMLSETTINGS
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_DORMANT MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_QA MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "Session"
+    BEGIN
+        MENUITEM "Open session",                ID_QAOPEN
+        MENUITEM "Save session",                ID_QASAVE
+    END
+    POPUP "Action"
+    BEGIN
+        MENUITEM "Reset",                       ID_QARESET
+        MENUITEM "Run all",                     ID_QARUN
+        MENUITEM "Run selected",                ID_QARUNSEL
+        MENUITEM "Browse",                      ID_QABROWSE
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_ACCESS MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_DATACHARTVIEW MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "Print",                       ID_FILE_PRINT
+        MENUITEM "Print preview",               ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Caliper",                     ID_QA
+        MENUITEM "Access terminal",             ID_ACCESS
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_ERDVIEW MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "Print",                       ID_FILE_PRINT
+        MENUITEM "Print preview",               ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Settings"
+    BEGIN
+        MENUITEM "View properties",             IDC_GRAPHPROP
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_FLOWCHARTVIEW MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "Print",                       ID_FILE_PRINT
+        MENUITEM "Print preview",               ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_INHERITANCEVIEW MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "Print",                       ID_FILE_PRINT
+        MENUITEM "Print preview",               ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Settings"
+    BEGIN
+        MENUITEM "View properties",             IDC_GRAPHPROP
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_OUTLINEVIEW MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "Print",                       ID_FILE_PRINT
+        MENUITEM "Print preview",               ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_TREEVIEW MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "Print",                       ID_FILE_PRINT
+        MENUITEM "Print preview",               ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Access terminal",             ID_ACCESS
+        MENUITEM "Caliper",                     ID_QA
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Settings"
+    BEGIN
+        MENUITEM "View properties",             IDC_GRAPHPROP
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_SIMPLIFY MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Simplify"
+    BEGIN
+        MENUITEM "Substitute mode",             ID_INCLUSION
+        MENUITEM "Update source",               ID_SIMPLIFY_UPDATE
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Caliper",                     ID_QA
+        MENUITEM "Access terminal",             ID_ACCESS
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "&Impact",                     IDC_IMPACT
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+IDR_IMPACT MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Connect to server ...\tCtrl+O", ID_SERVICESELECT
+        MENUITEM "Update",                      ID_UPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Editor setup...",            ID_EDITOR_SETUP
+        MENUITEM "C&M setup...",                ID_CM_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Tree Diagram",                ID_TREEDIAGRAM
+        MENUITEM "Inheritance",                 ID_INHERITANCE
+        MENUITEM "ERD",                         ID_ERD
+        MENUITEM "Data Chart",                  ID_DATACHART
+        MENUITEM "Outline",                     ID_OUTLINE
+        MENUITEM "Flow Chart",                  ID_FLOWCHART
+        MENUITEM "Graph",                       ID_CALLGRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Browser",                    ID_VIEW_BROWSER
+        MENUITEM "Errors",                      IDC_VIEW_ERRORS
+        MENUITEM "&Modes toolbar",              ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Caliper",                     ID_QA
+        MENUITEM "Access terminal",             ID_ACCESS
+        POPUP "Reengineer"
+        BEGIN
+            MENUITEM "Dormant",                     ID_DORMANT
+            MENUITEM "Simplify",                    IDC_SIMPLIFY
+        END
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Cascade",                     ID_WINDOW_CASCADE
+        MENUITEM "Tile",                        ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange icons",               ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Contents...",                 ID_HELP_INDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&About DIScover...",    ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+    VK_ESCAPE,      ID_CANCEL_EDIT_CNTR,    VIRTKEY, NOINVERT
+END
+
+IDR_DISCOVTYPE_CNTR_IP ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+    VK_ESCAPE,      ID_CANCEL_EDIT_CNTR,    VIRTKEY, NOINVERT
+END
+
+IDR_DISCOVTYPE_SRVR_IP ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_ESCAPE,      ID_CANCEL_EDIT_SRVR,    VIRTKEY, NOINVERT
+END
+
+IDR_DISCOVTYPE_SRVR_EMB ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_UPDATE,         VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+    VK_ESCAPE,      ID_CANCEL_EDIT_CNTR,    VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 280, 191
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About DIScover"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         369,IDC_ABOUT_IMAGE,"Static",SS_BITMAP | 
+                    SS_REALSIZEIMAGE,30,39,213,134,WS_EX_STATICEDGE
+END
+
+IDD_LEFTMODELBROWSER DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_LEFTBROWSER,
+                    "{1DE4F494-201B-11D2-AEF3-00A0C9B71DC4}",WS_TABSTOP,7,7,
+                    146,81
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,155,7,24,22
+END
+
+IDD_RIGHTMODELBROWSER DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,146,7,33,28
+    CONTROL         "",IDC_RIGHTBROWSER,
+                    "{1DE4F494-201B-11D2-AEF3-00A0C9B71DC4}",WS_TABSTOP,7,7,
+                    136,81
+END
+
+IDD_PROJECTBROWSER DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",0x0,7,7,172,21
+    CONTROL         "",IDC_PROJECTTREE,
+                    "{B888ED83-0911-11D2-AEE6-00A0C9B71DC4}",WS_TABSTOP,7,29,
+                    62,59
+    CONTROL         "",IDC_PROJECTMODULES,
+                    "{5743FFDD-0A20-11D2-AEE7-00A0C9B71DC4}",WS_TABSTOP,78,
+                    30,56,58
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,148,41,31,26
+END
+
+IDD_SORT DIALOGEX 0, 0, 212, 209
+STYLE DS_MODALFRAME | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Complex Sort Setup"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,188,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,81,188,50,14
+    LISTBOX         IDC_SOURCE,7,24,86,160,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Available Attributes",IDC_STATIC,9,12,77,10
+    LISTBOX         IDC_DESTINATION,120,24,85,160,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Sorting order",IDC_STATIC,127,12,73,9
+    PUSHBUTTON      "",IDC_ADD,96,78,22,20,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_REMOVE,96,105,22,20,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Apply",IDAPPLY,155,188,50,14
+    CONTROL         "",IDC_DECENDING,"Button",BS_AUTOCHECKBOX | BS_BITMAP | 
+                    BS_CENTER | BS_VCENTER | BS_PUSHLIKE | WS_TABSTOP,98,150,
+                    17,16
+    CONTROL         "Check1",IDC_ACENDING,"Button",BS_AUTOCHECKBOX | 
+                    BS_BITMAP | BS_CENTER | BS_VCENTER | BS_PUSHLIKE | 
+                    WS_TABSTOP,98,168,17,15
+END
+
+IDD_FILTERWIZARD DIALOG DISCARDABLE  0, 0, 250, 234
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_ATTRIBUTE,15,33,187,102,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_ARGUMENT,14,92,189,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_OPERATION,15,63,187,65,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Tab3",IDC_TABEXPRESSION,"SysTabControl32",TCS_BUTTONS,
+                    11,167,226,14
+    CTEXT           "Attribute",IDC_STATIC,15,18,186,12,SS_SUNKEN
+    CTEXT           "Operation",IDC_STATIC,15,48,187,12,SS_SUNKEN
+    CTEXT           "Argument",IDC_STATIC,15,78,188,12,SS_SUNKEN
+    EDITTEXT        IDC_EDITEXPRESSION,7,200,236,15,ES_AUTOHSCROLL | 
+                    ES_READONLY
+    LTEXT           "Results shown as  Access expression:",IDC_STATIC,9,188,
+                    127,8
+    PUSHBUTTON      "Add to results",IDC_ADDBUTTON,10,130,72,14
+    PUSHBUTTON      "Remove from results",IDC_REMOVEBUTTON,89,130,72,14
+    PUSHBUTTON      "Change results",IDC_CHANGEBUTTON,167,130,72,14
+    CONTROL         "And",IDC_AND,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
+                    WS_TABSTOP,37,112,40,12
+    CONTROL         "Or",IDC_OR,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
+                    WS_TABSTOP,86,112,40,12
+    GROUPBOX        "",IDC_STATIC,7,159,236,26
+    LTEXT           "Use",IDC_STATIC,14,114,22,11
+    LTEXT           "to merge with result.",IDC_STATIC,131,113,95,9
+    LTEXT           "Results as flowchart:",IDC_STATIC,9,151,128,9
+    GROUPBOX        "Attributte logical operation",IDC_STATIC,7,7,236,141
+END
+
+IDD_FILTERLIST DIALOG DISCARDABLE  0, 0, 220, 229
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_SAVELIST,7,19,206,114,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Saved Filters",IDC_STATIC,7,9,88,9
+    EDITTEXT        IDC_NAMEEDIT,7,150,206,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMANDEDIT,7,182,206,15,ES_AUTOHSCROLL
+    LTEXT           "Filter Name",IDC_STATIC,7,137,108,10
+    LTEXT           "Filter Command",IDC_STATIC,7,170,110,9
+    PUSHBUTTON      "Add",IDC_ADDBUTTON,7,207,50,15
+    PUSHBUTTON      "Remove",IDC_REMOVEBUTTON,63,207,50,15
+    PUSHBUTTON      "Change",IDC_CHANGEBUTTON,121,207,50,15
+END
+
+IDD_ATTRIBUTES DIALOGEX 0, 0, 216, 183
+STYLE DS_MODALFRAME | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Attributes Setup"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,162,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,84,162,50,14
+    LISTBOX         IDC_SOURCEATTR,7,19,87,137,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_DESTATTR,122,19,87,137,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<",IDC_ONE_TO_SOURCE,98,89,19,17,BS_BITMAP,
+                    WS_EX_CLIENTEDGE
+    PUSHBUTTON      ">",IDC_ONE_TO_DEST,98,64,19,17,BS_BITMAP,
+                    WS_EX_CLIENTEDGE
+    CTEXT           "Available Attributes",IDC_STATIC,7,7,86,11,SS_SUNKEN
+    CTEXT           "Selected Attributes",IDC_STATIC,123,7,86,11,SS_SUNKEN
+    PUSHBUTTON      "Apply",IDAPPLY,159,162,50,14
+END
+
+IDD_TPMFILTER DIALOGEX 0, 0, 293, 249
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TYPESPREADSHEET,
+                    "{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",WS_TABSTOP,7,73,
+                    69,156
+    CONTROL         "",IDC_TEXTSPREADSHEET,
+                    "{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",NOT WS_VISIBLE | 
+                    WS_TABSTOP,84,72,49,156
+    CONTROL         "",IDC_TPMSPREADSHEET,
+                    "{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",NOT WS_VISIBLE | 
+                    WS_TABSTOP,159,75,127,155
+    PUSHBUTTON      "Add row",IDC_ADDROW,7,230,54,13,0,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Remove row",IDC_DELROW,66,230,54,13,0,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Edit Row",IDC_EDITROW,123,230,54,13,NOT WS_VISIBLE,
+                    WS_EX_CLIENTEDGE
+    CONTROL         "Inclusive TPM filter",IDC_INCLUSIVE,"Button",
+                    BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,191,231,77,
+                    11
+    CONTROL         "Tab1",IDC_FILTERTYPE,"SysTabControl32",WS_TABSTOP,7,57,
+                    279,14
+    COMBOBOX        IDC_FILTERSELECTOR,7,29,200,90,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "New Filter",IDC_NEWFILTER,215,30,71,12
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",WS_TABSTOP,7,7,
+                    279,14
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,264,48,13,8
+END
+
+IDD_ADDTPM DIALOGEX 0, 0, 306, 218
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TPM Expression Editor"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,197,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,64,197,50,14
+    EDITTEXT        IDC_CURRENTEDIT,7,78,292,41,ES_MULTILINE | 
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_NAMEEDIT,7,19,292,12,ES_AUTOHSCROLL
+    LTEXT           "Name:",IDC_STATIC,7,7,85,9
+    EDITTEXT        IDC_NEWEDIT,7,140,292,40,ES_MULTILINE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTEDIT,7,46,292,12,ES_AUTOHSCROLL
+    LTEXT           "Comment:",IDC_STATIC,7,34,85,9
+    LTEXT           "Current TPM expression:",IDC_STATIC,7,67,106,8
+    LTEXT           "New TPM expression:",IDC_STATIC,9,126,106,8
+    PUSHBUTTON      "",IDC_CHANGE,146,122,19,16,BS_BITMAP,WS_EX_CLIENTEDGE
+END
+
+IDD_NEWFILTER DIALOG DISCARDABLE  0, 0, 186, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Filter"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_FILTEREDIT,7,23,172,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,63,45,50,14
+    LTEXT           "Enter the new filter name",IDC_STATIC,7,10,172,9
+END
+
+IDD_TPMFLOW DIALOGEX 0, 0, 236, 173
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_SEQUENCESELECTOR,7,7,154,90,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Tab1",IDC_TASKFLOW,"SysTabControl32",TCS_BUTTONS | 
+                    WS_GROUP | WS_TABSTOP,7,34,222,16,WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_TASKSPREADSHEET,
+                    "{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",NOT WS_VISIBLE | 
+                    WS_TABSTOP,7,49,222,117
+    PUSHBUTTON      "New Task",IDC_NEWSEQUENCE,160,7,69,13
+    CTEXT           "Sequence",IDC_SEQUENCECAPTION,7,21,193,11,
+                    SS_CENTERIMAGE | NOT WS_GROUP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,213,22,16,9
+END
+
+IDD_FLOWTASKS DIALOGEX 0, 0, 185, 169
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_TASKSLIST,"SysListView32",LVS_SMALLICON | 
+                    LVS_SHAREIMAGELISTS | LVS_AUTOARRANGE | WS_GROUP | 
+                    WS_TABSTOP,7,18,171,119,WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,148,137,27,20
+    LTEXT           "  Available Nodes",IDC_CAPTION,7,7,171,10,
+                    SS_CENTERIMAGE
+END
+
+IDD_NEWTASKFLOW DIALOG DISCARDABLE  0, 0, 186, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TaskFlow creation"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_NAMEEDIT,7,22,172,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,63,45,50,14
+    LTEXT           "Enter the name of the new TaskFlow:",IDC_STATIC,7,10,
+                    118,10
+END
+
+IDD_FORMVIEW DIALOGEX 0, 0, 250, 216
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_DOCSTRUCTURE,
+                    "{B0A92BA6-41AC-11D2-AF18-00A0C9B71DC4}",WS_TABSTOP,60,
+                    19,183,68
+    EDITTEXT        IDC_TAGTEXT,7,105,236,13,ES_MULTILINE | ES_UPPERCASE | 
+                    ES_AUTOHSCROLL
+    PUSHBUTTON      "Add Child",IDC_ADDCHILD,7,197,40,12
+    PUSHBUTTON      "Add sibling",IDC_ADDSIBLING,50,197,44,12
+    PUSHBUTTON      "Delete",IDC_DELETENODE,144,197,44,12
+    GROUPBOX        "Element type",IDC_TYPECOMBO,7,150,236,44,WS_GROUP,
+                    WS_EX_TRANSPARENT
+    LTEXT           "Tag name",IDC_TAGTITLE,7,93,35,8
+    LTEXT           "Report structure:",IDC_TITLE,60,8,92,11,SS_CENTERIMAGE
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,209,7,15,12
+    CONTROL         "User text",IDC_STATICTEXT,"Button",BS_AUTORADIOBUTTON,
+                    13,162,72,8
+    CONTROL         "Loop",IDC_LOOP,"Button",BS_AUTORADIOBUTTON,90,161,72,8
+    CONTROL         "Attribute",IDC_ATTRIBUTE,"Button",BS_AUTORADIOBUTTON,13,
+                    173,72,8
+    CONTROL         "Query",IDC_QUERY,"Button",BS_AUTORADIOBUTTON,90,172,72,
+                    8
+    CONTROL         "Switch",IDC_SWITCH,"Button",BS_AUTORADIOBUTTON,90,183,
+                    72,8
+    EDITTEXT        IDC_ITEMTEXT,7,134,236,13,ES_MULTILINE | ES_AUTOHSCROLL
+    LTEXT           "Node text:",IDC_ITEMTITLE,7,122,34,8
+    PUSHBUTTON      "Add parent",IDC_ADDPARENT,97,197,44,12
+    CONTROL         "List1",IDC_PRESET,"SysListView32",LVS_SMALLICON | 
+                    LVS_SINGLESEL | LVS_SORTASCENDING | LVS_AUTOARRANGE | 
+                    WS_BORDER | WS_TABSTOP,7,18,52,71,WS_EX_CLIENTEDGE
+    LTEXT           "Components:",IDC_COMPTITLE,8,9,50,10,SS_CENTERIMAGE
+END
+
+IDD_XMLADDNODE DIALOG DISCARDABLE  0, 0, 202, 151
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add To Document"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_TAGS,7,20,114,71,CBS_DROPDOWN | CBS_SORT | 
+                    CBS_UPPERCASE | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "User text",IDC_STATICTEXT,"Button",BS_AUTORADIOBUTTON,
+                    13,44,72,8
+    CONTROL         "Attribute",IDC_ATTRIBUTE,"Button",BS_AUTORADIOBUTTON,13,
+                    54,72,8
+    CONTROL         "Loop",IDC_LOOP,"Button",BS_AUTORADIOBUTTON,13,69,72,8
+    CONTROL         "Query",IDC_QUERY,"Button",BS_AUTORADIOBUTTON,13,80,72,8
+    CONTROL         "Switch",IDC_SWITCH,"Button",BS_AUTORADIOBUTTON,13,90,72,
+                    8
+    EDITTEXT        IDC_TEXT,7,131,188,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,145,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,145,24,50,14
+    LTEXT           "Item name",IDC_STATIC,8,9,113,9
+    GROUPBOX        "Item type",IDC_STATIC,7,34,115,69
+    LTEXT           "Item text:",IDC_TEXTNAME,7,104,188,9
+    COMBOBOX        IDC_SELECTOR,7,115,106,113,CBS_DROPDOWNLIST | 
+                    CBS_AUTOHSCROLL | NOT WS_VISIBLE | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,150,60,30,23
+    COMBOBOX        IDC_COMP,117,115,28,55,CBS_DROPDOWNLIST | NOT WS_VISIBLE | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_VAL,149,115,46,13,ES_AUTOHSCROLL | NOT WS_VISIBLE
+END
+
+IDD_XMLSTYLES DIALOGEX 0, 0, 185, 271
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_HTML,7,14,171,148,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_RULESEDITOR,99,52,79,212,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | 
+                    WS_VSCROLL | WS_HSCROLL
+    CONTROL         "",IDC_PROPERTIES,"{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",
+                    WS_TABSTOP,7,54,88,210
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",0x0,7,34,171,
+                    18,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,157,30,15,12
+END
+
+IDD_XMLSETUP DIALOG DISCARDABLE  0, 0, 180, 111
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "AutoDoc Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,90,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,65,90,50,14
+    LTEXT           "Default directory to store DIScover Active Pages:",
+                    IDC_STATIC,7,7,166,8
+    EDITTEXT        IDC_TEMPLATESEDITOR,7,17,166,12,ES_AUTOHSCROLL
+    LTEXT           "Default directory to store reports:",IDC_STATIC,7,35,
+                    149,8
+    EDITTEXT        IDC_XMLEDITOR,7,45,166,12,ES_AUTOHSCROLL
+    LTEXT           "Your favorite HTML Browser:",IDC_STATIC,7,63,166,8
+    EDITTEXT        IDC_BROWSEREDITOR,7,74,166,12,ES_AUTOHSCROLL
+END
+
+IDD_XMLARGUMENTS DIALOG DISCARDABLE  0, 0, 244, 114
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Report arguments:"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,93,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,64,93,50,14
+    CONTROL         "Selection",IDC_XMLSELECTIONARG,"Button",
+                    BS_AUTORADIOBUTTON,19,20,79,9
+    CONTROL         "Scope",IDC_XMLSCOPEARG,"Button",BS_AUTORADIOBUTTON,19,
+                    35,79,9
+    CONTROL         "Access variable",IDC_XMLEXPLISITARG,"Button",
+                    BS_AUTORADIOBUTTON,19,50,79,9
+    COMBOBOX        IDC_ACCESSCOMMAND,103,65,126,107,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Access query",IDC_XMLCOMMANDARG,"Button",
+                    BS_AUTORADIOBUTTON,19,67,79,9
+    EDITTEXT        IDC_ACCESSVARIABLE,103,48,124,12,ES_AUTOHSCROLL
+    GROUPBOX        "Arguments types and values:",IDC_STATIC,7,7,230,78
+END
+
+IDD_DORMANT DIALOG DISCARDABLE  0, 0, 185, 244
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DORMANTSELECTION,
+                    "{26C03863-0D33-11D2-AEE9-00A0C9B71DC4}",WS_TABSTOP,7,18,
+                    171,191
+    PUSHBUTTON      "Run Dormant Analysis",IDC_RUNDORMANT,53,217,80,13
+    CTEXT           "Roots selected for the Dormant Code analysis:",
+                    IDC_DORMANTTITLE,7,7,171,11,SS_CENTERIMAGE
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,7,212,30,25
+END
+
+IDD_MINIBROWSER DIALOG DISCARDABLE  0, 0, 298, 235
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,259,7,32,28
+    CONTROL         "",IDC_LEFTPANE,"{1DE4F494-201B-11D2-AEF3-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,129,33,72,195
+    CONTROL         "",IDC_RIGHTPANE,"{1DE4F494-201B-11D2-AEF3-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,208,32,60,196
+    CONTROL         "",IDC_PROJECTTREE,
+                    "{B888ED83-0911-11D2-AEE6-00A0C9B71DC4}",WS_TABSTOP,7,34,
+                    62,194
+    CONTROL         "",IDC_PROJECTMODULES,
+                    "{5743FFDD-0A20-11D2-AEE7-00A0C9B71DC4}",WS_TABSTOP,73,
+                    33,52,195
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",0x0,7,7,252,24
+    CONTROL         "",IDC_MSDEVINTEGRATOR,
+                    "{AA00DC08-36DE-11D2-AF0F-00A0C9B71DC4}",NOT WS_VISIBLE | 
+                    WS_TABSTOP,273,86,18,16
+END
+
+IDD_QATREE DIALOGEX 0, 0, 202, 203
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Tree1",IDC_QATREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    WS_TABSTOP,7,31,188,165,WS_EX_CLIENTEDGE
+    CTEXT           "Filter Sets:",IDC_QATREETITLE,7,7,132,10,SS_CENTERIMAGE
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,144,7,34,20
+END
+
+IDD_QAPARAMS DIALOG DISCARDABLE  0, 0, 283, 159
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_PROPERTIES,"{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",
+                    WS_TABSTOP,7,60,179,92
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",0x0,7,7,175,18
+    LTEXT           "  Scope to process:",IDC_SCOPETITLE,7,26,178,10
+    COMBOBOX        IDC_SCOPE,7,35,178,50,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "  Properties:",IDC_PROPERTIESTITLE,7,50,178,10
+    CONTROL         "",IDC_REPORTER,"{8856F961-340A-11D0-A96B-00C04FD705A2}",
+                    WS_TABSTOP,197,23,79,129
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,192,7,19,15
+END
+
+IDD_SERVICECHOOSER DIALOG DISCARDABLE  0, 0, 304, 154
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Service Chooser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,247,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,247,24,50,14
+    LISTBOX         IDC_SERVICELIST,7,7,235,140,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_ACCESS DIALOGEX 0, 0, 291, 221
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT,7,26,277,188,ES_MULTILINE | ES_AUTOVSCROLL | 
+                    ES_AUTOHSCROLL | ES_NOHIDESEL | ES_WANTRETURN | 
+                    WS_VSCROLL | WS_HSCROLL
+    PUSHBUTTON      "",IDC_PREVCMD,7,7,16,14,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_NEXTCMD,24,7,15,14,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_COPYSEL,46,7,16,14,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_PASTESEL,63,7,15,14,BS_BITMAP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "",IDC_STOP,83,7,16,14,BS_BITMAP | NOT WS_VISIBLE,
+                    WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,139,7,19,15
+    PUSHBUTTON      "",IDC_FONT,109,7,16,14,BS_BITMAP,WS_EX_CLIENTEDGE
+END
+
+IDD_XMLCOMPNAME DIALOG DISCARDABLE  0, 0, 157, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New component"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_NAME,5,20,145,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,86,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,25,45,50,14
+    LTEXT           "Type this component name:",IDC_STATIC,5,7,145,12
+END
+
+IDD_PROMPT DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "DIScover"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_USER,7,52,172,15,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,29,74,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,105,74,50,14
+    CTEXT           "Static",IDC_TEXT,7,9,172,40
+END
+
+IDD_DLGBAR DIALOG DISCARDABLE  0, 0, 82, 19
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_SUBSOURCE,4,3,73,88,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_UPDATEWAIT DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Information Model Update"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Yes",IDOK,41,66,50,14
+    PUSHBUTTON      "No",IDCANCEL,96,65,50,14
+    LTEXT           "This operation can take significant time.",IDC_STATIC,
+                    24,19,140,9
+    LTEXT           "Continue?",IDC_STATIC,68,38,39,10
+END
+
+IDD_GRAPH_LAYOUT DIALOG DISCARDABLE  0, 0, 211, 138
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Graph"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Orientation",IDC_STATIC,7,7,81,58
+    CONTROL         "Left To Right",IDC_LEFTTORIGHT,"Button",
+                    BS_AUTORADIOBUTTON,12,17,66,9
+    CONTROL         "Top To Bottom",IDC_TOPTOBOTTOM,"Button",
+                    BS_AUTORADIOBUTTON,12,28,67,9
+    CONTROL         "Right To Left",IDC_RIGHTTOLEFT,"Button",
+                    BS_AUTORADIOBUTTON,12,39,66,9
+    CONTROL         "Bottom To Top",IDC_BOTTOMTOTOP,"Button",
+                    BS_AUTORADIOBUTTON,12,50,65,9
+    GROUPBOX        "Nodes Justification",IDC_STATIC,7,68,81,47
+    CONTROL         "Left",IDC_JUSTIFY_START,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,14,78,69,9
+    CONTROL         "Center",IDC_JUSTIFY_CENTER,"Button",BS_AUTORADIOBUTTON,
+                    14,89,67,8
+    CONTROL         "Right",IDC_JUSTIFY_END,"Button",BS_AUTORADIOBUTTON,14,
+                    100,66,9
+    GROUPBOX        "Routing",IDC_STATIC,96,7,107,39
+    CONTROL         "Orthogonal routing",IDC_ORTHOGONAL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,105,19,74,10
+    CONTROL         "Merge rows",IDC_MERGEROWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,105,31,73,10
+    GROUPBOX        "Spacing",IDC_STATIC,96,46,107,85
+    CONTROL         "Variable spacing",IDC_VARSPACE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,104,57,75,9
+    LTEXT           "Between nodes:",IDC_SPACENODENAME,103,71,54,9
+    LTEXT           "Between levels:",IDC_SPACELEVELNAME,103,85,54,9
+    EDITTEXT        IDC_SPACENODE,164,69,32,13,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_SPACELEVEL,164,82,32,13,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "Row spacing:",IDC_STATIC,104,99,53,10
+    LTEXT           "Column spacing",IDC_STATIC,104,112,58,11
+    EDITTEXT        IDC_SPACEROW,164,95,32,13,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    EDITTEXT        IDC_SPACECOLUMN,164,108,32,13,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+END
+
+IDD_GRAPH_NODE DIALOGEX 0, 0, 211, 162
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Node"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Slider2",IDC_NODERED,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,109,22,25,54
+    CONTROL         "Slider2",IDC_NODEGREEN,"msctls_trackbar32",
+                    TBS_AUTOTICKS | TBS_VERT | TBS_BOTH | WS_TABSTOP,139,22,
+                    25,54
+    CONTROL         "Slider2",IDC_NODEBLUE,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,170,21,25,55
+    LTEXT           "Red",IDC_STATIC,114,14,16,8
+    LTEXT           "Green",IDC_STATIC,140,13,21,8
+    LTEXT           "Blue",IDC_STATIC,173,13,16,8
+    GROUPBOX        "Node Background Color",IDC_STATIC,74,2,128,76
+    CONTROL         "Unselected",IDC_UNSELECTED,"Button",BS_AUTORADIOBUTTON,
+                    13,9,50,10
+    CONTROL         "Selected",IDC_SELECTED,"Button",BS_AUTORADIOBUTTON,13,
+                    21,52,10
+    CONTROL         "Focused",IDC_FOCUSED,"Button",BS_AUTORADIOBUTTON,13,32,
+                    53,10
+    LTEXT           "",IDC_NODECOLOR,83,15,19,16,NOT WS_VISIBLE | WS_BORDER,
+                    WS_EX_TRANSPARENT
+    CONTROL         "Slider2",IDC_BORDERRED,"msctls_trackbar32",
+                    TBS_AUTOTICKS | TBS_VERT | TBS_BOTH | WS_TABSTOP,109,99,
+                    25,55
+    CONTROL         "Slider2",IDC_BORDERGREEN,"msctls_trackbar32",
+                    TBS_AUTOTICKS | TBS_VERT | TBS_BOTH | WS_TABSTOP,139,99,
+                    25,55
+    CONTROL         "Slider2",IDC_BORDERBLUE,"msctls_trackbar32",
+                    TBS_AUTOTICKS | TBS_VERT | TBS_BOTH | WS_TABSTOP,170,98,
+                    25,56
+    LTEXT           "Red",IDC_STATIC,114,91,16,8
+    LTEXT           "Green",IDC_STATIC,140,90,21,8
+    LTEXT           "Blue",IDC_STATIC,173,90,16,8
+    GROUPBOX        "Node Border Color",IDC_STATIC,74,80,128,75
+    LTEXT           "",IDC_BORDERCOLOR,83,93,19,16,NOT WS_VISIBLE | 
+                    WS_BORDER,WS_EX_TRANSPARENT
+    PUSHBUTTON      "Font",IDC_FONT,7,140,59,15
+    LTEXT           "Border thikness",IDC_STATIC,9,83,56,10
+    COMBOBOX        IDC_THICKNESS,9,95,53,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_GRAPH_EDGE DIALOGEX 0, 0, 211, 158
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edge"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Slider2",IDC_EDGERED,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,69,93,25,54
+    CONTROL         "Slider2",IDC_EDGEGREEN,"msctls_trackbar32",
+                    TBS_AUTOTICKS | TBS_VERT | TBS_BOTH | WS_TABSTOP,99,93,
+                    25,54
+    CONTROL         "Slider2",IDC_EDGEBLUE,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,130,92,25,55
+    LTEXT           "Red",-1,74,85,16,8
+    LTEXT           "Green",-1,100,84,21,8
+    LTEXT           "Blue",-1,133,84,16,8
+    GROUPBOX        "Edge Color",-1,8,46,195,103
+    CONTROL         "Unselected",IDC_EDGEUNSELECTED,"Button",
+                    BS_AUTORADIOBUTTON,9,59,50,10
+    CONTROL         "Selected",IDC_EDGESELECTED,"Button",BS_AUTORADIOBUTTON,
+                    9,71,52,10
+    CONTROL         "Focused",IDC_EDGEFOCUSED,"Button",BS_AUTORADIOBUTTON,9,
+                    82,53,10
+    LTEXT           "",IDC_EDGECOLOR,98,58,19,16,NOT WS_VISIBLE | WS_BORDER,
+                    WS_EX_TRANSPARENT
+    LTEXT           "Edge thikness",-1,12,12,56,10
+    COMBOBOX        IDC_THICKNESS,12,23,87,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_GRAPH_INHERITANCE DIALOG DISCARDABLE  0, 0, 211, 172
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Inheritance"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Show class methods",IDC_ENABLE_CLASS_MEHTODS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,17,181,10
+    CONTROL         "Show class properties",IDC_ENABLE_CLASS_PROPERTIES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,28,179,10
+    CONTROL         "Show public members",IDC_PUBLIC,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,56,180,10
+    CONTROL         "Show protected members",IDC_PROTECTED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,67,180,10
+    CONTROL         "Show package access members",IDC_PACKAGE_ACCESS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,78,181,10
+    CONTROL         "Show private members",IDC_PRIVATE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,89,179,10
+    CONTROL         "By name",IDC_SORT_BY_NAME,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,14,117,57,8
+    CONTROL         "By access",IDC_SORT_BY_ACCESS,"Button",
+                    BS_AUTORADIOBUTTON,14,128,56,8
+    CONTROL         "Short name",IDC_SHORT_NAMES,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,112,117,80,8
+    CONTROL         "Long name",IDC_LONG_NAMES,"Button",BS_AUTORADIOBUTTON,
+                    111,128,77,8
+    GROUPBOX        "Filter by access",IDC_STATIC,7,46,196,57
+    GROUPBOX        "Class fields",IDC_STATIC,7,7,196,36
+    GROUPBOX        "Sort",IDC_STATIC,7,107,92,36
+    GROUPBOX        "Names",IDC_STATIC,105,107,98,36
+    CONTROL         "Merge same classes",IDC_MERGESAME,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,149,183,8
+END
+
+IDD_GRAPH_ERD DIALOGEX 0, 0, 211, 172
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "Relations"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_RELATIONCOMBO,7,18,196,123,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Relation type:",IDC_STATIC,7,7,196,9
+    CONTROL         "Visible",IDC_VISIBLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,36,97,10
+    LTEXT           "Edge style:",IDC_STATIC,7,49,107,9
+    COMBOBOX        IDC_STYLECOMBO,7,60,100,84,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    GROUPBOX        "Edge color",IDC_STATIC,7,76,101,87
+    CONTROL         "Slider1",IDC_GREEN,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,55,94,26,69
+    CONTROL         "Slider1",IDC_RED,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,32,94,26,69
+    CONTROL         "Slider1",IDC_BLUE,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    TBS_VERT | TBS_BOTH | WS_TABSTOP,77,94,26,69
+    LTEXT           "Red",IDC_STATIC,35,86,20,8
+    LTEXT           "Green",IDC_STATIC,56,86,20,8
+    LTEXT           "Blue",IDC_STATIC,81,86,20,8
+    LTEXT           "Edge thickness:",IDC_STATIC,120,49,83,10
+    COMBOBOX        IDC_THICKNESSCOMBO,117,60,86,71,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_COLOR,15,90,14,13,NOT WS_VISIBLE,WS_EX_CLIENTEDGE
+END
+
+IDD_CHECKIN DIALOG DISCARDABLE  0, 0, 273, 170
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Check In"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,149,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,149,50,14
+    CTEXT           "The following file will be checked in:",IDC_STATIC,7,7,
+                    255,9,SS_CENTERIMAGE
+    LISTBOX         IDC_FILELIST,7,21,259,93,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,233,150,33,13
+    LTEXT           "Check in options:",IDC_STATIC,7,118,64,10
+    LTEXT           "Check in comments:",IDC_STATIC,7,135,64,10
+    EDITTEXT        IDC_OPTIONS,78,117,188,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,78,133,188,13,ES_AUTOHSCROLL
+END
+
+IDD_CHECKOUT DIALOG DISCARDABLE  0, 0, 273, 167
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Check Out"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,146,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,146,50,14
+    CTEXT           "The following file will be checked out:",IDC_STATIC,7,7,
+                    255,9,SS_CENTERIMAGE
+    LISTBOX         IDC_FILELIST,7,21,259,122,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,233,135,33,25
+END
+
+IDD_UNCHECKOUT DIALOG DISCARDABLE  0, 0, 273, 167
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Undo Check Out"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,146,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,146,50,14
+    CTEXT           "The check out will be cancelled for the following file:",
+                    IDC_STATIC,7,7,255,9,SS_CENTERIMAGE
+    LISTBOX         IDC_FILELIST,7,21,259,122,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,233,135,33,25
+END
+
+IDD_LOCK DIALOG DISCARDABLE  0, 0, 273, 167
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Lock"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,146,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,146,50,14
+    CTEXT           "The following file will be locked:",IDC_STATIC,7,7,255,
+                    9,SS_CENTERIMAGE
+    LISTBOX         IDC_FILELIST,7,21,259,122,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,233,135,33,25
+END
+
+IDD_UNLOCK DIALOG DISCARDABLE  0, 0, 273, 167
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Unlock"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,146,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,146,50,14
+    CTEXT           "The following file will be unlocked:",IDC_STATIC,7,7,
+                    255,9,SS_CENTERIMAGE
+    LISTBOX         IDC_FILELIST,7,21,259,122,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,233,135,33,25
+END
+
+IDD_FLOATINGBROWSER DIALOG DISCARDABLE  0, 0, 287, 239
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_PROJECTTREECTRL1,
+                    "{B888ED83-0911-11D2-AEE6-00A0C9B71DC4}",WS_TABSTOP,7,7,
+                    96,225
+    CONTROL         "Tab1",IDC_TAB1,"SysTabControl32",0x0,102,7,178,16
+    CONTROL         "",IDC_QUERYRESULTSCTRL1,
+                    "{26C03863-0D33-11D2-AEE9-00A0C9B71DC4}",WS_TABSTOP,164,
+                    18,116,195
+END
+
+IDD_DOCKABLEBROWSER DIALOG DISCARDABLE  0, 0, 291, 268
+STYLE WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_TREE,"{B888ED83-0911-11D2-AEE6-00A0C9B71DC4}",NOT 
+                    WS_VISIBLE | WS_TABSTOP,7,7,20,235
+    CONTROL         "",IDC_RESULTS,"{26C03863-0D33-11D2-AEE9-00A0C9B71DC4}",
+                    WS_TABSTOP,151,7,133,238
+    PUSHBUTTON      "",IDC_FILTER,190,246,70,15
+    PUSHBUTTON      "",IDC_NEXT,262,247,22,14,BS_BITMAP
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,113,38,36,29
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",NOT WS_VISIBLE,
+                    7,242,105,19
+    PUSHBUTTON      "",IDC_PREV,171,246,17,15,BS_BITMAP
+    CONTROL         "",IDC_CATEGORIES,"{2451D66C-1203-11D2-AEED-00A0C9B71DC4}",
+                    WS_TABSTOP,28,7,17,231
+    CONTROL         "",IDC_QUERIES,"{6E672C25-1543-11D2-AEED-00A0C9B71DC4}",
+                    WS_TABSTOP,53,7,14,232
+    CONTROL         "",IDC_GROUPS,"{1487DD54-1CB6-11D2-AEF0-00A0C9B71DC4}",
+                    WS_TABSTOP,78,7,23,229
+    CONTROL         "",IDC_ENABLEQUERIES,"Button",BS_AUTOCHECKBOX | 
+                    BS_BITMAP | BS_PUSHLIKE | WS_TABSTOP,151,246,18,15
+    CONTROL         "",IDC_CODEROVERINTEGRATORCTRL,
+                    "{8DBAE788-DB45-11D4-8E41-000102390321}",NOT WS_VISIBLE,
+                    112,75,38,25
+    CONTROL         "",IDC_CMINTEGRATORCTRL,
+                    "{3CA23651-0B2F-4E42-9C35-941DCBC95480}",NOT WS_VISIBLE,
+                    100,101,50,33
+END
+
+IDD_QUESTIONDLG DIALOG DISCARDABLE  0, 0, 255, 74
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "",ID_BTN1,7,53,76,14,NOT WS_VISIBLE
+    PUSHBUTTON      "",ID_BTN2,93,53,72,14,NOT WS_VISIBLE
+    PUSHBUTTON      "",ID_BTN3,175,53,73,14,NOT WS_VISIBLE
+    CTEXT           "",IDC_MESSAGE,7,7,241,32
+END
+
+IDD_GROUPSVIEW DIALOG DISCARDABLE  0, 0, 230, 120
+STYLE WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,13,12,20,18
+    CONTROL         "",IDC_GROUPS,"{1487DD54-1CB6-11D2-AEF0-00A0C9B71DC4}",
+                    WS_TABSTOP,7,7,167,106
+    PUSHBUTTON      "New",IDC_NEW,175,7,48,16
+END
+
+IDD_TPMMATCH DIALOG DISCARDABLE  0, 0, 391, 234
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TPM Match"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,213,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,71,213,50,14
+    CONTROL         "",IDC_TPMPROP,"{FC470417-2BF8-11D2-AF03-00A0C9B71DC4}",
+                    WS_TABSTOP,7,37,377,149
+    COMBOBOX        IDC_TPMSEL,7,7,274,126,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "TPM Filter properties",IDC_STATIC,7,24,377,11,
+                    SS_CENTERIMAGE
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,174,23,27,13
+    CONTROL         "Inclusive",IDC_INCLUSIVE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,338,192,45,10
+    PUSHBUTTON      "New Filter",IDC_NEW,299,7,85,13
+    PUSHBUTTON      "Add",IDC_ADD,7,191,60,12
+    PUSHBUTTON      "Edit",IDC_EDIT,74,191,60,12
+    PUSHBUTTON      "Remove",IDC_REMOVE,140,191,60,12
+END
+
+IDD_CALLGRAPH DIALOG DISCARDABLE  0, 0, 186, 181
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Call graph"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,103,160,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,35,160,50,14
+    CONTROL         "",IDC_SOURCE,"{26C03863-0D33-11D2-AEE9-00A0C9B71DC4}",
+                    WS_TABSTOP,5,22,72,119
+    CONTROL         "",IDC_TARGET,"{26C03863-0D33-11D2-AEE9-00A0C9B71DC4}",
+                    WS_TABSTOP,108,23,71,119
+    PUSHBUTTON      ">",IDC_TO_TARGET,81,52,22,18
+    PUSHBUTTON      "<",IDC_TO_SOURCE,81,94,22,18
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,82,144,21,14
+    CTEXT           "Source",IDC_STATIC,5,9,72,10,SS_CENTERIMAGE
+    CTEXT           "Target",IDC_STATIC,107,11,72,10,SS_CENTERIMAGE
+END
+
+IDD_SIMPLIFY_TREE DIALOG DISCARDABLE  0, 0, 185, 176
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | WS_BORDER | WS_TABSTOP,
+                    7,7,171,162
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE | WS_TABSTOP,7,154,20,15
+END
+
+IDD_SIMPLIFY_SELECTION DIALOG DISCARDABLE  0, 0, 185, 136
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DATASOURCE,"{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",
+                    NOT WS_VISIBLE,7,113,22,16
+    CONTROL         "List1",IDC_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,7,7,171,101
+END
+
+IDD_SIMPLIFY_TEXT DIALOG DISCARDABLE  0, 0, 185, 93
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_RICHEDIT1,"RICHEDIT",ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | 
+                    WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,7,7,171,
+                    79
+END
+
+IDD_SEVSAVE DIALOG DISCARDABLE  0, 0, 186, 86
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Save QA session"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,31,59,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,97,59,50,14
+    EDITTEXT        IDC_SESSIONNAME,7,36,172,12,ES_AUTOHSCROLL
+    LTEXT           "Enter session name:",IDC_STATIC,7,19,172,10
+END
+
+IDD_SEVOPEN DIALOG DISCARDABLE  0, 0, 186, 86
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Open QA session"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,31,59,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,97,59,50,14
+    LTEXT           "Session name:",IDC_STATIC,7,19,172,10
+    COMBOBOX        IDC_SESSIONLIST,7,31,172,89,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_SEVERRORS DIALOG DISCARDABLE  0, 0, 248, 207
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Errors running QA"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,99,186,50,14
+    LTEXT           "QA reported script errors:",IDC_STATIC,7,7,234,9
+    EDITTEXT        IDC_QAERRORS,7,21,234,161,ES_MULTILINE | ES_AUTOVSCROLL | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL
+END
+
+IDD_ERRORSBROWSER DIALOG DISCARDABLE  0, 0, 385, 89
+STYLE WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_ERRORSLOG,"RICHEDIT",ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_BORDER | WS_VSCROLL | 
+                    WS_HSCROLL | WS_TABSTOP,7,7,371,75
+END
+
+IDD_LISTSEL DIALOG DISCARDABLE  0, 0, 186, 162
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Title"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
+    LISTBOX         IDC_LIST,7,7,118,148,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EDITORSELECTORDLG DIALOG DISCARDABLE  0, 0, 186, 47
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Integrated Source Code Editor Selection"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,27,26,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,96,26,50,14
+    COMBOBOX        IDC_EDITORSELECTOR,7,7,172,50,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_CMSELECTORDLG DIALOG DISCARDABLE  0, 0, 187, 47
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Source Control Manager Selection"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,27,26,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,96,26,50,14
+    COMBOBOX        IDC_CMSELECTOR,7,7,174,50,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_ATTRIBUTESDLG DIALOG DISCARDABLE  0, 0, 187, 30
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "",IDC_BORDER,1,0,186,9
+    PUSHBUTTON      "OK",IDOK,5,13,50,14
+    PUSHBUTTON      "OK for all",IDC_OKALL,69,13,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,133,13,50,14
+END
+
+IDD_IMPACT DIALOGEX 0, 0, 27, 35
+STYLE WS_CHILD
+EXSTYLE WS_EX_TRANSPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_DATASOURCECTRL,
+                    "{7CA41F77-091C-11D2-AEE6-00A0C9B71DC4}",NOT WS_VISIBLE,
+                    11,13,14,20
+    CONTROL         "",IDC_IMPACTCTRL,"{2047B32D-6D1B-4538-9AF5-41F7B8D0BDBE}",
+                    WS_TABSTOP,1,1,14,20
+END
+
+IDD_IMATTACHMENT DIALOG DISCARDABLE  0, 0, 145, 116
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Attach to IM issue..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,8,94,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,88,94,50,14
+    LTEXT           "Host Name:",IDC_STATIC,9,8,37,8
+    LTEXT           "Port:",IDC_STATIC,9,24,15,8
+    LTEXT           "User Name:",IDC_STATIC,9,40,37,8
+    LTEXT           "Password:",IDC_STATIC,9,56,33,8
+    LTEXT           "Issue ID:",IDC_STATIC,9,72,27,8
+    EDITTEXT        IDC_HOSTNAME,56,8,78,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_HOSTPORT,56,24,40,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_USERNAME,56,40,78,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORD,56,56,53,12,ES_PASSWORD | ES_AUTOHSCROLL
+    EDITTEXT        IDC_ISSUEID,56,72,40,12,ES_AUTOHSCROLL
+    GROUPBOX        "",IDC_STATIC,5,0,134,87
+END
+
+IDD_WAITDLG DIALOGEX 0, 0, 236, 20
+STYLE WS_POPUP | WS_BORDER
+EXSTYLE WS_EX_STATICEDGE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_MESSAGE,25,6,209,8
+    CONTROL         383,IDC_STATIC,"Static",SS_BITMAP,2,2,17,16,
+                    WS_EX_STATICEDGE
+END
+
+IDD_SERVICEMANAGER_DIALOG DIALOGEX 0, 0, 194, 199
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Service Manager"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Browse",IDC_BROWSEMODEL,138,57,50,14
+    PUSHBUTTON      "Close",IDC_CLOSEMANAGER,138,105,50,14
+    LTEXT           "Repository:",IDC_STATIC,1,4,36,8
+    EDITTEXT        IDC_REPOSITORYNAME,37,1,97,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED | NOT WS_TABSTOP
+    PUSHBUTTON      "...",IDC_SELECTREPOSITORY,138,1,50,14
+    GROUPBOX        "",IDC_STATIC,1,16,191,180
+    PUSHBUTTON      "Start",IDC_STARTMODEL,138,23,50,14
+    PUSHBUTTON      "Stop",IDC_STOPMODEL,138,40,50,14
+    CONTROL         "Tree1",IDC_AVAILABLEMODELS,"SysTreeView32",
+                    TVS_HASBUTTONS | TVS_HASLINES | TVS_SHOWSELALWAYS | 
+                    WS_BORDER | WS_TABSTOP,4,23,130,170
+    PUSHBUTTON      "Refresh",IDC_REFRESHMODELS,138,88,50,14
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Upspring Software\0"
+            VALUE "FileDescription", "Information Model Browser\0"
+            VALUE "FileVersion", "1.01\0"
+            VALUE "InternalName", "DIScover\0"
+            VALUE "LegalCopyright", "Copyright (C) 1998-2000\0"
+            VALUE "OriginalFilename", "DiscoverMDI.EXE\0"
+            VALUE "ProductName", "DIScover Model Browser\0"
+            VALUE "ProductVersion", "1.01\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_LEFTMODELBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_RIGHTMODELBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_PROJECTBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_TPMFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 286
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 242
+    END
+
+    IDD_ADDTPM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 299
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 211
+    END
+
+    IDD_NEWFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+
+    IDD_TPMFLOW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 166
+    END
+
+    IDD_FLOWTASKS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 158
+    END
+
+    IDD_NEWTASKFLOW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+
+    IDD_FORMVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 209
+    END
+
+    IDD_XMLADDNODE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 195
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_XMLSTYLES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 264
+    END
+
+    IDD_XMLSETUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 173
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 104
+    END
+
+    IDD_XMLARGUMENTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 237
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 107
+    END
+
+    IDD_DORMANT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 237
+    END
+
+    IDD_MINIBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 291
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_QATREE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 195
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 196
+    END
+
+    IDD_QAPARAMS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 276
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 152
+    END
+
+    IDD_SERVICECHOOSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 297
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
+    IDD_ACCESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 284
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 214
+    END
+
+    IDD_XMLCOMPNAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 150
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+
+    IDD_PROMPT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_DLGBAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 77
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 17
+    END
+
+    IDD_UPDATEWAIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_GRAPH_LAYOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 131
+    END
+
+    IDD_GRAPH_NODE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 155
+    END
+
+    IDD_GRAPH_EDGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 151
+    END
+
+    IDD_GRAPH_INHERITANCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 163
+    END
+
+    IDD_GRAPH_ERD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 163
+    END
+
+    IDD_CHECKIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 266
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 163
+    END
+
+    IDD_CHECKOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 266
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 160
+    END
+
+    IDD_UNCHECKOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 266
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 160
+    END
+
+    IDD_LOCK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 266
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 160
+    END
+
+    IDD_UNLOCK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 266
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 160
+    END
+
+    IDD_FLOATINGBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 280
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 232
+    END
+
+    IDD_DOCKABLEBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 284
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 261
+    END
+
+    IDD_QUESTIONDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 248
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 67
+    END
+
+    IDD_GROUPSVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 113
+    END
+
+    IDD_TPMMATCH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 227
+    END
+
+    IDD_CALLGRAPH, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 174
+    END
+
+    IDD_SIMPLIFY_TREE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
+
+    IDD_SIMPLIFY_SELECTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 129
+    END
+
+    IDD_SIMPLIFY_TEXT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_SEVSAVE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 79
+    END
+
+    IDD_SEVOPEN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 79
+    END
+
+    IDD_SEVERRORS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 241
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 200
+    END
+
+    IDD_ERRORSBROWSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 378
+        VERTGUIDE, 108
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 82
+    END
+
+    IDD_LISTSEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 155
+    END
+
+    IDD_EDITORSELECTORDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_CMSELECTORDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_IMATTACHMENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 138
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 109
+    END
+
+    IDD_SERVICEMANAGER_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 192
+        TOPMARGIN, 1
+        BOTTOMMARGIN, 196
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_LEFTMODELBROWSER DLGINIT
+BEGIN
+    IDC_LEFTBROWSER, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x16a2, 0x0000, 0x0da5, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x03f8, 0x0000, 0x03a3, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_RIGHTMODELBROWSER DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0575, 0x0000, 0x04a1, 0x0000, 0x0000, 
+0x0000, 
+    IDC_RIGHTBROWSER, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x1516, 0x0000, 0x0da5, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_PROJECTBROWSER DLGINIT
+BEGIN
+    IDC_PROJECTTREE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0a41, 0x0000, 0x09c2, 0x0000, 0x0000, 
+0x0000, 
+    IDC_PROJECTMODULES, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0943, 0x0000, 0x0997, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0520, 0x0000, 0x044d, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_TPMFILTER DLGINIT
+BEGIN
+    IDC_TYPESPREADSHEET, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0ac0, 0x0000, 0x1a40, 0x0000, 0x0000, 
+0x0000, 
+    IDC_TEXTSPREADSHEET, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x07a6, 0x0000, 0x1a40, 0x0000, 0x0000, 
+0x0000, 
+    IDC_TPMSPREADSHEET, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x13be, 0x0000, 0x1a0c, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0211, 0x0000, 0x0158, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_TPMFLOW DLGINIT
+BEGIN
+    IDC_TASKSPREADSHEET, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x226b, 0x0000, 0x13a3, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x027b, 0x0000, 0x018d, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_FLOWTASKS DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x043d, 0x0000, 0x0369, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_FORMVIEW DLGINIT
+BEGIN
+    IDC_DOCSTRUCTURE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x1e43, 0x0000, 0x0b3f, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x027b, 0x0000, 0x01fc, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_XMLSTYLES DLGINIT
+BEGIN
+    IDC_HTML, 0x403, 2, 0
+0x0041, 
+    IDC_HTML, 0x403, 8, 0
+0x4341, 0x4f52, 0x594e, 0x004d, 
+    IDC_HTML, 0x403, 8, 0
+0x4441, 0x5244, 0x5345, 0x0053, 
+    IDC_HTML, 0x403, 7, 0
+0x5041, 0x4c50, 0x5445, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x5241, 0x4145, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4142, 0x4553, "\000" 
+    IDC_HTML, 0x403, 9, 0
+0x4142, 0x4553, 0x4f46, 0x544e, "\000" 
+    IDC_HTML, 0x403, 8, 0
+0x4742, 0x4f53, 0x4e55, 0x0044, 
+    IDC_HTML, 0x403, 4, 0
+0x4942, 0x0047, 
+    IDC_HTML, 0x403, 11, 0
+0x4c42, 0x434f, 0x514b, 0x4f55, 0x4554, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4f42, 0x5944, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x5242, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x5542, 0x5454, 0x4e4f, "\000" 
+    IDC_HTML, 0x403, 8, 0
+0x4143, 0x5450, 0x4f49, 0x004e, 
+    IDC_HTML, 0x403, 7, 0
+0x4543, 0x544e, 0x5245, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4943, 0x4554, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4f43, 0x4544, "\000" 
+    IDC_HTML, 0x403, 4, 0
+0x4f43, 0x004c, 
+    IDC_HTML, 0x403, 9, 0
+0x4f43, 0x474c, 0x4f52, 0x5055, "\000" 
+    IDC_HTML, 0x403, 8, 0
+0x4f43, 0x4d4d, 0x4e45, 0x0054, 
+    IDC_HTML, 0x403, 3, 0
+0x4444, "\000" 
+    IDC_HTML, 0x403, 4, 0
+0x4544, 0x004c, 
+    IDC_HTML, 0x403, 4, 0
+0x4644, 0x004e, 
+    IDC_HTML, 0x403, 4, 0
+0x4944, 0x0052, 
+    IDC_HTML, 0x403, 4, 0
+0x4944, 0x0056, 
+    IDC_HTML, 0x403, 3, 0
+0x4c44, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x5444, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x4d45, "\000" 
+    IDC_HTML, 0x403, 6, 0
+0x4d45, 0x4542, 0x0044, 
+    IDC_HTML, 0x403, 9, 0
+0x4946, 0x4c45, 0x5344, 0x5445, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4f46, 0x544e, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4f46, 0x4d52, "\000" 
+    IDC_HTML, 0x403, 6, 0
+0x5246, 0x4d41, 0x0045, 
+    IDC_HTML, 0x403, 9, 0
+0x5246, 0x4d41, 0x5345, 0x5445, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x3148, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x3248, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x3348, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x3448, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x3548, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x3648, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4548, 0x4441, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x5248, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x5448, 0x4c4d, "\000" 
+    IDC_HTML, 0x403, 2, 0
+0x0049, 
+    IDC_HTML, 0x403, 7, 0
+0x4649, 0x4152, 0x454d, "\000" 
+    IDC_HTML, 0x403, 4, 0
+0x4d49, 0x0047, 
+    IDC_HTML, 0x403, 6, 0
+0x4e49, 0x5550, 0x0054, 
+    IDC_HTML, 0x403, 4, 0
+0x4e49, 0x0053, 
+    IDC_HTML, 0x403, 8, 0
+0x5349, 0x4e49, 0x4544, 0x0058, 
+    IDC_HTML, 0x403, 4, 0
+0x424b, 0x0044, 
+    IDC_HTML, 0x403, 6, 0
+0x414c, 0x4542, 0x004c, 
+    IDC_HTML, 0x403, 7, 0
+0x454c, 0x4547, 0x444e, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x494c, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x494c, 0x4b4e, "\000" 
+    IDC_HTML, 0x403, 8, 0
+0x494c, 0x5453, 0x4e49, 0x0047, 
+    IDC_HTML, 0x403, 4, 0
+0x414d, 0x0050, 
+    IDC_HTML, 0x403, 8, 0
+0x414d, 0x5152, 0x4555, 0x0045, 
+    IDC_HTML, 0x403, 5, 0
+0x454d, 0x554e, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x454d, 0x4154, "\000" 
+    IDC_HTML, 0x403, 5, 0
+0x4f4e, 0x5242, "\000" 
+    IDC_HTML, 0x403, 9, 0
+0x4f4e, 0x5246, 0x4d41, 0x5345, "\000" 
+    IDC_HTML, 0x403, 9, 0
+0x4f4e, 0x4353, 0x4952, 0x5450, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x424f, 0x454a, 0x5443, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x4c4f, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x504f, 0x4954, 0x4e4f, "\000" 
+    IDC_HTML, 0x403, 2, 0
+0x0050, 
+    IDC_HTML, 0x403, 6, 0
+0x4150, 0x4152, 0x004d, 
+    IDC_HTML, 0x403, 10, 0
+0x4c50, 0x4941, 0x544e, 0x5845, 0x0054, 
+    IDC_HTML, 0x403, 4, 0
+0x5250, 0x0045, 
+    IDC_HTML, 0x403, 2, 0
+0x0051, 
+    IDC_HTML, 0x403, 2, 0
+0x0053, 
+    IDC_HTML, 0x403, 5, 0
+0x4153, 0x504d, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x4353, 0x4952, 0x5450, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x4553, 0x454c, 0x5443, "\000" 
+    IDC_HTML, 0x403, 6, 0
+0x4d53, 0x4c41, 0x004c, 
+    IDC_HTML, 0x403, 5, 0
+0x5053, 0x4e41, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x5453, 0x4952, 0x454b, "\000" 
+    IDC_HTML, 0x403, 7, 0
+0x5453, 0x4f52, 0x474e, "\000" 
+    IDC_HTML, 0x403, 6, 0
+0x5453, 0x4c59, 0x0045, 
+    IDC_HTML, 0x403, 4, 0
+0x5553, 0x0042, 
+    IDC_HTML, 0x403, 6, 0
+0x4154, 0x4c42, 0x0045, 
+    IDC_HTML, 0x403, 6, 0
+0x4254, 0x444f, 0x0059, 
+    IDC_HTML, 0x403, 3, 0
+0x4454, "\000" 
+    IDC_HTML, 0x403, 10, 0
+0x4554, 0x5458, 0x5241, 0x4145, 0x0052, 
+    IDC_HTML, 0x403, 6, 0
+0x4654, 0x4f4f, 0x0054, 
+    IDC_HTML, 0x403, 3, 0
+0x4d54, "\000" 
+    IDC_HTML, 0x403, 6, 0
+0x4854, 0x4145, 0x0044, 
+    IDC_HTML, 0x403, 6, 0
+0x4954, 0x4c54, 0x0045, 
+    IDC_HTML, 0x403, 3, 0
+0x5254, "\000" 
+    IDC_HTML, 0x403, 3, 0
+0x5454, "\000" 
+    IDC_HTML, 0x403, 2, 0
+0x0055, 
+    IDC_HTML, 0x403, 3, 0
+0x4c55, "\000" 
+    IDC_HTML, 0x403, 4, 0
+0x4156, 0x0052, 
+    IDC_HTML, 0x403, 4, 0
+0x4257, 0x0052, 
+    IDC_HTML, 0x403, 4, 0
+0x4d58, 0x0044, 
+    IDC_PROPERTIES, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0e8d, 0x0000, 0x22ba, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x027b, 0x0000, 0x01fc, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_XMLARGUMENTS DLGINIT
+BEGIN
+    IDC_ACCESSCOMMAND, 0x403, 16, 0
+0x6877, 0x7265, 0x2065, 0x6564, 0x6966, 0x656e, 0x2064, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 19, 0
+0x6877, 0x7265, 0x2065, 0x6572, 0x6566, 0x6572, 0x636e, 0x6465, 0x2f20, 
+"\000" 
+    IDC_ACCESSCOMMAND, 0x403, 13, 0
+0x6877, 0x7265, 0x2065, 0x7375, 0x6465, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 12, 0
+0x7375, 0x7365, 0x2d20, 0x6c61, 0x206c, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x7375, 0x7365, 0x2d20, 0x7566, 0x636e, 0x6974, 0x6e6f, 0x2073, 0x002f, 
+
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x7375, 0x7365, 0x2d20, 0x6176, 0x6972, 0x6261, 0x656c, 0x2073, 0x002f, 
+
+    IDC_ACCESSCOMMAND, 0x403, 16, 0
+0x7375, 0x7365, 0x2d20, 0x6c63, 0x7361, 0x6573, 0x2073, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 15, 0
+0x7375, 0x7365, 0x2d20, 0x6e75, 0x6f69, 0x736e, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 14, 0
+0x7375, 0x7365, 0x2d20, 0x6e65, 0x6d75, 0x2073, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 16, 0
+0x7375, 0x7365, 0x2d20, 0x7665, 0x6c61, 0x6575, 0x2073, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 15, 0
+0x7375, 0x7365, 0x2d20, 0x6966, 0x6c65, 0x7364, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 17, 0
+0x7375, 0x7365, 0x2d20, 0x7974, 0x6570, 0x6564, 0x7366, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 15, 0
+0x7375, 0x7365, 0x2d20, 0x616d, 0x7263, 0x736f, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 16, 0
+0x7375, 0x7365, 0x2d20, 0x7473, 0x6972, 0x676e, 0x2073, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 14, 0
+0x7375, 0x7365, 0x2d20, 0x6f6c, 0x6163, 0x206c, 0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 15, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x612d, 0x6c6c, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x742d, 0x6261, 0x656c, 0x2073, 0x002f, 
+
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x702d, 0x6361, 0x616b, 0x6567, 0x0073, 
+
+    IDC_ACCESSCOMMAND, 0x403, 17, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x662d, 0x6c69, 0x7365, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 21, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x662d, 0x6e75, 0x7463, 0x6f69, 0x736e, 
+0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 21, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x762d, 0x7261, 0x6169, 0x6c62, 0x7365, 
+0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 19, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x632d, 0x616c, 0x7373, 0x7365, 0x2f20, 
+"\000" 
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x752d, 0x696e, 0x6e6f, 0x2073, 0x002f, 
+
+    IDC_ACCESSCOMMAND, 0x403, 17, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x652d, 0x756e, 0x736d, 0x2f20, "\000" 
+    IDC_ACCESSCOMMAND, 0x403, 20, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x652d, 0x6176, 0x756c, 0x7365, 0x2f20, 
+0x0020, 
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x662d, 0x6569, 0x646c, 0x2073, 0x002f, 
+
+    IDC_ACCESSCOMMAND, 0x403, 20, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x742d, 0x7079, 0x6465, 0x6665, 0x2073, 
+0x002f, 
+    IDC_ACCESSCOMMAND, 0x403, 18, 0
+0x6564, 0x6966, 0x656e, 0x2073, 0x6d2d, 0x6361, 0x6f72, 0x2073, 0x002f, 
+
+    0
+END
+
+IDD_DORMANT DLGINIT
+BEGIN
+    IDC_DORMANTSELECTION, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x1c47, 0x0000, 0x1f96, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x7972, 0x6552, 0x7573, 0x746c, 0x4373, 0x7274, 
+0x316c, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x04f6, 0x0000, 0x0422, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_MINIBROWSER DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x054b, 0x0000, 0x04a1, 0x0000, 0x0000, 
+0x0000, 
+    IDC_LEFTPANE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0b2a, 0x0000, 0x20c3, 0x0000, 0x0000, 
+0x0000, 
+    IDC_RIGHTPANE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x094d, 0x0000, 0x20f8, 0x0000, 0x0000, 
+0x0000, 
+    IDC_PROJECTTREE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0a41, 0x0000, 0x2015, 0x0000, 0x0000, 
+0x0000, 
+    IDC_PROJECTMODULES, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0899, 0x0000, 0x203f, 0x0000, 0x0000, 
+0x0000, 
+    IDC_MSDEVINTEGRATOR, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x02ca, 0x0000, 0x02b0, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_QAPARAMS DLGINIT
+BEGIN
+    IDC_PROPERTIES, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x1d9a, 0x0000, 0x0f37, 0x0000, 0x0000, 
+0x0000, 
+    IDC_REPORTER, 0x376, 160, 0
+0x0000, 0x0000, 0x004c, 0x0000, 0x0d10, 0x0000, 0x1555, 0x0000, 0x0001, 
+0x0000, 0x0005, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x004c, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 
+0x0000, 0xd0e0, 0x0057, 0x3573, 0x11cf, 0x69ae, 0x0008, 0x2e2b, 0x6212, 
+0x0008, 0x0000, 0x0000, 0x0000, 0x004c, 0x0000, 0x1401, 0x0002, 0x0000, 
+0x0000, 0x00c0, 0x0000, 0x0000, 0x4600, 0x0080, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0324, 0x0000, 0x027b, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_QATREE DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x059f, 0x0000, 0x034f, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_ACCESS DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x02ff, 0x0000, 0x027b, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_XMLADDNODE DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x04f6, 0x0000, 0x03ce, 0x0000, 0x0000, 
+0x0000, 
+    IDC_COMP, 0x403, 2, 0
+0x003c, 
+    IDC_COMP, 0x403, 2, 0
+0x003e, 
+    IDC_COMP, 0x403, 3, 0
+0x3d3d, "\000" 
+    IDC_COMP, 0x403, 3, 0
+0x3d21, "\000" 
+    0
+END
+
+IDD_SUBMITPROP DLGINIT
+BEGIN
+    IDC_PROP, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x26a7, 0x0000, 0x1c6c, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0457, 0x0000, 0x027b, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_SUBMITINFO DLGINIT
+BEGIN
+    IDC_VIEWER, 0x376, 160, 0
+0x0000, 0x0000, 0x004c, 0x0000, 0x0fb6, 0x0000, 0x1688, 0x0000, 0x0001, 
+0x0000, 0x0005, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x004c, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 
+0x0000, 0xd0e0, 0x0057, 0x3573, 0x11cf, 0x69ae, 0x0008, 0x2e2b, 0x6212, 
+0x000b, 0x0000, 0x0000, 0x0000, 0x004c, 0x0000, 0x1401, 0x0002, 0x0000, 
+0x0000, 0x00c0, 0x0000, 0x0000, 0x4600, 0x0080, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    IDC_DATASOURCECTRL, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x043d, 0x0000, 0x0334, 0x0000, 0x0000, 
+0x0000, 
+    IDC_REPORTER, 0x376, 160, 0
+0x0000, 0x0000, 0x004c, 0x0000, 0x0fb6, 0x0000, 0x1688, 0x0000, 0x0001, 
+0x0000, 0x0005, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x004c, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 
+0x0000, 0xd0e0, 0x0057, 0x3573, 0x11cf, 0x69ae, 0x0008, 0x2e2b, 0x6212, 
+0x000b, 0x0000, 0x0000, 0x0000, 0x004c, 0x0000, 0x1401, 0x0002, 0x0000, 
+0x0000, 0x00c0, 0x0000, 0x0000, 0x4600, 0x0080, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0
+END
+
+IDD_DLGBAR DLGINIT
+BEGIN
+    IDC_SUBSOURCE, 0x403, 18, 0
+0x6553, 0x656c, 0x7463, 0x6465, 0x6520, 0x656c, 0x656d, 0x746e, 0x0073, 
+
+    IDC_SUBSOURCE, 0x403, 14, 0
+0x7543, 0x7272, 0x6e65, 0x2074, 0x6373, 0x706f, 0x0065, 
+    IDC_SUBSOURCE, 0x403, 16, 0
+0x6553, 0x656c, 0x7463, 0x6465, 0x6720, 0x6f72, 0x7075, 0x0073, 
+    0
+END
+
+IDD_GRAPH_NODE DLGINIT
+BEGIN
+    IDC_THICKNESS, 0x403, 5, 0
+0x6854, 0x6e69, "\000" 
+    IDC_THICKNESS, 0x403, 7, 0
+0x654d, 0x6964, 0x6d75, "\000" 
+    IDC_THICKNESS, 0x403, 6, 0
+0x6854, 0x6369, 0x006b, 
+    0
+END
+
+IDD_GRAPH_EDGE DLGINIT
+BEGIN
+    IDC_THICKNESS, 0x403, 5, 0
+0x6854, 0x6e69, "\000" 
+    IDC_THICKNESS, 0x403, 7, 0
+0x654d, 0x6964, 0x6d75, "\000" 
+    IDC_THICKNESS, 0x403, 6, 0
+0x6854, 0x6369, 0x006b, 
+    0
+END
+
+IDD_GRAPH_ERD DLGINIT
+BEGIN
+    IDC_RELATIONCOMBO, 0x403, 15, 0
+0x6f43, 0x746e, 0x6961, 0x736e, 0x6320, 0x616c, 0x7373, "\000" 
+    IDC_RELATIONCOMBO, 0x403, 16, 0
+0x6f50, 0x6e69, 0x7374, 0x7420, 0x206f, 0x6c63, 0x7361, 0x0073, 
+    IDC_STYLECOMBO, 0x403, 11, 0
+0x6f53, 0x696c, 0x2064, 0x696c, 0x656e, "\000" 
+    IDC_STYLECOMBO, 0x403, 12, 0
+0x6f44, 0x7474, 0x6465, 0x6c20, 0x6e69, 0x0065, 
+    IDC_STYLECOMBO, 0x403, 12, 0
+0x6144, 0x6873, 0x6465, 0x6c20, 0x6e69, 0x0065, 
+    IDC_THICKNESSCOMBO, 0x403, 6, 0
+0x6854, 0x6369, 0x006b, 
+    IDC_THICKNESSCOMBO, 0x403, 7, 0
+0x654d, 0x6964, 0x6d75, "\000" 
+    IDC_THICKNESSCOMBO, 0x403, 5, 0
+0x6854, 0x6e69, "\000" 
+    0
+END
+
+IDD_CHECKIN DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x052b, 0x0000, 0x022c, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_CHECKOUT DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x052b, 0x0000, 0x043d, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_UNCHECKOUT DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0575, 0x0000, 0x0422, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_LOCK DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0575, 0x0000, 0x0422, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_UNLOCK DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0575, 0x0000, 0x0422, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_FLOATINGBROWSER DLGINIT
+BEGIN
+    IDC_PROJECTTREECTRL1, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0ee2, 0x0000, 0x25d4, 0x0000, 0x0000, 
+0x0000, 
+    IDC_QUERYRESULTSCTRL1, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x11fc, 0x0000, 0x20c3, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x7972, 0x6552, 0x7573, 0x746c, 0x4373, 0x7274, 
+0x316c, 
+    0
+END
+
+IDD_DOCKABLEBROWSER DLGINIT
+BEGIN
+    IDC_TREE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x034f, 0x0000, 0x26dc, 0x0000, 0x0000, 
+0x0000, 
+    IDC_RESULTS, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x15fe, 0x0000, 0x275b, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x7972, 0x6552, 0x7573, 0x746c, 0x4373, 0x7274, 
+0x316c, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x05f4, 0x0000, 0x04cc, 0x0000, 0x0000, 
+0x0000, 
+    IDC_CATEGORIES, 0x376, 41, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x02d0, 0x0000, 0x2633, 0x0000, 0x0002, 
+0x0000, 0x4314, 0x7461, 0x6765, 0x726f, 0x6569, 0x4373, 0x6d6f, 0x6f62, 
+0x7443, 0x6c72, "\061" 
+    IDC_QUERIES, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0251, 0x0000, 0x265d, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x6972, 0x7365, 0x6f43, 0x626d, 0x436f, 0x7274, 
+0x316c, 
+    IDC_GROUPS, 0x376, 37, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x03ce, 0x0000, 0x25de, 0x0000, 0x0002, 
+0x0000, 0x4710, 0x6f72, 0x7075, 0x4373, 0x6d6f, 0x6f62, 0x7443, 0x6c72, 
+"\061" 
+    IDC_CODEROVERINTEGRATORCTRL, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0649, 0x0000, 0x0422, 0x0000, 0x0000, 
+0x0000, 
+    IDC_CMINTEGRATORCTRL, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0845, 0x0000, 0x0575, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_GROUPSVIEW DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x034f, 0x0000, 0x02fa, 0x0000, 0x0000, 
+0x0000, 
+    IDC_GROUPS, 0x376, 21, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x1b9e, 0x0000, 0x1187, 0x0000, 0x0002, 
+0x0000, "\000" 
+    0
+END
+
+IDD_TPMMATCH DLGINIT
+BEGIN
+    IDC_TPMPROP, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x3a7f, 0x0000, 0x1903, 0x0000, 0x0000, 
+0x0000, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x043d, 0x0000, 0x022c, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_CALLGRAPH DLGINIT
+BEGIN
+    IDC_SOURCE, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0b2a, 0x0000, 0x13f2, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x7972, 0x6552, 0x7573, 0x746c, 0x4373, 0x7274, 
+0x316c, 
+    IDC_TARGET, 0x376, 38, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0b0f, 0x0000, 0x13f2, 0x0000, 0x0002, 
+0x0000, 0x5111, 0x6575, 0x7972, 0x6552, 0x7573, 0x746c, 0x4373, 0x7274, 
+0x326c, 
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x034f, 0x0000, 0x0261, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_SIMPLIFY_SELECTION DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x03a3, 0x0000, 0x02a5, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_SIMPLIFY_TREE DLGINIT
+BEGIN
+    IDC_DATASOURCE, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x031a, 0x0000, 0x027b, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_IMPACT DLGINIT
+BEGIN
+    IDC_DATASOURCECTRL, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0251, 0x0000, 0x034f, 0x0000, 0x0000, 
+0x0000, 
+    IDC_IMPACTCTRL, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x0251, 0x0000, 0x034f, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
+    IDP_FAILED_TO_CREATE    "Failed to create object.  Make sure the object is entered in the system registry."
+    IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
+    IDR_DATACHART           "Data Chart View"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "CodeIntegrityMDI"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new documentnNew"
+    ID_FILE_OPEN            "Open an existing documentnOpen"
+    ID_FILE_CLOSE           "Close the active documentnClose"
+    ID_FILE_SAVE            "Save the active documentnSave"
+    ID_FILE_SAVE_AS         "Save the active documentwith a new namenSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active documentnPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+    ID_FILE_UPDATE          "Update the container to show any changes\nUpdate"
+    ID_FILE_SAVE_COPY_AS    "Save a copy of the active documentwith a new namenSave Copy"
+    ID_FILE_SEND_MAIL       "Send the active documentthrough electronic mail\nSend Mail"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documentnExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next windowpane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous windowpane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active documentnNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange window so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange window as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange window as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active windowinto panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selectionnErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selectionand put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selectionand put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_PASTE_LINK      "Insert Clipboard contents and a link to its source\nPaste Link"
+    ID_EDIT_PASTE_SPECIAL   "Insert Clipboard contents with options\nPaste Special"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire documentnSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbarnToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_OLE_INSERT_NEW       "Insert new embedded object\nNew Object"
+    ID_OLE_EDIT_LINKS       "Edit linked objects\nEdit Links"
+    ID_OLE_EDIT_CONVERT     "Convert object to different type\nConvert Object"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_OLE_VERB_FIRST       "Activate embedded or linked object"
+    57873                   "Activate embedded or linked object"
+    57874                   "Activate embedded or linked object"
+    57875                   "Activate embedded or linked object"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next documentwindow"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous documentwindow"
+    AFX_IDS_SCCLOSE         "Close the active windowand prompts to save the document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    GRAPH_CONTAINS_INSTANCE_OF "contains instance of"
+    GRAPH_CONTAINED_IN      "contained in"
+    GRAPH_POINTS_TO         "points to"
+    GRAPH_HAVE_ARGUMENTS    "have arguments"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NAME_COLUMN         "Symbol name"
+    IDS_FILE_COLUMN         "File"
+    IDS_EXTENTION_COLUMN    "Extension"
+    IDS_LINE_COLUMN         "Line"
+    IDS_TYPE_COLUMN         "Type"
+    IDS_ARGNUM_COLUMN       "Number of arguments"
+    IDS_ARGS_COLUMN         "Arguments"
+    IDS_KIND_COLUMN         "Kind"
+    IDS_LANGUAGE_COLUMN     "Language"
+    IDS_MODELFILE_COLUMN    "Model file"
+    IDS_CYCLCOMPLEXITY_COLUMN "Cyclomatic complexity"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_MYERCOMPLEXITY_COLUMN "Myer's complexity"
+    IDS_SUPERCLASSES_COLUMN "Superclasses"
+    IDS_SUBCLASSES_COLUMN   "Subclasses"
+    IDS_SIZE_COLUMN         "Size"
+    IDS_DEPTH_COLUMN        "Depth"
+    IDS_DANGLINGELSEIF_COLUMN "Dangling else if's"
+    IDS_DEFLESSSWITCH_COLUMN "Defaultless switches"
+    IDS_START_COLUMN        "Starting line"
+    IDS_RETURN_COLUMN       "Returns"
+    IDS_LINESAMOUNT_COLUMN  "Lines"
+    IDS_UNCOMMENTAMOUNT_COLUMN "Uncommented lines"
+    IDS_EXECUTABLEAMOUNT_COLUMN "Executable lines"
+    IDS_IFSAMOUNT_COLUMN    "If statements"
+    IDS_LOOPSAMOUNT_COLUMN  "Loop statements"
+    IDS_SWITCHESAMOUNT_COLUMN "Switch statements"
+    IDS_DEFAULTAMOUNT_COLUMN "Default statements"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NAME_COMMAND        "name"
+    IDS_FILE_COMMAND        "fname"
+    IDS_EXTENTION_COMMAND   "ox"
+    IDS_LINE_COMMAND        "line"
+    IDS_TYPE_COMMAND        "type"
+    IDS_ARGNUM_COMMAND      "numargs"
+    IDS_ARGS_COMMAND        "args"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_KIND_COMMAND        "kind"
+    IDS_LANGUAGE_COMMAND    "language"
+    IDS_MODELFILE_COMMAND   "psetfile"
+    IDS_CYCLCOMPLEXITY_COMMAND "met_CC"
+    IDS_MYERCOMPLEXITY_COMMAND "met_MYERS"
+    IDS_SUPERCLASSES_COMMAND "met_FANIN"
+    IDS_SUBCLASSES_COMMAND  "met_FANOUT"
+    IDS_SIZE_COMMAND        "met_BYTES"
+    IDS_DEPTH_COMMAND       "met_DEPTH"
+    IDS_DANGLINGELSEIF_COMMAND "met_DANG_EI"
+    IDS_DEFLESSSWITCH_COMMAND "met_DANG_SW"
+    IDS_START_COMMAND       "met_START_LN"
+    IDS_RETURN_COMMAND      "met_RETURNS"
+    IDS_LINESAMOUNT_COMMAND "met_LOC"
+    IDS_UNCOMMENTAMOUNT_COMMAND "met_ULOC"
+    IDS_EXECUTABLEAMOUNT_COMMAND "met_XLOC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_IFSAMOUNT_COMMAND   "met_IFS"
+    IDS_LOOPSAMOUNT_COMMAND "met_LOOPS"
+    IDS_SWITCHESAMOUNT_COMMAND "met_SWITCHES"
+    IDS_DEFAULTAMOUNT_COMMAND "met_DEFAULTS"
+    IDS_STATUS_COMMAND      "status"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NAME_TYPE           "string"
+    IDS_FILE_TYPE           "string"
+    IDS_EXTENTION_TYPE      "string"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_LINE_TYPE           "integer"
+    IDS_TYPE_TYPE           "string"
+    IDS_ARGNUM_TYPE         "integer"
+    IDS_ARGS_TYPE           "string"
+    IDS_KIND_TYPE           "string"
+    IDS_LANGUAGE_TYPE       "string"
+    IDS_MODELFILE_TYPE      "string"
+    IDS_CYCLCOMPLEXITY_TYPE "integer"
+    IDS_MYERCOMPLEXITY_TYPE "integer"
+    IDS_SUPERCLASSES_TYPE   "integer"
+    IDS_SUBCLASSES_TYPE     "integer"
+    IDS_SIZE_TYPE           "integer"
+    IDS_DEPTH_TYPE          "integer"
+    IDS_DANGLINGELSEIF_TYPE "integer"
+    IDS_DEFLESSSWITCH_TYPE  "integer"
+    IDS_START_TYPE          "integer"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_RETURN_TYPE         "integer"
+    IDS_LINESAMOUNT_TYPE    "integer"
+    IDS_UNCOMMENTAMOUNT_TYPE "integer"
+    IDS_EXECUTABLEAMOUNT_TYPE "integer"
+    IDS_IFSAMOUNT_TYPE      "integer"
+    IDS_LOOPSAMOUNT_TYPE    "integer"
+    IDS_SWITCHESAMOUNT_TYPE "integer"
+    IDS_DEFAULTAMOUNT_TYPE  "integer"
+    IDS_STATUS_TYPE         "string"
+    IDS_FIELDMESSAGE        "Argument field empty or wrong type."
+    IDS_FIELDCAPTION        "Filter Wizard Error:"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_OP_INT              ">  Greater Than"
+    IDS_OP_INT2             "<  Less Than"
+    IDS_OP_INT3             "=  Equal To"
+    IDS_OP_INT4             "!= Not Equal To"
+    IDS_OP_INT5             ">= Greater Than Or Equal To"
+    IDS_OP_INT6             "<= Less Than Or Equal To"
+    IDS_OP_STR              "String starts with, case sensitive"
+    IDS_OP_STR2             "String starts with, case insensitive"
+    IDS_OP_STR3             "String equal to, case sensitive"
+    IDS_OP_STR4             "String equal to, case insensitive"
+    IDS_OP_STR5             "String contains, case sensitive"
+    IDS_FMT_INT             "%s > %s"
+    IDS_FMT_INT2            "%s < %s"
+    IDS_FMT_INT3            "%s == %s"
+    IDS_FMT_INT4            "%s != %s"
+    IDS_FMT_INT5            "%s >= %s"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_FMT_INT6            "%s <= %s"
+    IDS_FMT_STR             "strncmp(%s,""%s"",%d)==0"
+    IDS_FMT_STR2            "strnicmp(%s,""%s"",%d)==0"
+    IDS_FMT_STR3            "strcmp(%s,""%s"")==0"
+    IDS_FMT_STR4            "stricmp(%s,""%s"")==0"
+    IDS_FMT_STR5            "strstr(%s,""%s"")!="""""
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_RELATIONS       "Open Dormant Code analysis window\\Dormant"
+    ID_DORMANT              "Run dormant code analysis using current selection\nDormant"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_MAKEPUBLIC           "Make selected elements public\nMake public"
+    ID_UPDATE               "Build outdated filesto update Information Model\nUpdate model"
+    ID_XMLREPORT            "Automatic report generator\nReport editor"
+    ID_MAKEXML              "Generate report\nGenerate"
+    ID_XMLOPEN              "Open report template\nOpen template"
+    ID_XMLSAVE              "Save report template\n Save template"
+    ID_PREVIEW              "Run Internet Explorer\n Show"
+    ID_SETTINGS             "AutoDoc settings, such as directories to store documentand browserto view document\nSettings"
+    ID_XMLSETTINGS          "Set all default directories and web browser name.\nSettings"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_CHECKOUT             "Check out the file containing the selected entities\nCheck out"
+    ID_CHECKIN              "Check in the file containing the selected entities\nCheck in"
+    ID_UNCHECKOUT           "Undo check out\n Undo check out"
+    ID_LOCK                 "Lock the file containing the selected entities\nLock"
+    ID_UNLOCK               "Unlock the file containing the selected entities\nUnlock"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_RUN                  "Execute TaskFlow\nExecute"
+    ID_STEP                 "Execute one node (task) in the TaskFlow sequence.\nStep"
+    ID_SUSPEND              "Suspend current TaskFlow\nSuspend"
+    ID_CONTINUE             "Re-start the TaskFlow execution after suspending\nContinue"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_XMLPREVIEW           "Preview generated document\nPreview"
+    ID_XMLSAVEAS            "Save the report templateunder different name\n Save as"
+    ID_XMLNEW               "Create a new report template\nNew"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "DIScover"
+    IDR_DISCOVTYPE          "\nCodeIn\nCodeIn\nCodeIn Files (*.prefs)\n.prefs\nCodeIntegrityMDI.Document\nCodeIn Document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDR_TPM                 "TaskFlow - Task Sequence Runner"
+    IDR_XML                 "AutoDoc - Automatic Report Generator"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDR_DORMANT             "Dormant - Dormant Code Analysis"
+    IDR_QA                  "Caliper - Automatic Quality Analyzer"
+    IDR_ACCESS              "Access Terminal"
+    IDR_DATACHARTVIEW       "Data Chart View"
+    IDR_ERDVIEW             "ERD View"
+    IDR_FLOWCHARTVIEW       "Flow Chart View"
+    IDR_INHERITANCEVIEW     "Class Inheritance View"
+    IDR_OUTLINEVIEW         "Outline View"
+    IDR_TREEVIEW            "Tree View"
+    IDR_SIMPLIFY            "Simplify - Simplifies include file tree"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_TREEDIAGRAM          "Open Tree diagram\nTree diagram"
+    ID_INHERITANCE          "Open Class Inheritance diagram\nInheritance diagram"
+    ID_ERD                  "Open ERD diagram\nERD diagram"
+    ID_DATACHART            "Open Data Chart diagram\nData Chart diagram"
+    ID_FLOWCHART            "Open Flow Chart diagram\nFlow Chart diagram"
+    ID_OUTLINE              "Open Outline diagram\nOutline diargam"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_QA                   "Open Caliper window\nCaliper"
+    ID_QARESET              "Remove previous results\nReset"
+    ID_QARUN                "Execute all available queries\nRun"
+    ID_QARUNSEL             "Execute selected QA test\nRun selected"
+    ID_QABROWSE             "Show selected query results in the browser\nBrowse results"
+    ID_SERVICESELECT        "Connect this client to the Information Model server.\nOpen project server"
+    ID_ACCESS               "Open Access terminal\nAccess"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_OPENTREEDIAGRAM      "Open Tree diagram\nTree diagram"
+    ID_OPENINHERITANCE      "Open Class Inheritance diagram\nClass inheritance"
+    ID_OPENERD              "Open ERD diagramnERD"
+    ID_OPENDATACHART        "Open Data Chart diagram\nData Chart diagram"
+    ID_OPENOUTLINE          "Open Outline diagram\nOutline diargam"
+    ID_OPENFLOWCHART        "Open Flow Chart diagram\nFlow Chart diagram"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDC_GRAPHPROP           "Sets the graph, nodes and edges properties"
+    ID_VIEW_BROWSER         "Show or hide Information Model browser window"
+    ID_VIEW_GRAPHBAR        "Shows or hides graphical views toolbar"
+    IDC_SIMPLIFY            "Remove unnecessary include files\nSimplify"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_CALLGRAPH            "Open graph diagram\n Call graph"
+    ID_INCLUSION            "Enable or disable substitute mode. Include files can be moved to the source if substitute is enabled\nSubstitute"
+    ID_SIMPLIFY_UPDATE      "Update source file\nUpdate"
+    ID_SIMPLIFY_PREV        "Select previous file to simplify\nPrevious"
+    ID_SIMPLIFY_NEXT        "Select next file to simplify\nNext"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_QASAVE               "Save current QA session.\nSave session"
+    ID_QAOPEN               "Open saved QA session.\nOpen session"
+    IDC_VIEW_ERRORS         "Show or hide errors browser.\n Errors browser"
+    IDC_SAVEREPORT          "Save current Report to the user-defined location.\nSave report as ..."
+    IDC_IMATTACHMENT        "Attach current report to an IM issue.\nAttach to an IM issue..."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDITOR_SETUP         "Selects the source code editor which DIScover will use for source code navigation.\nSelect editor"
+    ID_CM_SETUP             "Selects the source control manager which DIScover will use.\nSelect source control manager"
+    IDC_IMPACT              "Determines an impact of changing source code\nImpact"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDC_REPOSITORYNAME      "Current repository name"
+    IDC_SELECTREPOSITORY    "Opens another repository"
+    IDC_STARTMODEL          "Makes model available for browsing"
+    IDC_STOPMODEL           "Stops running model"
+    IDC_BROWSEMODEL         "Opens a model for browsing"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDC_CLOSEMANAGER        "Closes the Service Manager without doing anything"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "DiscoverMDI.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#include "afxolecl.rc"       // OLE container resources
+#include "afxolesv.rc"       // OLE server resources
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

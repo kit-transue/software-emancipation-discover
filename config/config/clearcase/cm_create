@@ -1,0 +1,4 @@
+#!/bin/sh
+# cm_create (ClearCase) - Create ClearCase elements for new files
+
+exit 0

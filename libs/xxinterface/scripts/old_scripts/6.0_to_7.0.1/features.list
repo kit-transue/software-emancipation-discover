@@ -1,0 +1,26 @@
+7.000	SET.Program/sw DISCOVER Delta
+7.000	SET.AutoDoc/sw AutoDoc
+7.000	SET.Debug/sw Debug
+7.000	SET.Summary/sw Statistics
+7.000	SET.DocLink/sw.Frame DocLinkRW
+7.000	SET.Extract/sw Extract
+7.000	SET.Admin/sw Admin
+7.000	SET.DFA/sw DFA
+7.000	SET.QAR/sw QAC QA_Browse QA_Complex QA_Global QA_Port QA_Report QA_Stand QA_Stats QA_TestCov QA_Struct QFS_Master 
+7.000	SET.Model/sw.Java Java
+7.000	SET.Model/sw.C C_CPP
+7.000	SET.Partition/sw Partition
+7.000	SET.Package/sw Package
+7.000	SET.Simplify.h/sw Simplify
+7.000	SET.Y2K/sw Y2K
+7.000	SET.Y2K/TaskFlow TaskFlow
+7.000	SET.TPM/sw TPM Remediation
+7.000	SET.Metrics/sw Metrics
+7.000	SET.Access/sw Access
+7.000	SET.TestLink/sw TestLinkRW
+7.000	SET.Compliance/sw Modularity
+7.000	SET.Model/sw.ESQL SQL
+7.000	SET.Dormant/sw Dormant
+7.000	SET.DefectLink/sw DefectLinkRW
+7.000	SET.ModelClient ModelClient
+

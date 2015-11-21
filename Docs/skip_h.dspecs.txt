@@ -1,0 +1,53 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+    N. Yatsenko. October 06, 1993.
+
+        Project: Skip (do not parse) include files which already have been included and parsed in previous compiled units and which are the same after preprocessing.
+
+        The goal is not to parse repeatedly the same include files. It cannot be done by simply not including .h files with the same name, because after preprocessing result could be differrent, depending on different defines and other preprocessing directives. The idea is to do it by comparing results after preprocessing. So, if we have files "a.c" , "b.c" and both of them include file "a.h", we keep result of preprocessing for "a.h" after importing the first file ("a.c"). Then, while importing "b.c", compare result of new preprocessing of "a.h" with previous, and if they are the same, skip "a.h" this time (not reparse it).
+
+        How compiled units are parsed now.
+
+        AST tree is created for the compile unit being parsed. All parsed global symbols are available while unit is parsed. After compile unit is parsed, symbols for types, typedefs/typedecls, static variables and static functions are saved in memory with unit name (main input file name) as a key - for possible incremental re-parsing, for example. So when next unit is parsed, these symbols from previous unit are not visible. And because any compiler parse unit separately, from scratch, such hiding of symbols from previous files does not cause any problem.
+
+        How they are going to be parsed.
+
+        After compile unit is parsed, all global symbols except static variables and static functions could be available in a following unit. For example, class A, defined in first unit a.C, would be available in next unit b.C through symbol table. If unit b.C contains declaration of class A, parser checks definition from unit a.C. If class A was defined in unit a.C in .h file which is skipped in next unit, parser takes that definition as it is defined in unit b.C. 
+
+        Some problems and solutions.
+
+        We cannot just keep symbols available in all units - C++ allows, for example, to have class local to its unit if it does not contain static members and/or non-inline member functions. So when we see declaration of the class with the same name as class defined in previous unit, we do not know whether it is the same class. We can avoid this problem if we know that class was defined in previous unit in .h file which is skipped in current unit - it means, it is (going to be) defined in current unit the same way. This works if .h files for both units are the same. But if they differ, classes still could be (and almost always are) the same. But in this case we do not have .h file in skipped file list. It means list of skipped files would not help in such case. And class is going to be defined in new unit too. Problem could be resolved by checking if new class is actually the same, - for example, consist of the same members (it could be difficult to verify though). If it is, we can take first definition of this class and forget the last one. There is another problem: for example, consider
+
+        "typedef A* APtr;".
+
+        Is it the same as previous? It depends on whether A is the same type. But we cannot know it until we have definition of A. Meantime we could have a lot of such typedefs before definition of A in a new unit. It is not a good idea to keep a list of all such typedefs until definition, and then decide. We can even have a unit without definition of A at all, and with many such typedefs. But we can follow regular compiler and keep new (may be, empty) definition / declaration of type A. And when it appears in source, check whether it is the same. And if it is, do not forget it, but keep track to previous definition (s), marking them equal - in order to prevent error messages like "class A is not a base class for A" and similar. 
+
+        This should cover typical cases.
+
+         

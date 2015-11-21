@@ -1,0 +1,502 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Java Language Entities</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 12.0px; font: 11.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px 'Times New Roman'}
+    p.p5 {margin: 0.0px 1.0px 1.3px 1.0px; font: 12.0px 'Times New Roman'}
+    p.p6 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16; min-height: 23.0px}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 86.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 103.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 167.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 169.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td5 {width: 86.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td6 {width: 103.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td7 {width: 167.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td8 {width: 169.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Java Language Entities</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p2">Entity</p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p2">Change Type Option</p>
+      </td>
+      <td valign="middle" class="td3">
+        <p class="p2">Description</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p2">Impact Analysis Results</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="3" valign="middle" class="td5">
+        <p class="p2">File (module)</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p2">Rename</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming a file.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflict</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p2">Delete</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a file.</p>
+        <p class="p4"><b>Caution:</b> Before you delete a file from a project, be aware that some entities from the file are referenced outside of the file.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Where the file is referenced</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Methods that implement interface that need to be deleted</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>If the selected file is a source file, Impact Analysis collects a list of all entities defined in the file and returns the impact of deleting each entity</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>If the selected file is a header file, Impact Analysis shows where the file is referenced and files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p2">Move to Package</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with moving a file to another package.</p>
+        <p class="p4"><b>Note:</b> If you move a file to anther package, some classes declared in the file will not be accessible outside of the package.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="4" valign="middle" class="td5">
+        <p class="p2">Field</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p2">Rename</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming a field.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflict</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p2">Delete</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a field.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p2">Change Type</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a field’s type.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p2">Change Declaration</p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a field’s declaration.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Non-static entities that cannot be referenced from a static context</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="2" valign="middle" class="td5">
+        <p class="p2">Package</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Rename</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming a package.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflict</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Referenced but undefined entities</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Delete</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a package.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Referenced but undefined entities</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="6" valign="middle" class="td5">
+        <p class="p2">Method</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Rename</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming a method.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflict</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Type</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a method’s return type.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Arguments</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a method’s arguments.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Body</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing how a method is written.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Declaration</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a method’s declaration.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Delete</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a method.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Referenced but undefined entities</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="8" valign="middle" class="td5">
+        <p class="p2">Class</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Rename</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming a class.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflict</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Add/Remove Field</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with adding or removing a field to or from a class.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Add/Remove Method</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with adding or removing a method to or from a class.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Base Class</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a class’ base class.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Implement/Remove Base Interface</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with implementing or removing a base interface to or from a class.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Methods that need to be implemented, reviewed, or removed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Move to Package</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with moving a class to another package.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Inaccessible entities</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Delete</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a class.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Referenced but undefined entities</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Declaration</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a class’ declaration.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Accessibility issues</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p2">Local Variable</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Delete</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a local variable.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="4" valign="middle" class="td5">
+        <p class="p2">Class Variable</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Rename</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming a class variable.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflict</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Delete</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting a class variable.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Referenced but undefined entities</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Type</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a class variable’s type.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Change Declaration</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with changing a class variable’s declaration.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Accessibility issues</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="5" valign="middle" class="td5">
+        <p class="p2">Interface</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Rename</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with renaming an interface.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Potential name conflicts</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Add/Remove Field</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with adding or removing a field to or from an interface.</p>
+        <p class="p4"><b>Note:</b> You can only add a public static final field (for example, constant).</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Add/Remove Method</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with adding or removing a method to or from an interface.</p>
+        <p class="p4"><b>Note:</b> You can only add a public method.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Implement/Remove Base Interface</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with implementing or removing an interface’s base interface.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td6">
+        <p class="p5"><b>Delete</b></p>
+      </td>
+      <td valign="middle" class="td7">
+        <p class="p2">Experiments with deleting an interface.</p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Entities that need to be changed</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Methods implementing the interface that need to be deleted</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Interfaces that extend the interface</p>
+        <p class="p3"><span class="s1">•</span><span class="s2">   </span>Files that need to be recompiled</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p6"><b></b><br></p>
+</body>
+</html>

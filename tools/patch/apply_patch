@@ -1,0 +1,49 @@
+#!/bin/sh
+#08/95 by Reggie Zhu
+
+
+#Initialize
+set -x
+#clear
+echo This program applies a custom patch to the current installation.
+echo 
+if test "$1" = '-help'; then
+  echo 'Check detailed information in ~support/bin/README_patch .'
+  exit 0
+fi
+
+echo Please make sure that current directory `pwd`
+echo is the root of installation directory where you want to apply the patch.
+echo If not, please type Control-c to exit now.
+sleep 10
+echo
+echo Please give the path of the custom patch directory:
+read NewDis
+echo
+if test ! -d $NewDis; then
+  echo $NewDis does not exist. Exiting.
+  exit 1
+fi
+
+#Apply the patch
+for i in `cat "$NewDis"/New`; do
+  (cd "$NewDis"; tar cf - "$i") | tar xBf -
+done
+
+for i in `cat "$NewDis"/Replace`; do
+  chmod +w "$i"
+  (cd "$NewDis"; tar cf - "$i") | tar xBf -
+done
+
+for i in `cat "$NewDis"/Delete`; do
+  chmod +w "$i"
+  if rm -f "$i"; then
+    :
+  else
+    exit 1
+  fi
+done
+
+cat "$NewDis"/README >>README
+
+echo Done.

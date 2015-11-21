@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="no_message"><alternate nameintro="+"/>
+<compilername>HP cc</compilername>
+C -D__hp9000s800 -D__hppa -D__hpux -D__unix -D_PA_RISC2_0 -D__CLASSIC_C__ -I/usr/include --c --no_warnings -D_SIZE_T --diag_suppress 265 --microsoft --size_t_is_unsigned_long -Dhppa -Dhpux -Dunix -Dhp9000s800
+  <translate>
+    <option name="I" immarg="1" separg="1">-I%</option><!-- Add <dir> to preprocessor #include file search path -->
+    <option name="D" immarg="1" separg="1">-D%</option><!-- Associate name with token as if by #define -->
+    <option name="E" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to stdout -->
+    <option intro="+" name="M" noarg="1">+M</option>            <!-- Print path names of included files -->
+    <option name="P" noarg="1">-P</option>            <!-- Compile source through preprocessor only, output to .i  file -->
+    <option name="U" immarg="1">-U%</option>          <!-- Delete initial definition of preprocessor symbol <name> -->
+    <option intro="+" name="Z" noarg="1">+Z</option>            <!-- Causes the compiler to generate position-independent code (PIC),
+                                                           necessary for building shared libraries.  -->
+    <option intro="+" name="v" noarg="1">+w</option>            <!-- Do stricter semantic checking -->
+    <option name="w" noarg="1">-w</option>            <!-- Suppress compiler warning messages -->
+    <option name="YI" immarg="1">-I -I%</option>      <!-- Change default directory searched for include files -->
+
+    <option name="o" separg="1"></option>             <!-- Set name of output file to <outputfile> -->
+    <option name="b" noarg="1">-b</option>             <!-- Creates a shared library rather than an executable file -->
+    <option name="c" noarg="1" />              <!-- Suppress linking -->
+  </translate>
+</cmdline>

@@ -1,0 +1,99 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Date: 6/28/95
+File: sdo_spec.txt
+Subject: SDO spec and design
+From: Trung Dung
+
+I   SDO app design:
+
+    0.  SDO description
+
+    SDO app defines the following [high level objects] entities:
+Ownership, Status, SW_Project, SW_Contract, CM_File.  Each entity consists
+of a set of attributes, actions and will serve a particular purpose. Each
+entity will also inherit from a base entity called SDO_base which provide
+common utilities.
+
+    SDO app defines 2 sub [ala. auxiliary, dependent] entities:
+code_status<ent> which provide the connection to Discover pmod and
+History<ent> which tries to capture activities applied to entity.  The sub
+entity is removed upon its last reference in entity ent.
+
+    a)	Entity code_status<entity Ent>
+	#include <code_status_ent.txt>
+    
+    b)	Entity History<entity Ent>
+	#include <history_spec.txt>
+
+    SDO app will have a triggering mechanism which will invoke SDO server
+activities when some other actions occur in some other servers.
+
+    	Trigger definition:
+	    * action,
+	    * entity type,
+	    * propagation type: self, broadcast
+	    * hooks,
+	    * data
+
+    1.	Entity Ownership
+	#include <ownership_spec.txt>
+
+    2.	Entity Status
+	#include <Status_spec.txt>
+
+    3.	Entity SW_Project
+	#include <SWProject_spec.txt>
+
+    4.	Entity SW_Contract
+	#include <contract.txt>
+
+    5. 	Entity CM_File
+	#include <CM_file_spec.txt>
+
+
+II  Issue:
+
+    * 	Formalize History, History <-> entity
+
+    * 	Submission form, procedure, view, report? computable from Status
+	history?
+
+    *  	Model: last modified date for modified objects.
+
+    *	Interface to project management tools?
+
+    *   ??? propagation of change and storage of notification: if a function
+is modified, get ownerships and notify appropriate owner, but also store
+the short notification on the ownership object itself. The whole mechanism
+should be done as much relational like as possible. How to define such
+behavior generically? should use something like an in-box to deposit
+notification? ???
+
+    * 	Incorporate FAQ into SDOs: SW_Project ?
+

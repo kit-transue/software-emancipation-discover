@@ -1,0 +1,15 @@
+CPROOTS=\
+	listitem \
+	parray \
+	pstack \
+	argParam \
+	argPrmAssign \
+	cstring \
+	indAccess \
+	indFSet \
+	intrCont \
+	dataSort \
+	heapSort
+	
+
+CROOTS=\

@@ -1,0 +1,30 @@
+#!/bin/sh
+# cm_get_src (ClearCase) - Checkout the source file (reserved)
+
+# Execute beforeget script if it exists
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeget ] ; then
+  $cm_optscripts/cm_beforeget
+  if [ $? -ne 0 ] ; then 
+      echo "%% get failed" >&2
+      exit 1
+  fi
+fi
+
+if [ -f $cm_workfile ] ; then
+  $PSETCFG/util/remove_file $cm_workfile
+fi
+
+echo "get -e -s -r$cm_version -p $cm_revision_file > $cm_workfile"
+      get -e -s -r$cm_version -p $cm_revision_file > $cm_workfile
+if [ $? -ne 0 ]; then
+  rm $cm_workfile
+  echo "%% get failed" >&2
+  exit 1
+else
+  chmod +w $cm_workfile 2> /dev/null
+fi
+
+# Execute afterget script (async) if it exists
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterget ] ; then
+  $cm_optscripts/cm_afterget &
+fi

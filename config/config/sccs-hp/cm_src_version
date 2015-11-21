@@ -1,0 +1,2 @@
+#!/bin/sh
+$PSETCFG/util/sccs_srcver < $cm_workfile | head -1 | $PSETCFG/util/sccs_version_string

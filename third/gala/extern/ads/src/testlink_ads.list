@@ -1,0 +1,30 @@
+#
+# 2/3/98
+#
+# Comments:
+#
+# See testlink_source.list in /paraset/src/tests/testlink/src.
+#
+
+TARGETS =
+	listitem.o
+	parray.o
+	pstack.o
+	argParam.o
+	argPrmAssign.o
+	cstring.o
+
+NT_TARGETS +=
+	dataSort.o
+	heapSort.o
+	indAccess.o
+	indFSet.o
+	intrCont.o
+
+VPATH =
+	/paraset/src/extern/ads/source
+
+CCINCLUDES =
+	/paraset/src/extern/ads/include
+	/paraset/src/extern/osport/include
+	${CXXINC}

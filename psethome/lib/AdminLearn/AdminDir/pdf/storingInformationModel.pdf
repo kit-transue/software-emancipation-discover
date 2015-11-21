@@ -1,0 +1,7 @@
+Application1 : $sharedSrcRoot/app1 <-> /application1
+{
+
+  **.[ch]
+
+}
+

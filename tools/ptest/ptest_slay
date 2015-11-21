@@ -1,0 +1,122 @@
+#!/bin/csh -f
+# ptest_slay
+#
+# Run by cron(btest) to kill off running tests before starting anew
+# Modifications:
+#	12/7/95 - install debug statement to find out which machine
+#		  is complaining
+
+onintr -
+
+set signum = $1
+
+if ("`uname -s`" == "HP-UX") then
+  	set u=`whoami`
+	set auxwww="eaf"
+	set slay_echo="echo"
+	set slay_echo_n="echo -n"
+else if ("`uname -s`" == "IRIX") then
+	set u=`/usr/bin/whoami`
+	set auxwww="eaf"
+	set slay_echo="echo"
+	set slay_echo_n="echo -n"
+else
+	set u = "^`whoami`"
+	set auxwww="auxwww"
+	set slay_echo="/usr/5bin/echo"
+	set slay_echo_n="/usr/5bin/echo"
+endif
+
+$slay_echo_n "ptest_slay: start on "
+uname -a
+$slay_echo ""
+
+set dd = '$'
+
+# Kill ptest_internal_run
+#
+set ptestreport=`ps -$auxwww  | egrep -v '(grep|slay)' | egrep ptest_internal_run | egrep $u  | sed "s/$dd/\\n/"`
+
+set pids = `$slay_echo $ptestreport:q | awk '{print $2}'`
+
+if ("$pids" != "") then
+   $slay_echo Killing ptest_internal_run
+   foreach i ($pids)
+      $slay_echo kill $signum $i
+      kill $signum $i
+   end
+else
+   $slay_echo No ptest_internal_run
+endif
+
+# Kill ptest_one_run
+#
+set ptestreport=`ps -$auxwww  | egrep -v '(egrep|slay)' | egrep ptest_one_run | egrep $u  | sed "s/$dd/\\n/"`
+
+set pids = `$slay_echo $ptestreport:q | awk '{print $2}'`
+
+if ("$pids" != "") then
+   $slay_echo Killing ptest_one_run
+   foreach i ($pids)
+      $slay_echo kill $signum $i
+      kill $signum $i
+   end
+else
+   $slay_echo No ptest_one_run
+endif
+
+# Kill ptest_all or ptest_continue
+#
+set ptestreport=`ps -$auxwww  | egrep -v '(egrep|slay)' | egrep ptest | egrep '(all|continue)' | egrep $u  | sed "s/$dd/\\n/"`
+
+set pids = `$slay_echo $ptestreport:q | awk '{print $2}'`
+
+if ("$pids" != "") then
+   $slay_echo Killing ptest_all and ptest_continue
+   foreach i ($pids)
+      $slay_echo kill $signum $i
+      kill $signum $i
+   end
+else
+   $slay_echo No ptest_all and continue
+endif
+
+# Kill ptest_monitor
+#
+set ptestreport=`ps -$auxwww  | egrep -v '(egrep|slay)' | egrep ptest_monitor | egrep $u  | sed "s/$dd/\\n/"`
+
+set pids = `$slay_echo $ptestreport:q | awk '{print $2}'`
+
+if ("$pids" != "") then
+   $slay_echo Killing ptest_monitor
+   foreach i ($pids)
+      $slay_echo kill $signum $i
+      kill $signum $i
+   end
+else
+   $slay_echo No ptest_monitor
+endif
+
+$slay_echo "*** slay discover ***"
+slay -9
+
+# Kill ptest_*
+#
+set ptestreport=`ps -$auxwww  | egrep -v '(egrep|slay)' | egrep ptest | egrep $u  | sed "s/$dd/\\n/"`
+
+set pids = `$slay_echo $ptestreport:q | awk '{print $2}'`
+
+if ("$pids" != "") then
+   $slay_echo Killing ptest_* what is left
+   foreach i ($pids)
+      $slay_echo kill $signum $i
+      kill $signum $i
+   end
+else
+   $slay_echo "No ptest_(s) left"
+endif
+
+$slay_echo ""
+$slay_echo ptest_slay: done
+
+exit 0

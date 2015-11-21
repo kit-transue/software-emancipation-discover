@@ -1,0 +1,1422 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+***************************************************************************	
+gtApplicationShell	(gtAppShell.h)
+
+	An Application Shell. That is, the highest level in the application
+	window hierarchy.  All subsequent shells must be children of this
+	one.
+
+static gtApplicationShell* create(char *name, int argc, char *argv[])
+
+	Creates the gtApplicationShell named name, and passes the 
+	run-time argument list argv with argc number of arguments to
+	it.  Those arguments will be parsed in a fashion consistent with
+	the toolkit being used.
+
+event_loop()
+	
+	Passes control to the user, signifies that the interface creation
+	is done and ready to begin event processing.
+
+***************************************************************************	
+gtArrowButton		(gtArrowButton.h)
+
+	A pushbutton which points in a cardinal direction.  There is a
+	callback which is called when the button is pushed.
+	
+static gtArrowButton* create(gtBase *parent, char *name, gtCardinalDir dir,
+				gtArrowCB callback, void *client_data)
+
+	Creates a gtArrowButton named name, parented by parent, pointing in
+	direction dir, which will call callback with client_data as an
+	argument.
+	
+void set_callback(gtArrowCB callback, void *client_data)
+
+	Sets the callback for the button
+
+void set_direction(gtCardinalDir)
+
+	sets the direction of the button
+
+void shadow_thickness(int thick)
+
+	specifies the thickness of shadow for those toolkits which support
+	sufficient control over decorations.
+
+***************************************************************************	
+gtBase		(gtBase.h)
+	
+	The basic class from which all gt objects inherit.  Functions here
+	are those which can be called on any gt object.  There are no
+	actual instantiations of gtBase object.
+
+static double ppmm_height, ppmm_width
+
+	Two variables which hold the computed constants of the pixels per
+	millimeter in height and width of the display
+
+void	(*destruct_func)(gtBase *),
+void 	(*user_destroy_func)(void *)
+
+	Both of these functions are called when the object is destroyed.
+	destruct_func is the function which the object itself specifies,
+	while user_destroy_func is left open as a way for specific objects
+	to dispose of themselves in new and interesting fashions.
+
+void destroy_init()
+
+	Called by any gt object as soon as it is created.  Sets up the
+	appropriate self-destruct triggers to allow it to kill itself when
+	it's representation goes away.
+
+void disable_destroy_callback()
+
+	This member function will prevent the gtBase destruction routines
+	from being called when the underlying representation is destroyed.
+	
+void destroy()
+
+	This function is signaled by the toolkit when the toolkit-based rep
+	is blown away.  It sets the destroyed flag and tries to kill itself
+	via the override-able destruct_func, which defaults to
+	self_destruct.
+
+static void self_destruct(gtBase *ptr)
+
+	This is the default "kill yourself" function.
+
+void update_display()
+
+	Processes pending exposure events immediately for the gt object.
+
+void pos(int x, int y)
+
+	Moves the object to coordinates x, y
+
+int px()
+int py()
+
+	Returns the x and y coordinates, in pixels.
+
+void size(int h, int w)
+
+	Changes the size of the object to height h and width w
+
+int pheight()
+int pwidth()
+	
+	Returns the height and width, in pixels.
+
+int pix_to_hund_horiz(int)
+int hund_to_pix_horiz(int)
+int pix_to_hund_vert(int)
+int hund_to_pix_vert(int)
+	
+	Converts between pixels and hundredths of an inch, and vice versa.
+	Note that it always rounds up the answer to the nearest unit.
+
+virtual gtBase *container()
+
+	Returns the container of the object, default to self
+
+void manage()
+
+	Bring the object under management of parent
+
+void user_destroy(void (*func)(void *))
+
+	User-suppliable destruction function
+
+void init_user_destroy()
+
+	Makes sure user_destroy is called at the right time
+
+void calc_ppmm()
+
+	Compute pixels per millimeter of the screen
+
+***************************************************************************	
+gtBlank			(gtBlank.h)
+
+	A blank area, left available for drawing on or whatever else the
+	application wants.
+
+static gtBlank* create(gtBase *parent, char *name)
+static gtBlank* create(gtBase *parent, char *name, int height, int width)
+
+	Creates a gtBlank named name, parented by parent.  If the height
+	and width parameters are specified, then the gtBlank will be of
+	that height and width.
+
+void resize_policy(gtResizeOption opt)
+
+	Set the options for resizing
+
+void set_background(char *c_name, int c_size)
+
+	Set background color
+
+void clear_window()
+
+	Clear out the window
+
+***************************************************************************	
+gtCascadeButton			(gtCascadeB.h)
+
+	A cascade button, which directly brings up a menu as a child. Used
+	in pulldown menus and pullright menus.
+
+static gtCascadeButton* create(gtBase *parent, char *name, char *contents,
+				   gtCascadeCB callback, void *client_data)
+
+	Creates a gtCascadeButton named name, parented by parent, with
+	contents as the string displayed in the button.  When the button
+	is pressed, in addition to bringing up any associated sub_menu,
+	callback will be called with client_data as an argument.
+
+void sub_menu(gtPrimitive *sub)
+
+	Determines which gt object is called up when the Cascade button is
+	clicked on.
+
+void label(const char *)
+
+	Sets the text to be printed in the button.
+
+void pulldown_menu(const char *name ...)
+
+	Variadically describe a menu to be presented when the button is
+	pressed.  Uses the same variadic format as gtPopupMenu.
+
+***************************************************************************	
+gtDialogShell			(gtDlgShell.h)
+
+	A dialog shell, only iconifiable with it's parent.
+
+static gtDialogShell* create(gtBase *parent, char *name, char *title)
+
+	Creates a gtDialogShell named name, parented by parent.  The title
+	string will be displayed along the top of the window.
+
+void popup(int modal)
+
+	Pop the window up.  If the modal flag is true, the window will be
+	modal, otherwise it is normal.
+
+***************************************************************************	
+gtDialogTemplate		(gtDlgTemplate.h)		
+
+	A template suitable for standard dialog boxes.  Has a button area
+	at the bottom, set off by a separator.  Has equivalent
+	functionality as a gtForm for parenting purposes.
+
+static gtDialogTemplate* create(gtBase *parent, char *name, char *title)
+static gtDialogTemplate* create(gtBase *parent, char *name, char *title,
+				    double m_height, double m_width)
+
+	Creates a gtDialogTemplate named name, parented by parent, with
+	the string title displayed along the top of the window.  If the
+	m_height and m_width arguments are specified, then the margin of
+	the dialog will be set to those values, otherwise they default to 3.
+	
+add_default_buttons(...)
+
+	Brings up the basic 4 buttons in a dialog box, whose titles default
+	to OK, Apply, Cancel, and Help.  The specified callbacks are
+	triggered when the button is pushed.  This could conceivably want
+	to be changed to conform with different style guides.
+
+int add_button(char *name, char *label, gtPushCB callback, void* client_data)
+
+	Add a button to go into the button area at the bottom of the
+	template.
+
+void realize(int mod)
+
+	Popup the dialog.  If mod if true, the dialog will be modal,
+	otherwise it won't be.
+
+void close()
+
+	Close the dialog.
+
+gtPushButton *button(int n)
+
+	Returns the nth pushbutton, from the zero-indexed array of buttons.
+
+gtPushButton *named(char *nm)
+
+	Returns the pushbutton whose name is nm.
+
+void bring_to_top()
+
+	Forces the dialog to the top of the screen.
+
+***************************************************************************	
+gtEvent				(gtEvent.h)
+
+	This is one of the slightly kludged classes.  Currently a gtEvent
+	is just a typedef for an XEvent, since the XEvent was deemed
+	sufficiently general for our purposes.  However, converting this to
+	NT would require some work here.
+
+***************************************************************************	
+gtFileSelector			(gtFileSel.h)
+
+	A file selection box.
+
+static gtFileSelector* create(gtBase *parent, char *name)
+static gtFileSelector* create(gtBase *parent, const char *name,
+				  gtPushCB OK_CB, void *OK_data,
+				  gtPushCB Cancel_CB, void *Cancel_data);
+
+	Creates a gtFileSelector named name, parented by parent.  If callback
+	information is supplied, then those callbacks will be associated
+	with the OK and Cancel buttons, respectively.
+
+char *selected()
+
+	returns the name of the selected file.
+
+gtPushButton *help_button();
+gtPushButton *ok_button();
+gtPushButton *cancel_button();
+gtLabel *select_label();
+gtLabel *list_label();
+gtStringEditor *text();
+gtList *list();
+gtList *dir_list();
+    	Returns the appropriate component of the box
+
+void pattern (const char *);
+    	Set the pattern
+
+void title(const char *);
+    	Set the title of the dialog
+
+char *title();
+    	Retrieve the title of the dialog
+
+void select_label(const char *);
+    	Set the selection label
+
+void dir_mode(int mode);
+    	Set the file selector in or out of directory mode
+
+***************************************************************************	
+gtForm
+
+	A manager suitable for specifying arbitrary geometries.  All of the
+	attach_foo functions under gtPrimitive are used in conjunction with
+	gtForms.
+
+static gtForm* create(gtBase *parent, char *name)
+
+	Creates a gtForm named name, parented by parent.
+
+void help_callback(gtFormCB callback, void *client_data)
+
+	Specify the help callback to be used for the entire form.
+
+***************************************************************************	
+gtFrame				(gtFrame.h)
+
+	A frame placed around other objects.
+
+static gtFrame* create(gtBase *parent, char *name)
+
+	Creates a gtFrame named name, parented by parent.
+
+void set_style (gtFrameStyle sty)
+
+	changes the style of the gtFrame to one specified by the argument.
+
+void highlight(int val)
+
+	Highlights the frame if val is true, otherwise removes the
+	highlight.
+
+void thickness(int val)
+
+	Sets the thickness of the frame.
+
+***************************************************************************	
+gtHorzBox
+
+	A horizontally oriented "slot" for placing objects and insuring
+	horizontal alignment.
+
+static gtHorzBox* create(gtBase *parent, char *name)
+
+	Creates a gtHorzBox named name, parented by parent.
+
+***************************************************************************	
+gtLabel				(gtLabel.h)
+
+	A static label
+
+static gtLabel* create(gtBase *parent, char *name, const char *contents)
+
+	Creates a gtLabel named name, parented by parent, with the contents
+	string displayed within.
+
+void alignment(gtAlign a)
+
+	Specify the alignment of the contents of the label.
+
+void text(char *tx)
+
+	Set the text in the contents of the label.
+
+***************************************************************************	
+gtList				(gtList.h)
+
+	A List which provides automatic scrolling capabilities and varying
+	selection options.
+
+static gtList* create(
+	gtBase *parent, char *name, const char *title, gtListStyle ltype,
+	const char **entries, int num_entries)
+
+	Creates a gtList named name, parented by parent.  If the title string
+	is non-NULL then that string will be displayed directly above the
+	list.  The selection format of the list is determined by ltype, and
+	there are num_entries entries originally in the list, specified by
+	the entries argument.
+
+char **selected()
+
+	Returns the currently selected strings.
+
+int num_selected()
+
+	Returns number of selections
+
+void add_item(char *item, int loc)
+
+	Adds item at location loc
+
+void add_item_unselected(char *item, int loc)
+
+	Like add_item, but the new entry is unselected
+
+void add_items(char **items, int num_items, int loc)
+
+	Add items at location loc
+
+void delete_all_items()
+
+	Removes all items from the gtList
+
+void delete_pos(int pos)
+
+	Removes the item at pos from the gtList
+
+void deselect_all()
+
+	Clears all selections
+
+void deselect_pos(int pos)
+
+	Clears the selection at location pos
+
+void get_selected_pos(int **pos_list, int *pos_count)
+
+	Returns via its arguments the positions of all of the selections
+
+int  item_pos(char *item)
+
+	Returns the location of item
+
+void select_item(char *item, int notify)
+
+	Sets a selection on item, and if notify is set will call
+	appropriate callbacks
+
+void select_pos(int post, int notify)
+
+	Like select_item, only at a location
+
+void select_all(int notify)
+
+	Like select_item, but for the whole list
+
+void set_bottom_item(char *item)
+
+	Sets the bottom item of the list
+
+void set_top_item(char *item)
+
+	Sets the top item of the list
+
+void num_rows(int n)
+
+	Makes n of the rows visible at any one time
+
+void ui_parse(struct ui_list *list)
+
+	Performs appropriate ui parsing functions on the list
+
+void set_callback(gtListCB, void *)
+
+	Set a callback to be triggered when the List is activated
+
+void set_pos(int pos)
+
+	Scroll the list so that the item at location pos is at the top of
+	the list.
+
+void num_items()
+
+	Returns the number of items in the list.
+
+
+***************************************************************************	
+gtListDialog			(gtListDialog.h)
+
+	A container class for gtDialogTemplate, so all functions on
+	gtDialogTemplate will work on it as well.  A ListDialog is a 
+	gtDialogTemplate with a gtList already inside it, with facilities
+	for connecting the list and any of the buttons together to a 
+	common function.
+
+static gtListDialog* create (gtBase *parent, const char *name, const char *dlg_title,
+	const char *list_title, gtListStyle sty,const char **entires, int num_entries)
+
+	Creates the ListDialog and passes the constructor arguments to the
+	constructors of it's two components -- the first three arguments are
+	the same as those for gtDialogTemplate::create and the last three
+	are the same as for gtList::create.
+
+void connect_to_button(int n, void (*joint_func)(void *),
+			   void *client_data)
+void connect_to_button(gtPushButton *, void (*joint_func)(void *),
+			   void *client_data)
+
+	These functions will see to it that joint_func is called with 
+	client_data as an argument whenever either the specified button is
+	pressed OR a selection is made from the single-selection list contained
+	in the dialog.  When the first form of this function is used, the
+	connection is made to the Nth button of the dialog.  When the second
+	form is used, the connection is made to the actual button passed in.
+	Remember that the buttons are zero-indexed.
+
+gtList *gt_list()
+gtDlgTemplate *gt_template()	
+
+	These two functions return the actual gtList and gtDialogTemplate used
+	inside the ListDialog so that you can have fuller access to their
+	functions & information.
+
+***************************************************************************	
+gtManager			(gtManager.h)
+
+	The class from which all manager objects inherit.  Currently has no
+	functionality.
+
+***************************************************************************	
+gtMenuBar			(gtMenuBar.h)
+
+	A Menu bar for pull-down menus, which can only have
+	gtCascadeButtons as children.
+
+static gtMenuBar* create(gtBase *parent, char *name)
+
+	Creates a gtMenuBar named name, parented by parent.
+
+***************************************************************************	
+gtMessageDialog			(gtMessageDlg.h)
+
+static gtMessageDialog* create(	gtBase *parent, const char *name,
+	const char *title, gtMessageType mtype = gtMsgPlain)
+
+	Creates a messaging dialog which displays the title string in
+	a simple dialog along with an icon appropriate to the type of
+	the message.
+
+void popup(int modal)
+
+	pops the box up with modality appropriate to the modal
+	argument (0 = modeless, 1 = application modal, 2 = system modal)
+
+void popdown()
+
+	pops the box down
+
+void set_type(gtMessageType)
+
+	Specifies the type of the dialog
+
+gtPushButton *help_button() 
+gtPushButton *cancel_button() 
+gtPushButton *ok_button()
+
+	Retrieves the appopriate button from the dialog.
+
+void message(const char *)
+
+	Sets the contents of the dialog
+	
+***************************************************************************	
+gtNoParent			(gtNoParent.h)
+
+	The object which represents what happens when an object is
+	specified to have a NULL parent.  This is implemented individually
+	by each toolkit, but in general should default to the application
+	shell.
+
+static gtNoParent *create()
+
+	Creates a gtNoParent whose contents can be replaced with suitable
+	replacement contents.
+
+static gtNoParent *app_shell()
+
+	Creates a gtNoParent which represents the application shell, useful
+	for parenting shells who have no other parent.  Make sure you don't
+	damage or delete this, though, since it is re-used across all people
+	who ask for it.
+
+***************************************************************************	
+gtOptionMenu			(gtOptionMenu.h)
+
+	An Option Menu.  Is created variadically.
+
+static gtOptionMenu* create(gtBase *parent, char *name, char *title ...)
+    Creates a gtOptionMenu appropriate to the toolkit, named name and
+	parented by parent.  The title string will appear as the text 
+	within the button which calls up the option menu.
+    Format for the variadic arguments is as follows:
+    for gtMenuStandard:
+	This is the basic menu option which triggers callback when 
+	selected.
+	    gtMenuChoice entry, char *name,
+	        char *contents, void *client_data, gtPushCB callback
+    for gtMenuCheck:
+	This is a toggle-able menu entry, which changes state when
+	selected in a visible fashion while also calling callback when
+	selected.
+	    gtMenuChoice entry, char *name, char *contents, void *client_data,
+    		gtToggleCB callback
+    for gtMenuCascade:
+	This entry will call up a new menu when selected.
+	    gtMenuChoice entry, char *name, char *contents, void *client_data,
+    		gtCascadeCB callback
+    for gtMenuSeparator:
+	This entry cannot be selected but is used to separate groups of
+	other entries.
+	    gtMenuChoice entry, char *name
+    for gtMenuLabel:
+	This entry cannot be selected but is used to provide information
+	within the menu.
+	    gtMenuChoice entry, char *name, char *contents
+    The variadic list is null-terminated.
+
+void insert_entries(int loc ...)
+
+	inserts more entries into the menu
+
+void remove_entry(int loc)
+
+	removes entries
+
+gtPrimitive *entry(int n)
+
+	returns the nth entry, which may then have to be cast accordingly.
+
+gtCascadeButton *cascade(int n)
+
+	returns the nth cascade in the menu
+
+gtLabel *label()
+
+	returns the label of the option menu
+
+int total_entries()
+
+	total number of entries
+
+gtPrimitive *most_recent()
+
+	most recently added item in the option menu
+
+void menu_history(int index)
+void menu_history(char *)
+
+	sets the menu history, either by index of entry or by entry name
+
+char *menu_history()
+
+	returns the name of the current menu_history entry.
+
+gtPulldownMenu *sub_menu()
+
+	returns the sub_menu which is popped up.
+
+void *map_callback(gtOptionCB, void *)
+
+	adds a callback to be called when the menu is mapped
+
+***************************************************************************	
+gtPulldownMenu			(gtPDMenu.h)
+
+	A pulldown menu.
+
+static gtPulldownMenu* create(gtBase *parent, char *name ...)
+    Creates a gtPulldownMenu appropriate to the toolkit.  Format for
+    the variadic arguments is as follows:
+    for gtMenuStandard:
+	This is the basic menu option which triggers callback when 
+	selected.
+	    gtMenuChoice entry, char *name,
+	        char *contents, void *client_data, gtPushCB callback
+    for gtMenuCheck:
+	This is a toggle-able menu entry, which changes state when
+	selected in a visible fashion while also calling callback when
+	selected.
+	    gtMenuChoice entry, char *name, char *contents, void *client_data,
+    		gtToggleCB callback
+    for gtMenuCascade:
+	This entry will call up a new menu when selected.
+	    gtMenuChoice entry, char *name, char *contents, void *client_data,
+    		gtCascadeCB callback
+    for gtMenuSeparator:
+	This entry cannot be selected but is used to separate groups of
+	other entries.
+	    gtMenuChoice entry, char *name
+    for gtMenuLabel:
+	This entry cannot be selected but is used to provide information
+	within the menu.
+	    gtMenuChoice entry, char *name, char *contents
+    The variadic list is null-terminated.
+
+void insert_entries(int loc ...)
+
+	inserts more entries into the menu
+
+void remove_entry(int loc)
+
+	removes entries
+
+gtPrimitive *entry(int n)
+
+	returns the nth entry, which may then have to be cast accordingly.
+
+gtPrimitive *named(char *name)
+
+	returns the entry named name.
+
+gtCascadeButton *cascade(int n)
+
+	returns the nth cascade in the menu
+
+int total_entries()
+
+	total number of entries
+
+gtPrimitive *most_recent()
+
+	most recently added item in the option menu
+
+void *map_callback(gtPulldownCB, void *)
+
+	adds a callback to be called when the menu is mapped
+
+***************************************************************************	
+gtPanedWindow			(gtPanedWindow.h)
+
+	multiple "panes" within a signle window whose
+	relative sizing can be controlled through a series of "sashes".
+
+static gtPanedWindow* create(gtBase *parent, char *name)
+static gtPanedWindow* create(gtBase *parent, char *name, int height, int width)
+
+	Creates a gtPanedWindow named name and parented by parent.  If a
+	height and width parameter is included, then the PanedWindow will
+	have that height and width.
+
+void prepare()
+
+	Prepares the paned window for use by the user.
+
+***************************************************************************	
+gtPopupMenu			(gtPopMenu.h)
+
+	a popup-menu.
+
+static gtPopupMenu* create(gtBase *parent, char *name ...)
+    Creates a gtPopupMenu appropriate to the toolkit.  Format for
+    the variadic arguments is as follows:
+    for gtMenuStandard:
+	This is the basic menu option which triggers callback when 
+	selected.
+	    gtMenuChoice entry, char *name,
+	        char *contents, void *client_data, gtPushCB callback
+    for gtMenuCheck:
+	This is a toggle-able menu entry, which changes state when
+	selected in a visible fashion while also calling callback when
+	selected.
+	    gtMenuChoice entry, char *name, char *contents, void *client_data,
+    		gtToggleCB callback
+    for gtMenuCascade:
+	This entry will call up a new menu when selected.
+	    gtMenuChoice entry, char *name, char *contents, void *client_data,
+    		gtCascadeCB callback
+    for gtMenuSeparator:
+	This entry cannot be selected but is used to separate groups of
+	other entries.
+	    gtMenuChoice entry, char *name
+    for gtMenuLabel:
+	This entry cannot be selected but is used to provide information
+	within the menu.
+	    gtMenuChoice entry, char *name, char *contents
+    The variadic list is null-terminated.
+
+void insert_entries(int loc ...)
+
+	inserts more entries into the menu
+
+void remove_entry(int loc)
+
+	removes entries
+
+gtPrimitive *entry(int n)
+
+	returns the nth entry, which may then have to be cast accordingly.
+
+gtCascadeButton *cascade(int n)
+
+	returns the nth cascade in the menu
+
+int total_entries()
+
+	total number of entries
+
+void move_to(gtEvent *eve)
+
+	Moves the gtPopupMenu to the location of the buttonpress
+	represented by the gtEvent argument.  This should be used right
+	before managing the object in order to make it appear in the
+	correct location
+
+void *map_callback(gtPopupCB, void *)
+
+	adds a callback to be called when the menu is mapped
+
+***************************************************************************	
+gtPrimitive			(gtPrim.h)
+
+	Class from which all primitive inherit.  Any function which can be
+	called on a arbirary primitive goes here.
+
+void map()
+
+	Causes the gtPrimitive to be drawn on the screen, along with all of
+	its sub-objects.
+
+void unmap()
+
+	Reverse of map, makes the object disappear from the screen.
+
+void unmanage()
+
+	Removes the object from the management of its parent.
+
+void remanage()
+
+	Remanages the object so that it is properly managed.
+
+void attach(gtCardinalDir dir, gtBase *attachee = NULL , int offset = 0,
+		int opposite = 0)
+
+    Attach the object to its surroundings, in the direction provided.
+    If an attachee is provided, it will be attached to that other object,
+    otherwise to the edge of the form.  If an offset is provided then
+    the offset between the two will be that value, if the opposite arg
+    is true, then it will be attached opposite the normal position.
+    
+void attach_pos(gtCardinalDir dir, int pos)
+
+    Attaches the object in the direction provided at a fixed 
+    percentage of distance.
+
+void detach(gtCardinalDir dir)
+
+    Removes all attachments on the object in the direction provided
+
+void attach_offset(gtCardinalDir dir, int offset)
+
+    Specifies the offset in a given direction
+
+void attach_top(gtBase *attachee);
+void attach_bottom(gtBase *attachee);
+void attach_left(gtBase *attachee);
+void attach_right(gtBase *attachee)
+
+	These 4 functions attach the primitives directly to other
+	primitives.
+
+void attach_opp_top(gtBase *attachee);
+void attach_opp_bottom(gtBase *attachee);
+void attach_opp_left(gtBase *attachee);
+void attach_opp_right(gtBase *attachee)
+
+	These 4 "line up" the appropriate side of primitive with the
+	equivalent side of the argument primitive.
+
+void attach_side_top();
+void attach_side_bottom();
+void attach_side_left();
+void attach_side_right()
+
+	These 4 connect the primitive to the sides of the form that is its
+	parent.
+
+void attach_side_opp_top();
+void attach_side_opp_bottom();
+void attach_side_opp_left();
+void attach_side_opp_right()
+
+	These 4 connect the primitive to the opposite side of the form that
+	is its parent.
+
+void attach_pos_top(int pos);
+void attach_pos_bottom(int pos);
+void attach_pos_left(int pos);
+void attach_pos_right(int pos)
+
+	These 4 functions specify the primitive's location in terms of
+	percentage of the total distance along that dimension.
+
+void attach_offset_top(int off);
+void attach_offset_bottom(int off);
+void attach_offset_left(int off);
+void attach_offset_right(int off)
+
+	These 4 functions set the offset of distance between the object and
+	its neighbor in a given direction
+
+void detach_top();
+void detach_bottom();
+void detach_left();
+void detach_right()
+
+	These 4 functions remove previous attachments
+
+void set_sensitive(int sens)
+
+	Adjusts the sensitivity of the primitive object.
+
+void accelerator(char *acc, char *acc_text)
+
+	Sets an accelerator for the primitive.
+
+void mnemonic(char *mne)
+
+	Sets a mnemonic for the primitive.
+
+void add_key_navig_group();
+void rem_key_navig_group()
+
+	controls keyboard navigation patterns.  For XtIntrinsics, this is
+	tab groups.
+
+int process_traversal(int dir)
+
+	Changes input focus, returns true if traversal successful
+
+virtual void construct()
+
+	Does the dirty work of assembling the object in a toolkit specific
+	way.
+
+char *userData();
+void userData(char *)
+
+	Store and retrieve a field of user-defined data to be associated
+	with the object.
+
+void trigger_callbacks(char *c_d, gtReason rea)
+
+	triggers all callbacks that would normally respond to that reason
+	code
+
+gtWindow *window()
+
+	returns the window of the primitive
+
+int height()
+
+	returns the height of the window
+
+int width()
+
+	returns the width of the window
+
+static void manage_list(gtPrimitive **plist, int num_elems);
+static void unmanage_list(gtPrimitive **plist, int num_elems)
+
+	like manage and unmanage, but works on an entire list of primitives
+	at once.
+
+char *name()
+
+	returns the name of the primitive.
+
+void install_accelerator(gtPrimitive *targ)
+
+	installs the accelerator between the primitive and targ.
+
+void translations(void *)
+
+	specifies a pattern of translations for the primitive.
+
+void font(char *)
+
+	specifies a font to use
+
+***************************************************************************	
+gtPushButton			(gtPushButton.h)
+
+	a push button with text inside.
+
+static gtPushButton* create(gtBase *parent, char *name, char *contents,
+				gtPushCB callback, void *client_data)
+
+	Creates a gtPushButton named name, parented by parent, with the
+	contents string displayed within.  When pressed, callback will be
+	called with client_data passed as an argument.
+
+void set_callback(gtPushCB callback, void *client_data)
+
+	specifies to callback to be called when the button is pushed.
+
+void shadow_thickness(int thick)
+
+	specifies the thickness of the shadow for toolkits which support
+	this degree of decoration control.
+
+***************************************************************************	
+gtRTL			(gtRTL.h)
+
+	Is a container class for gtList, but adds the extra functionality
+	of RTL attachment.  All the functions for a gtList can be called on
+	a gtRTL.
+
+static gtRTL *create(gtBase *parent, char *name, char *title,
+			 gtListStyle ltype, char **entries, int num_entries)
+
+	Creates a gtRTL named name, parented by parent.  If the title string
+	is non-NULL then that string will be displayed directly above the
+	list.  The selection format of the list is determined by ltype, and
+	there are num_entries entries originally in the list, specified by
+	the entries argument.
+
+void set_rtl(RTLPtr)
+
+	set the associated RTL of the list
+
+objArr* app_nodes(objArr*)
+
+	return an objArr with the selected contents of the list.
+
+gtList* gt_list()
+
+	returns the gtList which lies at the heart of the gtRTL.
+
+void dialog_create_window(dialog *, int)
+
+	calls the dialog's create_window function with the int and the
+	container of the underlying gtList passed to it as an argument.
+
+***************************************************************************	
+gtRadioBox		(gtRadioBox.h)
+
+	a box of togglebuttons, only one of which can be selected at any
+	given time.  It's contents are specified variadically, the buttons
+	are surrounded by a border and the whole thing may have a title
+	associated with it.
+
+int item_set()
+
+	Returns the number of the currently set button.  A zero means that
+	the result is indeterminate (no button pressed or box in state of
+	change).
+
+void item_set(int num, int value, int flag)
+
+	sets the state of the numth radiobutton to be that of value (true,
+	false).  will call any associated callbacks if the flag argument is
+	set.
+
+gtToggleButton *entries(int n)
+
+	Returns the nth gtToggleButton in the box
+
+gtToggleButton *named(char *nm)
+
+	Returns the gtToggleButton in the box named nm
+
+void num_columns(int n)
+
+	Rearranges the box so that it has n columns
+
+***************************************************************************	
+gtScale				(gtScale.h)
+
+	A slider with an associated value that can be set to a particular
+	value.  Can have it's maximum and minimum value specified.
+
+static gtScale* create(gtBase *parent, char *name, char *contents,
+			   gtDirection dir, int minval, int maxval)
+static gtScale* create(gtBase *parent, char *name, char *contents,
+			   gtDirection dir)
+
+	Creates a gtScale named name, parented by parent, with the contents
+	string displayed as an associated title.  The orientation of the
+	Scale is determined by the dir argument, either Horizontal or 
+	Vertical.  If maxval and minval arguments have been provided, then
+	the maximum and minimum values of the gtScale will be maxval and
+	minval.
+
+void add_callback(gtReason rea, gtScaleCB callback, void *client_data)
+
+	specifies a callback to be triggered on the reason rea.
+
+int value()
+
+	returns the current value of the scale
+
+void value(int)
+
+	sets the value of the scale
+
+void decimal_points(int)
+
+	determines how many digits before the decimal point in the output
+	formatting of the value
+
+void show_value(int)
+
+	toggle whether or not the value should be shown as it changes.
+
+***************************************************************************	
+gtScrolledWindow			(gtScrollWin.h)
+
+	a parent which supplies a scrollable window into its child
+
+static gtScrolledWindow* create(gtBase *parent, char *name)
+static gtScrolledWindow* create(gtBase *parent, char *name,
+				    int height, int width)
+
+	Creates a gtScrolledWindow named name, parented by parent.  If 
+	the height and width parameters are included, then the height and
+	width of the window will be that which was specified.
+
+gtScrollbar* horizBar();
+gtScrollbar* vertBar()
+
+	These two functions return the respective scrollbar of the window
+
+void set_horz_bar(gtScrollbar *sb);
+void set_vert_bar(gtScrollbar *sb)
+
+	These two allow the client to set the scrollbars.
+
+void set_work_area(gtPrimitive *wa)
+
+	This allows the client to set the work area, or child of the
+	scrolled window.
+
+***************************************************************************	
+gtScrollbar			(gtScrollbar.h)
+
+	A scrollbar used for, well, scrolling things.
+
+void set_limits(int min, int max)
+
+	Sets the minimum and maximum values of the scrollbar
+
+int value()
+
+	Fetches the current setting of the gtScrollbar
+
+void value(int v)
+
+	sets the scrollbar to value v
+
+void add_CB(gtScrollCB callback, void *client_data, gtReason rsn)
+
+	installs a new callback on the scrollbar to be called according to
+	reason rsn.
+
+***************************************************************************	
+gtSelectionBox				(gtSelBox.h)
+
+	a selection box.
+
+static gtSelectionBox* create(gtBase *parent, char *name, char **entries,
+				  int num_entries)
+
+	Creates a gtSelectionBox named name, parented by parent, with
+	num_entries entries in it initially who are specified by the
+	entries argument.
+
+char *selected()
+
+	Returns the currently selected string.
+
+***************************************************************************	
+gtSeparator			(gtSepar.h)
+
+	a separator, aligned either horizontally or vertically
+
+static gtSeparator* create(gtBase *parent, char *name, gtDirection dir)
+
+	Creates a gtSeparator named name, parented by parent, aligned
+	horizontally or vertically dependant on the dir argument.
+
+void set_style(gtSeparatorStyle sty)
+
+	Sets the style of the gtSeparator to one specified by the argument.
+
+***************************************************************************	
+gtShell				(gtShell.h)
+
+	the class from which all of the shells inherit.
+
+void realize()
+
+	Causes the shell and all of it's children objects to be brought
+	into existance onto the screen.
+
+void bring_to_top()
+
+	Brings the shell and associated window to the top of the window
+	manager's window stack.
+
+***************************************************************************	
+gtStringEditor			(gtStringEd.h)
+
+	a single-line text entry field
+
+static gtStringEditor* create(gtBase *parent, char *name, const char *contents)
+
+	Creates a gtStringEditor named name, parented by parent, with the
+	contents string as the initial contents.
+
+long get_last_position()
+
+	returns the last position of the cursor
+
+char *text()
+
+	returns the contents of the gtStringEditor
+
+void text(char *)
+
+	sets the contents
+
+void set_selection(long first, long last)
+
+	sets what part of the editor string is selected.
+
+void set_callback(gtStringCB callback, void *client_data)
+
+	specifies a callback to be triggered on the string editor
+
+void editable(int ed)
+
+	sets whether or not it can be edited or is only for display
+	purposes
+
+void columns(int c)
+
+	specifies how may columns of characters the editor will display.
+
+***************************************************************************	
+gtTextEditor			(gtTextEd.h)
+
+	a multi-line text display/editing thing
+
+static gtTextEditor* create(
+	gtBase *parent, char* name, const char* contents = NULL)
+
+	Creates a gtTextEditor named name, parented by parent, with 
+	initial contents of the contents string.
+
+void num_rows(int rows)
+
+	specifies how many rows of output to display
+
+void num_columns(int columns)
+
+	specifies how many columns of output to display
+
+void read_only_mode()
+
+	sets the editor into a read-only mode
+
+long get_last_position()
+
+	returns the last position of the cursor
+
+char *text()
+
+	returns the text in the editor
+
+void insert(long pos, char *text)
+
+	inserts the text at the specified position
+
+void set_selection(long first, long last)
+
+	selects a portion of the text
+
+void text(char *st)
+
+	sets the contents of the editor
+
+void show_position(long pos)
+
+	scrolls the editor to position pos
+
+void word_wrap(int)
+
+	turns word wrap on or off depending on the argument
+
+void append(const char*)
+
+       appends some text to the end of the editor's contents, and
+       scrolls to the end of the text editor.
+
+long current_pos()
+
+	returns the current insertion point
+
+***************************************************************************	
+gtToggleButton		(gtTogB.h)
+
+	a button with on and off states, toggleable
+
+static gtToggleButton* create(gtBase *parent, char *name, char *contents,
+				gtToggleCB callback, void *client_data)
+
+	Creates a gtToggleButton named name, parented by parent, with
+	the associated string contents.  When pressed, it's state will
+	flip and callback will be called with client_data as an argument.	
+
+int set()
+
+	returns a 0 or 1 depending on the state of the button
+
+void set(int state, int notify)
+
+	sets the state of the button.  If notify is true, then the
+	appropriate callbacks will be called.
+
+void pixmap(char *)
+
+	specifies the pixmap of the label for the togglebutton and performs
+	appropriate operations on the togglebutton.
+
+***************************************************************************	
+gtToggleBox			(gtToggleBox.h)
+
+	a collection of toggle buttons, surrounded by a border and possibly
+	headed by a title.
+
+static gtToggleBox* create(gtBase *parent, char *name, char *title,  ...)
+    Creates a gtToggleBox (a set of toggle buttons) appropriate to the 
+    toolkit.  The variadic format used to describe the buttons themselves 
+    is as follows:
+    char *button_title, char *button_name, gtToggleCB callback,
+		void *client_data
+    The variadic list is null-terminated.  The title argument sets
+    a title for the entire box.  If this is NULL, the title will be
+    excluded.
+
+int item_set(int num)
+
+	returns whether or not the numth button is set
+
+void item_set(int num, int value, int flag)
+
+	Set the numth button to the state indicated by value (true or
+	false), and call the appropraite callbacks if flag is true.
+
+gtToggleButton *named(char *nm)
+
+	Set the numth button to the state indicated by value (true or
+	false), and call the appropraite callbacks if flag is true.
+
+void num_columns(int n)
+
+	Change the layout of the box to have N columns
+
+***************************************************************************	
+gtTopLevelShell
+
+	a high-level shell for independant windows within an application.
+
+static gtTopLevelShell* create(gtBase *parent, char *name, char *cname)
+
+	Creates a new gtTopLevelShell named name, parented by parent, and
+	whose associated class is cname.
+
+void clear_background()
+
+	Resets the background of the the window to a cleared state
+
+void destroy_callback(gtTLShellCB callback, void *client_data)
+
+	specify a callback to be triggered when the shell is destroyed.
+
+***************************************************************************	
+gtTransientShell			(gtTranShell.h)
+
+	a temporary shell without resize capability or many standard
+	decorations/controls.
+
+gtTransientShell* create(gtBase *parent, char *name)
+gtTransientShell* create(gtBase *parent, char *name, char *title)
+
+	Creates a new gtTransientShell named name, parented by parent,
+	and if a title string is provided, with the title string displayed
+	along the top of the window.
+
+***************************************************************************	
+gtVertBox			(gtVertBox.h)
+
+	a manager object for aligning its children vertically.
+
+static gtVertBox* create(gtBase *parent, char *name)
+
+	Creates a gtVertBox named name, parented by parent.

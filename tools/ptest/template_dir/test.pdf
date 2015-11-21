@@ -1,0 +1,9 @@
+proj : $PSETTEST <-> /proj {
+  **.[cChH]
+
+  sub : sub <-> /DISCOVER-Subsystems { *.sub ext/* }
+
+  . : (**).c/%/.make => "echo cc -I. -I../include (1).c"
+  . : (**).C/%/.make => "echo CC -I. -I../include (1).C"
+}
+

@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>DPMSSL - Don't Place Multiple Statements on the Same Line</b></p>
+
+<p>
+According to Sun Code Conventions for Java, 
+each line should contain at most one statement.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+if( someCondition ) <font color='red'>someMethod(); </font><br>
+<font color='red'>i++; j++;</font><br>
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Place each statement on the separate line.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+if( someCondition ) <br>
+&nbsp; &nbsp; <font color='blue'>someMethod(); </font><br>
+<font color='blue'>
+i++; <br>
+j++;</font><br>
+</code></p></nobr>
+
+</body>
+</html>

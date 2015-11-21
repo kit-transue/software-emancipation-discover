@@ -1,0 +1,18 @@
+service DIScancel
+
+#include <tcl.h>
+#include <signal.h>
+#include <stdio.h>
+
+@@ dis_cancel
+{
+
+#ifndef _WIN32
+    /* fprintf(stderr, "Sending signal to pid : %d\n", pid_to_send_signal_to); */
+    kill (pid_to_send_signal_to, signal_to_send);
+#else
+	SetEvent(event_to_signal);
+#endif
+
+    return TCL_OK;
+}

@@ -1,0 +1,42 @@
+#!/bin/sh 
+
+DISPLAYTOOLS=${PROJ_ROOT}/tools/ptest/virtual_display_tools
+
+status=0
+display=""
+
+if [ $# -eq 1 ] ; then
+   display=$1
+elif [ $# -eq 0 ] ; then
+   display=$DISPLAY
+fi
+
+
+case "$Arch" in
+	hp10)
+		RSH=remsh
+		;;
+	*)
+		RSH=rsh
+		;;
+esac
+
+${DISPLAYTOOLS}/${Arch}/xopen $display > /dev/null 2>&1
+if [ $? -ne 0 ] ; then
+	dispnum=`echo $display | sed 's/.*://'`
+	server=`echo $display | sed 's/:.*//'`
+	host=`uname -n`
+	if [ "$host" != "$server" ] ; then
+		echo "Starting display on remote host ${server}."
+		${RSH} ${server} -n "${DISPLAYTOOLS}/startdisp ${dispnum}"
+	else
+		echo "Starting display."
+		${DISPLAYTOOLS}/startdisp ${dispnum}
+	fi
+	if [ $? -ne 0 ] ; then
+		echo "Could not start display $dispnum on $server"
+		status=1
+	fi
+fi
+
+exit $status

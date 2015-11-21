@@ -1,0 +1,105 @@
+#!/bin/sh
+
+EXE=`basename $0`
+userOptions="$*"
+versionScript="/main/NEW"
+
+Initialize()
+
+{
+  case `uname -r` in
+
+    [ABC].*)
+	systemType="hp-ux"
+	;;
+
+    4.*)
+	systemType="Sunos"
+	;;
+
+    5.*)
+	systemType="Solaris"
+	;;
+ 
+  esac
+
+}
+
+GetUserOptions()
+
+{
+
+  while [ $# -gt 0 ]
+  do
+    case $1 in
+
+      -c)
+		modeC=TRUE
+		;;
+
+      -o)
+		modeO=TRUE
+		shift
+		oFile=$1
+		;;
+
+      -v)
+		modeV=TRUE
+		;;
+
+      *\.c)
+		srcFileList="$srcFileList $1"
+		;;
+
+      *)
+		;;
+
+    esac
+    shift
+  done
+
+}
+
+ProcessFile()
+
+{
+
+  for srcFile in $srcFileList
+  do
+    if [ ! -r $srcFile ]
+    then
+      echo "$EXE: $srcFile: no such file or directory"
+      exit 1
+    fi
+  done
+
+  if [ "X$modeV" = "XTRUE" ]
+  then
+
+    echo "$EXE version 0x10"
+    echo "cpp -undef -D$EXE -D$systemType -D__PLATFORM_DEPENDENT_DEFINE__ -D__0x10__ -I$ADMINDIR/src/yourBuildEnvironment/$EXE/include -I/usr/include $srcFileList -o /tmp/12345.i"
+    echo "cccom /tmp/12345.i -o /tmp/abcde.s"
+    echo "as -o /tmp/abcde.o /tmp/abcde.s"
+    echo "ld /tmp/abcde.o crto.o -l$EXE -L/usr/lib/$EXE"
+  fi
+  if [ "X$modeC" = "XTRUE" ]
+  then
+    for srcFile in $srcFileList
+    do
+      objFile=`basename $srcFile .c`.o
+      touch $objFile
+    done
+    exit 0
+  fi
+
+  if [ "X$modeO" = "XTRUE" ]
+  then
+    touch $oFile
+    exit 0
+  fi
+
+}
+    
+GetUserOptions $userOptions
+Initialize
+ProcessFile

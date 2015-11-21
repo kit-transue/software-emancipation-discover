@@ -1,0 +1,310 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc sevb:init {} {
+
+  # source necesary files:
+  global _SEVB_SOURCELIB
+  if { ! [ info exists _SEVB_SOURCELIB ] } {
+    querytree init
+    querytree source
+    set _SEVB_SOURCELIB 1
+  }
+
+  source_dis list_ent.dis
+
+
+  # user_scripts file, located in the same directory as a policy file
+  # should contain custom queries
+
+  set path [ get_pref_value QACockpit.BaseLibrary ]
+  if { $path != "" && [file exists $path] } {
+      set dirname [ file dirname $path ]
+      set user_scripts "$dirname/user_scripts.dis"
+      if [file exists $user_scripts] {
+	  catch { puts_verbose "Using user scripts file: $user_scripts" }
+	  source $user_scripts
+      }	
+  }
+	
+  # clear globals:
+  set vars [ info globals SEVB* ]
+  foreach var $vars {
+    global $var
+    if { [ info exists $var ] } {
+      unset $var
+    }
+  }
+
+  sev_clear_cache
+
+}
+
+proc sevb:exec_tree { nodes domain } {
+
+    set modules [ sort [ filter { language != "UNKNOWN" } [ defines -module $domain ] ] ]
+
+    set msize [size $modules]
+    if { $msize > 0 } {
+
+	set queries ""
+
+	foreach node $nodes {
+	    set runners [ querytree runners $node ]
+	    foreach query $runners {
+		if { [ lsearch -exact $queries $query ] < 0 } {
+		    lappend queries $query
+		}
+	    }
+	}
+
+	if { [ llength $queries ] > 0 } {
+	    set ind 0
+	    for { sevb:get_next_index ind } { $ind <= $msize } { sevb:get_next_index ind } {
+		set module $modules/$ind
+		set psetname [psetfile $module]
+		set vlt_file $psetname.vlt
+		if ![file exists $psetname] { 
+		    puts "Missing $psetname. Skipping ..."
+		    continue 
+		}
+		if { [file exists $vlt_file] && [file mtime $vlt_file] >= [file mtime $psetname] } {
+		    puts "$vlt_file is up to date. Skipping ..."
+		    continue
+		}
+		puts "Processing [fname $module] ..."
+		set was_loaded [ is_loaded $module ]
+		sevb:exec_queries $queries $module
+		sevb:print $queries $module
+		if { ($was_loaded != "1") && ([ is_loaded $module ] == "1") } {
+		    catch { src_unload $module }
+		}        
+	    }
+	} else {
+	    sevb:log error "No queries to run."
+	}
+    } else {
+	sevb:log error "No valid modules specified."
+    }
+}
+
+proc sevb:exec_queries { queries module } {
+
+  set module [ set_copy $module ]
+
+  foreach query $queries {
+
+    global QUERYDIAG SEVBDIAG
+
+    set name [ querytree get $query name ]
+    set cmd [ querytree get $query cmd ]
+    set dbgcmd "$cmd [ lname $module ]"
+    catch { puts_verbose "Running command: $dbgcmd" }
+
+    set code [ catch {
+      set QUERYDIAG(text) ""
+      set validsyms 0
+      set rval [ eval $cmd $module ]
+      if { [ size -ignore $rval ] > 0 } {
+        set validsyms 1
+        set cres [ querytree get $query cres ]
+        querytree set $query cres [ set_unique [ set_union $cres $rval ] ]
+      }
+      set diags $QUERYDIAG(text)
+      if { ($diags == "") && ($validsyms) } {
+        foreach el $rval {
+          lappend diags [ qdiagfmt $el $name ]
+        }
+      }
+      set SEVBDIAG($query) ""
+      set SEVBDIAG($query) [ concat $SEVBDIAG($query) $diags ]
+    } tclerr ]
+
+    if { $code != "0" } {
+      global errorInfo
+      if { [ info exists errorInfo ] } { set tclerr $errorInfo }
+      regsub -all "\n+" $tclerr "\n\t" tclerr
+      if { $tclerr == "" } { set tclerr "unknown failure" }
+      set msg "Query \"$name\" was aborted ($dbgcmd):\n\t$tclerr"
+      sevb:log query $msg
+    }
+  }
+
+}
+
+proc sevb:log { key msg } {
+
+  global SEVB_LOG
+ 
+  lappend SEVB_LOG($key) $msg
+
+}
+
+proc sevb:log_dump {} {
+
+  set ret ""
+
+  global SEVB_LOG
+
+  if { [ info exists SEVB_LOG ] } {
+    set keys [ array names SEVB_LOG ]
+    foreach key $keys {
+      set msgs $SEVB_LOG($key)
+      foreach msg $msgs {
+        append ret "$msg\n"
+      }
+    }
+  }
+
+  return $ret
+
+}
+
+proc sevb:category { node } {
+
+  set ret ""
+
+  set parent [ querytree relation $node parent ]
+  while { $parent != "" } {
+    set type [ querytree type $parent ]
+    if { $type == "folder" } {
+      set name [ querytree get $parent name ]
+      if { $ret == "" } {
+        set ret $name
+      } else {
+        set ret [ list $name $ret ]
+      }
+    }
+    set parent [ querytree relation $parent parent ]
+  }
+
+  return $ret
+
+}
+
+proc sevb:print { queries module } {
+  set ret TCL_OK
+
+  # violations
+
+  set psetname [psetfile $module]
+  set sub ""
+  global SEVBDIAG
+  foreach query $queries {
+    if { [ info exists SEVBDIAG($query) ] } {
+      foreach diag $SEVBDIAG($query) {
+        if { [ catch { querytree get $query tag } qtag ] } {
+          set qtag ""
+        }
+        set used($query) ""
+        set diag [ linsert $diag 2 $qtag ]
+        lappend sub $diag
+      }
+    }
+  }
+  
+  set vlt_file $psetname.vlt
+  set fd [open $vlt_file "w"]
+  foreach vlt $sub {
+      puts $fd [join $vlt "|"]
+  }
+  close $fd
+
+  # entities
+
+  set full_list [ list_entities $module ]
+  set ent_file $psetname.ent
+  set fd [open $ent_file "w"]
+  foreach ent $full_list {
+      puts $fd [join $ent "|"]
+  }
+  close $fd
+
+  return $ret
+}
+
+
+proc sevb:get_policy {} {
+
+  set path [ get_pref_value QACockpit.BaseSession ]
+  set cmd open
+
+  if { $path == "" || ![file exists $path] } {
+    set path [ get_pref_value QACockpit.BaseLibrary ]
+    set cmd read
+
+    if { $path == "" || ![file exists $path] } {
+      global env
+      set path $env(PSETHOME)/lib/baselib.sc
+    }
+  }
+
+  catch { puts_verbose "Using policy file: $path" }
+
+  set tree [ eval querytree $cmd $path ]
+
+  return $tree
+
+} 
+
+proc sevb:run {} {
+
+  set code [ catch {
+    sevb:init
+    set tree [ sevb:get_policy ]
+    if { $tree != "" } {
+      set errors [ sevb:exec_tree $tree / ]
+    } else {
+      sevb:log error "Failed to initialize policy file."
+    }
+  } tclerr ]
+
+  if { $code != 0 } {
+    global errorInfo
+    if { [ info exists errorInfo ] } { set tclerr $errorInfo }
+    regsub -all "\n+" $tclerr "\n\t" tclerr
+    if { $tclerr == "" } { set tclerr "unknown failure" }
+    set msg "Fatal error occured:\n\t$tclerr"
+    sevb:log error $msg
+  }
+
+  set msgs [ sevb:log_dump ]
+
+  if { $msgs != "" } {
+    puts stderr $msgs
+  }
+
+}
+
+proc sevb:get_next_index { indvar } {
+    upvar $indvar ind
+    global env
+    set lock $env(PSETHOME)/bin/dis_lock
+    set ind [exec $lock $env(ADMINDIR)/tmp/disbuild/query.lck]
+}
+
+sevb:run

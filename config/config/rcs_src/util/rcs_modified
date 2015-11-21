@@ -1,0 +1,15 @@
+for ii in $*; do
+if [ -f $ii ] ; then
+ rfn=`rlog -R $ii`
+ if [ "$rfn" != "" -a "$rfn" != "$ii" ]; then
+   rfn=`rcsdiff -q $ii`
+   if [ "$rfn" != "" ]; then echo $ii; fi
+ fi
+elif [ -d $ii ]; then
+  if (  echo $ii | grep -s '/RCS$' ); then 
+     :
+  else
+     $0 $ii/*
+  fi
+fi 2> /dev/null
+done

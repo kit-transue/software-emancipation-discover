@@ -1,0 +1,2676 @@
+#!/bin/sh
+
+versionScript="/main/79"
+WHICH=$0
+CWD=`pwd`
+EXE=`basename $WHICH`; export EXE
+DIRNAME=`dirname $WHICH`; export DIRNAME
+HOST=${HOST:=`uname -n`}; export HOST
+
+if [ $DIRNAME = "." ]
+then
+  DIRNAME=`pwd`
+fi
+
+ 
+ 
+#
+# initial state information
+#
+doPrintVersionInfoOnly="no"
+modeBuild="build"
+modePlatform="local"
+hostAlias="$HOST" ; export hostAlias
+debugVerboseLevel=${debugVerboseLevel:="0"}
+					# no verbosity
+
+#
+# initial default behavior or values
+#
+#
+# SEE also ProcessOptions()
+# for those dependant on $ADMINDIR
+#
+defaultDiscoverExecPath="discover"		
+defaultPrivateSrcRoot=$HOME/CODEINTEGRITY/Private
+defaultPrivateModelRoot=$HOME/CODEINTEGRITY/Private
+defaultTMPDIR=/usr/tmp
+
+debugVerboseLevel_hints=5		# you may get diagnostic help from this
+debugVerboseLevel_ERROR=0
+debugVerboseLevel_WARNING=0
+debugVerboseLevel_FATAL=0
+
+licenseBuildFeatures="SET.Admin/sw ParaADMIN"		# license needed to build DIScover model
+
+Usage()
+
+{
+
+  case "X$modeScript" in
+
+    Xmodelbuild)
+	echo ""
+  	echo "Usage:  $EXE [-version]"
+  	echo "        $EXE  [-prefs prefsfilename] [-envSave] [-branch branch_name]"
+  	echo "          Normal mode of operation."
+  	echo "          Performs build of Information Model"
+  	echo "        $EXE -analysis [-branch branch_name] [-prefs prefsfilename] [-envSave]"
+  	echo "          Performs dependancy analysis for PDF"
+  	echo "        $EXE -update <projectname> [-branch branch_name] [-prefs prefsfilename] [-envSave]"
+  	echo "          Builds model only for given project"
+  	echo "          Assumes model is already checked out if necessary"
+  	echo "        $EXE -dfa_init <projectname> [-branch branch_name] [-prefs prefsfilename] [-envSave]"
+  	echo "          Initializes the DFA information for given project"
+  	echo "        $EXE -dfa <projectname> [-branch branch_name] [-prefs prefsfilename] [-envSave]"
+  	echo "          Links the DFA information for given project"
+  	echo "          Assumes model is already checked out if necessary"
+  	echo "        $EXE -defectlink [-branch branch_name] [-prefs prefsfilename] [-envSave]"
+  	echo "          Builds only the DefectLink information for the model"
+  	echo "          Assumes model is already checked out if necessary"
+  	echo "        $EXE -pdfExpand [-prefs prefsfilename] [-envSave]"
+  	echo "          Expands all projects in the PDF to indicate location of"
+  	echo "          files, psets, pmods and logical names"
+	echo ""
+	echo "prefsFile         : DIScover options selection file"
+	echo "                    If not set will look in order for:"
+	echo "                      $HOME/.psetPrefs,"
+	echo "                      $ADMINDIR/prefs/build.prefs"
+	echo "projectname       : the name of an individual project"
+	echo ""
+	echo "-envSave          : debugging aid, creates env save file"
+	echo "                    in $ADMINDIR/tmp by default"
+	echo "-Exec             : diagnostic aid, runs alternative"
+	echo "                    executable file"
+	echo "-which		: which executable are you running?"
+        echo "branch_name       : name of the branch for which model" 
+        echo "                    is to be built"
+      	echo "			  may not be used with other options"
+	echo ""
+	;;
+
+    Xstart_discover)
+	echo ""
+  	echo "        $EXE  [-prefs prefsfilename] [-dynamic_pdf dyn_pdf_flag]"
+	echo "          Interactively use Information Model"
+	echo ""
+	echo "prefsFile : DIScover options selection file"
+	echo "            If not set will look in order for:"
+	echo "              $HOME/.psetPrefs,"
+	echo "              $ADMINDIR/prefs/build.prefs"
+	echo ""
+	echo "-which		: which executable are you running?"
+	echo "			  may not be used with other options"
+        echo "dyn_pdf_flag      : if set to 1, create dynamic pdf for branches"
+        echo "                  :    listed in \"branch_list\" preference/"
+        echo "                  : if set to 0, do not create dynamic pdf"
+	echo ""
+	;;
+
+    Xmodeladmin)
+	echo ""
+  	echo "        $EXE  [-prefs prefsfilename] "
+	echo "          Administrative access to Information Model"
+	;;
+
+    *)
+	echo "$EXE: DIAGNOSTIC: Script is executing in invalid mode ($modeScript)"	# DIAGNOSTIC
+	echo "$EXE: initialization incomplete diagnostic information is not available"	# DIAGNOSTIC
+	Exit 1
+	;;
+
+  esac
+
+}
+
+PrintVersionInfo()
+
+{
+
+  versionDiscover=`$discoverExecPath -v | $AWK '
+    /CODEINTEGRITY/ {
+	printf ( "V%s", $4 );
+	next;
+	};
+    /system/ {
+	printf ( " (%s)\n", $3 );
+	};
+  '`
+
+  _EXE=`echo "$EXE" | $AWK '{printf ( "%-20.20s", EXE );}' EXE=$EXE`
+  echo "$EXE: Versions:"
+  echo "$EXE:   $_EXE    = $versionScript"
+  echo "$EXE:   util.sh                 = $versionUtil"
+  echo "$EXE:   DIScover                = $versionDiscover"
+
+}
+
+PrintPrefValues()
+
+{
+
+  echo "$EXE: Preference File Values:"
+  $AWK '
+  /^[ 	]*$/ {
+        next;
+        };
+  /^#/	{
+	next;
+	};
+	{
+	gsub ( "^[              ]*\\\\*", "" );
+	gsub ( "^\\*psetPrefs\.", "" );
+	prefCrntValue = substr ( $0, match ( $0, ":" ) +1 );
+	gsub ( "^[ 	]*", "", prefCrntValue );
+	prefCrntName = substr ( $0, 0, match ( $0, ":" ) -1 );
+	if ( prefCrntName ~ /^$/ ) {
+	  separator=" ";
+	} else {
+	  separator="=";
+	};
+	printf ( "%s:   %-35.35s %s %s\n", EXE, prefCrntName, separator, prefCrntValue );
+	};
+  ' EXE=$EXE $prefsFile 
+
+}
+
+
+SetSystemRequirements()
+
+{
+
+  case `PlatformArch` in
+
+    *)
+	requiredTMPDIR=140000		
+	requiredSwap=140000		
+	requiredMemory=32000		
+	;;
+
+  esac
+
+
+}
+
+GetUserOptions()
+
+{
+
+  modeScript=$EXE
+
+  while [ $# -gt 0 ]
+  do
+    case $1 in
+
+      -analysis)
+		modeBuild="-analysis"
+		;;
+
+      -envSave)
+		debugEnvSave="YES"
+		;;
+
+      -Exec)
+		shift
+		debugDiscoverExecPath=$1
+		while [ $# -gt 1 -a `expr "X$2" : "X-.*"` -eq 0 ]
+		do
+                  case "X$2" in
+
+			X\\*)
+				debugDiscoverExecPath="$debugDiscoverExecPath "`expr $2 : '\\\\\(.*\)'`
+				;;
+			X*)
+				debugDiscoverExecPath="$debugDiscoverExecPath $2"
+				;;
+
+		  esac
+		  shift
+		done
+		;;
+
+      -headers)
+		modeBuild="-headers"
+		;;
+
+      -pdfExpand)
+		modeBuild="-pdf_prt"
+		;;
+
+      -pdf)
+		if [ "X$modeScript" != "Xmodeladmin" ]
+		then
+		  echo  "$EXE: command line argument ($1) is not supported"
+		  Usage
+		  Exit 1
+		else
+		  shift
+		  pdfNameList=$1
+		fi
+		;;
+
+      -prefs)
+		shift
+		prefsFile=$1
+		;;
+      -userPrefs)
+		shift
+		prefsFile=$1
+		;;
+      -noUserPrefs)
+		;;
+
+      -update)
+		shift
+		modeBuild="-proj"
+		projectList="$projectList $1";
+		;;
+
+      -dfa_init)
+		shift
+		modeBuild="-dfa_init"
+		projectListDFA="$projectList $1";
+		;;
+
+      -dfa)
+		shift
+		modeBuild="-dfa"
+		projectListDFA="$projectList $1";
+		;;
+
+      -defectlink)
+		shift
+		modeBuild="-defectlink"
+		;;
+
+      -remote)
+		modePlatform="-remote"
+		;;
+
+      -alias)
+		shift
+		hostAlias="$1"
+		;;
+
+      -verb*)
+		shift
+		debugVerboseLevel=$1
+		;;
+
+      -vers*)
+		doPrintVersionInfoOnly="YES"
+		;;
+
+      -which)
+                echo $WHICH
+		if [ $# -gt 1 ]
+		then
+		  Usage
+		fi
+		Exit 0
+		;;
+
+      *)
+		rest_options="$rest_options $1"
+		;;
+
+    esac
+    shift
+
+  done
+
+}
+
+GetUserOptions $*
+
+. `util.sh -which`
+. `modelutil.sh -which`
+
+if [ "X$hostAlias" = "X$HOST" ]; then
+  hostAlias="`hostname`"
+fi
+
+ProcessOptions()
+
+{
+
+  if [ "X$ADMINDIR" = "X" ]
+  then
+    if [ `basename $CWD` = "AdminDir" ]
+    then
+      ADMINDIR=$CWD; export ADMINDIR
+      WARNING '\$ADMINDIR'" environment variable unset, assuming current working dir"
+    else
+      ABORT '\$ADMINDIR environment variable is undefined'
+      # can't really proceed at this time but probably not a flaw in program
+    fi
+  fi
+
+  #
+  #
+  #
+
+  [ "$DIS_ADD_ARGS" != "" ] && WARNING "DIS_ADD_ARGS=$DIS_ADD_ARGS"
+  disAddArgs="$DIS_ADD_ARGS";
+
+  #
+  # initial default behavior or values
+  #
+
+  PATH="$PATH:$ADMINDIR/bin"; export PATH		# ensure we can pick up site specfifc exe's from $ADMINDIR
+
+  if [ "$debugVerboseLevel" -gt "$debugVerboseLevel_hints" ]
+  then
+    if [ "X$ADMINDIR" != "X"`pwd` ]
+    then
+      WARNING '\$ADMINDIR environment variable '"($ADMINDIR) is not set to current working dir ("`pwd`")"
+    fi
+  fi
+
+  if [ "X$TMPDIR" = "X" ]
+  then
+    WARNING '\$TMPDIR environment variable is not defined, using default '"($defaultTMPDIR) ..."
+    TMPDIR=$defaultTMPDIR; export TMPDIR
+  fi
+
+  if [ ! -d "$TMPDIR" ]
+  then
+    FATAL '\$TMPDIR directory '"($TMPDIR) does not exist"
+  fi
+
+  if [ "X$prefsFile" = "X" ]
+  then
+    prefsFile=`FindFile "$HOME/.psetPrefs:$ADMINDIR/prefs/build.prefs"`; 
+    if [ $? -ne 0 ]
+    then
+      DIAGNOSTIC "Unable to locate any prefs file in std locations ($HOME/.psetPrefs:$ADMINDIR/prefs/build.prefs)"
+    fi
+  fi
+
+  prefsFile=`NormalizePath $prefsFile`
+
+  if [ -d $prefsFile ]
+  then
+    ABORT "prefs file ($prefsFile) is a directory not a file"
+    # can't really proceed at this time but probably not a flaw in program
+  fi
+
+  if [ ! -r $prefsFile -o  -d $prefsFile ]
+  then
+    ABORT "Unable to open prefs file ($prefsFile) for reading"
+    # can't really proceed at this time but probably not a flaw in program
+  fi
+  if [ "X$pdfNameList" = "X" ]
+  then
+    case "X$modeScript" in
+
+      Xstart_discover)
+	pdfPref="pdfFileUser"
+	;;
+
+      Xmodelbuild)
+	pdfPref="pdfFileBuild"
+	;;
+
+      Xmodeladmin)
+	if [ `expr "$rest_options" : ".*-batch.*"` -eq 0 ]
+	then
+	  pdfPref="pdfFileUser"
+	else
+	  pdfPref="pdfFileBuild"
+	fi
+	;;
+
+      *)
+	DIAGNOSTIC "Script is executing in invalid mode ($modeScript)"
+	;;
+
+    esac
+    pdfNameList=`GetPrefValue "psetPrefs.$pdfPref"`;
+    case "$pdfNameList" in
+
+      -)
+  	FATAL "Preference value (psetPrefs.$pdfPref) is missing"
+  	;;
+  
+      +)
+  	FATAL "Preference value (psetPrefs.$pdfPref) is incomplete"
+  	;;
+  
+      *)
+	;;
+
+    esac
+  fi
+  export pdfNameList
+
+  case "X$pdfNameList" in
+
+      -)
+	;;
+
+      +)
+	;;
+
+      *)
+  	for pdfFile in $pdfNameList
+  	do
+	  export pdfFile		# NB Will export the last pdfFile in a list
+  	  if [ -r $pdfFile ]
+  	  then
+  	    actionPDFFile="$actionPDFFile -pdf $pdfFile"
+  	  else
+  	    FATAL "Unable to open PDF file ($pdfFile) for reading"
+  	  fi
+  	done
+	export actionPDFFile
+	;;
+
+  esac
+
+  if [ "X$debugDiscoverExecPath" = "X" ]
+  then
+    debugDiscoverExecPath=`GetPrefValue "psetPrefs.debugDiscoverExecPath"`
+    case $debugDiscoverExecPath in
+ 
+      -)
+	discoverExecPath=$defaultDiscoverExecPath
+	;;
+ 
+      +)
+	discoverExecPath=$defaultDiscoverExecPath
+	;;
+
+      *)
+	discoverExecPath=$debugDiscoverExecPath
+	;;
+
+    esac
+  else
+    discoverExecPath=$debugDiscoverExecPath
+  fi
+
+  if [ "X$doPrintVersionInfoOnly" = "XYES" ]
+  then
+    PrintVersionInfo
+    Exit 0
+  fi
+
+  logFileDir=`GetPrefValue "psetPrefs.logFileDir"`
+  case $logFileDir in
+
+    -)
+	logFileDir=$ADMINDIR/log
+	;;
+
+    +)
+	logFileDir=$ADMINDIR/log
+	;;
+
+    *)
+	;;
+  esac
+
+  sharedSrcRoot=`GetPrefValue "psetPrefs.sharedSrcRoot"`
+  case $sharedSrcRoot in
+
+    -)
+	FATAL "Preference value (psetPrefs.sharedSrcRoot) is missing"
+	;;
+
+    +)
+	FATAL "Preference value (psetPrefs.sharedSrcRoot) is incomplete"
+	;;
+
+    *)
+	;;
+  esac
+  export sharedSrcRoot
+  if [ ! -d $sharedSrcRoot ]
+  then
+    FATAL "Shared src root directory ($sharedSrcRoot) is missing"
+  fi
+
+  sharedModelRoot=`GetPrefValue "psetPrefs.sharedModelRoot"`
+  case $sharedModelRoot in
+
+    -)
+	FATAL "Preference value (psetPrefs.sharedModelRoot) is missing"
+	;;
+
+    +)
+	FATAL "Preference value (psetPrefs.sharedModelRoot) is incomplete"
+	;;
+
+    *)
+	;;
+  esac
+  export sharedModelRoot
+  if [ ! -d $sharedModelRoot ]
+  then
+    case "X$modeScript" in
+
+      Xmodelbuild)
+    	WARNING "Shared model root directory ($sharedModelRoot) is missing, creating ..."
+    	mkdir -p $sharedModelRoot
+  	if [ ! -d $sharedModelRoot ]
+  	then
+    	  FATAL "Shared model root directory ($sharedModelRoot) is missing, creation has failed"
+	fi
+	;;
+
+      Xmodeladmin)
+    	WARNING "Shared model root directory ($sharedModelRoot) is missing, creating ..."
+    	mkdir -p $sharedModelRoot
+  	if [ ! -d $sharedModelRoot ]
+  	then
+    	  FATAL "Shared model root directory ($sharedModelRoot) is missing, creation has failed"
+	fi
+	;;
+
+      Xstart_discover)
+	FATAL "Shared model root directory ($sharedModelRoot) is missing"
+	;;
+
+      *)
+	DIAGNOSTIC "Script is executing in invalid mode ($modeScript)"
+	;;
+
+    esac
+  fi
+  
+
+  privateSrcRoot=`GetPrefValue "psetPrefs.privateSrcRoot"`
+  case $privateSrcRoot in
+
+    -)
+	WARNING "Preference value (psetPrefs.privateSrcRoot) is missing, using default ($defaultPrivateSrcRoot)"
+	privateSrcRoot=$defaultPrivateSrcRoot
+	;;
+
+    +)
+	WARNING "Preference value (psetPrefs.privateSrcRoot) is incomplete, using default ($defaultPrivateSrcRoot)"
+	privateSrcRoot=$defaultPrivateSrcRoot
+	;;
+
+    *)
+	;;
+  esac
+  export privateSrcRoot
+  if [ ! -d $privateSrcRoot ]
+  then
+    WARNING "Private src root directory ($privateSrcRoot) is missing, creating ..."
+    mkdir -p $privateSrcRoot
+  fi
+  if [ ! -d $privateSrcRoot ]
+  then
+    FATAL "Private src root directory ($privateSrcRoot) is missing, creation has failed"
+  fi
+
+  privateModelRoot=`GetPrefValue "psetPrefs.privateModelRoot"`
+  case $privateModelRoot in
+
+    -)
+	WARNING "Preference value (psetPrefs.privateModelRoot) is missing, using default ($defaultPrivateModelRoot)"
+	privateModelRoot=$defaultPrivateModelRoot
+	if [ ! -d $privateModelRoot ]
+	then
+	  mkdir -p $privateModelRoot
+	fi
+	;;
+
+    +)
+	WARNING "Preference value (psetPrefs.privateModelRoot) is missing, using default ($defaultPrivateModelRoot)"
+	privateModelRoot=$defaultPrivateModelRoot
+	if [ ! -d $privateModelRoot ]
+	then
+	  mkdir -p $privateModelRoot
+	fi
+	;;
+
+    *)
+	;;
+  esac
+  export privateModelRoot
+  if [ ! -d $privateModelRoot ]
+  then
+    WARNING "Private model root directory ($privateModelRoot) is missing, creating ..."
+    mkdir -p $privateModelRoot
+  fi
+  if [ ! -d $privateModelRoot ]
+  then
+    FATAL "Private model root directory ($privateModelRoot) is missing, creation has failed"
+  fi
+  
+  logPrefValues=`GetPrefValue "psetPrefs.logPrefValues"`
+  case $logPrefValues in
+
+    -)
+	logPrefValues="NO"
+	;;
+
+    +)
+	WARNING "preference value (psetPrefs.logPrefValues) is incomplete, assuming NO ..."
+	logPrefValues="NO"
+	;;
+
+    $PREF_YES)
+	logPrefValues="YES"
+	;;
+
+    $PREF_NO)
+	logPrefValues="NO"
+	;;
+
+    *)
+	WARNING "preference value (psetPrefs.logPrefValues) is invalid ($logPrefValues), assuming NO ..."
+	;;
+
+  esac
+
+  if [ "X$debugEnvSave" = "X" ]
+  then
+
+    debugEnvSave=`GetPrefValue "psetPrefs.debugEnvSave"`
+    case $debugEnvSave in
+
+      -)
+	debugEnvSave="NO"
+	;;
+
+      +)
+	WARNING "preference value (psetPrefs.debugEnvSave) is incomplete, assuming NO ..."
+	debugEnvSave="NO"
+	;;
+
+      $PREF_YES)
+	debugEnvSave="YES"
+	;;
+
+      $PREF_NO)
+	debugEnvSave="NO"
+	;;
+
+      *)
+	WARNING "preference value (psetPrefs.debugEnvSave) is invalid ($debugEnvSave), assuming NO ..."
+	;;
+
+    esac
+
+  fi
+
+  nameCompany=`GetPrefValue "psetPrefs.nameCompany"`
+  case $nameCompany in
+
+    -)
+	nameCompany="Unknown"
+	;;
+
+    +)
+	nameCompany="Unknown"
+	;;
+
+    *)
+	;;
+  esac
+
+  nameDiscoverAdministrator=`GetPrefValue "psetPrefs.nameDiscoverAdministrator"`
+  case $nameDiscoverAdministrator in
+
+    -)
+	nameDiscoverAdministrator="Unknown"
+	;;
+
+    +)
+	nameDiscoverAdministrator="Unknown"
+	;;
+
+    *)
+	;;
+  esac
+
+  logFileNameFixed=`GetPrefValue "psetPrefs.logFileNameFixed"`
+  case $logFileNameFixed in
+ 
+    -)
+	# Don't worry not important
+	;;
+ 
+    +)
+	# Don't worry not important
+	;;
+ 
+    $PREF_YES)
+	logFileNameFixed="YES"
+	;;
+
+    $PREF_NO)
+	logFileNameFixed="NO"
+	;;
+
+    *)
+        FATAL "preference value (psetPrefs.logFileNameFixed) is invalid ($logFileNameFixed)"
+	;;
+
+  esac
+
+  logFileCreate=`GetPrefValue "psetPrefs.logFileCreate"`
+  case $logFileCreate in
+
+    -)
+	logFileCreate="NO"
+	;;
+
+    +)
+	WARNING "preference value (psetPrefs.logFileCreate) is incomplete, assuming NO ..."
+	logFileCreate="NO"
+	;;
+
+    $PREF_YES)
+	logFileCreate="YES"
+	;;
+
+    $PREF_NO)
+	logFileCreate="NO"
+	;;
+
+    *)
+	WARNING "preference value (psetPrefs.logFileCreate) is invalid ($logFileCreate), assuming YES ..."
+	logFileCreate="NO"
+	;;
+
+  esac
+
+  logFileMonitor=`GetPrefValue "psetPrefs.logFileMonitor"`
+  case $logFileMonitor in
+
+    -)
+	logFileMonitor="YES"
+	;;
+
+    +)
+	WARNING "preference value (psetPrefs.logFileMonitor) is incomplete, assuming YES ..."
+	logFileMonitor="YES"
+	;;
+
+    $PREF_YES)
+	logFileMonitor="YES"
+	;;
+
+    $PREF_NO)
+	logFileMonitor="NO"
+	;;
+
+    *)
+	WARNING "preference value (psetPrefs.logFileMonitor) is invalid ($logFileMonitor), assuming YES ..."
+	logFileMonitor="YES"
+	;;
+
+  esac
+
+  PSET_LOGFILE=$logFileDir/$USER.log; export PSET_LOGFILE	# where discover's internal runtime log goes
+								# this is NOT optional
+  case $logFileCreate in
+
+    $PREF_YES)
+	if [ "X$logFileNameFixed" = "XYES" ]
+	then
+	  logFileName="$logFileDir/$USER.$modeScript"
+	else
+  	  case "X$modeScript" in
+
+    	    Xstart_discover)
+		logFileName=$logFileDir/$USER.`date +%m%d%y-%T`
+		;;
+
+    	    Xmodelbuild)
+		logFileName=$logFileDir/`date +%m%d%y-%T`
+		;;
+
+    	    Xmodeladmin)
+		logFileName=$logFileDir/`date +%m%d%y-%T`
+		;;
+
+    	    *)
+		DIAGNOSTIC "Script is executing in invalid mode ($modeScript)"
+		;;
+
+  	  esac
+	fi
+	case $logFileMonitor in
+
+	  $PREF_YES)
+	    	actionLog="2>&1 | tee -a $logFileName"
+		;;
+
+	  $PREF_NO)
+		actionLog=">> $logFileName 2>&1"
+		;;
+
+	esac
+	;;
+
+    $PREF_NO)
+	case $logFileMonitor in
+
+	  $PREF_YES)
+		actionLog=""
+		;;
+
+	  $PREF_NO)
+		actionLog=">/dev/null 2>&1"
+
+	esac
+	;;
+
+  esac
+
+  if [ ! -r $prefsFile ]
+  then
+    DIAGNOSTIC "unable to open prefs file ($prefsFile)"
+  fi
+
+  acceptSyntaxErrors=`GetPrefValue "psetPrefs.acceptSyntaxErrors"`
+  case $acceptSyntaxErrors in
+
+    -)
+	acceptSyntaxErrors="NO"
+	optionAcceptSyntaxErrors=""
+	;;
+
+    +)
+	acceptSyntaxErrors="NO"
+	optionAcceptSyntaxErrors=""
+	;;
+
+    $PREF_NO)
+	acceptSyntaxErrors="NO"
+	optionAcceptSyntaxErrors=""
+	;;
+  esac
+
+  projectParallel=`GetPrefValue "psetPrefs.projectParallel"`
+  case $projectParallel in
+
+    -)
+	projectParallel="NO"
+	actionParallel=""
+	;;
+
+    +)
+	projectParallel="NO"
+	actionParallel=""
+	;;
+
+    $PREF_YES)
+	projectParallel="YES"
+	DISBUILD_PARALLEL="yes"; export DISBUILD_PARALLEL
+        if [ "X$PSET_CPP_FILE" != "X" ]
+        then
+	    eval echo "$EXE: Unset PSET_CPP_FILE for parallel host modelbuild" $actionLog
+	    PSET_CPP_FILE=""; export PSET_CPP_FILE
+        fi
+	actionParallel="&"
+	;;
+
+    $PREF_NO)
+	projectParallel="NO"
+	actionParallel=""
+	;;
+
+    *)
+	FATAL "Preference value (psetPrefs.projectParallel) is invalid ($projectParallel)"
+	;;
+
+  esac
+
+
+
+  tmpParallelCpus=`GetPrefValue "psetPrefs.parallelCpus"`
+  case $tmpParallelCpus in
+
+    -)
+	parallelCpus=""
+	;;
+
+    +)
+	parallelCpus=""
+	;;
+
+    $PREF_NO)
+	parallelCpus=""
+	;;
+
+    *)
+        DISBUILD_PARALLEL="yes"; export DISBUILD_PARALLEL
+        if [ "X$PSET_CPP_FILE" != "X" ]
+        then
+	    eval echo "$EXE: Unset PSET_CPP_FILE for parallel CPUs modelbuild" $actionLog
+	    PSET_CPP_FILE=""; export PSET_CPP_FILE
+        fi
+	parallelCpus=`expr $tmpParallelCpus + 0`
+        [ $parallelCpus = 0 ] && FATAL "Preference value (psetPrefs.parallelCpus) is invalid ($tmpParallelCpus)"
+	;;
+
+  esac
+
+
+  useLockFile=`GetPrefValue "psetPrefs.useLockFile"`
+  case $useLockFile in
+
+    -)
+	useLockFile=""
+	;;
+
+    +)
+	useLockFile=""
+	;;
+
+    $PREF_NO)
+	useLockFile=""
+	;;
+
+    *)
+	;;
+
+  esac
+
+
+  executableTimer=`GetPrefValue "psetPrefs.executableTimer"`
+  case $executableTimer in
+
+    -)
+	actionTimer=""
+	;;
+
+    +)
+	actionTimer=""
+	;;
+
+    *)
+	actionTimer=$executableTimer
+	;;
+
+  esac
+
+  clearcasePutModel=`GetPrefValue "psetPrefs.clearcasePutModel"`
+  case $clearcasePutModel in
+ 
+    -)
+	;;
+
+    *)
+        WARNING "preference value (psetPrefs.clearcasePutModel) is depracated, use preference value (psetPrefs.putModel)"
+	;;
+
+  esac
+
+  clearcaseGetModel=`GetPrefValue "psetPrefs.clearcaseGetModel"`
+  case $clearcaseGetModel in
+
+    -)
+	;;
+ 
+    *)
+        WARNING "preference value (psetPrefs.clearcaseGetModel) is depracated, use preference value (psetPrefs.getModel)"
+        ;;
+
+  esac
+
+  getModel=`GetPrefValue "psetPrefs.getModel"`
+  case $getModel in
+ 
+    -)
+	getModel="NO"
+	;;
+ 
+    +)
+	getModel="NO"
+	;;
+ 
+    $PREF_YES)
+	getModel="YES";
+	;;
+
+    $PREF_NO)
+	getModel="NO"
+	;;
+
+    *)
+        FATAL "preference value (psetPrefs.getModel) is invalid ($getModel)"
+        ;;
+
+  esac
+
+  putModel=`GetPrefValue "psetPrefs.putModel"`
+  case $putModel in
+ 
+    -)
+	putModel="NO"
+	;;
+ 
+    +)
+	putModel="NO"
+	;;
+ 
+    $PREF_YES)
+	putModel="YES";
+	;;
+
+    $PREF_NO)
+	putModel="NO"
+	;;
+
+    *)
+        FATAL "preference value (psetPrefs.putModel) is invalid ($putModel)"
+        ;;
+
+  esac
+
+  configuratorSystem=`GetPrefValue "psetPrefs.configuratorSystem"`
+  case $configuratorSystem in
+ 
+    -)
+	if [ "X$putModel" = "XYES" -o "X$getModel" = "XYES" ]
+	then
+	  FATAL "Preference value (psetPrefs.configuratorSystem) is missing"
+	fi
+	;;
+ 
+    +)
+	if [ "X$putModel" = "XYES" -o "X$getModel" = "XYES" ]
+	then
+	  FATAL "Preference value (psetPrefs.configuratorSystem) is incomplete"
+	fi
+	;;
+ 
+    *)
+	;;
+
+  esac
+
+  if [ "X$configuratorSystem" = "Xcustom" ]
+  then
+    configuratorCustomDirectory=`GetPrefValue "psetPrefs.configuratorCustomDirectory"`
+    case $configuratorCustomDirectory in
+ 
+      -)
+	FATAL "Preference value (psetPrefs.configuratorCustomDirectory) is missing"
+	;;
+ 
+      +)
+	FATAL "Preference value (psetPrefs.configuratorCustomDirectory) is incomplete"
+	;;
+ 
+      *)
+	PSETCFG=$configuratorCustomDirectory; export PSETCFG
+	;;
+
+    esac
+  else
+    PSETCFG=$PSETHOME/config/$configuratorSystem; export PSETCFG
+  fi
+
+  debugShowMakeRuleOutput=`GetPrefValue "psetPrefs.debugShowMakeRuleOutput"`
+  case $debugShowMakeRuleOutput in
+ 
+    -)
+	debugShowMakeRuleOutput="NO"
+	;;
+ 
+    +)
+	debugShowMakeRuleOutput="NO"
+	;;
+
+    $PREF_YES)
+	debugShowMakeRuleOutput="YES"
+	CPP_DEBUG=TRUE; export CPP_DEBUG
+	;;
+
+    $PREF_NO)
+	debugShowMakeRuleOutput="NO"
+	unset CPP_DEBUG
+	;;
+
+    *)
+        FATAL "preference value (psetPrefs.debugShowMakeRuleOutput) is invalid ($debugShowMakeRuleOutput)"
+        ;;
+
+  esac
+
+  msgLogger=`GetPrefValue "psetPrefs.msgLogger"`
+  case $msgLogger in
+ 
+    -)
+	optionMsgLogger=""
+	msgLogger="NO"
+	;;
+ 
+    +)
+        WARNING "preference value (psetPrefs.msgLogger) is incomplete, assuming NO ..."
+	optionMsgLogger=""
+	msgLogger="NO"
+	;;
+
+    $PREF_YES)
+	optionMsgLogger="-msg_logger"
+	msgLogger="YES"
+	;;
+
+    $PREF_NO)
+	optionMsgLogger=""
+	msgLogger="NO"
+	;;
+
+    *)
+        WARNING "preference value (psetPrefs.msgLogger) is invalid ($msgLogger), assuming NO ..."
+        ;;
+
+  esac
+
+  debugCPPOutputFile=`GetPrefValue "psetPrefs.debugCPPOutputFile"`
+  case $debugCPPOutputFile in
+ 
+    # PSET_CPP_FILE will be set later after deciding whether we are in batch or user
+    # mode
+    -)
+	;;
+ 
+    +)
+	;;
+
+    *)
+	;;
+
+  esac
+
+  doPassDependency=`GetPrefValue "psetPrefs.doPassDependency"`
+  case $doPassDependency in
+  
+    -)
+	doPassDependency="NO"
+	;;
+  
+    +)
+	doPassDependency="NO"
+	;;
+  
+    $PREF_YES)
+	doPassDependency="YES"
+	;;
+  
+    $PREF_NO)
+	doPassDependency="NO"
+	;;
+  
+    *)
+        FATAL "preference value (psetPrefs.doPassDependency) is invalid ($doPassDependency)"
+	;;
+  
+  esac
+
+  doPassHeaders=`GetPrefValue "psetPrefs.doPassHeaders"`
+  case $doPassHeaders in
+  
+    -)
+	doPassHeaders="NO"
+	;;
+  
+    +)
+	doPassHeaders="NO"
+	;;
+  
+    $PREF_YES)
+	doPassHeaders="YES"
+	;;
+  
+    $PREF_NO)
+	doPassHeaders="NO"
+	;;
+  
+    *)
+        FATAL "preference value (psetPrefs.doPassHeaders) is invalid ($doPassHeaders)"
+	;;
+  
+  esac
+
+  doPassProject=`GetPrefValue "psetPrefs.doPassProject"`
+  case $doPassProject in
+  
+    -)
+      doPassProject="YES"
+      ;;
+  
+    +)
+      doPassProject="YES"
+      ;;
+  
+    $PREF_YES)
+      doPassProject="YES"
+      ;;
+  
+    $PREF_NO)
+      doPassProject="NO"
+      ;;
+  
+    *)
+      FATAL "preference value (psetPrefs.doPassProject) is invalid ($doPassProject)"
+      ;;
+  
+  esac
+ 
+  doPassSaveProj=`GetPrefValue "psetPrefs.doPassSaveProj"`
+  case $doPassSaveProj in
+  
+    -) 
+        doPassSaveProj="NO"
+        ;;
+
+    +) 
+        doPassSaveProj="NO"
+        ;; 
+
+    $PREF_YES)
+        doPassSaveProj="YES"
+	;;
+
+    $PREF_NO)
+ 	doPassSaveProj="NO"
+	;;
+
+    *)
+	FATAL "preference value (psetPrefs.doPassSaveProj) is invalid ($doPassSaveProj)"
+	;;
+
+  esac
+    
+  doPassSaveRoot=`GetPrefValue "psetPrefs.doPassSaveRoot"`
+  case $doPassSaveRoot in
+
+    -)
+	doPassSaveRoot="NO"
+	;;
+
+    +)
+	doPassSaveRoot="NO"
+	;;
+
+    $PREF_YES)
+	doPassSaveRoot="YES"
+	;;
+
+    $PREF_NO)
+	doPassSaveRoot="NO"
+	;;
+
+    *) 
+	FATAL "preference value (psetPrefs.doPassSaveProj) is invalid ($doPassSaveProj)"
+	;;
+
+  esac
+
+  doBuildDFA=`GetPrefValue "psetPrefs.doBuildDFA"`
+  case $doBuildDFA in
+
+    -)
+	doBuildDFA="NO"
+	;;
+
+    +)
+	doBuildDFA="NO"
+	;;
+
+    $PREF_YES)
+	doBuildDFA="YES"
+	;;
+
+    $PREF_NO)
+	doBuildDFA="NO"
+	;;
+
+    *) 
+	FATAL "preference value (psetPrefs.doBuildDFA) is invalid ($doBuildDFA)"
+	;;
+
+  esac
+
+  doPassDefectLink=`GetPrefValue "psetPrefs.doPassDefectLink"`
+  case $doPassDefectLink in
+
+    -)
+	doPassDefectLink="NO"
+	;;
+
+    +)
+	doPassDefectLink="NO"
+	;;
+
+    $PREF_YES)
+	doPassDefectLink="YES"
+	;;
+
+    $PREF_NO)
+	doPassDefectLink="NO"
+	;;
+
+    *) 
+	FATAL "preference value (psetPrefs.doPassDefectLink) is invalid ($doPassDefectLink)"
+	;;
+
+  esac
+
+}
+
+RmFilesInDir()
+
+{
+
+  if [ "$#" -ne "1" ]; then
+    ERROR "RmFilesInDir: Invalid parameters. Please contact THECOMPANY support."
+    return
+  fi
+
+  DIR="$1"
+
+  find "$DIR" -type f -print |
+  while read X; do
+    rm "$X" || WARNING "Remove failed: $X"
+  done
+
+}
+
+CheckSystem()
+
+{
+
+  if [ ! -d $logFileDir ]
+  then
+    FATAL "log directory ($logFileDir) does not exist"
+  fi
+
+  if [ ! -w $logFileDir ]
+  then
+    FATAL "log directory ($logFileDir) is not writable"
+  fi
+
+  resourceSwap=`GetResourceValue swap`
+  case $resourceSwap in
+
+    +)
+	case $platformArch in
+		hp700|hp10)
+			echo "$EXE: informational: must be root to determine available swap space on HP"
+			;;
+		*)
+			WARNING "unable to determine available swap space"
+			;;
+	esac
+	resourceSwap="Unknown "
+	;;
+
+    *)
+  	if [ $resourceSwap -lt $requiredSwap ]
+  	then
+	  WARNING "available swap space ($resourceSwap) is less than recommended swap ($requiredSwap)"
+  	fi
+	;;
+  esac
+
+  resourceTMPDIR=`GetResourceValue TMPDIR`
+  case $resourceTMPDIR in
+
+    +)
+	WARNING "unable to determine available tmp space"
+	resourceTMPDIR="Unknown "
+	;;
+
+    *)
+  	if [ $resourceTMPDIR -lt $requiredTMPDIR ]
+  	then
+    	  WARNING "available tmp space ($resourceTMPDIR) is less than recommended tmp space ($requiredTMPDIR)"
+  	fi
+	;;
+
+  esac
+
+  resourceMemory=`GetResourceValue memory`
+  case $resourceMemory in
+
+    +)
+	case $platformArch in
+		hp700|hp10)
+			echo "$EXE: informational: must be root to determine available memory on HP"
+			;;
+		*)
+			WARNING "unable to determine available memory"
+			;;
+	esac
+	resourceMemory="Unknown "
+	;;
+
+    *)
+  	if [ $resourceMemory -lt $requiredMemory ]
+  	then
+    	  WARNING "available memory ($resourceMemory) is less than recommended memory ($requiredMemory)"
+  	fi
+	;;
+
+  esac
+
+  if [ "X$projectHome" = "X" ]
+  then
+    projectHome=`GetPrefValue "psetPrefs.projectHome"`
+    case $projectHome in
+
+      -)
+		# Not defined in prefs set nothing
+		# The user will choose
+		;;
+
+      +)
+		# Preference but no value
+		WARNING "preference value (psetPrefs.projectHome) is incomplete"
+		# So can't log it, need to refer to discover's output
+		# The user will still choose project
+		;;
+
+      *)
+		projectHome=`echo $projectHome|sed 's%^/%%'`
+		actionProjectHome="-home /$projectHome"
+		;;
+
+    esac
+  fi
+  
+
+  prefsProjectFile=""
+  if [ "X$modeScript" = "Xmodelbuild" ]
+  then
+    prefsProjectFile=`GetPrefValue "psetPrefs.projectListFile"`
+    case $prefsProjectFile in
+ 
+       -)
+	  prefsProjectFile=""
+ 	  ;;
+ 
+       +)
+	  prefsProjectFile=""
+	  ;;
+ 
+       *)
+    	  [ ! -r $prefsProjectFile ] && ABORT "Preference value (psetPrefs.projectListFile) must be a file ($prefsProjectFile)"
+          ;;
+ 
+    esac
+
+  fi
+
+
+  prefsProjectList=`GetPrefValue "psetPrefs.projectList"`
+  case $prefsProjectList in
+      -)
+          	prefsProjectList=""
+	  	;;
+      +)
+		prefsProjectList="" 
+		;;
+      *)
+                ;;
+  esac
+
+
+  [ "X$modeScript" = "Xmodelbuild" ] && {
+	if [ ! "X$projectList" = "X" ]
+	then
+	    eval echo "$EXE: Using command line projects: $projectList" $actionLog
+	    [ ! "X$prefsProjectList" = "X" ] && {
+		prefsProjectList=""
+		eval echo "$EXE: WARNING: Ignoring Preference projectList" $actionLog
+            }
+	    [ ! "X$prefsProjectFile" = "X" ] && {
+		prefsProjectFile=""
+		eval echo "$EXE: WARNING: Ignoring Preference projectListFile" $actionLog
+            }
+	elif [ ! "X$prefsProjectFile" = "X" ]
+        then
+	    eval echo "$EXE: Using Preference projectListFile: $prefsProjectFile" $actionLog
+	    [ ! "X$prefsProjectList" = "X" ] && {
+		prefsProjectList=""
+		eval echo "$EXE: WARNING: Ignoring Preference projectList" $actionLog
+	    }
+        elif [ ! "X$prefsProjectList" = "X" ]
+        then
+	    eval echo "$EXE: Using Preference projectList: $prefsProjectList" $actionLog
+	    projectList=$prefsProjectList
+        else
+ 	    ABORT "projectListFile and projectList are missing from the Preferences"
+        fi
+
+
+        projectListFile=$ADMINDIR/tmp/project_file.$$; export projectListFile
+	eval echo "$EXE: Creating project file: $projectListFile" $actionLog
+        if [ "X$prefsProjectFile" = "X" ]
+        then
+     	    for ii in $projectList
+	    do
+	        echo "$ii" >> $projectListFile
+	    done
+       else
+	    grep '[0-9A-Za-z]' $prefsProjectFile | grep -v '#' > $projectListFile
+	    echo "" >> $projectListFile
+       fi
+
+      if [ ! "X$parallelCpus" = "X" ]; then
+          hostList=""; export hostList
+          projectParallel="NO"
+      else
+        
+          hostList=`ProjectList2HostList`; export hostList
+         
+          # do we need more than one license, are we co-ordinating locally
+          if [ "X$projectParallel" = "XYES" -a "X$modePlatform" = "Xlocal" ]
+          then
+            WARNING "Checking licenses for parallel build, may take some time"
+            licenseBuildRequired=`echo $hostList| $AWK '{print NF}'`
+            licenseBuildAvailable=`$discoverExecPath -show_users | $AWK '
+        	/available/ {
+        		featureAvailableCnt=$6;
+        		featureName=$3;
+        		gsub ( ":", "", featureName );
+        		featuresAvailableArray[featureName]=featureAvailableCnt;
+        		}
+        	END {
+        		split ( featuresRequiredList, featuresRequiredArray );
+        		for ( featureNo in featuresRequiredArray ) {
+        		  featureName=featuresRequiredArray[featureNo];
+        		  if ( featureName in featuresAvailableArray ) {
+        		    printf ( featuresAvailableArray[featureName] );
+        		    exit
+        		  };
+        		};
+        		printf ( "0\n" );
+        		};
+            ' featuresRequiredList="$licenseBuildFeatures"`
+         
+            if [ $licenseBuildAvailable -lt $licenseBuildRequired ]
+            then
+              FATAL "A parallel build would require ( $licenseBuildRequired ) licenses for feature ( $licenseBuildFeatures ), only ( $licenseBuildAvailable ) are available"
+            fi
+          fi
+       fi    
+    }
+}
+    
+Header()
+
+{
+
+  info=${*:-""}
+
+  echo ""
+  echo "$EXE: ----------------------------------------------------------------------"
+  echo "$EXE: General:"
+  echo "$EXE:   user                    = "`whoami`
+  echo "$EXE:   date                    = "`date`
+  echo "$EXE:   info                    = "$info
+  echo "$EXE:   administrator           = "$nameDiscoverAdministrator
+  echo "$EXE:   company name            = "$nameCompany
+  echo "$EXE:   hostname                = "$hostAlias
+  echo "$EXE:   preferences file        = "$prefsFile
+  echo "$EXE:   swap space              = "$resourceSwap"k"
+  echo "$EXE:   tmpdir space            = "$resourceTMPDIR"k"
+  echo "$EXE:   memory                  = "$resourceMemory"k"
+  echo "$EXE:   process ID              = "$EXEPID
+  echo "$EXE: PDF Values:"
+  echo "$EXE:   shared src root         = "$sharedSrcRoot
+  echo "$EXE:   shared model root       = "$sharedModelRoot
+  echo "$EXE:   private src root        = "$privateSrcRoot
+  echo "$EXE:   private model root      = "$privateModelRoot
+  echo "$EXE: Selected Options:"
+  echo "$EXE:   configuratorSystem      = "$configuratorSystem
+  case "X$configuratorCustomDirectory" in
+
+    X)
+	;;
+
+    X-)
+	;;
+
+    X+)
+	;;
+
+    *)
+  	echo "$EXE:   configuratorCustomDir   = "$configuratorCustomDirectory
+	;;
+
+  esac
+  echo "$EXE:   project parallel        = "$projectParallel
+  echo "$EXE:   parallel cpus           = "$parallelCpus
+  echo "$EXE:   get model               = "$getModel
+  echo "$EXE:   put model               = "$putModel
+  echo "$EXE:   do save proj pass       = "$doPassSaveProj
+  echo "$EXE:   do dependency pass      = "$doPassDependency
+  echo "$EXE:   do headers pass         = "$doPassHeaders
+  echo "$EXE:   do save root pass       = "$doPassSaveRoot
+  echo "$EXE:   do dfa pass             = "$doBuildDFA
+  echo "$EXE:   do defect link pass     = "$doPassDefectLink
+
+  case "X$logFileNameFixed" in
+
+    X)
+	;;
+
+    X-)
+	;;
+
+    X+)
+	;;
+
+    *)
+  	echo "$EXE:   log file name is fixed  = "$logFileNameFixed
+	;;
+
+  esac
+
+  case "X$projectHome" in
+
+    X)
+	;;
+
+    X-)
+	;;
+
+    X+)
+	;;
+
+    *)
+  	echo "$EXE:   home project            = "/$projectHome
+	;;
+
+  esac
+  case "X$debugCPPOutputFile" in
+
+    X)
+	;;
+
+    X-)
+	;;
+
+    X+)
+	;;
+
+    X*)
+	echo "$EXE:   cpp output file         = "$PSET_CPP_FILE
+	;;
+  esac
+  case "X$debugDiscoverExecPath" in
+
+    X)
+	;;
+
+    X-)
+	;;
+
+    X+)
+	;;
+
+    X*)
+	echo "$EXE:   discover executable     = "$discoverExecPath
+	;;
+  esac
+  if [ "X$msgLogger" != "X" ]
+  then
+    echo "$EXE:   use message logger      = "$msgLogger
+  fi
+  if [ "X$debugShowMakeRuleOutput" != "X" ]
+  then
+    echo "$EXE:   show make rule output   = "$debugShowMakeRuleOutput
+  fi
+  if [ "X$acceptSyntaxErrors" != "X" ]
+  then
+    echo "$EXE:   accept syntax errors    = "$acceptSyntaxErrors
+  fi
+  PrintVersionInfo
+  if [ "X$logPrefValues" = "XYES" ]
+  then
+    PrintPrefValues
+  fi
+  echo "$EXE: ----------------------------------------------------------------------"
+  echo ""
+
+}
+
+Footer()
+
+{
+
+  info=${*:-""}
+
+  echo ""
+  echo "$EXE: ----------------------------------------------------------------------"
+  echo "$EXE: info		      = "$info
+  echo "$EXE: date		      = "`date`
+  echo "$EXE: ----------------------------------------------------------------------"
+  echo ""
+
+}
+
+
+
+GetModel()
+
+{
+
+  LOG "$EXE: Checking out Information Model"
+
+  if [ -x $PSETCFG/cm_GetModel ]
+  then
+    $PSETCFG/cm_GetModel; STATUS=$?; export STATUS
+    UtilSTATUSCheck; STATUS=$?; export STATUS
+  else
+    FATAL "GetModel() NYI for CM system ( $configuratorSystem )"
+  fi
+
+  LOG "$EXE: Finished checking out Information Model"
+}
+
+PutModel()
+
+{
+
+  LOG "$EXE: Checking in Information Model"
+
+  if [ -x $PSETCFG/cm_PutModel ]
+  then
+    $PSETCFG/cm_PutModel; STATUS=$?; export STATUS
+    UtilSTATUSCheck; STATUS=$?; export STATUS
+  else
+    FATAL "PutModel() NYI for CM system ( $configuratorSystem )"
+  fi
+
+  LOG "$EXE: Finished checking in Information Model"
+}
+
+DoPassDependency()
+
+{
+
+  actionPassDependency="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -analysis $disAddArgs $rest_options"
+  eval Header "start -analysis pass" $actionLog
+  eval $actionTimer $actionPassDependency $actionLog
+  eval Footer "end -analysis pass" $actionLog
+
+}
+
+DoPassProjBuild()
+
+{
+
+  case "X$debugCPPOutputFile" in
+
+    X)
+        ;;
+ 
+    X-)
+	;;
+ 
+    X+)
+	;;
+
+    X*)
+        if [ "X$DISBUILD_PARALLEL" != "X" ]
+        then
+	    eval echo "$EXE: Ignore preference debugCPPOutputFile for parallel modelbuild" $actionLog
+	    PSET_CPP_FILE=""; export PSET_CPP_FILE
+        else
+            PSET_CPP_FILE=$debugCPPOutputFile.$EXEPID.$projHost; export PSET_CPP_FILE
+        fi
+  	;;
+
+  esac
+
+
+  debugVariablesList=`GetPrefValue "psetPrefs.debugVariablesList"`
+  case $debugVariablesList in
+ 
+    -)
+	;;
+ 
+    +)
+	;;
+ 
+    *)
+	EnvSet "$projHost" $debugVariablesList
+	;;
+  esac
+
+  if [ "X$debugEnvSave" = "XYES" ]
+  then
+    EnvSave sh all > $ADMINDIR/tmp/env_sh.$EXEPID.$projHost
+    EnvSave csh all > $ADMINDIR/tmp/env_csh.$EXEPID.$projHost
+  fi
+
+  case $modePlatform in
+
+    local)
+        actionTmpLog=">> $ADMINDIR/tmp/log.$EXEPID.$projHost 2>&1"	
+
+	if [ "X$projHost" = "X"`hostname` ]
+	then
+	  actionPassProj="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch  -s $rest_options"
+
+	  eval Header "start -update pass proj=/$projName host=$projHost" $actionTmpLog
+	  eval $actionTimer $actionPassProj -update /$projName $actionTmpLog
+	  eval Footer "end -update pass proj=/$projName host=$projHost" $actionTmpLog
+
+	else
+
+	  platformArch=`PlatformArch`
+	  case $platformArch in
+
+		hp700|hp10)
+			actionRsh="remsh $projHost -n"
+			;;
+
+		sun5|sun4)
+			actionRsh="rsh -n $projHost"
+			;;
+ 
+		linux2)
+		        actionRsh="rsh $projHost"
+			;;
+
+		*)
+			DIAGNOSTIC "Unable initialize actionRsh: invalid platform architecture ($platformArch)"
+			;;
+
+	  esac
+
+	  actionPassProj="$EXE -Exec $discoverExecPath -prefs $prefsFile -remote -alias $projHost $rest_options"
+
+	  preRshEnv=`GetPrefValue "psetPrefs.preRshEnv"`
+          if [ "$preRshEnv" != "" -a "$preRshEnv" != "+" -a "$preRshEnv" != "-" ]; then
+	    wok=0;
+	    if [ -w "$preRshEnv" -a -f "$preRshEnv" -a ! -d "$preRshEnv" ]; then wok=1; fi
+	    if [ -w "`dirname $preRshEnv`" -a ! -f "$preRshEnv" -a ! -d "$preRshEnv" ]; then wok=1; fi
+            if [ "$wok" = "1" ]; then env > "$preRshEnv"; fi
+	  else
+            preRshEnv=""
+	  fi
+	  configuratorSystem=`GetPrefValue "psetPrefs.configuratorSystem"`
+	  if [ "$configuratorSystem" = "clearcase" ]; then
+	    rshSuffix="\' `cleartool pwv -short`"
+	    actionRsh="$actionRsh cleartool setview -exec \'"
+	  fi
+	  rshProjInvoker=`GetPrefValue "psetPrefs.rshProjInvoker"`
+	  if [ "$rshProjInvoker" = "+" -o "$rshProjInvoker" = "-" ]; then rshProjInvoker=""; fi
+
+	  eval $actionTimer $actionRsh 											\\\
+				       sh -c 	'\"' 									\\\
+				                 	preRshEnv="$preRshEnv"						"\;"\\\
+							if [ $rshProjInvoker ]						"\;"\\\
+							  then if [ -x $rshProjInvoker ]				"\;"\\\
+							    then $rshProjInvoker $actionPassProj -update /$projName	"\;"\\\
+					           	  fi								"\;"\\\
+					         	else								\\\
+					         	  $actionPassProj -update /$projName 				"\;"\\\
+				  	       		fi								"\;"\\\
+						'\"'									\\\
+				       											\\\
+	  		    $rshSuffix $actionTmpLog
+
+	fi
+
+	;;
+
+    -remote)
+	actionPassProj="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch  -s $rest_options"
+
+	eval Header "start -update pass proj=/$projName host=$projHost"
+	eval "$actionPassProj -update /$projName"
+	eval Footer "end -update pass proj=/$projName host=$projHost"
+	;;
+
+    *)
+	DIAGNOSTIC "modePlatform has invalid value ($modePlatform)"
+	;;
+
+  esac
+
+}
+
+
+DoPassProjHost()
+
+{
+
+  projNameList=`ProjectList2ProjNameList`
+  for projName in $projNameList
+  do
+
+    export projName
+    export projHost
+
+    DoPassProjBuild
+
+  done
+
+}
+
+
+#!/bin/sh
+#boris 1997/07/30 
+
+DoPassProjParallel()
+
+{
+#
+# $1 - lockfile
+# $2 - list of projects
+# $3 - tag
+#
+
+nm=DoPassProjParallel
+
+lockfile=$1
+projfile=$2
+tag=$3
+
+
+[ ! -f $lockfile ] && {
+	ERROR "$nm: Lockfile $lockfile does not exist."
+	return
+}
+
+
+[ ! -r $projfile ] && {
+	ERROR "$nm: Could not read list of projects file $projfile."
+	return
+}
+
+projHost="$hostAlias"; export projHost
+
+while test 1
+do
+     num=`dis_lock $lockfile`
+     [ ! $? = 0 ] && {
+	eval echo "$EXE: ERROR $nm: Could not read lockfile $lockfile" $actionLog
+	return
+     }
+
+     projName=`sed -n "$num"p $projfile | sed 's%^[ 	]*\([^ 	\\]*\)%\1%'`
+
+     if [ "$projName" = "" ] ; then
+	eval echo "$EXE: Parallel CPUs, done CPU \#$tag" $actionLog
+	break
+     else
+        ttt=`echo $projName | grep '^/'`
+	[ "$ttt" = "" ] && projName="/$projName"
+
+        eval echo "$EXE: CPU \#$tag, project $projName, log $ADMINDIR/tmp/log.$EXEPID.parallel.$tag" $actionLog
+  	actionTmpLog=">> $ADMINDIR/tmp/log.$EXEPID.parallel.$tag 2>&1"
+	actionPassProj="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -s $rest_options"
+
+	orig_tmpdir=$TMPDIR
+	TMPDIR=$orig_tmpdir/parallel.$tag; export TMPDIR
+        mkdir -p $TMPDIR
+
+	eval Header "start -update pass proj=$projName host=$projHost" $actionTmpLog
+	eval $actionTimer $actionPassProj -update $projName $actionTmpLog
+	eval Footer "end -update pass proj=$projName host=$projHost" $actionTmpLog
+
+	#boris 980328. save parser crash CPP outputs (if any) 14902
+	cpps=`ls $TMPDIR/DISCOVE_.*.bug* 2> /dev/null`
+	if [ "X$cpps" != "X" ] ; then
+		for ii in $cpps
+		do
+			ff="$orig_tmpdir/`basename $ii`"
+			cp $ii $ff
+			echo "$ff" >> $orig_tmpdir/latest_parser_crash_cpps
+		done
+	fi
+	\rm -rf $TMPDIR
+
+        TMPDIR=$orig_tmpdir; export TMPDIR
+     fi
+done
+
+}
+
+
+DoPassProj()
+
+{
+  del_lockfile=""
+  [ "X$projectListFile" = "X" ] && {
+	FATAL "DoPassProj => projectListFile is missing"
+   		UtilMessageLog FLUSH
+		Exit 1
+  }
+
+  eval echo "$EXE:" $actionLog
+  \rm $TMPDIR/latest_parser_crash_cpps 1> /dev/null 2>&1
+
+  if [ "X$parallelCpus" = "X" ]
+  then
+      hostList=`ProjectList2HostList`
+      for projHost in $hostList
+      do
+    
+        _projHost=`echo "$EXE" | $AWK '{printf ( "%-16.20s", projHost );}' projHost=$projHost`
+        eval echo "$EXE: host = $_projHost log = $ADMINDIR/tmp/log.$EXEPID.$projHost" $actionLog
+        eval DoPassProjHost $actionParallel
+    
+      done
+  else
+      if [ "X$useLockFile" = "X" ]; then
+         lockfile=$ADMINDIR/tmp/lockfile.$EXEPID
+         del_lockfile=$lockfile
+         \rm -rf $lockfile >/dev/null 2>&1
+      else
+	 lockfile=$useLockFile
+	 [ -r $lockfile ] && linenum=`cat $lockfile`
+         eval echo "$EXE:" $actionLog
+	 eval echo "$EXE: Using existing lockfile ($useLockFile=$linenum)" $actionLog
+         eval echo "$EXE:" $actionLog
+      fi
+      touch $lockfile
+
+      cnt=0
+      while test 1
+      do
+	cnt=`expr $cnt + 1`;
+        eval echo "$EXE: Parallel CPUs, running CPU \#$cnt" $actionLog
+	eval DoPassProjParallel $lockfile $projectListFile $cnt &
+	[ $cnt = $parallelCpus ] && break
+      done
+  fi
+  eval echo "$EXE:" $actionLog
+
+  wait
+
+  #boris 980328. save parser crash CPP outputs (if any) 14902
+  if [ -f $TMPDIR/latest_parser_crash_cpps ] ; then 
+	eval echo "" $actionLog
+	eval echo "$EXE:  \*\*\*\*\*\*\*\*\* project pass \'Found bug in parser\': \*\*\*\*\*\*\*\*\*" $actionLog
+	for ii in `cat $TMPDIR/latest_parser_crash_cpps`
+	do
+		eval echo "$EXE:  	$ii" $actionLog
+	done
+	eval echo "" $actionLog
+  fi 
+
+#  [ -r "$tmpMessageLogFile" ] && eval cat $tmpMessageLogFile >> $logFileName
+
+   
+  if [ $modePlatform = "local" ]
+  then
+      for log_f in `ls $ADMINDIR/tmp/log.$EXEPID.*`
+      do
+          eval cat $log_f $actionLog			
+          \rm -f $log_f
+      done
+  fi
+
+#  \rm -f $projectListFile
+  if [ ! "X$del_lockfile" = "X" ]
+  then
+     \rm -rf $del_lockfile
+  fi
+
+}
+
+DoInitDFA()
+
+{
+
+  if [ ! "X$projectListDFA" = "X" ]
+  then
+	eval echo "$EXE: Using command line projects: $projectListDFA" $actionLog
+	eval echo "$EXE: Ignoring the projectList preference: $prefsProjectList" $actionLog
+	projNameListDFA=`echo $projectListDFA | sed -e 's@ \([^/][^ ]*\)@ /\1@g' -e 's@^\([^/]\)@/\1@'`
+  else
+	projNameListDFA=`ProjectList2ProjNameList`
+	projNameListDFA=`echo $projNameListDFA | sed -e 's@ \([^/][^ ]*\)@ /\1@g' -e 's@^\([^/]\)@/\1@'`
+	eval echo "$EXE: Using the projectList preference: $projNameListDFA" $actionLog
+  fi
+
+  actionInitDFA="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -dfa_init $projNameListDFA $rest_options"
+
+  eval Header "start -dfa_init pass" $actionLog
+  eval $actionTimer $actionInitDFA $actionLog
+  eval Footer "end -dfa_init pass" $actionLog
+
+}
+
+DoPassDFA()
+
+{
+
+  if [ ! "X$projectListDFA" = "X" ]
+  then
+	eval echo "$EXE: Using command line projects: $projectListDFA" $actionLog
+	eval echo "$EXE: Ignoring the projectList preference: $prefsProjectList" $actionLog
+	projNameListDFA=`echo $projectListDFA | sed -e 's@ \([^/][^ ]*\)@ /\1@g' -e 's@^\([^/]\)@/\1@'`
+  else
+	projNameListDFA=`ProjectList2ProjNameList`
+	projNameListDFA=`echo $projNameListDFA | sed -e 's@ \([^/][^ ]*\)@ /\1@g' -e 's@^\([^/]\)@/\1@'`
+	eval echo "$EXE: Using the projectList preference: $projNameListDFA" $actionLog
+  fi
+
+  actionPassDFA="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -dfa $projNameListDFA $rest_options"
+
+  eval Header "start -dfa pass" $actionLog
+  eval $actionTimer $actionPassDFA $actionLog
+  eval Footer "end -dfa pass" $actionLog
+
+}
+
+DoPassDefectLink()
+
+{
+  actionPassDefectLink="$discoverExecPath -batch -prefs $prefsFile $actionPDFFile -defect_link $rest_options"
+
+  eval Header "start -defectlink pass" $actionLog
+  eval $actionTimer $actionPassDefectLink $actionLog
+  eval Footer "end -defectlink pass" $actionLog
+
+}
+
+DoPassHeaders()
+
+{
+  actionPassHeaders="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -headers -s $rest_options"
+
+  eval Header "start -headers pass" $actionLog
+  eval $actionTimer $actionPassHeaders $actionLog
+  eval Footer "end -headers pass" $actionLog
+
+}
+
+DoPassSaveProj()
+
+{
+
+  actionPassSaveProj="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -save_proj $rest_options"
+  
+  eval Header "start -save_proj pass" $actionLog
+  eval $actionTimer $actionPassSaveProj $actionLog
+  eval Footer "end -save_proj pass" $actionLog
+
+}
+
+DoPassSaveRoot()
+
+{
+
+  actionPassSaveRoot="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch -save_root $rest_options"
+
+  eval Header "start -save_root pass" $actionLog
+  eval $actionTimer $actionPassSaveRoot $actionLog
+  eval Footer "end -save_root pass" $actionLog
+
+}
+
+Mail()
+
+{
+
+  if [ "$#" -lt "2" ]; then
+    ERROR "Mail: Invalid parameters. Please contact THECOMPANY support."
+    return
+  fi
+
+  SUBJECT="$1"; shift
+  TO="$*"
+
+  {
+
+    echo "Subject: $SUBJECT"
+    echo "To: $TO"
+    cat
+
+  } 2>&1 | $mailerExecPath $TO
+
+}
+
+Scramble()
+
+{
+
+  #
+  # NOTE: Bug in HP crypt: Do not pipe (|) input to
+  #       this function; redirect (<) instead.
+  #
+
+  if [ "$#" -ne "1" ]; then
+    ERROR "Scramble: Invalid parameters. Please contact THECOMPANY support."
+    return
+  fi
+
+  if [ "$scrambleDisable" = "YES" ]; then
+    cat
+  else
+    KEY="$1"
+    $scrambleExecPath $KEY | $uuencodeExecPath $uuName
+  fi
+
+}
+
+DoPassInteractive()
+
+{
+
+  actionPassInteractive="$discoverExecPath $actionPDFFile -prefs $prefsFile $optionMsgLogger  $disAddArgs $actionProjectHome $rest_options"
+
+  if [ "X$debugEnvSave" = "XYES" ]
+  then
+    EnvSave sh all > $ADMINDIR/tmp/env_sh.$EXEPID
+    EnvSave csh all > $ADMINDIR/tmp/env_csh.$EXEPID
+  fi
+
+  eval Header "start interactive pass" $actionLog
+  eval $actionTimer $actionPassInteractive $actionLog
+  eval Footer "end interactive pass" $actionLog
+
+}
+
+DoPassPDFPrt()
+
+{
+
+  if [ "X$projectList" = "X" ]
+  then
+    DIAGNOSTIC "Preference variable (projectList) was not set in DoPassPDFPrt()"
+  fi
+
+  actionPassPDFprt="$discoverExecPath $actionPDFFile -prefs $prefsFile -batch $rest_options"
+
+  hostList=`ProjectList2HostList`
+  for projHost in $hostList
+  do
+
+    export projHost
+
+    projNameList=`ProjectList2ProjNameList`
+    for projName in $projNameList
+    do
+
+      export projName
+
+      eval Header "start -pdf_prt pass proj=/$projName" $actionLog
+      eval $actionTimer $actionPassPDFprt -pdf_prt /$projName $actionLog
+      eval Footer "end -pdf_prt pass proj=/$projName" $actionLog
+
+    done
+
+  done
+
+}
+
+DoPassModelAdmin()
+
+{
+
+  actionPassModelAdmin="$discoverExecPath $actionPDFFile -prefs $prefsFile  $rest_options"
+
+  if [ "X$debugEnvSave" = "XYES" ]
+  then
+    EnvSave sh all > $ADMINDIR/tmp/env_sh.$EXEPID
+    EnvSave csh all > $ADMINDIR/tmp/env_csh.$EXEPID
+  fi
+
+  eval Header "start admin pass" $actionLog
+  eval $actionTimer $actionPassModelAdmin $actionLog
+  eval Footer "end admin pass" $actionLog
+
+}
+
+ModelAdmin()
+
+{
+
+  debugVariablesList=`GetPrefValue "psetPrefs.debugVariablesList"`
+  case $debugVariablesList in
+ 
+    -)
+	;;
+ 
+    +)
+	;;
+ 
+    *)
+	EnvSet `hostname` $debugVariablesList
+	;;
+  esac
+
+  case $debugCPPOutputFile in
+ 
+    -)
+	;;
+ 
+    +)
+	;;
+
+    *)
+	PSET_CPP_FILE=$debugCPPOutputFile.$EXEPID; export PSET_CPP_FILE
+	;;
+
+  esac
+
+  UtilMessageLog FLUSH
+  UtilMessageLog DEINITIALIZE
+
+  funcUtilWARNINGFunc="ModelutilNBFunc"; export funcUtilWARNINGFunc
+
+  UtilSTATUSCheck
+
+  funcUtilWARNINGFunc="UtilSTATUSNullFunc"; export funcUtilWARNINGFunc
+
+  DoPassModelAdmin
+
+}
+
+ModelBuild()
+
+{
+  #
+  # This allows Makefiles to have -I flags of the form
+  # '-I$privateSrcRoot -I$sharedSrcRoot'
+  # Which will help when parsing private projects
+  #
+
+  #  privateSrcRoot=$sharedSrcRoot; export privateSrcRoot
+  
+  if [ "X$getModel" = "XYES" -a "X$modePlatform" = "Xlocal" ]
+  then
+    case "X$modeBuild" in
+
+      Xbuild)
+	eval GetModel $actionLog
+	;;
+
+      X*)
+	# The assumption made is that in any other case the model
+	# is already checked out if needed
+	WARNING "Assuming model is already checked out if necessary"
+	;;
+
+    esac
+  fi
+
+  if [ "X$getModel" = "XNO" ]
+  then
+    if [ "X$doPassDependency" = "XYES" -o "X$modeBuild" = "X-analysis" ]
+    then
+      WARNING "Dependency analysis will checkout PSET model files"
+    fi
+  fi
+
+  UtilMessageLog FLUSH
+  UtilMessageLog DEINITIALIZE
+
+  funcUtilWARNINGFunc="ModelutilNBFunc"; export funcUtilWARNINGFunc
+
+  UtilSTATUSCheck
+
+  funcUtilWARNINGFunc="UtilSTATUSNullFunc"; export funcUtilWARNINGFunc
+
+  case "X$modeBuild" in
+
+    X-update)
+	DoPassProj
+	;;
+
+    X-dfa_init)
+	DoInitDFA
+	;;
+
+    X-dfa)
+	DoPassDFA
+	;;
+
+    X-defectlink)
+	DoPassDefectLink
+	;;
+
+    X-analysis)
+  	DoPassDependency
+	;;
+
+    X-headers)
+	DoPassHeaders
+	;;
+
+    X-pdf_prt)
+	DoPassPDFPrt
+	;;
+
+    Xbuild)
+	if [ "X$doPassSaveProj" = "XYES" ]
+        then
+          DoPassSaveProj
+        fi
+	if [ "X$doPassDependency" = "XYES" ]
+	then
+	  DoPassDependency
+	fi
+        if [ "X$doPassProject" = "XYES" ]
+        then
+          DoPassProj
+        else 
+	 # emulate side-effects of DoPassProj
+         projHost=`hostname` ; export projHost
+        fi
+	if [ "X$doPassHeaders" = "XYES" ]
+	then
+	  DoPassHeaders
+	fi
+	if [ "X$doPassSaveRoot" = "XYES" ]
+        then
+          DoPassSaveRoot
+        fi
+	if [ "X$doBuildDFA" = "XYES" ]
+	then
+	  DoInitDFA
+	  DoPassDFA
+	fi
+	if [ "X$doPassDefectLink" = "XYES" ]
+	then
+	  DoPassDefectLink
+	fi
+
+	;;
+
+    *)
+	DIAGNOSTIC "modeBuild is invalid ($modeBuild) in ModelBuild()"
+	;;
+
+  esac
+
+  if [ "X$putModel" = "XYES" -a "X$modePlatform" = "Xlocal" ]
+  then
+    case "X$modeBuild" in
+
+      Xbuild)
+	eval PutModel $actionLog;
+	;;
+
+      *)
+	# The assumption made is that in any other case the model
+	# the model will be checked in by another method
+	;;
+
+    esac
+  fi
+  
+  logFileBuildCompress=`GetPrefValue "psetPrefs.logFileBuildCompress"`
+  case $logFileBuildCompress in
+  
+    -)
+  	;;
+  
+    +)
+  	;;
+  
+    $PREF_YES)
+  	compress $logFileName
+  	;;
+  
+    $PREF_NO)
+  	;;
+  
+    *)
+        WARNING "preference value (psetPrefs.logFileBuildCompress) is invalid ($logFileBuildCompress), assuming NO ..."
+	logFileBuildCompress="NO"
+  	;;
+  
+  esac
+  
+}
+
+ModelUser()
+
+{
+
+  debugVariablesList=`GetPrefValue "psetPrefs.debugVariablesList"`
+  case $debugVariablesList in
+ 
+    -)
+	;;
+ 
+    +)
+	;;
+ 
+    *)
+	EnvSet `hostname` $debugVariablesList
+	;;
+  esac
+
+  case $debugCPPOutputFile in
+ 
+    -)
+	;;
+ 
+    +)
+	;;
+
+    *)
+	PSET_CPP_FILE=$debugCPPOutputFile.$EXEPID; export PSET_CPP_FILE
+	;;
+
+  esac
+
+  UtilMessageLog FLUSH
+  UtilMessageLog DEINITIALIZE
+
+  funcUtilWARNINGFunc="ModelutilNBFunc"; export funcUtilWARNINGFunc
+
+  UtilSTATUSCheck
+
+  funcUtilWARNINGFunc="UtilSTATUSNullFunc"; export funcUtilWARNINGFunc
+
+  DoPassInteractive
+
+  logFileUserDelete=`GetPrefValue "psetPrefs.logFileUserDelete"`
+  case $logFileUserDelete in
+  
+    -)
+  	;;
+  
+    +)
+  	;;
+  
+    $PREF_YES)
+	logFileUserDelete="YES"
+  	rm -f $logFileName
+  	;;
+  
+    $PREF_NO)
+	logFileUserDelete="NO"
+  	;;
+  
+    *)
+        WARNING "preference value (psetPrefs.logFileUserDelete) is invalid ($logFileUserDelete), assuming NO ..."
+	logFileUserDelete="NO"
+        ;;
+
+  
+  esac
+  
+}
+
+Cleanup()
+
+{
+
+  if [ ! -z "$genericTmpFile" ]; then
+
+    DIR="`dirname $genericTmpFile`"
+
+    find "$DIR/." \( -type d ! -name . -prune \) -o \( -name "${genericTmpFile}.*" -print \) 2> /dev/null |
+    while read X; do
+      rm "$X" || WARNING "Remove failed: $X"
+    done
+
+  fi
+
+  CloseDisplay
+
+}
+
+Main()
+
+{
+  # Bourne shell is too flaky across platforms
+  # and revisions to rely on trap:
+  #
+  # trap 'Cleanup' 0 1 2 3 15
+  # trap 'Cleanup' 0
+
+  UtilMessageLog INITIALIZE
+
+  SetSystemRequirements
+  ProcessOptions
+  CheckSystem
+
+  debugVariablesList=`GetPrefValue "psetPrefs.debugVariablesList"`
+  case "$debugVariablesList" in
+ 
+    -)
+	;;
+ 
+    +)
+	;;
+ 
+    *)
+	EnvSet `hostname` $debugVariablesList
+	;;
+  esac
+
+  case "X$modeScript" in
+
+    Xmodelbuild)
+	ModelBuild
+	;;
+
+    Xstart_discover)
+	ModelUser
+	;;
+
+    Xmodeladmin)
+	ModelAdmin
+	;;
+
+    *)
+	DIAGNOSTIC "Script is executing in invalid mode ($modeScript)"
+	;;
+
+  esac
+
+#ls -lstr $ADMINDIR/tmp/*$$*
+\rm -rf $ADMINDIR/tmp/*$$* >/dev/null 2>&1
+}
+
+Main
+Exit $STATUS

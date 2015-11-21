@@ -1,0 +1,2 @@
+#!/bin/sh
+$PSETHOME/bin/rlog $cm_revision_file | $PSETCFG/util/rcs_revisions

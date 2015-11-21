@@ -1,0 +1,358 @@
+#
+# File
+#
+set m [dis_MenuCreate AppFileMenu "F_ile" "All=S"] 
+ 
+#  dis_MenuAppendItem $m FileOpenDefinition      "Open D_efinition" {
+#    leval DISmain "dis_open_view -1 Text"
+#        }
+#
+#  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m BRViewCloseView         "C_lose View" {
+        dis_layer -close
+        }
+
+  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m ViewPrintSetup          "Print S_etup" {
+        leval DISview dis_view_PrintSetup
+        }
+
+  dis_MenuAppendItem $m ViewPrint               "P_rint" {
+        leval DISview dis_view_Print
+        }
+
+  dis_MenuAppendSeparator $m
+
+
+  dis_MenuAppendItem $m FileCloseWindow         "Ex_it" {
+        dis_view_manage -close -noexit
+        }
+
+#
+# Edit
+#
+
+set m [dis_MenuCreate EditMenu "E_dit" "All=S"]
+
+  dis_MenuAppendItem $m EditClearSelection      "C_lear Selection" {
+        leval DISview dis_view_clear_selection
+        }
+
+#
+# View
+#
+
+set m [dis_MenuCreate ViewMenu "V_iew" "All=S"]
+
+  dis_MenuAppendItem $m FileOpenCalltree        "T_ree Diagram" {
+    leval DISmain "dis_open_view -1 Calltree"
+        }
+
+  dis_MenuAppendItem $m FileOpenInheritance     "I_nheritance" {
+    leval DISmain "dis_open_view -1 Inheritance"
+        }
+
+  dis_MenuAppendItem $m FileOpenERD             "ER_D" {
+    leval DISmain "dis_open_view -1 Relations"
+        }
+
+  dis_MenuAppendItem $m FileOpenDatachart       "D_ata Chart" {
+    leval DISmain "dis_open_view -1 Datachart"
+        }
+
+  dis_MenuAppendItem $m FileOpenOutline         "O_utline" {
+    leval DISmain "dis_open_view -1 Outline"
+        }
+
+  dis_MenuAppendItem $m FileOpenFlowchart       "F_low Chart" {
+    leval DISmain "dis_open_view -1 Flowchart"
+        }
+
+  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m ViewCollapse            "C_ollapse" {
+        leval DISview "dis_view_collapse -1"
+        }
+
+  set sm1 [dis_MenuAppendSubmenu $m ViewDisplay "E_xpand"]
+
+    dis_MenuAppendItem $sm1 Expand1Level        "1_st Level" {
+        leval DISview "dis_view_expand 1"
+        }
+
+    dis_MenuAppendItem $sm1 Expand2Level        "2_nd Level" {
+        leval DISview "dis_view_expand 2"
+        }
+
+    dis_MenuAppendItem $sm1 Expand3Level        "3_rd Level" {
+        leval DISview "dis_view_expand 3"
+        }
+
+    dis_MenuAppendItem $sm1 Expand4Level        "4_th Level" {
+        leval DISview "dis_view_expand 4"
+        }
+
+    dis_MenuAppendItem $sm1 Expand5Level        "5_th Level" {
+        leval DISview "dis_view_expand 5"
+        }
+
+    dis_MenuAppendSeparator $sm1
+
+    dis_MenuAppendItem $sm1 ExpandAll           "A_ll" {
+        leval DISview "dis_view_expand -1"
+    }
+
+
+#
+#  Inheritance
+#
+
+set m [dis_MenuCreate InheritanceMenu "I_nheritance" "Inheritance=S"]
+  dis_MenuAppendItem $m InheritanceShowRel      "S_how Related..." {
+    dis_launch_dialog IShowRelated -modal 0
+        }
+
+  dis_MenuAppendItem $m InherShowMem    "Sh_ow Members..." {
+    dis_launch_dialog IShowMembers -modal 0
+        }
+
+  dis_MenuAppendItem $m InherSortMem    "So_rt Members..." {
+    dis_launch_dialog ISortMembers -modal 0
+        }
+
+  dis_MenuAppendToggleItem $m InherExpertMode   "E_xpert Mode" {
+        leval DISview "dis_view_inher_expert_mode 0"
+        } {
+        leval DISview "dis_view_inher_expert_mode 1"
+        }
+
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m InherChangeAttr        "C_hange Attributes..." {
+#    dis_launch_dialog IChangeAttributes -modal 0
+#       }
+#
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m InherInsertMem "I_nsert Member..." {
+#    dis_launch_dialog IAddMember -modal 0
+#       }
+#
+#  dis_MenuAppendItem $m InherAddSuper  "Add Sup_erclass..." {
+#    dis_launch_dialog IAddInheritance -modal Superclasses 0
+#       }
+#
+#  dis_MenuAppendItem $m InherAddSub    "Add Sub_class..." {
+#    dis_launch_dialog IAddInheritance -modal Subclasses 0
+#       }
+#
+#  dis_MenuAppendItem $m InherAddRel    "Add R_elation..." {
+#       dis_launch_selBrowser "Select target entities for relation" dis_view_addRelation -modal
+#       }
+
+
+#
+#  Tree Diagram
+#
+
+set m [dis_MenuCreate CallTreeMenu "T_ree Diagram" "CallTree=S"]
+  dis_MenuAppendItem $m CTDisplayArgs   "D_isplay Arguments" {
+        leval DISview "dis_view_display_args 1"
+        }
+
+  dis_MenuAppendItem $m CTHideArguments "H_ide Arguments" {
+        leval DISview "dis_view_display_args 0"
+        }
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m CTPrune         "P_rune..." {
+    dis_launch_dialog CTPrune  -modal
+        }
+
+  dis_MenuAppendItem $m CTShowPaths     "S_how Paths..." {
+    dis_launch_dialog CTShowPaths -modal
+        }
+
+
+#
+#  Relations
+#
+
+set m [dis_MenuCreate RelationsMenu "ER_D" "Relations=S"]
+  set sm1 [dis_MenuAppendSubmenu $m RelShowAll "S_how All"]
+    dis_MenuAppendItem $sm1 ShowAllAttributes   "A_ttributes" {
+        leval DISview "dis_view_enable_attrib 1"
+        }
+
+    dis_MenuAppendItem $sm1 ShowAllOperations   "O_perations" {
+        leval DISview "dis_view_enable_ops 1"
+        }
+
+  set sm1 [dis_MenuAppendSubmenu $m RelHideAll "H_ide All"]
+    dis_MenuAppendItem $sm1 HideAllAttributes   "A_ttributes" {
+        leval DISview "dis_view_enable_attrib 0"
+        }
+
+    dis_MenuAppendItem $sm1 HideAllOperations   "O_perations" {
+        leval DISview "dis_view_enable_ops 0"
+        }
+
+  dis_MenuAppendItem $m RelShowBuiltin  "Show B_uilt-in Relations..." {
+    dis_launch_dialog RShowBuiltin -modal
+        }
+
+  dis_MenuAppendItem $m RelShowOtherRel "Show O_ther Relations..." {
+    dis_launch_dialog RFilterOther -modal
+        }
+
+  dis_MenuAppendItem $m RelShowMember   "Show M_embers..." {
+    dis_launch_dialog RShowMembers -modal 0
+        }
+
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m RelNewClass    "N_ew Class..." {
+#       dis_launch_dialog CreateClass -modal
+#       }
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m RelInsertClass  "I_nsert Class..." {
+        dis_launch_selBrowser "Select entities to add to ERD" dis_view_add_class_to_ERD -modal
+        }
+
+  dis_MenuAppendItem $m RelRemoveClass  "R_emove Class" {
+        leval DISview dis_remove_class_from_ERD
+        }
+
+#
+#  Group/Subsystem
+#
+
+set m [dis_MenuCreate SubsystemMapMenu  "Subsystem" "SubsysBrowser=S"]
+  dis_MenuAppendItem $m SubShowMembers  "Sh_ow Members..." {
+    dis_launch_dialog SMShowMembers -modal
+        }
+
+  dis_MenuAppendItem $m SubSortMembers  "So_rt Members..." {
+    dis_launch_dialog SMSortMembers -modal 0
+        }
+
+  dis_MenuAppendSeparator $m
+#  set sm1 [dis_MenuAppendSubmenu $m SubInsertNew "Insert N_ew"]
+#    dis_MenuAppendItem $sm1 SubInsertNewStruct "S_truct..." {
+#       dis_launch_dialog CreateStruct -modal
+#       }
+#
+#  dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $sm1 SubInsertNewClass  "C_lass..." {
+#       dis_launch_dialog CreateClass -modal
+#       }
+#
+#    dis_MenuAppendItem $sm1 SubInsertNewFunc   "F_unction..." {
+#       dis_launch_dialog CreateFunction -modal
+#       }
+#
+#    dis_MenuAppendItem $sm1 SubInsertNewSub    "G_roup/Subsystem..." {
+#       }
+#
+  dis_MenuAppendItem $m SubInsertMember "I_nsert Member..." {
+        leval DISview dis_view_add_members_to_all
+        }
+
+  dis_MenuAppendItem $m SubRemoveMember "R_emove Member" {
+        leval DISview dis_view_remove_from_subsys
+        }
+
+  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m SubNewGroup    "New G_roup/Subsystem..." {
+#       }
+#
+#  dis_MenuAppendItem $m SubInsertGroup "Ins_ert Group/Subsystem..." {
+#       }
+#
+  dis_MenuAppendItem $m SubRemoveGroup  "Remov_e Subsystem" {
+        leval DISview dis_remove_subsystem_from_view
+        }
+
+
+#
+#  Data Chart
+#
+
+set m [dis_MenuCreate DatachartMenu     "D_ata Chart" "DataChart=S"]
+  set sm1 [dis_MenuAppendSubmenu $m DCShowAll   "S_how All"]
+    dis_MenuAppendItem $sm1 DCShowAllAttributes "A_ttributes" {
+        leval DISview "dis_view_enable_attrib 1"
+        }
+
+    dis_MenuAppendItem $sm1 DCShowAllOperations "O_perations" {
+        leval DISview "dis_view_enable_ops 1"
+        }
+
+  set sm1 [dis_MenuAppendSubmenu $m DCHideAll "H_ide All"]
+    dis_MenuAppendItem $sm1 DCHideAllAttributes "A_ttributes" {
+        leval DISview "dis_view_enable_attrib 0"
+        }
+
+    dis_MenuAppendItem $sm1 DCHideAllOperations "O_perations" {
+        leval DISview "dis_view_enable_ops 0"
+        }
+
+  dis_MenuAppendItem $m DCShowBuiltin   "Show B_uilt-in Relations..." {
+    dis_launch_dialog DCShowBuiltin -modal
+        }
+
+  dis_MenuAppendItem $m DCShowOther     "Show O_ther Relations..." {
+    dis_launch_dialog RFilterOther -modal
+        }
+
+  dis_MenuAppendItem $m DCShowMembers   "Show M_embers..." {
+    dis_launch_dialog DCShowMembers -modal
+        }
+
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m DCNewStruct    "N_ew Struct..." {
+#       dis_launch_dialog CreateStruct -modal
+#       }
+#
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m DCInsertStruct         "I_nsert Struct..." {
+#       dis_launch_selBrowser "Select entities to add to Data Chart" dis_view_add_struct_to_DC -modal
+#       }
+#
+#  dis_MenuAppendItem $m DCRemoveStruct "R_emove Struct" {
+#       leval DISview dis_remove_struct_from_DC
+#       }
+
+
+#
+# History (Window)
+#
+
+set m [dis_MenuCreateDynamic "HistoryMenu" "W_indow" {dis_build_menu HistoryMenu {dis_view -layer}} ]
+
+  dis_MenuAppendItem $m ViewRefresh             "R_efresh" {
+        leval DISview dis_view_refresh
+        }
+
+  set sm1 [dis_MenuAppendSubmenu $m ViewZoom    "Z_oom"]
+
+    dis_MenuAppendItem $sm1 ViewZoomIn          "I_n" {
+        leval DISview dis_view_zoomIn
+        }
+
+    dis_MenuAppendItem $sm1 ViewZoomOut         "O_ut" {
+        leval DISview dis_view_zoomOut
+        }
+
+    dis_MenuAppendItem $sm1 ViewZoomToFit       "To F_it" {
+        leval DISview dis_view_zoomToFit
+        }
+
+    dis_MenuAppendSeparator $sm1
+
+    dis_MenuAppendItem $sm1 ViewResetZoom       "R_eset" {
+        leval DISview dis_view_zoomReset
+        }
+
+  dis_MenuAppendSeparator $m
+

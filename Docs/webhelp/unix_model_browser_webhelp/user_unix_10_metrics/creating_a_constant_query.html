@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Creating a Constant Query</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p5 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p6 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p7 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p8 {margin: 0.0px 1.0px 1.3px 24.0px; font: 12.0px 'Courier New'}
+    p.p9 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Creating a Constant Query</b></p>
+<p class="p2">The <b>Filter List</b> dialog box is enhanced to include metrics and attributes for filtering, formatting, and sorting. Through the <b>Match Expression</b> field in the <b>Filter List</b> dialog box, you can create an Access (command-line) query and apply it to a column.</p>
+<p class="p3"><br></p>
+<p class="p4"><img src="./tmp09027.jpg" alt="tmp09027.jpg"></p>
+<p class="p5"> </p>
+<p class="p2">When you set an Access query, you create a static, or constant, filter on the contents of that column. Because Access supports metrics, you can use this field to apply a metrics filter.</p>
+<p class="p2">See the <i>DIScover Access Guide</i> for information on the commands, attributes, and operators available through Access.</p>
+<p class="p2">Using this field requires some knowledge of Access.</p>
+<p class="p6"><b>Note: </b>In the Filter List, you do not need to use the Access command “apply” to query multiple entities for a matching attribute.</p>
+<p class="p2">The <b>Match Expression</b> field takes multiple queries using boolean operators, and you can use any attribute or valid Access attribute expression. An advantage to using this procedure over the <b>Metrics</b> dialog box is that you can use the <b>Filter List</b> for any column that shows entities—any column can become a metrics querying tool</p>
+<p class="p7"><b>Example</b></p>
+<p class="p8">met_CC &gt; 12 &amp;&amp; met_DEPTH &gt; 5</p>
+<p class="p2">For more information on writing Access expressions, see the<i> DIScover Access Guide</i>.</p>
+<p class="p2">This is an example of an Access expression; specifically, it is a string that searches for entities in the information model with a Cyclomatic Complexity metric greater than 12 and a Nested Control Structure depth metric greater than 5.</p>
+<p class="p2">Once you apply this filter, the filter remains in effect until you reset it (or quit DIScover) and the column to which you apply this filter turns a lighter shade of color to remind you that a filter is in place.</p>
+<p class="p3"><br></p>
+<p class="p4"><img src="./tmp090271.jpg" alt="tmp090271.jpg"></p>
+<p class="p5"> </p>
+<p class="p2"> </p>
+<p class="p9"> </p>
+</body>
+</html>

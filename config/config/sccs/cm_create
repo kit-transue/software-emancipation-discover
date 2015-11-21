@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cd `dirname $cm_workfile`
+echo "sccs create $cm_workfile"
+      sccs create $cm_workfile
+
+exit $?

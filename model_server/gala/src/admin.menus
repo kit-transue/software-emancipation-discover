@@ -1,0 +1,74 @@
+#
+# File (master)
+#
+set m [dis_MenuCreate AppFileMenu "F_ile" "All=S"] 
+  
+  
+  dis_MenuAppendItem $m FileQuit              	"Ex_it" {
+	 dis_quit NOSERVER
+	} "State=All=S"
+   
+
+#Settings
+set m [dis_MenuCreate "SettingsMenu" "S_ettings" "All=S"]
+  dis_MenuAppendItem $m SettingsNew              	"N_ew" {
+	  DoNew
+	} "State=ModelBuilder=S"
+
+  dis_MenuAppendItem $m SettingsOpen              	"O_pen" {
+	  DoOpen
+	} "State=ModelBuilder=S"
+
+  dis_MenuAppendItem $m SettingsSave              	"S_ave" {
+	  DoSave
+	} "State=ModelBuilder=S"
+
+  dis_MenuAppendItem $m SettingsSaveAs              	"Save As..." {
+	  DoSaveAs
+	}  "State=ModelBuilder=S"
+
+
+
+
+
+#
+# Window
+#
+set m [dis_MenuCreate "WindowMenu" "W_indow" "All=S"]
+
+dis_MenuAppendItem $m ActivateMSItem "Start Model Server" {
+dis_layer -open DialogLayer ModelServer 
+} "State=ModelBuilder=S"
+
+dis_MenuAppendItem $m ActivateMBItem "Build Information Model" {
+dis_layer -open DialogLayer ModelBuilder 
+} "State=ModelServer=S"
+
+
+# Help
+#
+
+set m [dis_MenuCreate "HelpMenu" "H_elp" "All=S"]
+
+dis_MenuAppendItem $m HelpContentsItem	"Table of Contents" {
+	dis_help -contents 100 "[dis_getenv PSETHOME]/lib/hyperhelp/DISCOVER_HELP.hlp"
+	}
+
+dis_MenuAppendSeparator $m
+
+dis_MenuAppendItem $m HelpMSItem "Help on Start Model Server" {
+	dis_confirm1 "Not Yet Implemented" OK "Help for this topic has not yet been implemented.\n Defaulting to the table of contents"
+	dis_help -contents 100 "[dis_getenv PSETHOME]/lib/hyperhelp/DISCOVER_HELP.hlp"
+	} "State=ModelServer=S"
+dis_MenuAppendItem $m HelpMBItem "Help on Build Information Model" {
+	dis_confirm1 "Not Yet Implemented" OK "Help for this topic has not yet been implemented.\n Defaulting to the table of contents"
+	dis_help -contents 100 "[dis_getenv PSETHOME]/lib/hyperhelp/DISCOVER_HELP.hlp"
+	} "State=ModelBuilder=S"
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m HelpAboutDiscover	"About Model Administrator" {
+	dis_launch_dialog About
+	}
+
+
+
+

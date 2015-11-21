@@ -1,0 +1,151 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis require.dis
+
+catch {
+
+if { [ getvar WFTYPE_INSTANTIATED ] != "1" } {
+
+    wftype enum  "selection" "scope selection group explicit"
+    wftype enum  "direction" "in out bi"
+    wftype enum  "format" "decl field cell"
+    wftype enum  "funtype" "none extern all"
+    wftype enum  "report" "report_list" true
+    wftype enum  "filter" "filter_list" true
+    wftype enum  "pattern" "patterns_list" true
+
+  setvar WFTYPE_INSTANTIATED 1
+}
+
+global env
+set tmpReportName "/tmp"
+set varList [array names env]
+set index [lsearch $varList TMPDIR]
+if { $index != -1 } { set tmpReportName $env([lindex $varList $index]) 
+ } else {
+   set index [lsearch $varList TMP]
+   if { $index != -1 } { set tmpReportName $env([lindex $varList $index]) 
+   } else {
+      set index [lsearch $varList TEMP]
+      if { $index != -1 } { set tmpReportName $env([lindex $varList $index]) }
+   }
+}
+append tmpReportName "/node_report.txt"
+# try to remove temporary part from temporary directory name
+# so saved task will contain good name for report 
+regsub "DISCOVER.*/" $tmpReportName "" tmpReportName
+
+if { [ getvar WF_INSTANTIATED ] != "1" } {
+
+wfparam new 	Selection	-v Y2K_SELECTION	-t selection	-d selection	    -i {Selection}
+wfparam new 	Direction	-v Y2K_DIRECTION	-t direction	-d out	    -i {Direction}
+wfparam new 	Entities	-v Y2K_ENTITIES		-t entity			    -i {Entities}
+wfparam new	FilterName	-v Y2K_FILTER_NAME	-t filter	-d default	    -i {Filter Name}
+wfparam new 	Format		-v Y2K_FORMAT		-t format	-d decl		    -i {Output Format}
+# add "-mi" to the next command to match inputs:
+wfparam new 	GroupPrefix	-v Y2K_GROUP_PREFIX	-t string	-d y2k_		    -i {Group Prefix}
+wfparam new 	Results		-v Y2K_RESULTS		-t entity			    -i {Results}
+wfparam new 	Groups		-v Y2K_GROUPS		-t string			    -i {Groups}
+wfparam new	PatternName	-v Y2K_PATTERN_NAME	-t pattern	-d default	    -i {Pattern Name}
+wfparam new	ReportName	-v Y2K_REPORT_NAME	-t report	-d {Impact Summary} -i {Report Name}
+wfparam new	ReportFile	-v Y2K_REPORT_FILE	-t string	-d "$tmpReportName" -i {Report File}
+wfparam new	ImpactGroup	-v Y2K_IMPACT_GROUP	-t string			    -i {Impact Group}
+wfparam new	ReportScope	-v Y2K_REPORT_SCOPE	-t scope			    -i {Report Scope}
+wfparam new 	EntitySet	-v Y2K_ENTITY_SET	-t entity			    -i {Entity Set}
+wfparam new	InstanceSet	-v Y2K_INSTANCE_SET	-t entity			    -i {Instance Set}
+wfparam new	AssignmentDepth	-v Y2K_ASSIGNMENT_DEPTH	-t int		-d 5	    	    -i {Assignment Depth} -mt
+wfparam new	AssignmentSet	-v Y2K_ASSIGNMENT_SET	-t entity			    -i {Assignment Set}
+
+wfparam new	InstancesCommand -mn -v Y2K_INSTANCES_COMMAND	-t string   -d {viewable_instances $input}     -i {Instances Command}
+
+wfparam new	QueryCommand -mn -v Y2K_QUERY_COMMAND	-t string  -d {return $input}    -i {Query Command}
+
+wfparam new KeepFunCalls -v Y2K_KEEP_FCALLS -t funtype -d none -i {Keep Function Calls} 
+
+wfparam new	ExplicitInput -mn -v Y2K_EXPLICIT_INPUT	-t string -i {Explicit Input}
+
+wfnode new Query    -eval {
+     set Y2K_ENTITIES [ lambda input $Y2K_QUERY_COMMAND $Y2K_ENTITY_SET] 
+     } \
+			-opt EntitySet \
+			-out Entities \
+			-opt QueryCommand \
+			-i {Evaluate Query}
+
+wfnode new Instances    -eval { 
+  set Y2K_INSTANCE_SET [ lambda input $Y2K_INSTANCES_COMMAND $Y2K_ENTITY_SET ] 
+			} \
+			-opt EntitySet \
+			-out InstanceSet \
+			-opt InstancesCommand \
+			-i {Find Instances}
+
+wfnode new Collect	-eval { 
+     set Y2K_ENTITIES [ sel2sym $Y2K_SELECTION $Y2K_EXPLICIT_INPUT] } \
+	   	  	-in Selection \
+                        -opt ExplicitInput \
+			-out Entities \
+			-i {Collect Entities}
+
+wfnode new Filter	-eval { Y2K_filter_node $Y2K_FILTER_NAME $Y2K_ENTITIES $Y2K_GROUP_PREFIX } \
+		 	-in FilterName -in GroupPrefix -in Entities \
+			-out Results -out Groups -out ImpactGroup -out ReportScope \
+			-i {Apply Filter to Entities}
+
+wfnode new Pattern	-eval { Y2K_pattern_node $Y2K_PATTERN_NAME $Y2K_GROUP_PREFIX $Y2K_ENTITIES} \
+			-in PatternName -in GroupPrefix -in Entities \
+			-out Results -out Groups  \
+			-i {Apply Pattern to Entities}
+
+wfnode new Report	-eval { Y2K_report_node $Y2K_REPORT_NAME $Y2K_REPORT_FILE \
+				$Y2K_GROUP_PREFIX $Y2K_IMPACT_GROUP $Y2K_REPORT_SCOPE $Y2K_FILTER_NAME $Y2K_PATTERN_NAME } \
+	 		-in ReportName -in ReportFile -in GroupPrefix -in ImpactGroup -in ReportScope \
+			-opt FilterName -opt PatternName \
+			-i {Summarize Analysis}
+
+wfnode new Assignments	-eval { set Y2K_ASSIGNMENT_SET [ dfa_assign $Y2K_ASSIGNMENT_DEPTH $Y2K_DIRECTION $Y2K_KEEP_FCALLS $Y2K_FORMAT $Y2K_ENTITY_SET ] } \
+			-in EntitySet -in AssignmentDepth \
+			-out AssignmentSet \
+			-opt Direction -opt KeepFunCalls -opt Format \
+			-i {Find Assignments}
+
+
+wfparam new DiffMerge	-v Y2K_DIFF_MERGE -t bool -d 0    -i {Merge Diff Files}
+wfparam new DiffView	-v Y2K_DIFF_VIEW  -t bool -d 0    -i {View Diff Files}
+
+wfnode new TpmDiff	-eval { Y2K_tpm_diff_node $Y2K_PATTERN_NAME $Y2K_DIFF_MERGE \
+                            	$Y2K_DIFF_VIEW  $Y2K_ENTITIES} \
+			-in PatternName -in DiffMerge -in DiffView -in Entities \
+			-out Results  \
+			-i {Apply Tpm Diff Generator to Entities}
+
+#wftask new Y2K Collect Filter Report
+setvar WF_INSTANTIATED 1
+}
+catch {require workflow_aux.dis}
+}

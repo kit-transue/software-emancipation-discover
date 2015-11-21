@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Filter Set Scores</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 10.0px 'Courier New'}
+    span.s2 {font: 15.0px Symbol}
+    span.s3 {font: 13.0px Courier}
+    span.s4 {font: 12.0px Courier}
+    span.s5 {font: 10.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Filter Set Scores</b></p>
+<p class="p2">Caliper filter sets are collections of related standards that are contained within a query, for example, the File Metrics filter set within the Structure Query. Like queries, filter sets have quality scores; when you select a filter set its visual score appears in the <b>Score </b>property box in the right pane of the Caliper window. A filter set’s score is based on the sum of the raw scores of its constituent queries, which are multiplied by the normalized weight. This is known as the filter set’s raw score.</p>
+<p class="p2">The normalized weight is the weight of an individual item, divided by the sum of the individual weights of every item in that filter set. Normalized weight is represented by the following equation:</p>
+<p class="p3">NWi = Wi/Wt</p>
+<p class="p2">The raw score for a filter set is represented by the following equation:</p>
+<p class="p3">RS<span class="s1">F</span> = <span class="s2">Â</span><span class="s3"> </span>(RS<span class="s1">i</span> x NW<span class="s1">q</span>)</p>
+<p class="p2">To generate the visual score for a filter set, the raw score of that filter set is multiplied by a scaling constant. The scaling constant has a value of 3; this is based on the supposition that if a third of your code is severely error-ridden, it probably needs a significant amount of remediation. The scaling constant is represented by the following equation:</p>
+<p class="p3">SC = 3</p>
+<p class="p2">The product of the raw score and the scaling constant is then subtracted from 1. (This is for inversion; the higher <span class="s4">RS</span><span class="s5">F</span> is, the lower the quality score.) Finally, the difference is multiplied by 100 to produce the visual score. The visual score for a filter set is represented by the following equation:</p>
+<p class="p3">VS<span class="s1">F</span> = (1 - (RS<span class="s1">c</span> * SC)) * 100</p>
+</body>
+</html>

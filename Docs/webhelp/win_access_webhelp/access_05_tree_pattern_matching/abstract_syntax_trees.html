@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Abstract Syntax Trees</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 9.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p7 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p8 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px Verdana}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 9.0px 'Times New Roman'}
+    span.s4 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Abstract Syntax Trees</b></p>
+<p class="p2">During the parsing phase of source compilation—after preprocessing in the case of C/C++—the syntactic structure of the program emerges. Parts of this structure are decorated with attributes that capture the meaning of the parts: variable references are resolved to their storage areas, the type of objects is defined or clarified, calls to functions are noted, and implicit operations like type conversions or calls to constructors are made explicit. DIScover creates this structure as an abstract syntax tree, and stores this AST for later analysis.</p>
+<p class="p2">The AST is a highly structured representation of a body of source code. It encapsulates all of the syntactical properties of the source in a format that can be formally manipulated. Each element or node in the tree represents a syntactical component and may have one or more subnodes. Direct descendants of a node are known as <i>children</i>. Children of the same node are known as <i>siblings</i>. An entire program can be described by the AST, starting from such high-level notions as file or function all the way down to such things as integer constant. The following illustrates some equivalent code fragments, and their corresponding AST:</p>
+<p class="p3"><span class="s1">C</span>               <span class="s2">a = x + 5</span></p>
+<p class="p3"><span class="s1">Pascal</span>               <span class="s2">a := x + 5</span></p>
+<p class="p4"><span class="s1">COBOL</span><span class="s3">               </span>add x, 5 giving a</p>
+<p class="p4"><span class="s1">Tcl</span><span class="s3">               </span>set a [ expr $x + 5 ]</p>
+<p class="p4"><span class="s1">AST</span><span class="s3">               </span>assign(a, add(x , 5))</p>
+<p class="p2">The preceding AST can be visualized logically as follows:</p>
+<p class="p5"><br></p>
+<p class="p6"><img src="./tmp16061.jpg" alt="tmp16061.jpg"></p>
+<p class="p7"> </p>
+<p class="p2">The AST is stored as a strict tree. A root node is created for each file, and the ASTs for elements defined in those files are created as children of the file’s root node. The root node is called the <i>ast_root</i>.</p>
+<p class="p8"><b>Note: </b>Although the AST is called an abstract syntax tree, it is not always completely language independent (abstract). There is a number of cases where nodes are added to represent particular facets of a language; these cases are often important to TPM users. In checking coding standards in C, for example, it may be important to be able to distinguish between a <span class="s4">then</span> clause that is a single statement and a <span class="s4">then</span> clause that is a single statement enclosed in a curly brace block. In this case, the block is captured in the AST, even though its structure without the block is sufficient to understand the action of the program. The ast_root that describes the root of the file is another example of an artifact introduced to assist the TPM developer but that is not important for the action of the program.</p>
+</body>
+</html>

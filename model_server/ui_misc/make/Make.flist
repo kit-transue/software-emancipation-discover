@@ -1,0 +1,45 @@
+CROOTS=\
+    generic-popup-menu \
+
+
+CPROOTS=\
+    ui-rowcolumn.h \
+    ui_INTERP_info.h \
+    ProgressBar \
+    mpb \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_misc/data \
+-I$(BUILD_SRC_ROOT)/model_server/ui_misc/data \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/gt/include \
+-I$(BUILD_SRC_ROOT)/gt/include \
+-I$(LOCAL_SRC_ROOT)/gtxm/include \
+-I$(BUILD_SRC_ROOT)/gtxm/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+

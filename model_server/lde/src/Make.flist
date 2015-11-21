@@ -1,0 +1,26 @@
+CROOTS=\
+
+
+CPROOTS=\
+    lde-RTL \
+    lde-browser-hierarchy \
+    lde-decorate \
+    lde-hierarchy \
+    ldeList \
+    ldeSmod.h \
+    lde_erd \
+    lde_reference.h \
+    lde_smod_short \
+    lde_smt_class \
+    lde_smt_flowchart \
+    lde_smt_goto \
+    lde_smt_hierarchy \
+    lde_smt_loop \
+    lde_smt_switch \
+    lde_smt_text \
+    lde_smt_tree \
+    lde_ste_hierarchy \
+    lde_subsys_map \
+    lde_symbol \
+
+

@@ -1,0 +1,2212 @@
+/*************************************************************************
+* Copyright (c) 2015, Synopsys, Inc.                                     *
+* All rights reserved.                                                   *
+*                                                                        *
+* Redistribution and use in source and binary forms, with or without     *
+* modification, are permitted provided that the following conditions are *
+* met:                                                                   *
+*                                                                        *
+* 1. Redistributions of source code must retain the above copyright      *
+* notice, this list of conditions and the following disclaimer.          *
+*                                                                        *
+* 2. Redistributions in binary form must reproduce the above copyright   *
+* notice, this list of conditions and the following disclaimer in the    *
+* documentation and/or other materials provided with the distribution.   *
+*                                                                        *
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    *
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      *
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  *
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   *
+* HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, *
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       *
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  *
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  *
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    *
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
+*************************************************************************/
+#define SERVER // this code for server only
+
+#include <vport.h>
+ 
+#include vstartupHEADER
+#include vstdlibHEADER
+#include vsessionHEADER
+#include vserviceHEADER
+#include vscrapHEADER
+#include vdasservHEADER
+#include vstdioHEADER
+
+#include <signal.h>
+#include "Application.h"
+
+#ifdef SERVER
+#include <tcl.h>
+#endif /* SERVER */
+ 
+#ifndef _WIN32
+#ifndef SIG_TYP
+#ifdef sun4
+typedef void (*SIGHANDLER)(int,...);
+#else
+typedef void (*SIGHANDLER)(int);
+#endif
+#define SIG_TYP SIGHANDLER
+#endif
+#endif
+
+static int Block(vsessionStatement *statement)
+{
+#ifndef _WIN32
+    SIG_TYP old = signal(SIGALRM,SIG_IGN);
+#endif
+    int retval = statement->Block(NULL);
+#ifndef _WIN32
+    signal(SIGALRM,old);
+#endif
+    return retval;
+}
+
+typedef void async;
+typedef char* _charptr;
+typedef vstr* _vstrptr;
+
+#define g_push(s) {vscrapSetArrayCount(real_result,array_index2+1);vscrapSetElementAt(real_result,array_index2,s);array_index2++;}
+#define g_take() sarg? vscrapGetElementAt(sarg,array_index++): 0
+ 
+static vscrap*  marshall_char(char x){return vscrapFromCharacter(x);}
+static vscrap*  marshall_short(short x){return vscrapFromInteger((int)x);}
+static vscrap*  marshall_int(int x){return vscrapFromInteger(x);}
+static vscrap*  marshall_float(float x){return vscrapFromFloat(x);}
+static vscrap*  marshall_double(double x){return vscrapFromFloat(x);}
+static vscrap*  marshall__charptr(_charptr x){if (!x)x="";vstr*_x=vstrClone((vchar*)x);vscrap* s=vscrapFromString(_x);vstrDestroy(_x);return s;}
+static vscrap*  marshall__vstrptr(_vstrptr x){if (!x)x=(_vstrptr)"";return vscrapFromString(x);}
+ 
+static void demarshall_char(char* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetCharacter(s);delete s;
+    } else { 
+        *x = '\0'; 
+    } 
+} 
+ 
+static void demarshall_short(short* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_int(int* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_float(float* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+static void demarshall_double(double* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+ 
+extern "C" char* strdup(const char*);
+static void demarshall__charptr(char** x, vscrap* s) 
+{ 
+    if (s) { 
+        vstr*y = vstrCloneScribed(vscrapScribeString(s));delete s;
+        *x = strdup((char*)y);
+        vstrDestroy(y);
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static void demarshall__vstrptr(vstr** x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vstrCloneScribed(vscrapScribeString(s));delete s;
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static vscrap *answer_scrap;
+
+
+static void errmsg(char*msg){fprintf(stderr,msg);}
+static void std_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+    vscrap *sync_answer_scrap = NULL;
+
+    switch (vsessionStatement::GetEventCode (event)) {
+        case vsessionStatementEVENT_COMPLETED:
+            statement->GetReturnValue(statement, &sync_answer_scrap);
+            statement->SetData(sync_answer_scrap);
+            break;
+        case vsessionStatementEVENT_CANNOT_SEND:
+            errmsg("*** cannot send!\n");
+            Application::SetCannotSend(vTRUE);
+            break;
+        case vsessionStatementEVENT_END_SESSION:
+            errmsg("*** end session!\n");
+            break;
+        case vsessionStatementEVENT_FAILED:
+            errmsg("*** failed!\n");
+            break;
+    }
+}
+
+static void std_async_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+
+    Application::DecrementCount();
+}
+
+static Application* DISview_app;
+#ifdef SERVER
+#include <cLibraryFunctions.h>
+#include <machdep.h>
+#define galaxy_printf printf
+#undef printf
+#include <perspective.h>
+#include <general.h>
+#include <gview.h>
+#include <gviewer.h>
+#include <driver.h>
+#include <view.h>
+#include <messages.h>
+#include <viewTreeHeader.h>
+#include <viewERDHeader.h>
+#include <ldrDCHierarchy.h>
+#include <viewMulticonnHeader.h>
+#include <viewGraHeader.h>
+#include <ldrSubsysMapHierarchy.h>
+#include <smt.h>
+#include <symbolLdrHeader.h>
+#include <ldrERDHierarchy.h>
+#include <viewERDClassNode.h>
+#include <OODT_apl_entries.h>
+#include <dd_or_xref_node.h>
+#include <ste_interface.h>
+#include <groupTree.h>
+#include "DIS_view/interface.h"
+#include "DIS_main/interface.h"
+#include <ggraViewLayer.h>
+#include <gRTListServer.h>
+#include <string.h>
+#include <boilerplate.h>
+
+#include <vport.h>
+#include vstrHEADER
+#include <gdDrawingArea.h>
+#define printf galaxy_printf
+
+extern void open_view (viewtype, symbolArr&);
+int build_graph( symbolArr &src, symbolArr &target, char *device_name );
+int get_erd_builtin_rel_mask( int );
+int get_erd_members_mask( int );
+int get_dc_builtin_rel_mask( int );
+void apl_OODT_list_unselected_classes( vstr* & );
+void apl_OODT_toggle_erd_attribs(viewPtr, int);
+void apl_OODT_toggle_erd_ops(viewPtr, int);
+unsigned getDirectionFlags (viewTreeHeader* vth, const objArr& arr);
+extern "C" int viewClass_mixin_get_member_filter( viewClass_mixin* );
+extern "C" char* viewClass_mixin_get_name_filter_text( viewClass_mixin* );
+
+static vstr *AddInhList = NULL;
+static void *inh_popnode = NULL;
+static int glob_inh_change_attr_mask = 0;
+static unsigned uCTShowPathsFilter = 0; 
+extern "C" void dr_clear_selection();
+
+static int magfact = 11;
+static int SMFunctions, SMVariables, SMClasses, SMUnions, SMEnums, SMTypedefs, SMMacros, SMFiles;
+extern "C" int getmagfact() {return magfact;}
+
+void confirmJobNotify (vprint *printer, int flag)
+{
+
+  Viewer *vr;
+  View *v;
+  Viewer::GetExecutingView(vr, v);
+  
+  if(flag)
+  {
+    vexWITH_HANDLING
+    {
+      printer->OpenDocument();
+    }
+    vexON_EXCEPTION
+    {
+      flag = FALSE;
+      if (!vprintGetJobCanceledException())
+      {
+        vexPropagate(vexGetRootClass(), vexNULL);
+      }
+    }
+    vexEND_HANDLING
+  }
+
+  if(flag)  {
+        vdraw::GSave();
+        myDrawingArea *gd  = (myDrawingArea *)v->FindItem ((const unsigned char *)"DrawingArea");
+        gd->Print(printer);     
+        vdraw::GRestore();
+        printer->CloseDocument();
+  }
+}
+
+#endif /*SERVER*/
+
+
+/*----------------------------- dis_calltree_has_selection ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_has_selection (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_has_selection );
+  char pszResult[11];
+  int nSelected = 0;
+
+  view *pView = dis_get_gra_view();
+  if( pView )
+  {
+    viewTreeHeader *vth = checked_cast( viewTreeHeader, pView );
+    
+    objArr      arr, nodes;
+    Obj*        el;
+    driver_instance->selected_view_nodes (vth, arr);
+    ForEach (el, arr) 
+    {
+            if (!el->relationalp())
+              continue;
+            viewNode *vn = checked_cast (viewNode, el);
+            if (vn->get_header() == vth)
+      {
+        nodes.insert_last( vn );
+              nSelected ++;
+      }
+    }
+    if( (argc > 1) && !strcmp(argv[1], "1") && nSelected )
+      uCTShowPathsFilter = getDirectionFlags( vth, nodes );
+  }
+  OSapi_sprintf(pszResult, "%d", nSelected);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_calltree_is_prune_foreign ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_is_prune_foreign (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_is_prune_foreign );
+  char pszResult[11];
+  int nResult = 0;
+
+  view *pView = dis_get_gra_view();
+  if( pView )
+  {
+    viewTreeHeader *vth = checked_cast( viewTreeHeader, pView );
+    nResult = vth->prune_foreign_funcs;
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_calltree_is_prune_automatic ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_is_prune_automatic (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_is_prune_automatic );
+  char pszResult[11];
+  int nResult = 0;
+
+  view *pView = dis_get_gra_view();
+  if( pView )
+  {
+    viewTreeHeader *vth = checked_cast( viewTreeHeader, pView );
+    nResult = vth->prune_filter_persistent;
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_calltree_prune ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_prune (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_prune );
+  if(argc != 6) 
+    printf("dis_calltree_prune: invalid number of arguments!!\n");
+  else 
+  {
+    int fHasSelection = atoi(argv[1]);
+    char* PruneFunsMatching = argv[2];
+    char* PruneInFilesMatching = argv[3];               
+    int fPruneForeign = atoi(argv[4]);
+    int fAutomatic = atoi(argv[5]);
+    
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      viewTreeHeader *pTreeHeader = checked_cast( viewTreeHeader, pView );
+      if( !fHasSelection )
+        pTreeHeader->prune( PruneFunsMatching, PruneInFilesMatching, fPruneForeign, fAutomatic );
+      else
+      {
+        objArr  arr;
+        Obj*    el;
+        driver_instance->selected_view_nodes (pTreeHeader, arr);
+        ForEach (el, arr) 
+        {
+                if (!el->relationalp())
+                  continue;
+                viewNode *vn = checked_cast (viewNode, el);
+                if (vn->get_header() == pTreeHeader)
+          {
+            viewFuncCallNode *vfcn = checked_cast (viewFuncCallNode, vn);
+            vfcn->apply_prune_filter(PruneFunsMatching, PruneInFilesMatching, fPruneForeign);
+          }
+        }
+      }
+      pTreeHeader->route_view();
+      pTreeHeader->repaint_view(); 
+    }  
+  } 
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_calltree_showpaths_get_direct ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_showpaths_get_direct (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_showpaths_get_direct );
+  char pszResult[2];
+  static int deflt[] = { 2, 0, 1, 2, 2, 0, 1, 2 };
+  int nSize = sizeof(deflt)/sizeof(int);
+  if( uCTShowPathsFilter >= nSize )
+    uCTShowPathsFilter = 0;  
+  int nDirect = deflt[ uCTShowPathsFilter ];
+  OSapi_sprintf(pszResult, "%d", nDirect);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_calltree_showpaths_direct_enabled ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_showpaths_direct_enabled (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_showpaths_direct_enabled );
+  char pszResult[2];
+  static int sensitive[] = { 0, 0, 0, 0, 1, 1, 1, 0 };
+  int nSize = sizeof(sensitive)/sizeof(int);
+  if( uCTShowPathsFilter >= nSize )
+    uCTShowPathsFilter = 0;  
+  int nEnable = sensitive[ uCTShowPathsFilter ];
+  OSapi_sprintf(pszResult, "%d", nEnable);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_calltree_show ------------------------------*/
+
+#ifdef SERVER
+int dis_calltree_show (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_calltree_show );
+  if(argc != 5) 
+    printf("dis_calltree_show: invalid number of arguments!!\n");
+  else 
+  {
+    int fHasSelection = atoi(argv[1]); 
+    char* FindFuncs = argv[2];
+    char* FindInFiles = argv[3];                
+    int nShow = atoi(argv[4]);
+    
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      viewTreeHeader *pTreeHeader = checked_cast( viewTreeHeader, pView );
+      unsigned dir;
+      switch (nShow) 
+      {
+            case 0:     
+        dir = dirRight; 
+        break;
+            case 1:     
+        dir = dirLeft;  
+        break;
+            default:    
+        dir = dirBoth;  
+        break;
+            }
+      if( !fHasSelection )
+        pTreeHeader->show_paths( FindFuncs, FindInFiles, dir ); 
+      else
+      {
+        objArr arr;
+        Obj*    el;
+        driver_instance->selected_view_nodes (pTreeHeader, arr);
+        ForEach (el, arr) 
+        {
+                if (!el->relationalp())
+                  continue;
+                viewNode *vn = checked_cast (viewNode, el);
+                if (vn->get_header() == pTreeHeader)
+          {
+            viewFuncCallNode *vfcn = checked_cast (viewFuncCallNode, vn);
+            vfcn->show_paths( FindFuncs, FindInFiles, dir );
+          }
+        }
+      }
+      pTreeHeader->route_view();
+    }  
+  } 
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_erd_dc_get_filter ------------------------------*/
+
+#ifdef SERVER
+int dis_erd_dc_get_filter (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_erd_get_filter );
+  char *pszResult = "";
+  view *pView = dis_get_gra_view();
+  if( pView )
+  {
+    ldrPtr ldrpt = pView->get_ldrHeader();
+    viewClass_mixin *vcm = NULL;
+    if (is_ldrERDHierarchy(ldrpt))
+            vcm = (viewClass_mixin *)checked_cast(ldrERDHierarchy,ldrpt);
+    else if (is_ldrDCHierarchy(ldrpt))
+      vcm = (viewClass_mixin *)checked_cast(ldrDCHierarchy,ldrpt);
+    if( vcm )
+    {
+      char * pszFilter = vcm->get_name_filter_text();
+      if( pszFilter )
+        pszResult = pszFilter;
+    }
+  }
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_erd_dc_filter ------------------------------*/
+
+#ifdef SERVER
+int dis_erd_dc_filter (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_erd_filter );
+  if(argc != 4) 
+    printf("dis_erd_filter: invalid number of arguments!!\n");
+  else 
+  {
+    char* pszFilter = argv[1];
+    int fFilter = atoi(argv[2]);                
+    int fShowInherited = atoi(argv[3]);
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      ldrPtr ldrpt = pView->get_ldrHeader();
+      viewClass_mixin *vcm = NULL;
+      if (is_ldrERDHierarchy(ldrpt))
+              vcm = (viewClass_mixin *)checked_cast(ldrERDHierarchy,ldrpt);
+      else if (is_ldrDCHierarchy(ldrpt))
+        vcm = (viewClass_mixin *)checked_cast(ldrDCHierarchy,ldrpt);
+      if( vcm )
+      {
+        viewGraHeader *vgh = checked_cast(viewGraHeader, pView); 
+        
+        if( !fFilter || *pszFilter == '\0' )
+          pszFilter = NULL;
+        
+        vcm->set_relation_filter(pszFilter, fShowInherited);
+        if( is_viewERDHeader(vgh) )
+        {
+                ldrOODTPtr ldr_pt = checked_cast (ldrOODT, vgh->get_ldrHeader());
+                ldr_pt->rebuild_root();
+        }
+        else
+                vgh->route_view();
+      }
+      driver_instance->regenerate_view(pView);
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_edr_get_rel_filter_result ------------------------------*/
+
+#ifdef SERVER
+int dis_edr_get_rel_filter_result (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  char pszResult[11];
+  Initialize( dis_edr_get_rel_filter_result );
+  int nResult = 0;
+  if(argc != 2) 
+    printf("dis_edr_get_rel_filter_result: invalid number of arguments!!\n");
+  else 
+  {
+    int nCheckBox = atoi(argv[1]);
+    int nMask = get_erd_builtin_rel_mask( nCheckBox );
+    int nFilter = 0;            
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      ldrPtr ldrpt = pView->get_ldrHeader();
+      if( is_ldrERDHierarchy(ldrpt) )
+              nFilter = ldrERDHierarchyPtr(ldrpt)->builtin_relations_filter();
+    }
+    nResult = nFilter & nMask;
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_erd_build_mask ------------------------------*/
+
+#ifdef SERVER
+int dis_erd_build_mask (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  char pszResult[11];
+  Initialize( dis_erd_build_mask );
+  int nResult = 0;
+  if(argc != 4)
+    printf("dis_erd_build_mask: invalid number of arguments!!\n");
+  else 
+  {
+    nResult = atoi( argv[1] );
+    int nCheckBox = atoi( argv[2] );
+    int fIsChecked = atoi( argv[3] );
+    if( fIsChecked )
+      nResult |= get_erd_builtin_rel_mask( nCheckBox );
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_erd_show_builtin ------------------------------*/
+
+#ifdef SERVER
+int dis_erd_show_builtin (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_erd_show_builtin );
+  if(argc != 2)
+    printf("dis_erd_show_builtin: invalid number of arguments!!\n");
+  else
+  {
+    int nFilter = atoi( argv[1] );
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      ldrPtr ldrpt = pView->get_ldrHeader();
+      if( is_ldrERDHierarchy(ldrpt) )
+              ldrERDHierarchyPtr(ldrpt)->filter_builtin_relations( nFilter );
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_is_member_box_checked ------------------------------*/
+
+#ifdef SERVER
+int dis_is_member_box_checked (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  char pszResult[11];
+  Initialize( dis_is_member_box_checked );
+  int nResult = 0;
+  if(argc != 3) 
+    printf("dis_is_member_box_checked: invalid number of arguments!!\n");
+  else 
+  {
+    int nFilter = 0;
+    int nCheckBox = atoi(argv[2]);
+    int nMask = get_erd_members_mask( nCheckBox );
+    viewClass_mixin *vcm = (viewClass_mixin *)atoi(argv[1]);
+    nFilter = viewClass_mixin_get_member_filter( vcm );
+    nResult = nFilter & nMask;
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_get_name_filter_text ------------------------------*/
+
+#ifdef SERVER
+int dis_get_name_filter_text (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_get_name_filter_text );
+  char *pszResult = "";
+  if(argc != 2) 
+    printf("dis_get_name_filter_text: invalid number of arguments!!\n");
+  else 
+  {
+    viewClass_mixin *vcm = (viewClass_mixin *)atoi(argv[1]);
+    char *pszText = viewClass_mixin_get_name_filter_text( vcm );
+    if( pszText )
+      pszResult = pszText;
+  }
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_build_members_mask ------------------------------*/
+
+#ifdef SERVER
+int dis_build_members_mask (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  char pszResult[11];
+  Initialize( dis_build_members_mask );
+  int nResult = 0;
+  if(argc != 4) 
+    printf("dis_build_members_mask: invalid number of arguments!!\n");
+  else 
+  {
+    nResult = atoi( argv[1] );
+    int nCheckBox = atoi( argv[2] );
+    int fIsChecked = atoi( argv[3] );
+    if( fIsChecked )
+      nResult |= get_erd_members_mask( nCheckBox );
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_show_members ------------------------------*/
+
+#ifdef SERVER
+int dis_show_members (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_show_members );
+  if(argc != 5)
+    printf("dis_show_members: invalid number of arguments!!\n");
+  else
+  {
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      viewGraHeader *vh = checked_cast( viewGraHeader, pView );
+      viewClass_mixin *popup_node = (viewClass_mixin *)atoi(argv[1]);
+      member_attributes filter = (member_attributes)atoi( argv[2] );
+      int fUseName = atoi( argv[3] );
+      char *name_filter = argv[4];
+      if( !fUseName || *name_filter == '\0')
+        name_filter = NULL;
+   
+      apl_OODT_set_disp_selection(popup_node, vh, filter, name_filter);
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_oodt_init_sel_list ------------------------------*/
+
+#ifdef SERVER
+int dis_oodt_init_sel_list (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_oodt_init_sel_list );
+  viewSymbolNode *vsnode = NULL;
+  if(argc >= 2)
+    vsnode = (viewSymbolNode *)atoi(argv[1]);
+  apl_OODT_init_sel_list(vsnode);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+/*----------------------------- dis_show_related ------------------------------*/
+
+#ifdef SERVER
+int dis_show_related (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_show_related );
+  if(argc != 6)
+    printf("dis_show_related: invalid number of arguments!!\n");
+  else
+  {
+    viewClassNode *popnode = (viewClassNode *)atoi(argv[1]);
+    int fMembers = atoi(argv[2]);
+    int fSuperclasses = atoi(argv[3]);
+    int fSubclasses = atoi(argv[4]);
+    int fUserdef = atoi(argv[5]);
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      int flags = 0;
+      if (fMembers)
+        flags |= MEMBERS_EXPLODED;
+      if (fSuperclasses)
+        flags |= SUPERCLASSES_EXPLODED;
+      if (fSubclasses)
+        flags |= SUBCLASSES_EXPLODED;
+      if (fUserdef)
+        flags |= RELATIONS_EXPLODED;
+      viewGraHeader *vgh = checked_cast(viewGraHeader, pView);
+      apl_OODT_setup_class_selection(popnode, pView);
+      apl_OODT_explode_entities(vgh, (oodt_explode_selections)flags);
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_zoomIn ------------------------------*/
+
+#ifdef SERVER
+int dis_view_zoomIn (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    view *pView = dis_get_gra_view();
+    if( pView ) {
+        pView->manipulate_perspective (VIEW_ZOOM_XY, 1, 0, 0, 0);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_zoomOut ------------------------------*/
+
+#ifdef SERVER
+int dis_view_zoomOut (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    view *pView = dis_get_gra_view();
+    if( pView ) {
+        pView->manipulate_perspective (VIEW_ZOOM_XY, -1, 0, 0, 0);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_zoomToFit ------------------------------*/
+
+#ifdef SERVER
+int dis_view_zoomToFit (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    view *pView = dis_get_gra_view();
+    if( pView ) {
+        pView->manipulate_perspective (VIEW_ZOOM_TO_FIT, 0, 0, 0, 0);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_zoomReset ------------------------------*/
+
+#ifdef SERVER
+int dis_view_zoomReset (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    view *pView = dis_get_gra_view();
+    if( pView ) {
+        pView->manipulate_perspective (VIEW_RESET, 0, 0, 0, 0);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+
+#ifdef SERVER
+int dis_init_add_inheritance (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_init_add_inheritance );
+  if(argc != 2)
+    printf("dis_add_inh_superclasses: invalid number of arguments!!\n");
+  else
+  {
+    apl_OODT_init_sel_list( (viewSymbolNode *)atoi(argv[1]) );
+
+    AddInhList = vstrCloneScribed( vcharScribeLiteral("") );
+    apl_OODT_list_unselected_classes( AddInhList );
+
+    Tcl_SetResult (interp, (char *)AddInhList, TCL_VOLATILE);
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_add_inheritance_cleanup ------------------------------*/
+
+#ifdef SERVER
+int dis_add_inheritance_cleanup (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_add_inheritance_cleanup );
+  if( AddInhList )
+  {
+    vstrDestroy( AddInhList );
+    AddInhList = NULL; 
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_expand ------------------------------*/
+
+#ifdef SERVER
+int dis_view_expand (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc != 2) return TCL_ERROR;
+    int level = atoi (argv[1]);
+
+    view *pView = dis_get_gra_view();
+    if (pView) {
+        driver_instance->expand(viewGraHeaderPtr(pView), level);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_collapse ------------------------------*/
+
+#ifdef SERVER
+int dis_view_collapse (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc != 2) return TCL_ERROR;
+    int level = atoi (argv[1]);
+
+    view *pView = dis_get_gra_view();
+    if (pView) {
+        driver_instance->collapse(pView, level);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_clear_selection ------------------------------*/
+
+#ifdef SERVER
+int dis_view_clear_selection (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    dr_clear_selection();
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_refresh ------------------------------*/
+
+#ifdef SERVER
+int dis_view_refresh (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_set_pref ------------------------------*/
+
+#ifdef SERVER
+int dis_view_set_pref (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc != 2) return TCL_ERROR;
+
+    magfact = atoi (argv[1]) + 10;
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_load_pref ------------------------------*/
+
+#ifdef SERVER
+int dis_view_load_pref (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    char temp[10];
+    sprintf (temp, "%d", magfact - 10);
+    Tcl_SetResult (interp, temp, TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_inher_expert_mode ------------------------------*/
+
+#ifdef SERVER
+int dis_view_inher_expert_mode (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Initialize( dis_view_inher_expert_mode );
+
+    view *pView = dis_get_gra_view();
+    if( pView ) {
+        viewMulticonnHeader *mHeader = checked_cast( viewMulticonnHeader, pView );
+        if (mHeader) {
+            mHeader->novice_mode (atoi (argv[1]));
+        }
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_display_args ------------------------------*/
+
+#ifdef SERVER
+int dis_view_display_args (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Initialize( dis_view_display_args );
+
+    int show_arg = atoi (argv[1]);
+
+    view *pView = dis_get_gra_view();
+    if ( pView ) {
+        symbolLdrHeaderPtr ldr_hdr = checked_cast(symbolLdrHeader, pView->get_ldrHeader());
+        if (ldr_hdr && ldr_hdr->get_disp_arg() != show_arg) {
+            ldr_hdr->set_disp_arg (show_arg);
+            ldr_hdr->modify_names();
+
+            driver_instance->regenerate_view (pView);
+        }
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_enable_attrib ------------------------------*/
+
+#ifdef SERVER
+int dis_view_enable_attrib (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+
+    int state = atoi (argv[1]);
+
+    view *pView = dis_get_gra_view();
+    if (pView) {
+        apl_OODT_toggle_erd_attribs (pView, state);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_enable_ops ------------------------------*/
+
+#ifdef SERVER
+int dis_view_enable_ops (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+
+    int state = atoi (argv[1]);
+
+    view *pView = dis_get_gra_view();
+    if (pView) {
+        apl_OODT_toggle_erd_ops (pView, state);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_remove_class_from_ERD ------------------------------*/
+
+#ifdef SERVER
+int dis_remove_class_from_ERD (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Initialize( dis_remove_class_from_ERD );
+
+    view *vp = dis_get_gra_view();
+
+    objArr selected;
+    if (!is_viewERDHeader(vp)) return TCL_ERROR;
+
+    driver_instance->fill_array_with_selected_appnodes(vp, selected, 0);
+
+    ldrERDHierarchyPtr ldr_pt = checked_cast(ldrERDHierarchy,vp->get_ldrHeader());
+    if (!ldr_pt) return TCL_ERROR;
+
+    Obj* item;
+    int need_to_regenerate_view = 0;
+    ForEach(item, selected)
+    {
+        if (is_dd_or_xref_node(RelationalPtr(item)))
+        {
+           fsymbolPtr  item_xref = dd_or_xref_nodePtr(item)->get_xrefSymbol();
+           if (item_xref->xrisnotnull() && item_xref->get_kind() == DD_CLASS) {
+              ldr_pt->remove_class(item_xref);
+              need_to_regenerate_view = 1;
+           }
+        }
+    }
+    if (need_to_regenerate_view) {
+        driver_instance->regenerate_view(vp);
+        checked_cast(viewGraHeader, vp)->get_gra_interface()->RefreshWindow();
+     }
+    // else msg_error(TXT("No class selected for removal: nothing to do."));
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+
+
+/*----------------------------- dis_remove_struct_from_DC ------------------------------*/
+
+#ifdef SERVER
+int dis_remove_struct_from_DC (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Initialize(dis_remove_struct_from_DC);
+
+    view *vp = dis_get_gra_view();
+    if (!vp) return TCL_ERROR;
+
+    objArr selected;
+    if (!is_viewERDHeader(vp)) return TCL_ERROR;
+
+    driver_instance->fill_array_with_selected_appnodes(vp, selected, 0);
+
+    Obj* item;
+    int need_to_regenerate_view = 0;
+
+    ldrDCHierarchyPtr ldr_pt = checked_cast(ldrDCHierarchy,vp->get_ldrHeader());
+    if (!ldr_pt) return TCL_ERROR;
+
+    ForEach(item, selected)
+    {
+        if (is_dd_or_xref_node(RelationalPtr(item))) {
+           fsymbolPtr  item_xref = dd_or_xref_nodePtr(item)->get_xrefSymbol();
+           if (item_xref->xrisnotnull() && item_xref->get_kind() == DD_CLASS) { // FIX ME!
+              ldr_pt->remove_struct(item_xref);
+              need_to_regenerate_view = 1;
+           }
+        }
+    }
+
+    if (need_to_regenerate_view) {
+        driver_instance->regenerate_view(vp);
+        checked_cast(viewGraHeader, vp)->get_gra_interface()->RefreshWindow();
+    }
+
+    else {
+        // msg_error(TXT("No structs selected for removal: nothing to do."));
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_inh_change_attr_get_mask ------------------------------*/
+
+#ifdef SERVER
+int dis_inh_change_attr_get_mask (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_inh_change_attr_get_mask );
+  static char *RONE = "1";
+  static char *RZERO = "0";
+  char *pszResult = RZERO;
+  if(argc != 2)
+    printf("dis_inh_change_attr_get_mask: invalid number of arguments!!\n");
+  else
+  {
+    int nControl = atoi( argv[1] );
+    int attr = glob_inh_change_attr_mask;
+    switch( nControl )
+    {
+      case 0: //Init Access radio button set
+        if (attr & 0x0400)
+                pszResult = "Protected";
+        else if (attr & 0x0800)
+                pszResult = "Private";
+        else
+          pszResult = "Public";
+      break;
+      case 1: //Init Binding redio button set
+        if (attr & 0x0040)
+                pszResult = "Instance";
+        else if (attr & 0x0080)
+                pszResult = "Virtual";
+        else
+          pszResult = "Class";
+      break;
+      case 2: //Init Const checkbox
+        if (attr & 0x2000)
+          pszResult = RONE;
+      break;
+      case 3: //Init Volatile checkbox
+        if (attr & 0x4000)
+          pszResult = RONE;  
+      break;
+    }
+  }
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_sort_members ------------------------------*/
+
+#ifdef SERVER
+int dis_sort_members (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  
+  Initialize( dis_sort_members );
+  static const int LIST_MAX_TOKENS = 4;
+  int map_array[ LIST_MAX_TOKENS ]; 
+  if(argc != 5)
+    printf("dis_sort_members: invalid number of arguments!!\n");
+  else
+  {
+    viewClassNode *popnode = (viewClassNode *)atoi(argv[1]);
+    int sort_depth = atoi(argv[2]);
+    int order_choice = atoi(argv[3]);
+    char *order_list = argv[4];
+
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      viewGraHeader *vgh = checked_cast(viewGraHeader, pView);
+      oodt_sorter_types type = ALPHA_SORTER;
+      switch( order_choice )
+      {
+      case 0:
+        type = INHERITANCE_SORTER;
+      break;
+      case 1:
+        type = KIND_SORTER;
+      break;
+      case 2:
+        type = CATEGORY_SORTER;
+      break;
+      case 3:
+        type = ACCESS_SORTER;
+      break;
+      case 4:
+        type = ALPHA_SORTER;
+      break;  
+      }
+      memset( map_array, 0, sizeof( map_array ) );
+      //Get sort order array from TCL list
+      static char seps[]   = " \t\n";
+      int i=0;
+      char *tok = strtok( order_list, seps );
+      while( tok )
+      {
+        
+        if( i < LIST_MAX_TOKENS )
+          map_array[ i ] = atoi( tok );
+        i++;
+        tok = strtok( NULL, seps );
+      }
+      apl_OODT_setup_class_selection(popnode, pView);
+      if (sort_depth == 0)
+        apl_OODT_reset_sorting_order();
+      apl_OODT_apply_sort(vgh, type, map_array);
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+
+/*----------------------------- dis_sort_members_reset ------------------------------*/
+
+#ifdef SERVER
+int dis_sort_members_reset (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_sort_members_reset );
+  if(argc != 2)
+    printf("dis_sort_members_reset: invalid number of arguments!!\n");
+  else
+  {
+    viewClassNode *popnode = (viewClassNode *)atoi(argv[1]);
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      apl_OODT_setup_class_selection(popnode, pView);
+      apl_OODT_reset_sorting_order();
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_add_class_to_ERD ------------------------------*/
+
+#ifdef SERVER
+int dis_view_add_class_to_ERD (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Initialize( dis_view_add_class_to_ERD );
+
+    RTListServer* r = RTListServer::find (atoi (argv[1]));
+    if (!r) return TCL_ERROR;
+
+    view *vp = dis_get_gra_view();
+    if (!vp) return TCL_ERROR;
+
+    if (!is_viewERDHeader(vp)) return TCL_ERROR;
+
+    ldrERDHierarchyPtr ldr_pt = checked_cast(ldrERDHierarchy,vp->get_ldrHeader());
+    if (!ldr_pt) return TCL_ERROR;
+
+    bool need_to_regenerate_view = false;
+
+    symbolArr symbols;
+    r->getSelArr (symbols);
+ 
+    symbolPtr sel;
+    ForEachS(sel, symbols) {
+      if (      sel->get_kind() == DD_CLASS || 
+                sel->get_kind() == DD_SUBSYSTEM) {
+         ldr_pt->add(sel);
+         need_to_regenerate_view = true;
+      }
+
+//      else msg_error(TXT("Cannot add %s to ERD: wrong kind of entity."),
+//                   selection->get_name());
+    }
+
+   if (need_to_regenerate_view) {
+      driver_instance->regenerate_view(vp);
+      checked_cast(viewGraHeader, vp)->get_gra_interface()->RefreshWindow();
+   }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+
+
+/*----------------------------- dis_view_add_struct_to_DC ------------------------------*/
+
+#ifdef SERVER
+int dis_view_add_struct_to_DC (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Initialize( dis_view_add_struct_to_DC );
+
+    view *vp = dis_get_gra_view();
+    if (!vp) return TCL_ERROR;
+
+    ldrDCHierarchyPtr ldr_pt = checked_cast (ldrDCHierarchy,vp->get_ldrHeader());
+    if (!ldr_pt) return TCL_ERROR;
+
+    RTListServer* r = RTListServer::find (atoi (argv[1]));
+    if (!r) return TCL_ERROR;
+
+    symbolArr symbols;
+    r->getSelArr (symbols);
+
+    bool need_to_regenerate_view = false;
+    symbolPtr selection;
+
+    ForEachS(selection, symbols) {
+        if (selection->get_kind() == DD_CLASS || selection->get_kind() == DD_SUBSYSTEM) {
+            ldr_pt->add(selection);
+            need_to_regenerate_view = true;
+        }
+//        else msg_error(TXT("Cannot add %s to Data Chart: wrong kind of entity."),
+//                   selection->get_name());
+    }
+
+    if (need_to_regenerate_view) {
+        driver_instance->regenerate_view(vp);
+        checked_cast(viewGraHeader, vp)->get_gra_interface()->RefreshWindow();
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+
+/*----------------------------- dis_graph_add ------------------------------*/
+
+#ifdef SERVER
+int dis_graph_add (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_graph_init );
+  if(argc < 3)
+    printf("dis_graph_init: invalid number of arguments!!\n");
+  else
+  {
+    RTListServer *source_rtl = RTListServer::find (atoi(argv[1]));
+    if( source_rtl )
+    {
+        // Code changed to insert all symbols needed to be in list
+        // in a single operation (to reduce communication flow & to prevent lockup)
+        symbolArr to_insert = source_rtl->getArr();
+        int       changed   = 0;
+        for( int i=2; i < argc; i++ ){ 
+          RTListServer *initial_rtl = RTListServer::find (atoi(argv[i]));
+          if( initial_rtl )
+            {
+              symbolArr sel;
+              initial_rtl->getSelArr( sel );
+              if( sel.size() > 0 )
+                {
+                  symbolPtr x_sym;
+                  ForEachS(x_sym, sel) 
+                    {
+                      if(!to_insert.includes(x_sym)){
+                        changed = 1;
+                        to_insert.insert_last(x_sym);
+                      }
+                    }
+                }
+            }
+        }
+        if(changed){
+          source_rtl->clear();
+          source_rtl->insert(to_insert);
+        }
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_graph_move ------------------------------*/
+
+#ifdef SERVER
+int dis_graph_move (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_graph_move );
+  if(argc != 3)
+    printf("dis_graph_move: invalid number of arguments!!\n");
+  else
+  {
+    RTListServer *source_rtl = RTListServer::find (atoi(argv[1]));
+    RTListServer *target_rtl = RTListServer::find (atoi(argv[2]));
+    if( source_rtl && target_rtl )
+    {
+      symbolArr sel;
+      source_rtl->getSelArr( sel );
+      if( sel.size() > 0 )
+      {
+              symbolArr source ( source_rtl->getArr() );
+        symbolArr target ( target_rtl->getArr() );
+        symbolPtr x_sym;
+              ForEachS(x_sym,sel) 
+        {
+                if (source.includes(x_sym))
+                        source.remove(x_sym);
+                if (!target.includes(x_sym))
+                        target.insert_last(x_sym);
+        }
+        source_rtl->clear();
+        source_rtl->insert( source );
+        target_rtl->clear();
+        target_rtl->insert( target );
+      }
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_graph_remove ------------------------------*/
+
+#ifdef SERVER
+int dis_graph_remove (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_graph_remove );
+  if(argc != 3)
+    printf("dis_graph_remove: invalid number of arguments!!\n");
+  else
+  {
+    RTListServer *rtl1 = RTListServer::find (atoi(argv[1]));
+    RTListServer *rtl2 = RTListServer::find (atoi(argv[2]));
+    if( rtl1 && rtl2 )
+    {
+      symbolArr sel;
+      rtl1->getSelArr( sel );
+      rtl2->getSelArr( sel );
+      if( sel.size() > 0 )
+      {
+              symbolArr arr1 ( rtl1->getArr() );
+        symbolArr arr2 ( rtl2->getArr() );
+        symbolPtr x_sym;
+              ForEachS(x_sym,sel) 
+        {
+                if (arr1.includes(x_sym))
+                        arr1.remove(x_sym);
+                if (arr2.includes(x_sym))
+                        arr2.remove(x_sym);
+        }
+        rtl1->clear();
+        rtl1->insert( arr1 );
+        rtl2->clear();
+        rtl2->insert( arr2 );
+      }
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_graph_create ------------------------------*/
+
+#ifdef SERVER
+int dis_graph_create (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_graph_create );
+  char pszResult[11];
+  int nResult = 0;
+  if(argc != 6)
+    printf("dis_graph_create: invalid number of arguments!!\n");
+  else
+  {
+    int fIsOKPressed = atoi(argv[1]);
+    RTListServer *source_rtl = RTListServer::find (atoi(argv[2]));
+    RTListServer *target_rtl = RTListServer::find (atoi(argv[3]));
+    int fUseDeviceName = atoi( argv[4] );
+    char *pszDeviceName = argv[5];
+    if( source_rtl && target_rtl )
+    {
+      symbolArr source ( source_rtl->getArr() );
+      symbolArr target ( target_rtl->getArr() );
+      if( !(fUseDeviceName && strlen( pszDeviceName )) )
+        pszDeviceName = NULL;
+      nResult = build_graph( source, target, pszDeviceName );
+      // In case of failure to build a graph or if Apply was pressed, 
+      // reset source and target RTLs
+      if( !nResult || !fIsOKPressed )
+      {
+        source_rtl->clear();
+        source_rtl->insert( source );
+        target_rtl->clear();
+        target_rtl->insert( target );
+
+      }
+    }
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_dc_get_rel_filter_result ------------------------------*/
+
+#ifdef SERVER
+int dis_dc_get_rel_filter_result (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  char pszResult[11];
+  Initialize( dis_dc_get_rel_filter_result );
+  int nResult = 0;
+  if(argc != 2) 
+    printf("dis_dc_get_rel_filter_result: invalid number of arguments!!\n");
+  else 
+  {
+    int nCheckBox = atoi(argv[1]);
+    int nMask = get_dc_builtin_rel_mask( nCheckBox );
+    int nFilter = 0;            
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      ldrPtr ldrpt = pView->get_ldrHeader();
+      if( is_ldrDCHierarchy(ldrpt) )
+              nFilter = ldrDCHierarchyPtr(ldrpt)->builtin_relations_filter();
+    }
+    nResult = nFilter & nMask;
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_dc_build_mask ------------------------------*/
+
+#ifdef SERVER
+int dis_dc_build_mask (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  char pszResult[11];
+  Initialize( dis_dc_build_mask );
+  int nResult = 0;
+  if(argc != 4)
+    printf("dis_dc_build_mask: invalid number of arguments!!\n");
+  else 
+  {
+    nResult = atoi( argv[1] );
+    int nCheckBox = atoi( argv[2] );
+    int fIsChecked = atoi( argv[3] );
+    if( fIsChecked )
+      nResult |= get_dc_builtin_rel_mask( nCheckBox );
+  }
+  OSapi_sprintf(pszResult, "%d", nResult);
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_dc_show_builtin ------------------------------*/
+
+#ifdef SERVER
+int dis_dc_show_builtin (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_dc_show_builtin );
+  if(argc != 2)
+    printf("dis_dc_show_builtin: invalid number of arguments!!\n");
+  else
+  {
+    int nFilter = atoi( argv[1] );
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      ldrPtr ldrpt = pView->get_ldrHeader();
+      if( is_ldrDCHierarchy(ldrpt) )
+              ldrDCHierarchyPtr(ldrpt)->filter_builtin_relations( nFilter );
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+/*----------------------------- dis_dc_show_members ------------------------------*/
+
+#ifdef SERVER
+int dis_dc_show_members (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_dc_show_members );
+  if(argc != 4)
+    printf("dis_dc_show_members: invalid number of arguments!!\n");
+  else
+  {
+    view *pView = dis_get_gra_view();
+    if( pView )
+    {
+      viewGraHeader *vh = checked_cast( viewGraHeader, pView );
+      viewClass_mixin *popup_node = (viewClass_mixin *)atoi(argv[1]);
+      int fUseName = atoi( argv[2] );
+      char *name_filter = argv[3];
+      if( !fUseName || *name_filter == '\0')
+        name_filter = NULL;
+   
+      apl_OODT_set_disp_selection(popup_node, vh, member_attributes(show_methods | show_data |
+        show_instance_members | show_public_members), name_filter);
+    }
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_display_query_and_fetch ------------------------------*/
+
+#ifdef SERVER
+int dis_display_query_and_fetch (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_display_query_and_fetch );
+  static char *pszTRUE = "1";
+  static char *pszFALSE = "0";
+  char *pszResult = pszFALSE;
+  if(argc != 2)
+    printf("dis_display_query_and_fetch: invalid number of arguments!!\n");
+  else
+  {
+    symbolArr *pArr = (symbolArr *)atoi(argv[1]);
+    symbolArr &files_needed = *pArr;
+    symbolArr files_to_fetch;
+    projNodePtr home = projNode::get_home_proj();
+    for (int i = 0; i < files_needed.size(); i++) 
+    {
+      if (!files_to_fetch.includes(files_needed[i])) 
+      {
+        if (!home->find_module(files_needed[i].get_name())) 
+        {
+          files_to_fetch.insert_last(files_needed[i]);
+        }
+      }
+    }
+    int nSize = files_to_fetch.size();
+    if ( nSize > 0) 
+    {
+      char *pszIsOK = NULL;
+      //Set Files list variable in TCL
+      genString fetch_list;
+      for (int i = 0; i < nSize; i++)
+      {
+        fetch_list += " {";
+        fetch_list += (files_to_fetch[i]->get_name());
+        fetch_list += "}";
+      }
+      Tcl_SetVar(g_global_interp, "FETCH_LIST", (char *)fetch_list.str(), TCL_GLOBAL_ONLY);
+      if( Tcl_Eval( g_global_interp, "dis_prompt Query&Fetch \"Files to Fetch\"" ) == TCL_OK )
+        pszIsOK = g_global_interp->result;
+      Tcl_SetVar(g_global_interp, "FETCH_LIST", "", TCL_GLOBAL_ONLY);
+      if (pszIsOK && atoi(pszIsOK) == 1) 
+      {
+        // checkout the files;
+        ste_finalize(0);
+        pszResult = pszTRUE;
+        for (i = 0; i < nSize; i++) 
+        {
+          symbolPtr sym = files_to_fetch[i];
+          projModulePtr local_mod = projModule::get_module(sym);
+          if (!local_mod)
+            local_mod = projModule::copy_module(sym);
+          if (!local_mod) 
+          {
+            dis_message (C_UIGLOBALS, MSG_ERROR, "M_COULDNOTFETCH", sym.get_name());
+            pszResult = pszFALSE;
+            break;
+          }
+        }
+      } 
+    }
+    else
+      pszResult = pszTRUE;
+  }
+  Tcl_SetResult (interp, pszResult, TCL_VOLATILE);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_init_default_boilerplates ------------------------------*/
+
+#ifdef SERVER
+int dis_init_default_boilerplates (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  Initialize( dis_init_default_boilerplates );
+  if(argc != 2)
+    printf("dis_init_default_boilerplates: invalid number of arguments!!\n");
+  else
+  {
+    int from_cancel = atoi(argv[1]);
+    init_default_boilerplates( from_cancel );
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_Print ------------------------------*/
+
+#ifdef SERVER
+int dis_view_Print (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    Viewer *vr;
+    View *v;
+    Viewer::GetExecutingView(vr, v);
+    vprint *Printer; 
+        if(!(Printer = vr->GetPrinter()))    Printer = vr->CreatePrinter();
+    if(Printer) {
+           Printer->SetJobNotifyProc(confirmJobNotify);
+           Printer->ConfirmJob();
+           vr->DestroyPrinter();
+        }
+        return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view_PrintSetup ------------------------------*/
+
+#ifdef SERVER
+int dis_view_PrintSetup (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+        Viewer *vr;
+    View *v;
+    Viewer::GetExecutingView(vr, v);
+    vprint *Printer; 
+        if(!(Printer = vr->GetPrinter()))    Printer = vr->CreatePrinter();
+    if(Printer) 
+           Printer->ConfirmStyle();
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval ------------------------------*/
+
+#ifdef CLIENT
+static _vstrptr rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISview_app = app;
+    static _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval in DISview - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static _vstrptr dis_servereval (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    static vstr* myresult = NULL;
+    if (!myapp) 
+        myapp = DISview_app;
+    int e = myapp->eval((vchar*)str);
+    myresult = NULL;
+    myresult = myapp->getEvalResult();
+    return myresult;
+}
+
+
+static void dis_servereval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_servereval (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval_async ------------------------------*/
+
+#ifdef CLIENT
+static async rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISview_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval_async in DISview - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval_async"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static async dis_servereval_async (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    if (!myapp) 
+        myapp = DISview_app;
+    int e = myapp->eval((vchar*)str);
+    return;
+}
+
+
+static void dis_servereval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    dis_servereval_async (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISview_eval ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_DISview_eval (Application* app, _vstrptr str)
+{
+    DISview_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISview_eval in DISview - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISview_eval (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISview_eval"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_DISview_eval (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_DISview_eval (_vstrptr str)
+{
+    int e = DISview_app->eval((vchar*)str);
+    static vstr* result = NULL;
+    result = DISview_app->getEvalResult();
+    return result;
+}
+
+
+void dis_DISview_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISview_eval (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_DISview_eval (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISview_eval (Application* app, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISview_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_DISview_eval_async (Application* app, _vstrptr str)
+{
+    DISview_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISview_eval_async in DISview - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISview_eval_async (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISview_eval_async"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_DISview_eval_async (_vstrptr str)
+{
+   int e = DISview_app->eval((vchar*)str);
+}
+
+
+void dis_DISview_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISview_eval_async (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    dis_DISview_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISview_eval_async (Application* app, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+#ifdef SERVER
+
+static int serverInited = 0;
+
+#ifdef _WIN32
+#include "Interpreter.h"
+int build_graph(symbolArr& source,symbolArr& target, char* device_name);
+static int CreateCallGraph(ClientData cd, Tcl_Interp *interp, int argc, char *argv[])
+{
+    Interpreter *i = (Interpreter *)cd;
+    symbolArr source;
+    symbolArr target;
+        if(argc<3) {
+            Tcl_AppendResult(i->interp, "Usage : call_graph <source_set> <dest_set> {<device>}",NULL);
+            return TCL_ERROR;
+        }
+        if(i->ParseArgString((char *)argv[1], source)!=0)  return TCL_ERROR;
+        if(i->ParseArgString((char *)argv[2], target)!=0)  return TCL_ERROR;
+        if(argc==3)
+            build_graph(source,target,NULL);
+        else
+            build_graph(source,target,argv[3]);
+    return TCL_OK;
+}
+#endif
+
+void DISviewServerInit(){
+    DISview_app = Application::findApplication("DISview");
+    if (!serverInited) {
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_has_selection", dis_calltree_has_selection, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_is_prune_foreign", dis_calltree_is_prune_foreign, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_is_prune_automatic", dis_calltree_is_prune_automatic, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_prune", dis_calltree_prune, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_showpaths_get_direct", dis_calltree_showpaths_get_direct, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_showpaths_direct_enabled", dis_calltree_showpaths_direct_enabled, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_calltree_show", dis_calltree_show, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_erd_dc_get_filter", dis_erd_dc_get_filter, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_erd_dc_filter", dis_erd_dc_filter, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_edr_get_rel_filter_result", dis_edr_get_rel_filter_result, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_erd_build_mask", dis_erd_build_mask, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_erd_show_builtin", dis_erd_show_builtin, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_is_member_box_checked", dis_is_member_box_checked, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_get_name_filter_text", dis_get_name_filter_text, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_build_members_mask", dis_build_members_mask, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_show_members", dis_show_members, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_oodt_init_sel_list", dis_oodt_init_sel_list, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_show_related", dis_show_related, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_zoomIn", dis_view_zoomIn, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_zoomOut", dis_view_zoomOut, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_zoomToFit", dis_view_zoomToFit, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_zoomReset", dis_view_zoomReset, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_init_add_inheritance", dis_init_add_inheritance, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_add_inheritance_cleanup", dis_add_inheritance_cleanup, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_expand", dis_view_expand, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_collapse", dis_view_collapse, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_clear_selection", dis_view_clear_selection, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_refresh", dis_view_refresh, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_set_pref", dis_view_set_pref, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_load_pref", dis_view_load_pref, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_inher_expert_mode", dis_view_inher_expert_mode, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_display_args", dis_view_display_args, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_enable_attrib", dis_view_enable_attrib, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_enable_ops", dis_view_enable_ops, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_remove_class_from_ERD", dis_remove_class_from_ERD, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_remove_struct_from_DC", dis_remove_struct_from_DC, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_inh_change_attr_get_mask", dis_inh_change_attr_get_mask, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_sort_members", dis_sort_members, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_sort_members_reset", dis_sort_members_reset, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_add_class_to_ERD", dis_view_add_class_to_ERD, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_add_struct_to_DC", dis_view_add_struct_to_DC, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_graph_add", dis_graph_add, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_graph_move", dis_graph_move, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_graph_remove", dis_graph_remove, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_graph_create", dis_graph_create, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_dc_get_rel_filter_result", dis_dc_get_rel_filter_result, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_dc_build_mask", dis_dc_build_mask, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_dc_show_builtin", dis_dc_show_builtin, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_dc_show_members", dis_dc_show_members, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_display_query_and_fetch", dis_display_query_and_fetch, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_init_default_boilerplates", dis_init_default_boilerplates, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_Print", dis_view_Print, NULL, NULL);
+        Tcl_CreateCommand (DISview_app->interp(), "dis_view_PrintSetup", dis_view_PrintSetup, NULL, NULL);
+ 
+        #ifdef _WIN32
+          new cliCommandInfo("call_graph", CreateCallGraph);
+        #endif
+        
+        serverInited = 1;
+    }
+}
+
+
+vscrap* DISviewServer(    vservicePrimitive *primitive,
+    vsession          *session,
+    vscrap            *scrapArgs)
+{
+    DISviewServerInit();
+
+    DISview_app = Application::findApplication(session);
+    vscrapArray *sarg=0;
+    int array_index,max_index,array_index2;
+    vstr *command;
+    primitive->GetArgs(scrapArgs,&sarg);
+    array_index=0;array_index2=0;
+    max_index=vscrapGetArrayCount(sarg);
+    demarshall__vstrptr (&command, g_take());
+    vscrap *real_result=vscrapCreateArray();
+
+    if (strcmp((char*)command, "dis_servereval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISview_eval") == 0) dis_DISview_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISview_eval_async") == 0) dis_DISview_eval_async_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+
+    vscrap *temp= primitive->MakeReturnScrap(session,real_result);
+    if (real_result) delete real_result;
+    if (command) vstrDestroy (command);
+    if (sarg) delete sarg;
+    return temp;
+}
+
+#endif /* SERVER */

@@ -1,0 +1,327 @@
+.TH ParaSET 1 " June 17, 1993" 
+.SH NAME
+ParaSET \- Software Emancipation Technology's parametric software development tool.
+.SH SYNOPSIS
+.B paraset [-d[isplay] 
+.I x-display
+] [-psethome 
+.I directory
+] [-noepoch] [-P 
+.I pdf_pathname
+] [-exec
+.I executable
+] [-where]
+
+.B paraset -batch [arg1...argn]
+
+.B paraset [-start_server] [-stop_server] [-show_users] [-show_log] [-license_file] [-license_log]
+
+.SH OPTIONS  
+
+-batch Run the batch mode parametric model builder. See BATCH MODE below for 
+more details.
+
+-start_server...-license_log Perform license management functions. See LICENSE FUNCTIONS below for more details.
+
+-d[isplay] Set the DISPLAY environment variable to 
+.I x-display. 
+This is useful if you want to run ParaSET remotely from another
+workstation. For example, if your workstation host name is ilm and you
+wish to run the ParaSET while remotely logged into workstation
+sprockets, you would type 
+.B paraset -d ilm:0 
+from an 
+.B sprockets 
+command line. (You could also type 
+.B paraset -d ilm:0.n, 
+where 
+.I n
+is the number of a specific screen, per standard X-windows convention.) By 
+default, windows come up on whatever screen you name in your DISPLAY 
+environment variable, so this provides a way of overriding that behavior 
+when necessary. 
+
+-psethome  Set the PSETHOME environment variable to 
+.I directory.
+This determines which ParaSET installation directory gets used, and is
+useful if you have multiple copies of ParaSET.
+
+-noepoch  Invoke ParaSET without the EMACS editor (Epoch). This is
+useful if you want to bring up ParaSET very quickly and do not need to
+use the Para/PROGRAMMER or Para/DOC text editors.
+
+-P  Specify which Project Definition File to use. This overrides the setting 
+of the PSET_PROJECT_FILE environment variable. 
+
+-exec Specify an executable other than the default.
+
+-where Display the path of the executable that will be invoked by a default paraset command.
+
+Availability of optional product modules is
+determined by your license. ParaSET modules include:
+.IP 
+.B
+Para/PROGRAMMER (core)
+
+.B
+Para/DOC (core)
+
+.B
+Para/DESIGNER (core)
+
+.B
+Para/DEBUGGER (optional)
+
+.B
+Para/ANALYZER (optional)
+
+.B
+Para/C++ (optional)
+
+.LP
+
+See ParaSET online documentation for more information.
+
+.SH DESCRIPTION 
+
+ParaSET is Software Emancipation's parametric software development 
+environment, featuring Omni-Directional Associativity(TM), change
+propagation, mixed-mode debugging option, code analyzer option, design
+tools, integrated code and document editors and views, hyperlinking, and 
+source code browsing.
+
+You or your system administrator must set up the ParaSET license 
+manager before you can execute the paraset command.
+
+The paraset command performs one of three functions, depending on the arguments
+you pass it:
+
+1. Start ParaSET -- when invoked with either no arguments, or with some 
+combination of -exec, -psethome, -noepoch, and/or -display. You first see
+the ParaSET copyright notice and version notification, and ParaSET places you 
+in the Browser, from which you can open projects, browse files, access
+online help, and open views and editors on your software.
+
+2. Display the default ParaSET executable path -- when invoked with -where.
+
+3. Start ParaSET batch mode -- when invoked with -batch, plus batch-related 
+arguments. Batch mode builds or updates a ParaSET parametric model of your
+software, as described below.
+
+4. Perform license managment chores -- when invoked with any of the license 
+manager arguments, which are described in License Mode below, and in detail
+in the ParaSET System Administration book.
+
+.SH BATCH MODE
+
+ParaSET's parametric model building utility.
+
+.SH BATCH MODE SYNOPSIS
+paraset -batch [-r] [-l] [-c
+.I file1.c 
+[
+.I filen.c ...
+]] [-C 
+.I file1.C 
+[
+.I filen.C
+]] -x
+.I /projectname
+-P 
+.I [pdffile1 [pdffilen ...]] 
+[-e] [-s] [-m
+.I /projectname1 [/projectnamen ...]] 
+[-t] [-h] [-u]
+
+.SH BATCH MODE OPTIONS  
+
+-r Remove the specified files from the parametric model.
+
+-l Load the specified files into the parametric model. This is the
+default, and "-l" only needs to be specified if you have already used
+"-r" in the command line.
+
+-c The following files are C source files.
+
+-C The following files are C++ source files.
+
+-x Use the parametric model (.pmod.) files for the named project;
+create them if not found. Note: .I projectname must start with a slash
+(/).
+
+-e Exclude any include files (do not create .pset files for them).
+
+-m Merge the specified pmod file(s) into the pmod file 
+specified with the -x argument. Note: 
+.I
+projectname 
+must start with a slash (/).
+
+-P Use the specified Project Definition File(s) (.pdf).
+
+-t Make the specified parametric model "tighter" (compact).
+
+-s Create and save .pset files for all files visited during this operation.
+
+-h Display a brief help summary of these arguments.
+
+-u Update the parametric model from all .pset files in the specified project; reparse 
+any touched source files; import any files that do not have .pset files (newly 
+created .pset files will only be saved if you specify the -s switch). The source
+files include all c files, c++ files, the header files included by these c files 
+and c++ files, and the .txt files.  
+
+.SH BATCH MODE DESCRIPTION 
+
+.I paraset -batch
+generates parametric model (pmod) files containing information about 
+the contents of the specified files. ParaSET uses parametric models 
+to quickly locate information, propagate changes, and navigate
+hyperlinks across your software. 
+
+ParaSET automatically creates and updates parametric models for your
+projects as you import and save files. However, you use batch mode to
+create a parametric model at the beginning of a project to build
+knowledge about all your files in a single batch operation. A commonly
+used form of the command is:
+
+.IP
+.B paraset -batch -x /<projectname> -P <pdffilepath> -u -s >& <outfile.out>
+
+.LP This creates and updates a parametric model from all files 
+encompassed by project <projectname>, as defined in Project Definition 
+File <pdffilepath>, and creates and saves .pset files for all files in 
+the project. See below for a description of all arguments. 
+
+All output is directed to file outfile.out. You should examine this file
+for any warning or error messages; look particularly for messages 
+that request you to contact Software Emancipation Technology, Inc. 
+
+You may want save your commonly-used paraset -batch command(s) in an alias
+or a script file for easy access. 
+
+Note that building the model is comparable to recompiling from 
+scratch. If your application is very big, you may want to ensure that 
+your pdf file breaks your application down into subprojects, and build 
+parametric models for one subproject at a time. 
+
+You can also use this utility to include information about files that 
+are not directly a part of your project.
+
+Batch mode also provides the ability to:
+
+  o rebuild a parametric model from the .pset files of the individual
+files in a project
+
+  o compact an existing parametric model
+
+  o merge information from one or more parametric models into the output 
+parametric model
+
+In most batch mode operations, you must specify a project name (with the
+-x argument) as well as the project definition file (.pdf) where that
+project is defined (with the -P argument).
+
+Parametric model file names are determined by the system. They are
+currently named <projectname>.pmod.ind and <projectname>.pmod.sym, and their
+location is determined by the directory mapping to the specified
+project, as defined in the project definition file. In other words, if
+the root project TopProject maps to physical directory
+/users/jsmith/work/Foobar1000, the TopProject pmod file(s) will be
+created as /users/jsmith/work/Foobar1000/TopProject.pmod.*.
+
+Parametric model operations also affect or depend upon .pset
+files -- the ParaSET-created files that accompany each source and
+document file you import into ParaSET.  For example, if you use
+batch mode to import a group of files into ParaSET, the utility not only
+creates the pmod files, but also creates .pset files for each of the
+files it reads. Likewise, you can use batch mode to rebuild a lost 
+parametric model by reading the contents of existing .pset files.
+
+.SH BATCH MODE EXAMPLES
+
+1.  .I Create a parametric model for a subproject consisting of C++
+files, but do not create .pset files for Include files: 
+
+.IP 
+.B paraset -batch -e -C *.C -x /TopProject/SubProject -P /users/jsmith/my_projs.pdf 
+
+.LP This creates parametric model files in the
+directory that maps to project /TopProject/SubProject, as defined in
+J. Smith's project definition file (my_projs.pdf). Each of the .C
+files will also get a .pset file (assuming they do not already have
+them). You might build parametric models for subprojects if you have 
+a very large application and just want to get started on a small 
+area initially.
+
+2.  
+.I 
+Merge together two subproject parametric models into a large "master" 
+parametric model:
+.IP 
+.B 
+paraset -batch -m /TopProject/SubProject1 /TopProject/SubProject2 -x
+/TopProject -P /users/jsmith/my_projs.pdf 
+.LP 
+This merges two parametric models from subprojects of TopProject into
+the root TopProject parametric model (located in the directory 
+mapping to the /TopProject project). This kind of operation is useful
+for very large applications, where you might want to start with a
+few subsections of the code, instead of doing the entire application
+all at once.
+
+3. 
+.I 
+Reconstruct a parametric model from the .pset files:
+.IP
+.B
+paraset -batch -u -x /TopProject -P /users/jsmith/my_projs.pdf
+.LP
+Builds parametric model files in the directory mapping to project
+/TopProject, based on all the .pset files within TopProject, as defined
+by J. Smith's project definition file (my_projs.pdf).  This is useful
+if you accidentally delete the parametric model files for your project, or if
+you want to update your model in a batch operation instead of with
+every PUT operation.
+
+.SH LICENSE MODE
+
+Several paraset arguments are devoted to control of the ParaSET License Manager:
+
+-start_server Start up the license manager daemon. When restarting the daemon, you should preface this command with -stop-server.
+
+-stop_server Halt the license manager daemon.
+
+-show_users Display current status of the lecense manager (equivalent to "lmstat").
+
+-show_log Displays the contents of the license manager log file (by default, /usr/tmp/paraset_lmgr.log).
+
+-license_file Specify the license file to use in concert with one of the other license manager arguments.
+
+-license_log Specify the file that the -show_log argument should use.
+
+See the FLEXlm End User Guide for more information about the license manager.
+
+.SH FILES
+/users/paraset/*
+
+.SH "SEE ALSO"
+
+.I ParaSET Tutorial; 
+.I ParaSET Administration;
+.I FLEXlm End User Guide 
+ParaSET online documentation
+
+.SH KNOWN ISSUES 
+See the release notes.
+
+.SH COPYRIGHT 
+Copyright 1992, 1993, Software Emancipation Technology. 
+
+
+
+
+
+
+
+

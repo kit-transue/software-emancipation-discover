@@ -1,0 +1,39 @@
+
+file_name=${1:-0}
+cpp_file=${2:-$PSET_CPP_FILE}
+start_line=${3:-1}
+end_line=${4:-10000000}
+
+truncate < $cpp_file | awk '
+
+/^# / {
+       if(!$3) {
+         line = $2;
+         if(fff==file) print "MACRO arg", line, file;
+       } else {
+         line=$2; 
+         path=$3;
+# remove quotes
+         file = substr(path, 2, length(path) - 2);
+         while(ind=index(file, "/")){
+           file = substr(file, ind+1);
+         }
+         if(fff==0) fff=file;
+         if(file==fff){
+            if(first_time==0)  print file, start, end, path;
+            first_time=1;
+         }
+        }
+      }
+
+file==fff && $1 != "#" {
+   if((NF>0) && (line > start-1) && (line < end+1))
+                                   print  line, $0;
+   ++line;
+ }
+
+'  fff=$file_name start=$start_line end=$end_line 
+
+
+
+

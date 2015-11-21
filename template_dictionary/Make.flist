@@ -1,0 +1,4 @@
+CXXROOTS=\
+    impact_templates\
+    cmIntegration_templates\
+    model_server_templates

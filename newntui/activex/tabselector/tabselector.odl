@@ -1,0 +1,80 @@
+// TabSelector.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (TabSelector.tlb) that will become a resource in
+// TabSelector.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(ADC2DFD1-1E61-11D2-AEF3-00A0C9B71DC4), version(1.0),
+  helpstring("TabSelector OLE Control module"), control ]
+library TABSELECTORLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CTabSelectorCtrl
+
+	[ uuid(ADC2DFD2-1E61-11D2-AEF3-00A0C9B71DC4),
+	  helpstring("Dispatch interface for TabSelector Control"), hidden ]
+	dispinterface _DTabSelector
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTabSelectorCtrl)
+			[id(1)] IDispatch* DataSource;
+			[id(2)] BSTR OutputVariable;
+			[id(3)] BSTR SelectionVariable;
+			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+			[id(4)] BSTR SelectedCategories;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTabSelectorCtrl)
+			[id(5)] BSTR AccessFromName(BSTR name);
+			[id(6)] void Update();
+			[id(7)] BSTR AccessFromCategory(BSTR category);
+			[id(8)] BSTR AccessFromQuery(BSTR query);
+			[id(9)] void Unselect();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CTabSelectorCtrl
+
+	[ uuid(ADC2DFD3-1E61-11D2-AEF3-00A0C9B71DC4),
+	  helpstring("Event interface for TabSelector Control") ]
+	dispinterface _DTabSelectorEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CTabSelectorCtrl)
+			[id(1)] void ModeChanged(short modeID);
+			[id(2)] void CategoryChanged(BSTR catList);
+			[id(3)] void QueryChanged(BSTR name);
+			[id(4)] void GroupChanged(BSTR varName);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CTabSelectorCtrl
+
+	[ uuid(ADC2DFD4-1E61-11D2-AEF3-00A0C9B71DC4),
+	  helpstring("TabSelector Control"), control ]
+	coclass TabSelector
+	{
+		[default] dispinterface _DTabSelector;
+		[default, source] dispinterface _DTabSelectorEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

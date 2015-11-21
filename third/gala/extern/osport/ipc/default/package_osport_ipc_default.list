@@ -1,0 +1,10 @@
+
+TARGETS =
+	asyncInputWatcher.o
+
+VPATH =
+	/paraset/src/extern/osport/ipc/default
+
+CCINCLUDES =
+	/paraset/src/extern/osport/ipc/default
+	/paraset/src/extern/osport/include

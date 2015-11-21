@@ -1,0 +1,6 @@
+VPATH=/paraset/src/extern/ads/source
+
+TARGETS=\
+	parray.o \
+	pstack.o \
+	listitem.o

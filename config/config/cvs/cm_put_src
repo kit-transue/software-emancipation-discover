@@ -1,0 +1,38 @@
+#!/bin/sh -f
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeput ] ; then
+  $cm_optscripts/$cm_beforeput
+  if [ $? -ne 0 ] ; then 
+      echo "%% put fail" >&2
+      exit 1
+  fi
+fi
+
+revname=`$PSETCFG/util/cvs_find_name $cm_revision_file`
+dname=`$PSETCFG/util/cvs_find_dir`
+msg=`$PSETCFG/util/cm_quote ${cm_description:=/dev/null}`
+echo cvs commit $cm_options -m "$msg" $revname
+cd $dname
+pwd
+cvs commit $cm_options -m "$msg" $revname 
+# < ${cm_description:=/dev/null}
+
+if [ $? -eq 0 ] ; then 
+
+  rm -f $cm_workfile
+
+# Check out in pending area
+
+#  echo $cm_workfile $cm_sysfile $cm_revision_file
+#  echo "co -q $cm_options $cm_sysfile $cm_revision_file 2> /dev/null"
+#  co -q $cm_options $cm_sysfile $cm_revision_file 2> /dev/null
+
+  if [ "$cm_optscripts" != "" -a -f $cm_optscripts/$cm_afterput ] ; then
+    $cm_optscripts/$cm_afterput &
+  fi
+
+  exit 0
+
+fi
+
+exit 1

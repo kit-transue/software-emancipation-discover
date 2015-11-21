@@ -1,0 +1,59 @@
+figure_flags.sh
+
+This program provides a way of testing the behavior of the host compiler
+to determine which EDG flags should be used to emulate this behavior.
+
+Simply run figure_flags.sh from its current directory.  It will return
+a list of functions tested and flags that should be used to emulate the
+host CC compiler.
+
+You should pass the figure_flags.sh a compiler name and arguments for
+parsing a single source file and generating an object file, not an
+executable.  The default behavior is to call "CC -c" for each file.
+It should report an error during its initialization if the -c flag
+or its equivalent is left off.
+
+WATCH OUT FOR FLAGS THAT CONTROL THE COMPILER's BEHAVIOR!  If you generate
+this list without using these flags, and parse files with them, the flags
+determined may not emulate the compiler in this mode.
+
+Bugs:
+
+All files are parsed as C++ files; there is no provision for determining
+flags for C files.
+
+The directory "questionable_tests" contains potentially interesting test
+cases, but that do not generate failures or do not generate reliable
+failures.  They can be fed to some compilers by hand, and the the results
+may be useful.
+
+Some flags are only required in --no_microsoft mode.  These should be
+identified and reported as such; if you're running in the default mode,
+they're overly verbose.
+
+No provision is made to determine if --no_microsoft mode should be invoked.
+
+Some errors can be supressed by error number.  No attempt is made to
+identify these.  The recommended action is to parse with
+--display_error_number and supress those that can be supressed.
+
+The test suite is not complete.  There are not test cases for
+--early_tiebreaker, --guiding_decls, and some others.
+
+This suite is relatively new, and has little experience in the field.  It
+may be that some tests may be pass third-party compilers because of a
+behavior of that compiler that we have not anticipated, either in these
+suites or in our parser.  May the Buyer Beware!
+
+Output might want to be less verbose (no "Testing ...").
+
+The only provision for cleaning up is the "rm *.o" near the end of
+figure_flags.sh.  Some compilers generate temporary files for external
+template instantiation; these are not cleaned up.  On Windows, object
+files end with .obj extension.  The "rm" should probably be removed, and
+the directory simply wiped after the flags discovery process.  Passing
+a "syntax-only" option to the compiler, if available, is another option.
+
+
+Usage:
+	figure_flags.sh <compiler compiler-options>

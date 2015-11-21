@@ -1,0 +1,1969 @@
+ldrFUNC_CALL {
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 38, 10
+	graLayerNoNormal {
+		color  0, 50000, 0
+		moveto 20, 1
+		lineto 15, 1
+		lineto 4, 10
+		lineto 15, 19
+		lineto 20, 19
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 50000, 0
+		moveto 0, 1
+		lineto 5, 1
+		lineto 16, 10
+		lineto 5, 19
+		lineto 0, 19
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 16, 8
+		lineto 20, 8
+		lineto 20, 12
+		lineto 16, 12
+		lineto 16, 8
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 8
+		lineto 3, 8
+		lineto 3, 12
+		lineto 0, 12
+		lineto 0, 8
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 1, 20
+		lineto 20, 20
+		lineto 1, 10
+		fill
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 0
+		fill
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 20
+		lineto 16, 20
+		lineto 16, 10
+		fill
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 16, 0
+		lineto 16, 10
+		fill
+	}
+}
+
+ldrFUNC_CALL_ROOT {
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 38, 10
+	graLayerNoNormal {
+		color  55000, 0, 0
+		moveto 20, 1
+		lineto 15, 1
+		lineto 4, 10
+		lineto 15, 19
+		lineto 20, 19
+	        stroke
+	}
+	graLayerNoNote {
+		color 50000, 0, 0
+		moveto 0, 1
+		lineto 5, 1
+		lineto 16, 10
+		lineto 5, 19
+		lineto 0, 19
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 16, 8
+		lineto 20, 8
+		lineto 20, 12
+		lineto 16, 12
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 1, 20
+		lineto 20, 20
+		lineto 1, 10
+		fill
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 0
+		fill
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 8
+		lineto 3, 8
+		lineto 3, 12
+		lineto 0, 12
+		lineto 0, 8
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 20
+		lineto 16, 20
+		lineto 16, 10
+		fill
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 16, 0
+		lineto 16, 10
+		fill
+	}
+}
+
+ldrBLOCK {
+	text_mode textinside
+	attach cl 1, 1
+	attach cr 1, 1
+	attach uc 5, 5
+	attach lc 5, 0
+	graLayerNoNormal {
+		color  0, 55000, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 10
+		lineto 0, 10
+		lineto 0, 0
+	        stroke
+	}
+	graLayerNoNote {
+		color  0, 55000, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 10
+		lineto 0, 10
+		lineto 0, 0
+	        stroke
+	}
+}
+
+ldrOVAL {
+	text_mode textpositioned
+	attach cl 1, 1
+	attach cr 1, 1
+	attach uc 50, 22
+	attach lc 50, 0
+	graLayerNoNormal {
+		color  0, 55000, 0
+		ellipse 0, 0, 100, 22
+	        stroke
+	}
+}
+
+ldrBULLET {
+	text_mode textpositioned
+	attach cl 1, 10
+	attach cr 140, 10
+	attach uc 70, 20
+	attach lc 70, 0
+	graLayerNoNormal {
+		color  50000, 0, 50000
+		moveto 0, 0
+		lineto 140, 0
+		lineto 140, 20
+		lineto 0, 20
+		lineto 0, 0
+	        stroke
+	}
+}
+
+ldrCONTAINER {
+	text_mode textpositioned
+	attach cl 1, 1
+	attach cr 1, 1
+	attach uc 5, 5
+	attach lc 5, 0
+	graLayerNoNormal {
+		color  55000, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 10
+		lineto 0, 10
+		lineto 0, 0
+	        stroke
+	}
+}
+
+ldrENTRY_SYMBOL {
+	text_mode textpositioned
+	attach cl 1, 1
+	attach cr 1, 1
+	attach uc 4, 8
+	attach lc 4, 0
+	graLayerNoNormal {
+		color  50000, 60000, 0
+		moveto 0, 0
+		lineto 8, 0
+		lineto 8, 8
+		lineto 0, 8
+		lineto 0, 0
+	        stroke
+	}
+}
+
+ldrEXIT_SYMBOL {
+	text_mode textpositioned
+	attach cl 0, 4
+	attach cr 8, 4
+	attach uc 4, 8
+	attach lc 4, 0
+	graLayerNoNormal {
+		color  63000, 20000, 0
+		moveto 0, 0
+		lineto 8, 0
+		lineto 8, 8
+		lineto 0, 8
+		lineto 0, 0
+	        fill
+	}
+}
+
+ldrIF_FLOW {
+	text_mode textpositioned
+	attach cl 0, 50
+	attach cr 140, 50
+	attach uc 70, 100
+	attach lc 70, 0
+	graLayerNoNormal {
+		color  60000, 0, 60000
+		moveto 70, 0
+		lineto 140, 50
+		lineto 70, 100
+		lineto 0, 50
+		lineto 70, 0
+	        stroke
+	}
+}
+
+ldrFLOW_YES {
+	text_mode textright
+	text   yes
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 0, 0
+	attach lc 0, 0
+	graLayerNoNormal {
+		color  60000, 0, 60000
+		/* create empty picture, just to properly position text */
+		moveto 0, 0 
+		stroke
+		moveto 5, 35
+		stroke
+	}	
+}
+
+ldrFLOW_EMPTY {
+	text_mode textpositioned
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 0, 0
+	attach lc 0, 0
+	graLayerNoNormal {
+		moveto 0, 0
+		stroke
+	}	
+}
+
+ldrFLOW_LOOP {
+	text_mode textpositioned
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 73, 26
+	attach lc 0, 0
+	graLayerNoNormal {
+		color 0, 0, 60000
+		moveto 140, 20
+		lineto 140, 23
+		lineto 3, 23
+		lineto 3, 3
+		lineto 140, 4
+		lineto 140, 7
+		lineto 136, 7
+		lineto 142, 12
+		lineto 146, 7
+		lineto 144, 7
+		lineto 144, 1
+		lineto 0, 1
+		lineto 0, 26
+		lineto 144, 26
+		lineto 144, 20
+		fill
+		color  0, 0, 0
+		moveto 0, 0
+		lineto 147, 0
+		lineto 147, 27
+		lineto 0, 27
+		lineto 0, 0
+		stroke
+	}	
+}
+
+ldrFLOW_SWITCH {
+	text_mode textpositioned
+	attach cl 0, 40
+	attach cr 120, 40
+	attach uc 60, 80
+	attach lc 60, 0
+	graLayerNoNormal {
+		color 50000, 10000, 0
+		moveto 30, 0
+		lineto 90, 0
+		lineto 120, 40
+		lineto 90, 80
+		lineto 30, 80
+		lineto 0, 40
+		lineto 30, 0
+		stroke
+	}
+}
+
+ldrFLOW_CASE {
+	text_mode textpositioned
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 60, 20
+	attach lc 60, 0
+	graLayerNoNormal {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 90, 0
+		lineto 120, 20
+		lineto 30, 20
+		lineto 0, 0
+		stroke
+	}
+}
+
+ldrFLOW_DEFAULT {
+	text_mode textpositioned
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 60, 100
+	attach lc 60, 0
+	graLayerNoNormal {
+		color 50000, 10000, 0
+		moveto 30, 0
+		stroke
+	}
+}
+
+ldrSOMETHING {
+	text_mode textright
+	attach cl 6, 10
+	attach cr 0, 0
+	attach uc 60, 100
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image ISomething
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrENUM_TYPE {
+	text_mode textright
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 60, 100
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image IEnum
+		color 65000, 10000, 0
+		moveto 5, 0
+		lineto 27, 0
+		lineto 27, 20
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrCLASS_TYPE {
+	text_mode textright
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 60, 100
+	attach lc 7, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image IClass
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrVARIABLE_TYPE {
+	text_mode textright
+	attach cl 0, 10
+	attach cr 0, 0
+	attach uc 6, 10
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image IVariable
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrFUNCTION_TYPE {
+	text_mode textright
+	attach cl 0, 0
+	attach cr 0, 0
+	attach uc 60, 100
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image IFunction
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrLOOP {
+	text_mode textright
+	attach cl 0, 10
+	attach cr 0, 0
+	attach uc 6, 10
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image ILoop
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrSEM_TYPE {
+	text_mode textright
+	attach cl 7, 10
+	attach cr 1, 0
+	attach uc 1, 0
+	attach lc 10, 0
+	graLayerNoNormal {
+		color 65000, 10000, 0
+		moveto 7, 0
+		image ISem
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrIF {
+	text_mode textright
+	attach cl 0, 10
+	attach cr 0, 0
+	attach uc 6, 10
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image IIf
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrMULTIPLE_IF {
+	text_mode textpositioned
+	attach cl 0, 10
+	attach cr 0, 0
+	attach uc 60, 100
+	attach lc 10, 0
+	graLayerNoNormal {
+		moveto 7, 0
+		image IMultiIf
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 6, 15
+		stroke
+		moveto 3, 17
+		lineto 3, 13
+		stroke
+	}
+}
+
+ldrERD_CLASS {
+	text_mode textinside
+	attach lc 1, 13
+	attach cl 1, 13
+	attach cr 20, 13
+	graLayerNoNormal {
+		color  0, 0, 0
+		moveto 10, 0
+		lineto 1, 0
+		lineto 1, 26
+		lineto 10, 26
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 26
+		lineto 0, 26
+		stroke
+	}
+}
+
+ldrERD_MEMBER {	
+	text_mode textinside
+	attach lc 1, 0
+	attach cl 1, 10
+	attach cr 20, 10
+	graLayerNoNormal {
+		color  0, 0, 0
+		moveto 10, 0
+		lineto 1, 0
+		lineto 1, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+}
+
+ldrCURRENT_CLASS {   /* for inheritance view */
+	text_mode textinside
+	attach lc 1, 13
+	attach cl 3, 13
+	attach cr 15, 13
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  0, 0, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 10, 26
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 0, 26
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 6, 11
+		lineto 10, 11
+		lineto 10, 15
+		lineto 6, 15
+		lineto 6, 11
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 11
+		lineto 4, 11
+		lineto 4, 15
+		lineto 0, 15
+		lineto 0, 11
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPUBLIC_CLASS {  /* for inheritance view */
+	text_mode textinside
+	attach lc 1, 13
+	attach cl 3, 13
+	attach cr 15, 13
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  0, 55000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 10, 26
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 55000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 0, 26
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 6, 11
+		lineto 10, 11
+		lineto 10, 15
+		lineto 6, 15
+		lineto 6, 11
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 11
+		lineto 4, 11
+		lineto 4, 15
+		lineto 0, 15
+		lineto 0, 11
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPRIVATE_CLASS {  /* for inheritance view */
+	text_mode textinside
+	attach lc 1, 13
+	attach cl 3, 13
+	attach cr 15, 13
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 10000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 10, 26
+	        stroke
+	}
+	graLayerNoNote {
+		color 55000, 10000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 0, 26
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 6, 11
+		lineto 10, 11
+		lineto 10, 15
+		lineto 6, 15
+		lineto 6, 11
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 11
+		lineto 4, 11
+		lineto 4, 15
+		lineto 0, 15
+		lineto 0, 11
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPROTECTED_CLASS {  /* for inheritance view */
+	text_mode textinside
+	attach lc 1, 13
+	attach cl 3, 13
+	attach cr 15, 13
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 50000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 10, 26
+	        stroke
+
+	}
+	graLayerNoNote {
+		color 55000, 50000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 26
+		lineto 0, 26
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 6, 11
+		lineto 10, 11
+		lineto 10, 15
+		lineto 6, 15
+		lineto 6, 11
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 11
+		lineto 4, 11
+		lineto 4, 15
+		lineto 0, 15
+		lineto 0, 11
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPUBLIC_MEMBER_NOVICE {
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 20, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  0, 55000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 55000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPROTECTED_MEMBER_NOVICE {
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 20, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 50000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 55000, 50000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPRIVATE_MEMBER_NOVICE {
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 20, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 10000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color  55000, 10000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrHIDDEN_MEMBER_NOVICE {
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 20, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  65000, 65000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color  65000, 65000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPUBLIC_METHOD_NOVICE {
+	text_mode textinside
+	attach lc 100, 10
+	attach cl 100, 10
+	attach cr 300, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  0, 55000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 55000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPROTECTED_METHOD_NOVICE {
+	text_mode textinside
+	attach lc 100, 10
+	attach cl 100, 10
+	attach cr 300, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 50000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 55000, 50000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPRIVATE_METHOD_NOVICE {
+	text_mode textinside
+	attach lc 100, 10
+	attach cl 100, 10
+	attach cr 300, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 10000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color  55000, 10000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrHIDDEN_METHOD_NOVICE {
+	text_mode textinside
+	attach lc 100, 10
+	attach cl 100, 10
+	attach cr 300, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  65000, 65000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color  65000, 65000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPUBLIC_METHOD_PARAMETER_NOVICE {
+	text_mode textinside
+	attach lc 10, 10
+	attach cl 10, 10
+	attach cr 10, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  0, 0, 65000
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 65000
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPROTECTED_METHOD_PARAMETER_NOVICE {
+	text_mode textinside
+	attach lc 10, 10
+	attach cl 10, 10
+	attach cr 10, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  0, 0, 65000
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 65000
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrPRIVATE_METHOD_PARAMETER_NOVICE {
+	text_mode textinside
+	attach lc 10, 10
+	attach cl 10, 10
+	attach cr 10, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 10000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color  55000, 10000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+ldrHIDDEN_METHOD_PARAMETER_NOVICE {
+	text_mode textinside
+	attach lc 10, 10
+	attach cl 10, 10
+	attach cr 10, 10
+	attach uc 10, 20
+	attach lc 10, 0
+	graLayerNoNormal {
+		color  55000, 10000, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 10, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color  55000, 10000, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 5, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		stroke
+	}
+	graLayerNoCollapsed {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+	graLayerNoExpanded {
+		color 62000, 10000, 0
+		moveto 0, 15
+		lineto 5, 15
+		stroke
+	}
+}
+
+
+ldrSM_SUBSYSTEM {
+	text_mode textinside
+	attach lc 10, 0
+	attach cl 1, 13
+	attach cr 20, 0
+	graLayerNoNormal {
+		color  0, 0, 0
+		moveto 10, 0
+		lineto 5, 0
+		lineto 0, 6
+		lineto 0, 20
+		lineto 5, 26
+		lineto 10, 26
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 5, 0
+		lineto 10, 6
+		lineto 10, 20
+		lineto 5, 26
+		lineto 0, 26
+		stroke
+	}
+}
+
+ldrPRIVATE_SUBSYS_CLASS { /* subsystem view */
+	text_mode textinside
+	attach lc 1, 10
+	attach cl 1, 10
+	attach cr 38, 10
+	attach uc 20, 20
+	graLayerNoNormal {
+		color  0, 50000, 20000
+		moveto 20, 1
+		lineto 15, 1
+		lineto 4, 10
+		lineto 15, 19
+		lineto 20, 19
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 50000, 20000
+		moveto 0, 1
+		lineto 5, 1
+		lineto 16, 10
+		lineto 5, 19
+		lineto 0, 19
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 16, 8
+		lineto 20, 8
+		lineto 20, 12
+		lineto 16, 12
+		lineto 16, 8
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 8
+		lineto 3, 8
+		lineto 3, 12
+		lineto 0, 12
+		lineto 0, 8
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 1, 20
+		lineto 20, 20
+		lineto 1, 10
+		fill
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 0
+		fill
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 20
+		lineto 16, 20
+		lineto 16, 10
+		fill
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 0
+		fill
+	}
+}
+
+ldrXREF_METHOD { /* Call graph */
+	text_mode textinside
+	attach uc 20, 20
+	attach lc 20, 0
+	attach cl 20, 10
+	attach cr 38, 10
+	graLayerNoNormal {
+		color  0, 0, 0
+		moveto 20, 0
+		lineto 0, 0
+		lineto 0, 20
+		lineto 20, 20
+	        stroke
+	}
+	graLayerNoNote {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 20, 0
+		lineto 20, 20
+		lineto 0, 20
+		stroke
+	}
+	graLayerNoDecorationCR {
+		color 0, 0, 0
+                moveto 16, 8
+		lineto 20, 8
+		lineto 20, 12
+		lineto 16, 12
+		lineto 16, 8
+		stroke
+	}
+	graLayerNoDecorationCL {
+		color 0, 0, 0
+                moveto 0, 8
+		lineto 3, 8
+		lineto 3, 12
+		lineto 0, 12
+		lineto 0, 8
+		stroke
+	}
+	graLayerNoDecorationUL {
+		color 0, 0, 0
+		moveto 1, 20
+		lineto 20, 20
+		lineto 1, 10
+		fill
+	}
+	graLayerNoDecorationLL {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 0
+		fill
+	}
+	graLayerNoDecorationUR {
+		color 0, 0, 0
+		moveto 0, 20
+		lineto 16, 20
+		lineto 16, 10
+		fill
+	}
+	graLayerNoDecorationLR {
+		color 0, 0, 0
+		moveto 0, 0
+		lineto 10, 0
+		lineto 10, 0
+		fill
+	}
+}	

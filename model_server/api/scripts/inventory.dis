@@ -1,0 +1,869 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+###################################################
+#Interface for Inventory document
+#call function :  dis_inventory__inventory 
+#with parameters : scope mod_files mod_projects no_hierarchy criteria_filter complexity_theshold switches_treshold
+#                  do_standard_deviations subproject_info file_info macro_info variable_info class_info enum_info 
+#                  function_info template_info union_info typedef_info output_fname output_format 
+#
+#example: dis_inventory__inventory "/" 1 1 0 "" 0 0 1 1 1 1 1 1 1 1 1 1 1 "/usr/tmp/inventory.rep" "ASCII"
+#one page only: dis_inventory__inventory "/Project_Cobra" 0 0 1 "" 15 0 1 0 1 0 1 1 1 1 1 1 1 "/usr/tmp/inventory.rep" "ASCII"
+
+
+
+###################################################
+#Interface for Library Interface Document
+#call function : dis_inventory__library_interface
+#with parameters : project name/project set
+#
+#example: dis_inventory__library_interface /local
+#(redirect output to file if needed, use command "> or >>"; 
+# example : > /usr/tmp/lib.html { dis_inventory__library_interface /local })
+
+
+
+###################################################
+#Interface for Executable composition report
+#call function : dis_inventory__executable_decomposition
+#with parameters : set of projects
+#
+#example: dis_inventory__executable_decomposition "/exe1 /exe2"
+#(redirect output to file if needed, use command "> or >>"; 
+# Example : > /usr/tmp/decompose.rep { dis_inventory__executable_decomposition "/exe1 /exe2" }
+
+
+
+###################################################
+#Interface for Executable Used Report
+#call function : do_dormant
+#with parameters : project, root functions
+#
+#example: do_dormant /exe1 main
+#dormant code will be placed in the discover group/subsystem
+
+
+
+###################################################
+#Interface for IPC Report
+#call function : dis_inventory__IPCreport
+#with parameters : project/executable, ipc_rules 
+#
+#example: 
+#dis_inventory__IPCreport /local "select read write fread fwrite puts printf"
+#(redirect output to file if needed, use command "> or >>")
+
+
+
+###################################################
+#Interface for Database Report 
+#call function : dis_inventory__database_report
+#with parameters : project/executable, database_rules/strings
+#
+#example: 
+#dis_inventory__database_report /local "{sql select calls} {sql registry} {any string} {TEST}"
+#(redirect output to file if needed, use command "> or >>")
+#ouput: all functions what called with given strings/rules as argument(s)
+
+
+
+###################################################
+#Interface for Environment Use Report
+#call function : dis_inventory__EnvironmentReport
+#with parameters : project/executable, ipc_rules 
+#
+#example: 
+#dis_inventory__EnvironmentReport /local "{getenv} {putenv}"
+#(redirect output to file if needed, use command "> or >>")
+
+
+
+###################################################
+#Interface for Copied Code Report
+#call function : dis_inventory__copied_code_report
+#with parameters : threshold, set_of_functions
+#
+#example: 
+#set x [defines -functions /exe1]
+#dis_inventory__copied_code_report 0.7 $x 
+#(redirect output to file if needed, use command "> or >>")
+
+
+
+###################################################
+#Interface for Reused Tree Report
+#call function : dis_inventory__reused_tree
+#with parameters : root_function_1, root_function_2
+#
+#example: 
+#set x1 [filter cname==@main [defines -functions /exe1]]
+#set x2 [filter cname==@main [defines -functions /exe2]]
+#dis_inventory__reused_tree $x1 $x2
+#(redirect output to file if needed, use command "> or >>")
+
+###########################################################################
+
+proc dis_inventory__libs_decompose { arr_list } {
+    global dis_common_lib
+
+    if [info exists dis_common_lib] {unset dis_common_lib}
+    set cur 0
+    set all [new_set]
+    set ll [llength $arr_list]
+    for {set i 0} {$i < $ll} {incr i} {
+	set el [lindex $arr_list $i]
+	incr cur [size $el]
+	lappend sizes $cur
+	sappend $all $el
+    }
+    foreach name ii $all {
+	set ind 0
+	set cur [lindex $sizes 0]
+	set ll ""
+	foreach i $ii {
+	    while { $i > $cur } {
+		incr ind
+		set cur [lindex $sizes $ind]
+	    }
+	    lappend ll $ind
+	}
+	lappend dis_common_lib($ll) $name
+    }
+}
+
+proc dis_inventory__libs_decompose_no_statics { arr_list } {
+    global dis_common_lib
+
+    if [info exists dis_common_lib] {unset dis_common_lib}
+    set cur 0
+    set all [new_set]
+    set ll [llength $arr_list]
+    for {set i 0} {$i < $ll} {incr i} {
+	set el [lindex $arr_list $i]
+	incr cur [size $el]
+	lappend sizes $cur
+	sappend $all $el
+    }
+    foreach name ii $all {
+	set ind 0
+	set prev_ind -1
+	set do_append 1
+	set cur [lindex $sizes 0]
+	set ll ""
+	foreach i $ii {
+	    while { $i > $cur } {
+		incr ind
+		set cur [lindex $sizes $ind]
+	    }
+	    if { $prev_ind == $ind } { set do_append 0 } else { set prev_ind $ind }
+	    lappend ll $ind
+	}
+	if { $do_append != 0 } {
+	    lappend dis_common_lib($ll) $name
+	}
+    }
+}
+
+proc dis_inventory__report_same_static { sel } {
+    global dis_common_lib
+
+    foreach ex $sel {
+	set def [defines -functions $ex]
+	dis_inventory__libs_decompose $def
+	if { [llength [array names dis_common_lib]] > 1 } { 
+	    set func_list ""
+	    foreach nm [array names dis_common_lib] {
+		if { [llength $nm] != 1 } {
+		    foreach f $dis_common_lib($nm) { lappend func_list $f }
+		}
+	    }
+	    puts "Executable $ex:"
+	    puts "Following static functions repeated more than once:"
+	    foreach f $func_list {
+		puts "    $f"
+	    }
+	    puts ""
+	}
+    }
+}
+
+proc dis_inventory__report_same_static_count { proj } {
+    global dis_common_lib
+
+    set all [defines -functions $proj]]
+    foreach name ii $all {
+       if { [llength $ii] > 1 } {
+          puts "[size $ii]    $name"
+       }
+   }
+}
+
+proc dis_inventory__report_libs { sel } {
+    global dis_common_lib
+
+    foreach ex $sel { 
+	set def [defines -functions $ex]
+	lappend def_list $def
+    }
+    dis_inventory__libs_decompose_no_statics $def_list
+    foreach nm [array names dis_common_lib] {
+	if { [llength $nm] > 1 } {
+	    puts "Following executables: "
+	    foreach el $nm {
+		set exe_name [lindex $sel $el]
+		puts -nonewline "$exe_name "
+	    }
+	    puts ""
+	    puts ""
+	    puts "have common group of functions: "
+	    foreach el $dis_common_lib($nm) {
+		puts $el
+	    }
+	    puts ""
+	}
+    }
+}
+
+#This is the function to call for "Executable decomposition" report
+proc dis_inventory__executable_decomposition { sel } {
+    # first report same static functions inside each executable (if any)
+    dis_inventory__report_same_static $sel
+    dis_inventory__report_libs $sel
+}
+
+#####################################################################
+
+proc dis_inventory__find_where_used { all_funcs rule } {
+    set rule_filtered [filter name=="$rule" $all_funcs]
+    if { [size $rule_filtered] == 0 } {
+	if { [catch {set used_in [where used $rule]}] == 1 } {
+	    return [nil_set]
+	}
+	return $used_in
+    }
+    set used_in [where used $rule_filtered]
+    return $used_in
+}
+
+#this is the function to call for "IPC report"
+proc dis_inventory__IPCreport { sel ipc_rules } {
+    set all_funcs [defines -functions /]
+    foreach rule $ipc_rules {
+	set used_in [dis_inventory__find_where_used $all_funcs $rule]
+	puts "Rule: $rule"
+	puts ""
+	if { [size $used_in] != 0 } {
+	    foreach f $used_in {
+		puts -nonewline [name $f]
+		puts -nonewline " @ "
+		puts [lname $f]
+	    }
+	} else {
+	    puts "no functions found"
+	}
+	puts ""
+	puts ""
+    }
+}
+
+#this is the function to call for "Environment report"
+proc dis_inventory__EnvironmentReport { sel env_rules } {
+    set all_funcs [defines -functions /]
+    foreach rule $env_rules {
+	set used_in [dis_inventory__find_where_used $all_funcs $rule]
+	puts "Rule: $rule"
+	puts ""
+	if { [size $used_in] != 0 } {
+	    foreach f $used_in {
+		puts -nonewline [name $f]
+		puts -nonewline " @ "
+		puts [lname $f]
+	    }
+	} else {
+	    puts "no functions found"
+	}
+	puts ""
+	puts ""
+    }
+}
+
+proc dis_inventory__inventory { scope mod_files mod_projects no_hierarchy criteria_filter complexity_theshold switches_treshold \
+                           do_standard_deviations subproject_info file_info macro_info variable_info class_info enum_info \
+                           function_info template_info union_info typedef_info output_fname output_format } {
+    global env		       
+    global STAT_SCOPE
+    global STAT_CRITERIA
+    global STAT_REBUILT_FILES
+    global STAT_REBUILT_PROJECTS
+    global STAT_CC_THRESH
+    global STAT_SWITCHES_THRESH
+    global STAT_SHALLOW
+    global STAT_STANDARD_DEV
+    global STAT_FILE_INFO
+    global STAT_PROJECT_INFO
+    global STAT_FUNCT_INFO
+    global STAT_CLASS_INFO
+    global STAT_VAR_INFO
+    global STAT_ENUM_INFO
+    global STAT_MACRO_INFO
+    global STAT_UNION_INFO
+    global STAT_TEMPLATE_INFO
+    global STAT_TYPEDEF_INFO
+    global STAT_OUTPUT_FORMAT
+    global STAT_OUTPUT_FILE
+    global OUTFILE
+    global STAT_METRICS_INFO
+    global STAT_STATS_INFO
+
+		       set STAT_SCOPE $scope
+		       set STAT_CRITERIA $criteria_filter
+		       set STAT_REBUILT_FILES $mod_files
+		       set STAT_REBUILT_PROJECTS $mod_projects
+		       set STAT_CC_THRESH $complexity_theshold
+		       set STAT_SWITCHES_THRESH $switches_treshold
+		       set STAT_SHALLOW $no_hierarchy
+		       set STAT_STANDARD_DEV $do_standard_deviations
+		       set STAT_FILE_INFO $file_info
+		       set STAT_PROJECT_INFO $subproject_info
+		       set STAT_FUNCT_INFO $function_info
+		       set STAT_CLASS_INFO $class_info
+		       set STAT_VAR_INFO $variable_info
+		       set STAT_ENUM_INFO $enum_info
+		       set STAT_MACRO_INFO $macro_info
+		       set STAT_UNION_INFO $union_info
+		       set STAT_TEMPLATE_INFO $template_info
+		       set STAT_TYPEDEF_INFO $typedef_info
+		       set STAT_OUTPUT_FILE $output_fname
+		       if { $output_format == "ASCII" || $output_format == "ascii" } {
+			   set STAT_OUTPUT_FORMAT STAT_ASCII_FILE
+		       }
+		       if { $output_format == "HTML" || $output_format == "html" } {
+			   set STAT_OUTPUT_FORMAT STAT_HTML_FILE
+		       }
+		       if { $output_format == "RTF" || $output_format == "rtf" } {
+			   set STAT_OUTPUT_FORMAT STAT_RTF_FILE
+		       }
+		       set psethome $env(PSETHOME)
+                       source "$psethome/lib/discover.summary.dis"
+}
+
+proc dis_inventory__redundant_funcs_in_projs { subprojs } {
+    foreach sprj $subprojs {
+	puts "Working on [name $sprj]"
+	set d [dis_inventory__order_set_by_usage [defines -functions $sprj]]
+	dis_inventory__redundant 0.7 $d $d
+    }
+}
+
+proc dis_inventory__t_redundant_funcs_in_projs { subprojs } {
+    foreach sprj $subprojs {
+	set d [dis_inventory__order_set_by_usage [defines -functions $sprj]]
+	puts "[name $sprj] [size $d]"
+    }
+}
+
+proc dis_inventory__copied_code_report  { threshold targets } {
+    set d [dis_inventory__order_set_by_usage $targets]
+    dis_inventory__redundant $threshold $d $d
+}
+
+#add_query redundant_ui1 dis_inventory__copied_code_report
+
+proc dis_inventory__redundant { threshold targets against } {
+    set targsize [size $targets]
+    set origsize $targsize
+    while { $targsize > 0 } {
+#	message "Working on [expr $origsize - $targsize] of $origsize"
+	set e [set_copy $targets 1]
+	set es [size [uses $e]]
+	if { $es > 1 } {
+	    # Do not analyse yourself.
+	    set against [set_subtract $against $e]
+	    set redund [dis_inventory__find_redund $threshold $e $against]
+	    if {  [size $redund] > 0 } {
+		puts -nonewline "Group of functions within "
+		puts -nonewline $threshold
+		puts " range of difference"
+		print $e 
+		print $redund
+		puts ""
+		set targets [set_subtract $targets $redund]
+		set against [set_subtract $against $redund]
+	    }
+	} 
+	# Dont analyse redundant code more than once.
+	set targets [set_subtract $targets $e]
+	set targsize [size $targets]
+#        puts "Done with [name $e]; targsize: $targsize"
+    }
+}
+
+#############
+# Future algorithm.
+# Sort by size.
+# Create window of valid targets.
+# Do analysis.
+# Reduce set.
+
+
+
+# Slide window.
+#############
+proc dis_inventory__find_redund { threshold target others } {
+    set tu [uses $target]
+    set tus [size $tu]
+    set ret [nil_set]
+    foreach e $others { 
+	set nm [name $e]
+	set eu [uses $e]
+	set eus [size $eu]
+	if { [expr $eus.0 / $tus ] < $threshold } {
+	    break
+	}
+
+#	set isz [size [set_intersect $tu $eu]]
+	set isz [size [dis_inventory__name_intersect $tu $eu]]
+#       set uu [set_union $eu $tu]
+        set uu [dis_inventory__name_union $eu $tu]
+	set perc [expr $isz.0 / [size $uu]]
+	if { $perc > $threshold } {
+            set ret [set_add $ret $e]
+	}
+    }
+    return [set_copy $ret]
+}
+
+# The first argument is the set to sort.
+# The second is weather to report the progress.
+# The rest is the evaluation routine to invoke on each routine.
+#
+proc dis_inventory__order_set_by_usage { funcs } {
+    return [dis_inventory__order_set $funcs true dis_inventory__size_uses]
+}
+
+proc dis_inventory__size_uses { f } {
+    return [size [uses $f]]
+}
+
+proc dis_inventory__order_set { elems show_status args } {
+    set attrcmd "$args \$f"
+    set tmpfile "/usr/tmp/of"
+    set of [open $tmpfile "w+"]
+    set esz [size $elems]
+    set cur 0
+    foreach f $elems {
+	# This puts will but the set element number in the file for use later
+	# the set_copy commmand.
+	incr cur
+#	if { $show_status == "true" } {
+#	    message "Evaluating $cur of $esz"
+#	}
+	set val [eval $attrcmd]
+	puts $of "$val $f"
+    }
+    close $of
+
+#    if { $show_status == "true" } {
+#	message "Sorting..."
+#    }
+    exec sort -r -n $tmpfile > $tmpfile.sort
+
+    set ret ""
+    set if [open $tmpfile.sort "r+"]
+    while { [gets $if line] >= 0 } {
+	set ret "$ret [lindex $line 2]"
+    }
+    close $of
+    set ret "set_copy \$elems $ret"
+    return [eval $ret]
+}
+
+proc dis_inventory__name_intersect { s1 s2 } {
+    set result [nil_set]
+
+    foreach e $s1 {
+	set intersect([name $e]) "\{$e\} 1"
+    }
+    foreach e $s2 {
+	if { [info exists intersect([name $e])] == 1 } {
+	    set result [set_add $result $e]
+	}
+    }
+    return $result
+}
+
+proc dis_inventory__name_union { s1 s2 } {
+
+    set result [set_copy $s1]
+    foreach e $s1 {
+	set union([name $e]) 1
+    }
+    foreach e $s2 {
+	if { [info exists union([name $e])] == 0 } {
+	    set result [set_add $result $e]
+	}
+    }
+    return $result
+}
+
+###########################################################################
+
+proc dis_inventory__reused_tree { f1 f2 } {
+    set chain1 [dis_inventory__chains_from $f1]
+    set chain2 [dis_inventory__chains_from $f2]
+    set res [dis_inventory__chains_compare $chain1 $chain2]
+    if { [llength $res] != 3 } {
+	puts "incorrect chains"
+    } else {
+	puts -nonewline "Difference in maximum call chains depth: "
+	puts -nonewline [lindex $res 0]
+	puts "%"
+	puts -nonewline "Maximum tree width deviation: "
+	puts -nonewline [lindex $res 1]
+	puts "%"
+	puts -nonewline "Average tree width deviation: "
+	puts -nonewline [lindex $res 2]
+	puts "%"
+    }
+}
+
+proc dis_inventory__chains_reset {} {
+    global dis_common_all dis_common_in
+    if { [info exists dis_common_all] } { unset dis_common_all }
+    if { [info exists dis_common_in] } { unset dis_common_in }
+}
+
+proc dis_inventory__chains { src trg } {
+    dis_inventory__chains_reset
+    set src [new_set $src]
+    set trg [name $trg]
+    set lev [dis_inventory__chains_intern 1 $src $trg]
+    if { $lev > 0 } {
+	dis_inventory__chains_extract "  " "" $lev $src $trg
+    } else {
+      puts "no chains from [name $src] to $trg"
+    }
+}
+
+proc dis_inventory__chains_from { src } {
+    dis_inventory__chains_reset
+    set src [new_set $src]
+    set trg ""
+    set lev [dis_inventory__chains_intern 1 $src $trg]
+    dis_inventory__chains_count
+}
+
+proc dis_inventory__chains_count {} {
+    global dis_common_all	
+    set max 0	
+    foreach nm [array names dis_common_all] {
+	set cur $dis_common_all($nm)
+	if { $cur > $max } { set max $cur }
+	if [info exists ind($cur)] {
+	    incr ind($cur)
+	} else {
+	    set ind($cur) 1
+	}
+    }
+    for { set cur 1 } { $cur <= $max} {incr cur} {
+	if [info exists ind($cur)] {lappend lll $ind($cur)} {lappend lll 0}
+    }
+    return $lll
+}
+
+proc dis_inventory__chains_compare { ch1 ch2 } {
+    set sz1 [llength $ch1]
+    set sz2 [llength $ch2]
+    
+    set tot1 0
+    foreach el $ch1 {incr tot1 $el}
+    
+    set tot2 0
+    foreach el $ch2 {incr tot2 $el}
+    
+    if { $sz1 < $sz2 } {
+	set len_dif [expr $sz2 - $sz1]
+	set len $sz1
+	set which 1
+    } elseif { $sz1 > $sz2 } {
+	set len_dif [expr $sz1 - $sz2]
+	set len $sz2
+	set which 2
+    } else {
+	set len_dif 0
+	set len $sz2
+	set which 0
+    }
+    
+    set dif 0
+    set max_dif 0
+    for {set i 0} { $i < $len } {incr i } {
+	set n1 [lindex $ch1 $i]
+	set n2 [lindex $ch2 $i]
+	set cur [expr $n2 - $n1]
+	if { $cur < 0 } { set cur [expr  -$cur]}
+	if { $cur > $dif} { set dif  $cur }
+	incr max_dif $cur
+    }
+    #len_d - difference in length
+    #max_d - maximal deviation
+    #tot_d - average deviation
+    set len_d  [expr $len_dif * 100 / $len ]
+    set max_d  [ expr $max_dif * 100 / $tot1]
+    set tot_d  [expr ($tot1 - $tot2) * 100 / $tot1 ]
+    if {$tot_d < 0} { set tot_d [expr -$tot_d]}
+    return [list $len_d $max_d $tot_d]
+}
+
+proc dis_inventory__chains_extract { pref indent level src trg } {
+    global dis_common_all dis_common_in
+
+    set tn [name $trg]
+    puts "$indent$tn"
+    #puts "chains_extract $pref $indent $level $src $tn "
+
+    if { [info exists in($tn)] } {
+	return
+    }
+    append indent $pref
+    set dis_common_in($tn) $level
+    
+    set where [filter func [where used $trg]]
+    incr level -1
+    set sz [size $where]
+    if {$sz == 0}  { return }
+    set indlist ""
+    for { set i 1 } {$i <= $sz} {incr i } {
+	set nm [name $where $i]
+	if { [info exists dis_common_all($nm)] } {
+	    set lev $dis_common_all($nm)
+	    if { $level == $lev } {
+		lappend indlist $i
+	    }
+	}
+    }
+    set sz [llength $indlist]
+    if { $sz == 0 } {
+	return
+    }
+    incr sz -1
+    for { set i 0 } {$i < $sz} {incr i } {
+	dis_inventory__chains_extract "\| " $indent $level $src "$where [lindex $indlist $i]"
+    }
+    dis_inventory__chains_extract "  " $indent $level $src "$where [lindex $indlist $sz]"
+}
+
+proc dis_inventory__chains_intern { level src trg } {
+    global dis_common_all
+    #puts "chains_intern $level $src $trg"
+    set new ""
+    set sz [size $src]
+    for { set i 1 } {$i <= $sz } {incr i} {
+	set nm [name $src $i]
+	if { $trg == $nm } { return $level}
+	if {! [info exists dis_common_all($nm)] } {
+	    set dis_common_all($nm) $level
+	    lappend new $i
+	}
+    }
+    if { [llength $new] > 0 } {
+	set calls [filter func [uses $src $new]]
+	incr level
+	return [dis_inventory__chains_intern $level $calls $trg  ]
+    } else {
+	return 0
+    }
+}
+
+###########################################################################
+
+proc dis_inventory__report_class { sel } {
+    dis_inventory__report_super_classes Def
+}
+
+proc dis_inventory__print_indent { ind } {
+    while { $ind != 0 } {
+	puts -nonewline " "
+	incr ind -1
+    }
+}
+
+proc dis_inventory__collect_super_classes { sel } {
+    set super ""
+    set s [get_super_classes $sel]
+    foreach s1 $s {
+	set s2 [dis_inventory__collect_super_classes $s1]
+	if { [llength $s2] != 0 } {
+	    set list_elem [set_copy $s1]
+	    lappend list_elem $s2
+	    lappend super $list_elem
+	} else {
+	    lappend super [set_copy $s1]
+	}
+    }
+    return $super
+}
+
+proc dis_inventory__print_super_classes { clist indent } {
+    set num_super [llength $clist]
+    set cur_num 0
+    while { $cur_num < $num_super } {
+	set single_super [lindex $clist $cur_num]
+	set c [lindex $single_super 0]
+	dis_inventory__print_indent $indent
+	puts [name $c]
+	dis_inventory__print_super_classes [lindex $single_super 1] [expr $indent + 3]
+	incr cur_num
+    }
+}
+
+proc dis_inventory__report_super_classes { c } {
+    set super [dis_inventory__collect_super_classes $c]
+    puts -nonewline "<b><pre>CLASS : "
+    puts -nonewline [name $c]
+    puts ""
+    dis_inventory__print_super_classes $super 12
+    puts "</pre></b>"
+}
+
+proc dis_inventory__report_public_members { c } {
+    set f [uses -functions $c]
+    set fp [filter public $f]
+    #filter out compiler generated methods
+    set fp [filter fname $fp]
+    set co [filter constructor $fp]
+    set de [filter destructor $fp]
+    set fp [set_subtract $fp $co]
+    set fp [set_subtract $fp $de]
+    puts "<li><b>Class interface :</b>"
+    puts "<ul>"
+    #print constructors first 
+    foreach f $co {
+	puts -nonewline "<li><i>"
+	set str [type $f]
+	append str " " [name $f] "</i>"
+	puts $str
+	puts "<ul>"
+	puts -nonewline "<li>"
+	puts [fname $f]
+	puts "</ul>"
+    }
+    #print destructors next
+    foreach f $de {
+	puts -nonewline "<li><i>"
+	set str [type $f]
+	append str " " [name $f] "</i>"
+	puts $str
+	puts "<ul>"
+	puts -nonewline "<li>"
+	puts [fname $f]
+	puts "</ul>"
+    }
+    foreach f $fp {
+	puts -nonewline "<li>"
+	set str [type $f]
+	append str " " [name $f]
+	puts $str
+	puts "<ul>"
+	#	puts -nonewline "  in  "
+	puts -nonewline "<li>"
+	puts [fname $f]
+	puts "</ul>"
+    }
+    puts "</ul>"
+}
+
+proc dis_inventory__report_public_fields { c } {
+    set f [uses -fields $c]
+    set fp [filter public $f]
+    puts "<li><b>Class public data fields :</b>"
+    puts "<ul>"
+    foreach f $fp {
+	puts -nonewline "<li>"
+	set str [type $f]
+	append str " " [name $f]
+	puts $str
+    }
+    puts "</ul>"
+}
+
+proc dis_inventory__generate_html_lib_header { lib } {
+    puts "<html>"
+    puts "<head>"
+    puts "<!-- Generated by DIScover -->"
+    puts "<title>"
+    puts -nonewline "Library "
+    puts [name $lib]
+    puts "</title>"
+    puts "</head>"
+    puts "<body>"
+    puts -nonewline "<h2>Interface for library : "
+    puts [name $lib]
+    puts "</h2>"
+}
+
+proc dis_inventory__generate_html_lib_epilog {} {
+    puts "</html>"
+}
+
+proc dis_inventory__library_interface { lib } {
+    dis_inventory__generate_html_lib_header $lib
+    set all_classes [defines -classes $lib]
+    foreach c $all_classes {
+	puts "<br><font size=+2>"
+	dis_inventory__report_super_classes $c
+	puts "</font><br>"
+	puts "<ul>"
+	dis_inventory__report_public_members $c
+	dis_inventory__report_public_fields $c
+	puts "</ul>"
+	puts "<hr>"
+    }
+    dis_inventory__generate_html_lib_epilog
+}
+
+##################################################
+
+proc dis_inventory__database_report { sel rules } {
+    set all_strings [uses -strings $sel]
+    foreach rule $rules {
+	set filtered [filter name=="$rule" $all_strings]
+	set used_in [argument_of $filtered]
+	puts "Rule: $rule"
+	puts ""
+	if { [size $used_in] != 0 } {
+	    foreach f $used_in {
+		puts [name $f]
+	    }
+	} else {
+	    puts "no functions found"
+	}
+	puts ""
+	puts ""
+    }
+}

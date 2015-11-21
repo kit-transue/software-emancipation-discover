@@ -1,0 +1,10 @@
+CPROOTS=\
+	item\
+	itemenv\
+	persistent\
+	settings\
+
+
+CROOTS=\
+
+

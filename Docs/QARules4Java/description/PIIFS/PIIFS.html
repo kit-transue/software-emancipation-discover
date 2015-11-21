@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>PIIFS - Provide Incremental In For-Statement or use while-statement</b></p>
+
+<p>Checks if third argument of the for-statement is missing.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+<font color='red'>for ( Enumeration enum = getEnum(); enum.hasMoreElements(); )</font> {<br>
+&nbsp; &nbsp; Object o = enum.nextElement();<br>
+&nbsp; &nbsp; doSomeProc(o);<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+  Either provide incremental part of
+a for-structure or cast for-statement into a while-statement.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+<font color='blue'>Enumeration enum =   getEnum();<br>
+while (enum.hasMoreElements())</font> {<br>
+&nbsp; &nbsp; Object o = enum.nextElement();<br>
+&nbsp; &nbsp; doSomeProc(o);<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

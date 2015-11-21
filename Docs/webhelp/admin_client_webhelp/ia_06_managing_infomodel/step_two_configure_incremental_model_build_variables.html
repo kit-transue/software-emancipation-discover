@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Step Two: Configure Incremental Model Build Variables</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 48.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 6.7px 48.0px; font: 11.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 6.7px 72.0px; font: 12.0px 'Courier New'}
+    p.p7 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p8 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 12.0px Verdana}
+    span.s4 {font: 12.0px 'Courier New'}
+    span.s5 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Step Two: Configure Incremental Model Build Variables</b></p>
+<p class="p2">When you create an information model, you specify the incremental model build variables; however, if necessary, you can change them at any time.</p>
+<p class="p3"><span class="s1"><b>1</b></span><span class="s2"><b>   </b></span>Do one of the following:</p>
+<p class="p4">•<span class="s2">   </span>From the administration client’s <b>Navigator</b> panel, select an information model, then select <b>Model &gt; Edit Model Configuration</b> or click <img src="./tmp25935.jpg" alt="tmp25935.jpg">.</p>
+<p class="p5"><span class="s3">•</span><span class="s2">   </span><span class="s3">Open </span>&lt;repository&gt;/template/&lt;informationmodel&gt;Template/config/Setup.txt</p>
+<p class="p3"><span class="s1"><b>2</b></span><span class="s2"><b>   </b></span>Choose an incremental model build option:</p>
+<p class="p4">•<span class="s2">   </span>To analyze outdated files by time stamp automatically, uncomment or add <span class="s4">VAR=AutomaticAnalysis:TS</span>.</p>
+<p class="p4">This option is enabled by default.</p>
+<p class="p4">•<span class="s2">   </span>To analyze outdated files by checksum automatically, uncomment or add <span class="s4">VAR=AutomaticAnalysis:CS</span>.</p>
+<p class="p4">•<span class="s2">   </span>To analyze outdated files by time stamp and checksum automatically, uncomment or add <span class="s4">VAR=AutomaticAnalysis:TS_CS</span>.</p>
+<p class="p4">•<span class="s2">   </span>To specify a file containing a list of files that needs to be updated, uncomment or add <span class="s4">VAR=UserSpecifiedList:<i>$HOME/incremental_build.lst</i></span> (where <span class="s4">$<i>HOME/incremental_build.lst</i></span> is the path and name of the file), for example:</p>
+<p class="p6"><span class="s3">•</span><span class="s2">   </span><span class="s3">On Windows, </span>VAR=UserSpecifiedList:D:/changed_files/balance.lst</p>
+<p class="p6"><span class="s3">•</span><span class="s2">   </span><span class="s3">On UNIX, </span>VAR=UserSpecifiedList:/users/bob/balance.lst</p>
+<p class="p3"><span class="s1"><b>3</b></span><span class="s2"><b>   </b></span>If you specify the automatic dependency analysis option, specify whether a model should be built if it is identical to the baseline model:</p>
+<p class="p4">•<span class="s2">   </span>To create a new model version, even if it is identical to the baseline model, type <span class="s4">Yes</span>.</p>
+<p class="p4">•<span class="s2">   </span>To cancel creating a new model version, if it is identical to the baseline model, type <span class="s4">No</span>.</p>
+<p class="p7"><b>Note: </b>This option does not apply to a user specified list because the specified files in the list are rebuilt regardless.</p>
+<p class="p3">Uncomment the following variable and specify <span class="s4">yes</span> or <span class="s4">no</span>:</p>
+<p class="p8">VAR=PublishIfIdentical:no</p>
+<p class="p3">This option is set to <span class="s5">no</span> by default.</p>
+<p class="p3"><span class="s1"><b>4</b></span><span class="s2"><b>   </b></span>Save the file.</p>
+</body>
+</html>

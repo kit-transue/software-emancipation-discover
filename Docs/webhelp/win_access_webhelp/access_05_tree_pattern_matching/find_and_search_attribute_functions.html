@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Find and Search Attribute Functions</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Find and Search Attribute Functions</b></p>
+<p class="p2"><b>Find</b></p>
+<p class="p3"><span class="s1"><b>find</b>(attribute-expression)</span> examines the current node and all its descendants, and returns the number of descendents that match the attribute expression. Side-effects, like changing the current node, are seen inside the <span class="s1">attribute-expression</span>, but once the attribute expression succeeds (or fails), the current node is restored: changes made inside <span class="s1">attribute-expression</span> are not visible to an enclosing expression.</p>
+<p class="p3">When used as a boolean check, it is more efficient to use <span class="s1"><b>find1</b>(attribute-expression)</span>. Like <span class="s1"><b>find</b></span>, <span class="s1"><b>find1</b></span> navigates the subtree of the current node, applying <span class="s1">attribute-expression,</span> but returns as soon as the first match is made against <span class="s1">attribute-expression.</span></p>
+<p class="p2"><b>Search</b></p>
+<p class="p3"><span class="s1"><b>search</b>(attribute-expression)</span>is similar to <span class="s1"><b>find</b></span> in that it traverses a subtree and returns a count of nodes that match attribute-expression. While <span class="s1"><b>find</b></span> considers only the current node and its descendants, <span class="s1"><b>search</b></span> considers the current node, the current node’s "later" siblings, and all their descendents.</p>
+<p class="p3"><span class="s1"><b>search1</b>(attribute-expression)</span> is provided for efficiency when only a boolean match is required. It returns <span class="s1">1</span> if a match is found; otherwise, <span class="s1">0</span>.</p>
+<p class="p3">In general, <span class="s1"><b>find1</b></span> and <span class="s1"><b>search1</b></span> should be preferred over find and search. It is only necessary to traverse all possible nodes when you are counting on a side-effect of your traversal (occurring only in attribute actions, introduced later).</p>
+</body>
+</html>

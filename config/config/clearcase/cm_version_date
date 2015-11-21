@@ -1,0 +1,35 @@
+#!/bin/sh
+# cm_version_list (ClearCase) - report version history for a file after a given date
+
+# The output of this script is used for the "get by date" functionality
+# inside DISCOVER
+
+# I did not have time to deal with ClearCase's crazy idea of date/time stamps,
+# so this script just reports all versions just like cm_version_list. -jef
+
+# exit script if we get any errors
+set -e
+
+# List out the history
+cleartool lshistory $cm_workfile | $PSETCFG/util/atria_revision_list
+
+exit 0
+
+
+#### Parameters    : none
+#### Return values : ignored
+#### Output	   : stdout = history list with version and date
+		   : stderr = ignored
+
+#### Sample output :
+/main/4 26-Apr.18:37
+/main/3 26-Apr.17:36
+/main/2 26-Apr.17:19
+/main/1 26-Apr.17:03
+/main/0 26-Apr.17:02
+
+#### Environment Variables
+# Environment variables setup by DISCOVER for ALL config scripts:
+#	$PSETCFG	  - path to directory containing the config scripts
+#	$cm_workfile	  - path to local (private) copy of file to be processed
+# 	$cm_date	  - cutoff date for history list (not used -jef)

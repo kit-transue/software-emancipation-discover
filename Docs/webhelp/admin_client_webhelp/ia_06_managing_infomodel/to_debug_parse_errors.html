@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>To debug parse errors</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p6 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p8 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px Verdana}
+    p.p9 {margin: 0.0px 1.0px 5.3px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 12.0px 'Courier New'}
+    span.s4 {text-decoration: underline ; color: #ff6262}
+  </style>
+</head>
+<body>
+<p class="p1"><b>To debug parse errors</b></p>
+<p class="p2"><span class="s1"><b>1</b></span><span class="s2"><b>   </b></span>Open the model build log, if not already open in a text editor or the administration client model build panel.</p>
+<p class="p3"><b>Note: </b>You can also display the build summary by clicking the model version in the <b>Navigator</b> panel.</p>
+<p class="p2"><span class="s1"><b>2</b></span><span class="s2"><b>   </b></span>Search for the <span class="s3">Parse Summary</span> section of the log that summarizes file building results, for example:</p>
+<p class="p4"><br></p>
+<p class="p5"><img src="./tmp25942.jpg" alt="tmp25942.jpg"></p>
+<p class="p6"> </p>
+<p class="p7">The example report illustrates that Code<br>
+Integrity tried to build 180 files; 177 were built into the model. Eighteen (18) files had forgivable (non-catastrophic) parse errors. Three (3) catastrophic errors occurred, where the file was not built into the model.</p>
+<p class="p3"><b>Note: </b>Once you have a summary, you know how many files need attention. You should examine the first error in any failed file in the log. Most often, correcting the first error saves time and possibly corrects other errors that have occurred.</p>
+<p class="p2"><span class="s1"><b>3</b></span><span class="s2"><b>   </b></span>Locate the compile line from your first source file that had a parse error, for example:</p>
+<p class="p2">Long lines beginning with the following:</p>
+<p class="p8"><b>•</b><span class="s2"><b>   </b></span><b>C files</b></p>
+<p class="p9">aset_CCcc -IF_File [temporary IF file name]... file name</p>
+<p class="p8"><b>•</b><span class="s2"><b>   </b></span><b>Java files</b></p>
+<p class="p9">aset_jfe -IF_File [temporary IF file name]... file name</p>
+<p class="p8"><b>•</b><span class="s2"><b>   </b></span><b>SQL files</b></p>
+<p class="p9">dis_sql -o [temporary IF file name]... file name</p>
+<p class="p2">Using C code compile line for <span class="s3">bits.c</span>:</p>
+<p class="p9">aset_CCcc --IF_file "/usr/tmp/mbtmp_parse__psales_1.12124/tmpif.12124" --relative_path_base "/net/psales/space/apps/CosmosProject-1.2.4" --GNU_compatible_AST --c -I/net/psales/space/apps/CosmosProject-1.2.4 -D__svr4__ -D__SVR4 -D__GCC_NEW_VARARGS__ --gnu_asm /net/psales/space/apps/CosmosProject-1.2.4/bits.c</p>
+<p class="p2"><span class="s1"><b>4</b></span><span class="s2"><b>   </b></span>Copy and paste the compile line at a command prompt, and remove the <span class="s3">IF</span> file and temporary <span class="s3">IF</span> file name, for example (command line, using the previous compile line):</p>
+<p class="p9">aset_CCcc --relative_path_base "/net/psales/space/apps/CosmosProject-1.2.4" --GNU_compatible_AST --c -I/net/psales/space/apps/CosmosProject-1.2.4 -D__svr4__ -D__SVR4 -D_GCC_NEW_VARARGS__ --gnu_asm/net/psales/space/apps/CosmosProject-1.2.4/bits.c</p>
+<p class="p2"><span class="s1"><b>5</b></span><span class="s2"><b>   </b></span>Run the command to produce the same errors that appear in your build log.</p>
+<p class="p2"><span class="s1"><b>6</b></span><span class="s2"><b>   </b></span>Add an appropriate flag before the file name, and rerun the compile line at the command prompt, until you no longer receive the parse error, for example (of command line, with an added flag):</p>
+<p class="p9">aset_CCcc --relative_path_base "/net/psales/space/apps/CosmosProject-1.2.4" --GNU_compatible_AST --c -I/net/psales/space/apps/CosmosProject-1.2.4 -D__svr4__ -D__SVR4 -D_GCC_NEW_VARARGS__ --gnu_asm --wchar_t /net/psales/space/apps/CosmosProject-1.2.4/bits.c</p>
+<p class="p2">Add the flag to the corresponding XML document, as described in the section, <a href="../ia_06_managing_infomodel/changing_include,_macro,_or_compatibility_options.html#XREF_Changing_include_macro"><span class="s4">Changing #include, Macro, or Compatibility Options</span></a>.</p>
+</body>
+</html>

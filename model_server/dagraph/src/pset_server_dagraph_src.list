@@ -1,0 +1,16 @@
+TARGETS =
+    	DAGHandler.o
+    	DAGraph.o
+    	DGDataAccess.o
+    	DGNode.o
+    	DGNodeData.o
+    	DGPathFilter.o
+    	DGPathHandler.o
+
+VPATH =
+	/paraset/src/paraset/dagraph/src
+
+CCINCLUDES =
+	/paraset/src/paraset/debug/include
+	/paraset/src/paraset/dagraph/include
+	/paraset/src/paraset/search/include

@@ -1,0 +1,328 @@
+#!/bin/csh -f
+unsetenv PSET_EEPOCH_LIST
+
+if ( "$1" == "" ) then
+    echo "Usage: ptest_run [-exec executable] [-outdir outdir]"
+    echo "                 [-file filename] [-location test_path]"
+    echo "                 [-e filename] [-location test_path]"
+    echo "                 [-group {B}atch | {R}egression | {S}moke | {Y}2K |" 
+    echo "                          {C}losed | p{M}od_server | {A}ll]"
+    echo "                 [-project {SMOD | STE | DD | PROJ | UI | ASSOC}]"
+    echo "                 [f1 ... f2]"
+    echo "                 [-list filename /* from Tests Impact Analysis]"
+    echo "                 [-exclude {DEBUG | STE | SMODE | UI | PROJ}]"
+    exit 1
+endif
+
+if (-d "$PSETTEST") then
+   echo "Current Test Directory: $PSETTEST"
+else
+   echo "${PSETTEST}: no such directory."
+   exit 1
+endif
+
+if ( ! $?FMHOME ) then
+   setenv FMHOME "/net/oxen/vol03/share/$Arch/frame/frame-5.5.3" # /bin/maker"
+   echo "Setting FMHOME=$FMHOME"
+endif
+
+source ${PROJ_ROOT}/tools/ptest/ptest_set_tmpdir
+
+if ("$status" != "0") exit 1
+echo "Using temporary directory $PTEST_TMPDIR"
+
+set t_ex = ""
+set t_out = ""
+set t_loc = ""
+set t_path = "$PTEST_LOCATION"
+set t_group = ""
+set t_IA = 0
+set t_proj = ""
+set t_subs = ""
+set t_str = ""
+set shift_flag = "1"
+set t_flag_subs = "0"
+set mail_flag = ""
+set t_stat = 0
+set t_curr = "$PTEST_TMPDIR/Tests.tmp"
+set t_need = "$PTEST_TMPDIR/needed_tests.tmp"
+set tmp = "$PTEST_TMPDIR/tmp.tmp"
+
+if (-f "$t_curr") then 
+   \rm "$t_curr" 
+endif
+
+if (-f "$tmp") then
+   \rm "$tmp"
+endif
+
+while ("$1" != "")
+   if ("-exec" == "$1" ) then
+      if (-x $2) then
+        echo "Executable: $2"
+        set t_ex = "$2"
+      else
+        echo "$2 is not an executable"
+        exit 1
+      endif
+   else if ("$1" == "-outdir") then
+      mkdir -p $2
+      if (-d $2) then
+         echo "output directory: $2"
+         set t_out = "$2"
+      else
+         echo "$2 is not a directory"
+         exit 1
+      endif
+   else if  ("$1" == "-file" || "$1" == "-e") then
+      if  ("$1" == "-e") then
+          echo "----e----"
+          setenv PTEST_EXEC_OPTION "-e"
+      endif
+      if (-r $2) then
+          echo "File: $2"
+          echo $2 >> $tmp
+      else
+          echo "$2 is not OK to read from"
+          exit 1
+      endif
+   else if ("$1" == "-location") then
+      if (-d $2) then
+         echo "Tests from: $2"
+         set t_path = "$2"
+      else
+         echo "$2 is not a directory"
+         exit 1
+      endif
+   else if ("$1" == "-group") then
+      if ("$2" == "B") then
+         if ("$t_group" == "") then
+            set t_group = "batch"
+	 else
+            set t_group = "$t_group batch"
+         endif
+      else if ("$2" == "C") then
+         if ("$t_group" == "") then
+            set t_group = "closed_bugs"
+	 else
+            set t_group = "$t_group closed_bugs"
+         endif
+      else if ("$2" == "R") then
+         if ("$t_group" == "") then
+             set t_group = "regression"
+	 else
+            set t_group = "$t_group regression"
+         endif
+      else if ("$2" == "S") then
+         if ("$t_group" == "") then
+            set t_group = "smoke"
+         else
+            set t_group = "$t_group smoke"
+         endif
+      else if ("$2" == "M") then
+         if ("$t_group" == "") then
+            set t_group = "pmod_server"
+         else
+            set t_group = "$t_group pmod_server"
+         endif
+      else if ("$2" == "PR") then
+         if ("$t_group" == "") then
+            set t_group = "pend/regression"
+         else
+            set t_group = "$t_group pend/regression"
+         endif
+      else if ("$2" == "PS") then
+         if ("$t_group" == "") then
+            set t_group = "pend/smoke"
+         else
+            set t_group = "$t_group pend/smoke"
+         endif 
+      else if ("$2" == "P") then
+         if ("$t_group" == "") then
+            set t_group = "pend/regression pend/smoke"
+         else
+            set t_group = "$t_group pend/regression pend/smoke"
+         endif
+      else if ("$2" == "Y") then
+         if ("$t_group" == "") then
+            set t_group = "Y2K"
+         else
+            set t_group = "$t_group Y2K"
+         endif
+      else
+         echo "Wrong group: $2"
+         exit 1
+      endif
+      echo "Group: $t_group"
+   else if ("$1" == "-list") then
+      echo "Using I/A Test List File: $2"
+      if ( $t_IA  == 0 ) then
+         set t_IA = 1
+         cat "$2" > $t_need
+      else 
+         cat "$2" >> $t_need
+      endif
+   else if ("$1" == "-project") then
+      echo "Project: $2"
+      if ("$t_proj" == "") then
+         set t_proj = "$2"
+      else
+         set t_proj = "$t_proj $2"
+      endif
+   else if ("$1" == "-exclude") then
+      echo "Exclude: $2"
+      if ("$t_subs" == "") then
+         set t_subs = "$2"
+      else
+         set t_subs = "$t_subs $2"
+ echo "t_subs $t_subs"      
+      endif
+   else if ("$1" == "-mail") then
+      set mail_flag = "$2"
+   else
+      set shift_flag = ""
+      if (-d "$1") then
+         echo "$1" >> $t_curr
+      else
+         echo "$1 is not a test directory"
+         exit 1
+      endif
+   endif
+      shift
+   if ("$shift_flag" == "") then
+	set shift_flag = "1"
+   else
+        shift
+   endif
+ end
+
+
+if ("$t_group" == "") then
+   echo "There is no test group specified"
+else
+   foreach ii ($t_group)
+            set t_dir = "$t_path/$ii"
+      if (-d $t_dir) then
+         #do not include .pj files (SI project files)
+         foreach jj (`ls $t_dir | grep -v '.pj' `)
+             set t_flag_subs = 0
+             set t_flag = 0
+             if ("$t_proj" == "") then
+                set t_flag = 1
+             else
+                foreach kk ($t_proj)
+
+                   grep "Bug Project:" $t_dir/$jj/*.ccc | grep  "$kk" >&! /dev/null
+                   set t_stat = $status
+                   if ($t_stat == 0) then
+                      set t_flag = 1
+                   endif
+                end
+             endif
+             if ("$t_subs" == "") then
+                set t_flag_subs = 1
+             else
+
+                set t_flag_subs = 0
+                foreach mm ($t_subs)
+                   foreach ll (`ls $t_dir/$jj/*.ccc`)
+                       set t_str = ""
+                       grep "Bugsubsys:" $ll >/dev/null
+                       if ($status == 0) then
+                         set t_str = `grep "Bugsubsys:" $ll | sed 's/^.*: //' | sed 's/ .*\///'`
+                         set t_str = `eval "echo $t_str"`
+                       endif
+                       if ($t_str == "") then
+                          set t_stat = 1
+                       else
+                          if ("`echo $t_str`" == "`echo $mm`") then
+                             set t_stat = 0
+                          endif
+                       endif
+                      if ($t_stat != 0) then
+                          set t_flag_subs = 1
+                      endif
+                      if ($t_flag_subs) then
+                         break
+                      endif
+                    end
+                   if ($t_flag_subs) then 
+                       break
+                    endif
+                end
+             endif
+             if ($t_flag_subs == 0) then
+               continue
+             else
+               if ($t_flag) then
+                  grep -s -w "$t_dir/$jj" $t_curr >&! /dev/null
+                  if ($status) then 
+                     echo "$t_dir/$jj" >> $t_curr
+                  endif
+               endif
+             endif
+         end
+      else
+         echo "$t_dir is not a directory "
+      endif
+   end
+endif
+
+if ("$t_out" == "") then
+      set t_out = "$HOME/outdir"
+endif
+
+if (-r $tmp) then
+   cat $tmp >> $t_curr
+   \rm $tmp
+endif
+
+#
+# execute only test projects that need to be rerun
+#
+if ( $t_IA == 1 ) then
+   echo "Filtering out unneeded test directories."
+   echo "" > $tmp
+   set _T_NEED_ = `cat $t_need`
+   echo "" > $t_need
+   foreach a_test ( $_T_NEED_ )
+      set test_name = `basename $a_test .pkapl`
+      echo $test_name >> $t_need
+      grep `echo $test_name | sed -e 's%-.*$%%g'` $t_curr >> $tmp
+   end
+   \mv -f $tmp $t_curr
+else
+   set t_need = ""
+endif
+
+
+echo ""
+
+if (-r $t_curr) then
+   echo "   Tests to run :"
+   cat "$t_curr"
+   echo ""
+   setenv PSET_TEST_RUNNING "RUNNING"
+   ptest_internal_run "$t_curr" "$t_out" "$t_ex" "$t_subs" "$t_need"
+   if ($status != 0) then
+       echo "ptest_run:  Failed."
+       exit 1
+   endif 
+   \rm $t_curr
+   
+   echo "ptest_run:  Done"
+
+#boris: To avoid stat error on the deleted directory
+   cd $PTEST_TMPDIR
+   cd $PSETTEST
+
+   if ($?PTEST_ALL || $?PTEST_CONTINUE) then
+	   ptest_analyze $t_out/test.log "ptest_all"
+   else
+	   ptest_analyze $t_out/test.log "$mail_flag"
+   endif
+else
+   echo "*** No Tests to Run ***"
+endif  
+
+echo ""

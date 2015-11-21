@@ -1,0 +1,209 @@
+-$
+--access_invalidates_overload
+--allow_asm_pseudofunction
+--allow_conv_from_void_star
+--allow_empty_macro_arg
+--allow_error_directive
+--allow_implicit_enum_conv
+--allow_multiline_string
+--alternative_tokens
+--anachronisms
+--arg_dep_lookup
+--array_new_and_delete
+--asm_preprocessing_directive
+--asm_ref_char char
+--assert_expression
+--assert_name
+--at_sign
+--auto_instantiation
+--base_assign_op_is_default
+--bool
+--brief_diagnostics
+--c
+--c++
+--c99
+--c_and_cpp_function_types_distinct
+--c_and_cpp_function_types_identical
+--cfront_2.1
+--cfront_3.0
+--checksum
+--class_name_injection
+--comments
+--common_tentative_defs
+--compound_literals
+--const_string_literals
+--create_pch file
+--curtail_discretion
+--default_calling_convention conv
+--define_macro
+--dep_name
+--dependencies
+--designators
+--diag_error num
+--diag_remark num
+--diag_suppress num
+--diag_warning num
+--display_error_number
+--distinct_template_signatures
+--dollar
+--early_tiebreaker
+--embedded_c++
+--emit_asm_strings
+--enum_overloading
+--error_limit num
+--error_output file
+--exceptions
+--exercise_discretion
+--explicit
+--extended_designators
+--extended_variadic_macros
+--extern_inline
+--far_code_pointers
+--far_data_pointers
+--for_init_diff_warning
+--friend_injection
+--gnu_asm
+--gnu_friend_type
+--guiding_decls
+--header_path_translations file
+--ignore_cv_qual_mismatch
+--ignore_space_in_line_splice
+--ignore_std
+--implicit_extern_c_type_conversion
+--implicit_include
+--implicit_typename
+--import_dir path
+--incl_suffixes list
+--include_asm_comments
+--include_directory
+--include_headers_once
+--inlining
+--instantiate arg
+--late_tiebreaker
+--long_lifetime_temps
+--long_preserving_rules
+--microsoft
+--microsoft_16
+--microsoft_bugs
+--microsoft_version ver
+--multibyte_chars
+--namespaces
+--near_code_pointers
+--near_data_pointers
+--new_for_init
+--no_alternative_tokens
+--no_anachronisms
+--no_arg_dep_lookup
+--no_array_new_and_delete
+--no_asm_preprocessing_directive
+--no_auto_instantiation
+--no_base_assign_op_is_default
+--no_bool
+--no_brief_diagnostics
+--no_c99
+--no_checksum
+--no_common_tentative_defs
+--no_compound_literals
+--no_const_string_literals
+--no_dep_name
+--no_designators
+--no_distinct_template_signatures
+--no_emit_asm_strings
+--no_enum_overloading
+--no_exceptions
+--no_explicit
+--no_extended_designators
+--no_extended_variadic_macros
+--no_extern_inline
+--no_for_init_diff_warning
+--no_friend_injection
+--no_guiding_decls
+--no_implicit_extern_c_type_conversion
+--no_implicit_include
+--no_implicit_typename
+--no_include_asm_comments
+--no_inlining
+--no_line_commands
+--no_long_preserving_rules
+--no_microsoft
+--no_microsoft_bugs
+--no_multibyte_chars
+--no_namespaces
+--no_nonconst_ref_anachronism
+--no_nonstd_qualifier_deduction
+--no_nonstd_using_decl
+--no_old_specializations
+--no_parse_templates
+--no_pch_messages
+--no_pch_verbose
+--no_preproc_only
+--no_restrict
+--no_rtti
+--no_search_source_directory_for_includes
+--no_special_subscript_cost
+--no_stack_referenced_include_directories
+--no_sun
+--no_svr4
+--no_typename
+--no_use_before_set_warnings
+--no_using_std
+--no_variadic_macros
+--no_vla
+--no_warnings
+--no_wchar_t_keyword
+--no_wchar_t
+--no_wrap_diagnostics
+--nonconst_ref_anachronism
+--nonstd_qualifier_deduction
+--nonstd_using_decl
+--old_c
+--old_for_init
+--old_specializations
+--old_style_preprocessing
+--pack_alignment num
+--parse_templates
+--partial_order_cv_then_ref
+--partial_order_ref_then_cv
+--pch
+--pch_dir path
+--pch_mem num
+--pch_messages
+--pch_verbose
+--pending_instantiations num
+--prefer_copy_ctor
+--prefer_derived_class
+--prefer_user_defined_operator
+--preinclude file
+--preprocess
+--relative_path_base path
+--remarks
+--restrict
+--rtti
+--search_source_directory_for_includes
+--short_lifetime_temps
+--signed_chars
+--size_t_is_signed_int
+--size_t_is_unsigned_int
+--size_t_is_unsigned_long
+--special_subscript_cost
+--stack_referenced_include_directories
+--static_array_tentative_defs
+--strict
+--strict_warnings
+--sun
+--suppress_template_macro_files
+--suppress_trigraphs
+--svr4
+--sys_include path
+--trace_includes
+--trim_filenames
+--typename
+--undefine_macro
+--unsigned_chars
+--use_pch file
+--using_std
+--variadic_macros
+--vla
+--wchar_t_keyword
+--wchar_t
+--wrap_diagnostics

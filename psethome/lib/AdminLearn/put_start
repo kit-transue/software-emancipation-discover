@@ -1,0 +1,28 @@
+#!/bin/sh
+$PSETCFG/cm_trace $0 $*
+
+cat $cm_files >>/tmp/report.out
+
+
+if [ `uname` = "HP-UX" ] ;
+then
+	(echo "User" `whoami` "submitting bug : "; cat $cm_bugno; echo "Comment for submission :"; 
+	 cat $cm_comment; echo;  
+	 awk '/^\// { printf("Submitted file :\n%s\nFollowing entities are modified\n" , $0); };\
+	      /@/ {  $1=" "; print $0 };\
+	      /Files aff/ { print $0 };\
+	      /---/ { print "" ; print "" ; }
+	      /#/ { $1=" "; print $0 }' $cm_files
+	) | mail -s "Submission report" $USER 2> /dev/null
+else
+	(echo "User" `whoami` "submitting bug : "; cat $cm_bugno; echo "Comment for submission :"; 
+	 cat $cm_comment; echo;  
+	 awk '/^\// { printf("Submitted file :\n%s\nFollowing entities are modified \n" , $0); };\
+	      /@/ {  $1=" "; print $0 };\
+	      /Files aff/ { print $0 };\
+	      /---/ { print "" ; print "" ; }
+	      /#/ { $1=" "; print $0 }' $cm_files
+	) | mail -s "Submission report" $USER
+fi
+
+exit 0

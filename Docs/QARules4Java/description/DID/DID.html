@@ -1,0 +1,27 @@
+<html>
+<body>
+
+<p><b>DID - Duplicate Import Declarations</b></p>
+
+<p> There should be only one import declaration
+that imports a particular class/package.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.audit;<br>
+import java.io.*;<br>
+<font color='red'>import java.io.*;</font><br>
+import java.sql.Time;<br>
+<font color='red'>import java.sql.Time;</font><br>
+<br>
+class DID {<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Delete duplicate declarations
+</p>
+
+</body>
+</html>

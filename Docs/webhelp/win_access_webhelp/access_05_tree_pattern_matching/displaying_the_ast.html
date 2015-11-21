@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Displaying the AST</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Displaying the AST</b></p>
+<p class="p2">The Access command <span class="s1"><b>tree print</b></span> takes an ast_node and prints a graphical representation of the node and its descendants, for example:</p>
+<p class="p3">tree print [data node main]</p>
+<p class="p2">returns</p>
+<p class="p3">function_def 13809 4976 : ‘int main (arg ... warning */ }’<br>
+ast_declspec 13809 3 : ‘int’<br>
+function_decl 13813 17 : ‘main (argc, argv)’<br>
+| global_id 13813 4 : ‘main’<br>
+| parm_decl 13835 9 : ‘int argc;’<br>
+| | ast_declspec 13835 3 : ‘int’<br>
+| | local_id 13839 4 : ‘argc’<br>
+| parm_decl 13849 12 : ‘char **argv;’<br>
+| ast_declspec 13849 4 : ‘char’<br>
+| local_id 13856 4 : ‘argv’<br>
+ast_block 13862 4923 : ‘{ int fil ... warning */ }’<br>
+list_decl 13868 15 : ‘int file_count;’<br>
+| ast_declspec 13868 3 : ‘int’<br>
+| var_decl 13872 11 : ‘file_count;’<br>
+| local_id 13872 10 : ‘file_count’<br>
+list_decl 13925 12 : ‘int proglen;’<br>
+| ast_declspec 13925 3 : ‘int’<br>
+| var_decl 13929 8 : ‘proglen;’<br>
+| local_id 13929 7 : ‘proglen’<br>
+[...]</p>
+<p class="p2">Here you see the function definition for <span class="s1">main</span>: its return type followed by its signature, which in turn is made up of its name and full specifications of its parameters. The body of the function follows, starting with the local variable declarations.</p>
+<p class="p2">The <span class="s1"><b>tree print</b></span> command is essential for understanding and debugging TPM scripts. C++ in particular is a rich language with many subtleties; often the easiest way to build a TPM expression to match a construct is to take a sample of that construct to understand its exact structure.</p>
+</body>
+</html>

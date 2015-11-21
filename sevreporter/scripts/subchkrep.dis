@@ -1,0 +1,623 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+global _SUBCHKREP_DIS_SOURCED
+global env
+
+if { ( ! [ info exists _SUBCHKREP_DIS_SOURCED ] ) || [ info exists env(DISCOVER_VERBOSE) ] } {
+
+proc subchk:get_report_types {} {
+  return [ list "Detailed" "Summary" ]
+}
+
+proc subchk:get_report_formats {} {
+  return [ list "HTML" "Plain Text" ]
+}
+
+proc subchk:report { filter type format } {
+  set tree [ querytree open $filter ]
+  if { $type == "detailed" || $type == "Detailed" } {
+    return [ subchk:report_basic $tree $format 1 $filter ]
+  } elseif { $type == "summary" || $type == "Summary" } {
+    return [ subchk:report_basic $tree $format 0 $filter ]
+  } else {
+    return -code 1 "No such report type: $type"
+  }
+}
+
+proc subchk:report_basic { tree format verbose filtername } {
+
+  global SUBCHK_REPORT_BUFFER
+  set SUBCHK_REPORT_BUFFER ""
+
+  if { $format == "html" || $format == "HTML" } {
+    set reporter subchk:reporter_detailed_html
+  } elseif { $format == "text" || $format == "Plain Text" } {
+    set reporter subchk:reporter_detailed_text
+  } else {
+    return -code 1 "No such report format: $format"
+  }
+
+  set domain [ querytree get $tree domain ]
+  set disposition [ querytree get $tree disposition ]
+
+  $reporter push START
+
+  $reporter emit REPORT_TITLE "DISCOVER SubmissionCheck" $filtername
+  $reporter push USER_INFO
+  $reporter emit USER User [ subchk:username ]
+  $reporter emit HOST Host [ subchk:hostname ]
+  $reporter emit DATE Date [ subchk:date ]
+  $reporter pop
+
+  # live submission:
+  set comment [ querytree get $tree comment ]
+  if { $comment != "" } {
+    set msg "The following submission"
+    if { $disposition == "Reject" } {
+      append msg " was rejected"
+    } elseif { $disposition == "Warn" } {
+      append msg " passed with warnings"
+    } else {
+      append msg " passed all criteria"
+    }
+    $reporter push SUBMISSION_INFO $msg
+    if { [ size $domain ] > 1 } { set f "files" } else { set f "file" }
+    $reporter emit PUT_LIST "Target $f" $domain
+    set bugid [ querytree get $tree bugid ]
+    if { $bugid == "" } { set bugid "<none>" }
+    $reporter emit BUGID "Submission ID" $bugid
+    $reporter emit COMMENT "Checkin comment" $comment
+    $reporter pop
+  } else {
+    if { [ size $domain ] > 1 } { set f "Files" } else { set f "File" }
+    if { [ size $domain ] > 0 } {
+      $reporter emit FILE_LIST "$f analyzed" $domain
+    }
+  }
+
+  set n_reject [ size [ querytree get $tree rejects ] ]
+  set n_warning [ size [ querytree get $tree warnings ] ]
+  set n_total [ expr $n_warning + $n_reject ]
+
+  if { $n_total > 0 } {
+    if { $n_reject == 1 } { set err "error" } else { set err "errors" }
+    if { $n_warning == 1 } { set warn "warning" } else { set warn "warnings" }
+    if { $n_total == 1 } { set viol "violation" } else { set viol "violations" }
+    set text "Found $n_total $viol ($n_reject $err and $n_warning $warn)"
+    set tag "RESULTS"
+  } else {
+    set text "Found no violations"
+    set tag "RESULTS_EMPTY"
+  }
+
+  $reporter push $tag $text
+
+  if { $verbose } {
+
+    set queries [ querytree runners $tree ]
+
+    set rejects ""
+    set warnings ""
+    set others ""
+
+    foreach query $queries {
+      set total [ querytree get $query total ]
+      set tolerance [ querytree get $query tolerance ]
+      if { $total > $tolerance } {
+        set action [ querytree get $query action ]
+        if { $action == "Reject" } {
+          lappend rejects $query
+        } elseif { $action == "Warn" } {
+          lappend warnings $query
+        } else {
+          lappend others $query
+        }
+      }
+    }
+
+    set querycount 1
+    set elemcount 1
+    foreach item [ list [ list $rejects "error" ] [ list $warnings "warning" ] ] {
+      set queries [ lindex $item 0 ]
+      set severity [ lindex $item 1 ]
+      foreach query $queries {
+        set title [ querytree get $query name ]
+        set hits [ querytree get $query hits ]
+        set hitcount 1
+        $reporter push QHITS $querycount $title $severity [ size $hits ]
+        foreach el $hits {
+          set lname [ lname $el ]
+          set line [ line $el ]
+          set kind [ kind $el ]
+          set name [ name $el ]
+          if { $name == "" } { set name [ ast_text [ data node -ignore $el ] ] }
+          regsub -all "\n+" $name " " name
+          regsub -all " +" $name " " name
+          set name [ string trim $name " " ]
+          if { $line != "-1" } { set pos "$lname:$line" } else { set pos "$lname" }
+          $reporter emit HIT $elemcount $title $severity $kind $pos [ format "%.30s" $name ] $hitcount
+          incr elemcount
+          incr hitcount
+        }
+        $reporter pop
+        incr querycount
+      }
+    }
+
+  }
+
+  $reporter pop
+
+  # The following has been disabled:
+
+  if { 0 && $verbose } {
+    global SUBCHK_RESULTS_MODIFIED
+    set mod [ nil_set ]
+    foreach file $domain {
+      set lname [ lname $file ]
+      if { [ info exists SUBCHK_RESULTS_MODIFIED($lname) ] } {
+        sappend $mod $SUBCHK_RESULTS_MODIFIED($lname)
+      }
+    }
+    foreach item [ list [ list "The following entities were modified" $mod ] ] {
+      set syms [ nil_set ]
+      foreach sym [ lindex $item 1 ] { if { [ kind $sym ] != "VERSION" } { sappend $syms $sym } }
+      if { [ size $syms ] > 0 } {
+        $reporter push ENTINFO [ lindex $item 0 ]
+        set index 1
+        foreach sym $syms {
+          set lname [ lname $sym ]
+          set line [ line $sym ]
+          if { $line != "-1" } { set pos "$lname:$line" } else { set pos "$lname" }
+          $reporter emit ENTITEM $index [ kind -ignore $sym ] [ name -ignore $sym ] $pos
+          incr index
+        }
+        $reporter pop
+      }
+    }
+  }
+
+  $reporter pop
+
+  set ret $SUBCHK_REPORT_BUFFER
+  unset SUBCHK_REPORT_BUFFER
+
+  return $ret
+}
+
+proc subchk:reporter_detailed_text { op args } {
+  global SUBCHK_REPORT_BUFFER
+  global SUBCHK_REPORT_STACK
+  if { $SUBCHK_REPORT_BUFFER == "" } { set SUBCHK_REPORT_STACK "" }
+
+  if { $op == "push" || $op == "emit" } {
+    set tag [ lindex $args 0 ]
+    set index 0
+    foreach item [ lrange $args 1 end ] {
+      set data($index) $item
+      incr index
+    }
+    if { $op == "push" } { lappend SUBCHK_REPORT_STACK $tag }
+  } elseif { $op == "pop" } {
+    set tag [ lindex $SUBCHK_REPORT_STACK end ]
+    set SUBCHK_REPORT_STACK [ lreplace $SUBCHK_REPORT_STACK end end ]
+  }
+
+  set buf ""
+
+  switch -- $tag {
+    START {}
+    REPORT_TITLE {
+      if { $data(1) != "" } {
+        set title "$data(0) - $data(1)"
+      } else {
+        set title $data(0)
+      }
+      set len [ string length $title ]
+      for { set i 0 } { $i < $len } { incr i } { append buf "=" }
+      append buf "\n$title\n"
+      for { set i 0 } { $i < $len } { incr i } { append buf "=" }
+      append buf "\n\n"
+    }
+    USER_INFO { if { $op == "pop" } { append buf "\n" } }
+    USER -
+    HOST -
+    DATE { append buf "$data(0):\t$data(1)\n" }
+    SUBMISSION_INFO {
+      if { $op == "push" } { append buf "$data(0):\n\n" }
+    }
+    BUGID { append buf "\n\t$data(0):\n\n\t\t$data(1)\n" }
+    COMMENT {
+      append buf "\n\t$data(0):\n\n"
+      set comment $data(1)
+      if { $comment == "" } { set comment "<none>" }
+      set lines [ split $comment \r\n ]
+      foreach line $lines { append buf [ format "\t\t> $line\n" ] }
+    }
+    PUT_LIST -
+    FILE_LIST {
+      if { $tag == "PUT_LIST" } {
+        append buf "\t"
+        set indent "\t\t"
+      } else {
+        set indent "\t"
+      }
+      append buf "$data(0):\n\n"
+      set domain $data(1)
+      if { [ size $domain ] > 1 } {
+        set index 1
+        foreach file $domain {
+          append buf "${indent}${index}. [ lname $file ]\n"
+          incr index
+        }
+      } else {
+        append buf "${indent}[ lname $domain ]\n"
+      }
+    }
+    RESULTS_EMPTY { if { $op == "push" } { append buf "\n$data(0).\n" } }
+    RESULTS { if { $op == "push" } { append buf "\n$data(0):\n" } }
+    QHITS {
+      switch -- $op {
+        push { append buf "\n\t$data(0). $data(1) \[[ string toupper $data(2) ]\] ($data(3)):\n\n" }
+        pop {}
+      }
+    }
+    HIT {
+      append buf [ format "\t\t%-4.4s %-12.12s %-20.20s %.40s\n" $data(6). ($data(3)) $data(4) `$data(5)' ]
+    }
+    ENTINFO {
+      switch -- "$op" {
+        push { append buf "\n$data(0):\n\n" }
+        pop {}
+      }
+    }
+    ENTITEM {
+      append buf [ format "\t%-4.4s %-12.12s %-20.20s %.40s\n" $data(0). ($data(1)) $data(3) $data(2) ]
+    }
+  }
+
+  append SUBCHK_REPORT_BUFFER $buf
+}
+
+proc subchk:html_protect { str } {
+  regsub -all {\<} $str {\&lt;} str
+  regsub -all {\>} $str {\&gt;} str
+  # add others...
+  return $str
+}
+
+proc subchk:reporter_detailed_html { op args } {
+  global SUBCHK_REPORT_BUFFER
+  global SUBCHK_REPORT_STACK
+  if { $SUBCHK_REPORT_BUFFER == "" } { set SUBCHK_REPORT_STACK "" }
+
+  if { $op == "push" || $op == "emit" } {
+    set tag [ lindex $args 0 ]
+    set index 0
+    foreach item [ lrange $args 1 end ] {
+      set data($index) [ subchk:html_protect $item ]
+      incr index
+    }
+    if { $op == "push" } { lappend SUBCHK_REPORT_STACK $tag }
+  } elseif { $op == "pop" } {
+    set tag [ lindex $SUBCHK_REPORT_STACK end ]
+    set SUBCHK_REPORT_STACK [ lreplace $SUBCHK_REPORT_STACK end end ]
+  }
+
+  set buf ""
+
+  switch -- $tag {
+    START {
+      if { $op == "push" } {
+        append buf "<HTML>\n"
+      } elseif { $op == "pop" } {
+        append buf "</BODY>\n</HTML>\n"
+      }
+    }
+    REPORT_TITLE {
+      if { $data(1) != "" } {
+        set title "$data(0) - $data(1)"
+      } else {
+        set title $data(0)
+      }
+      append buf "<HEAD>\n<TITLE>$title</TITLE>\n</HEAD>\n"
+      append buf "<BODY bgcolor=white>\n"
+      append buf "<H1>$title</H1>\n"
+    }
+    USER_INFO {
+      switch -- $op {
+        push { append buf "<TABLE BORDER=0 CELLPADDING=0>\n" }
+        pop { append buf "</TABLE>\n<P>\n" }
+      }
+    }
+    USER -
+    HOST -
+    DATE {
+      append buf "<TR>\n"
+      append buf "<TD><EM>$data(0): </EM></TD>\n"
+      append buf "<TD>$data(1)</TD>\n"
+      append buf "</TR>\n"
+    }
+    SUBMISSION_INFO {
+      if { $op == "push" } { append buf "<H3>$data(0):</H3>\n" }
+    }
+    BUGID {
+      append buf "<OL>\n"
+      append buf "<STRONG><EM>$data(0):</EM></STRONG><P>\n"
+      append buf "<OL>$data(1)</OL>\n"
+      append buf "</OL>\n"
+    }
+    COMMENT {
+      append buf "<OL>\n"
+      append buf "<STRONG><EM>$data(0):</EM></STRONG><P>\n"
+      append buf "<OL>\n"
+      set comment $data(1)
+      if { $comment == "" } { set comment "<none>" }
+      set lines [ split $comment \r\n ]
+      foreach line $lines { append buf "$line<BR>\n" }
+      append buf "</OL>\n"
+      append buf "</OL>\n"
+    }
+    PUT_LIST -
+    FILE_LIST {
+      if { $tag == "PUT_LIST" } { set indent 1 } else { set indent 0 }
+      if { $indent } {
+        append buf "<OL>\n"
+        append buf "<STRONG><EM>$data(0):</EM></STRONG><P>\n"
+      } else {
+        append buf "<H3>$data(0):</H3>\n"
+      }
+      append buf "<OL>\n"
+      set domain $data(1)
+      if { [ size $domain ] > 1 } {
+        set index 1
+        foreach file $domain {
+          append buf "${index}. [ lname $file ]<BR>"
+          incr index
+        }
+      } else {
+        append buf "[ lname $domain ]"
+      }
+      append buf "</OL>\n"
+      if { $indent } { append buf "</OL>\n" }
+    }
+    RESULTS_EMPTY {
+      if { $op == "push" } { append buf "<H3>$data(0).</H3>\n" }
+    }
+    RESULTS {
+      switch -- $op {
+        push {
+          append buf "<H3>$data(0):</H3>\n"
+          append buf "<OL>\n"
+        }
+        pop { append buf "</OL>\n" }
+      }
+    }
+    QHITS {
+      switch -- $op {
+        push { 
+          append buf "<H4>$data(0). $data(1) ($data(2)):</H4>\n"
+          append buf "<OL><TABLE BORDER=\"0\" CELLPADDING=\"0\" WIDTH=\"650\" CELLSPACING=\"2\">\n"
+        }
+        pop { append buf "</TABLE></OL>\n" }
+      }
+    }
+    HIT {
+      append buf "<TR>\n"
+      if { $data(6) == 1 } {
+        append buf "<TD WIDTH=\"6%\">$data(6).</TD>\n"
+        append buf "<TD WIDTH=\"14%\"><EM>($data(3))</EM></TD>\n"
+        append buf "<TD WIDTH=\"30%\">$data(4)</TD>\n"
+        append buf "<TD WIDTH=\"50%\">`$data(5)'</TD>\n"
+      } else {
+        append buf "<TD>$data(6).</TD>\n"
+        append buf "<TD><EM>($data(3))</EM></TD>\n"
+        append buf "<TD>$data(4)</TD>\n"
+        append buf "<TD>`$data(5)'</TD>\n"
+      }
+      append buf "</TR>\n"
+    }
+    ENTINFO {
+      switch -- $op {
+        push {
+          append buf "<H3>$data(0):</H3>\n"
+          append buf "<OL><TABLE BORDER=0 CELLPADDING=0>\n"
+        }
+        pop {
+          append buf "</TABLE></OL>\n"
+        }
+      }
+    }
+    ENTITEM {
+      append buf "<TR>\n"
+      append buf "<TD colspan=10>$data(0).</TD>\n"
+      append buf "<TD colspan=30><EM>($data(1))</EM></TD>\n"
+      append buf "<TD colspan=40>$data(3)</TD>\n"
+      append buf "<TD colspan=80>$data(2)</TD>\n"
+      append buf "</TR>\n"
+    }
+  }
+
+  append SUBCHK_REPORT_BUFFER $buf
+}
+
+proc subchk:username {} {
+  set user ""
+  global env
+  if { [ info exists env(USER) ] } {
+    set user "$env(USER)"
+  } elseif { [ info exists env(USERNAME) ] } {
+    set user "$env(USERNAME)"
+  } else {
+    set user "<unknown>"
+  }
+
+  return $user
+}
+
+proc subchk:hostname {} {
+  set host [ info hostname ]
+  if { $host == "" } { set host <unknown> }
+  if { [ info exists env(OS) ] } { append host " ($env(OS))" }
+  return $host
+}
+
+proc subchk:date {} {
+  set date [ echo_date ]
+  if { $date == "" } {
+    set date "<unknown>"
+  }
+
+  regsub "\n" $date {} date
+
+  return $date
+}
+
+proc subchk:writefile { file text } {
+
+  if { $file == "" } {
+    global env
+    if { [ info exists env(TMPDIR) ] } {
+      set file [ tempnam $env(TMPDIR) subchk ]
+    } else {
+      set file [ tempnam "" subchk ]
+    }
+    set _file $file
+    set counter 1
+    while { [ file isfile $_file ] && $counter < 500 } {
+      set _file "${file}.${counter}"
+      incr counter
+    }
+    set file $_file
+    > $file { puts $text }
+    catch { if { ! [ is_windows ] } { view_file $file } }
+  }
+
+  return $file
+}
+
+proc is_windows {} {
+  set ret 0
+  global tcl_platform
+  if { [ info exists tcl_platform(platform) ] && $tcl_platform(platform) == "windows" } {
+    set ret 1
+  }
+  return $ret
+}
+
+proc subchk:sendmail { subject to text } {
+
+  set retval ""
+  set retcode 0
+
+  set _to ""
+  foreach addr $to {
+    if { $addr != "" } {
+      append _to "\{$addr\} "
+    }
+  }
+  set to $_to
+
+  if { ! [ is_windows ] } {
+    set text "Subject: ${subject}\n\n$text"
+    set mail [ get_pref_value SubmissionCheck.MailExecPath ]
+    set cmd "{$mail} $to"
+    catch { eval puts_verbose \{executing: $cmd\} }
+    set status [ catch { eval exec $cmd << {$text} } errmsg ]
+    if { $status != 0 } {
+      set ec ""
+      global errorCode
+      if { [ info exists errorCode ] } {
+        set ec $errorCode
+        puts_verbose "subchk: mail command exited with code: $ec"
+      }
+      global errorInfo
+      if { [ info exists errorInfo ] } { set errmsg $errorInfo }
+      if { (! [ regexp SIG $errmsg ]) && (! [ regexp INTR $ec ]) } {
+        set retval "Error encountered while sending mail:\n\n\t$errmsg"
+        set retcode 1
+      }
+    }
+  } else {
+    set status [ catch { send_mail $to $subject $text } ]
+    if { $status != 0 } {
+      set retval "Error encountered while sending mail"
+      global errorInfo
+      if { [ info exists errorInfo ] } {
+        append retval ":\n\n\t$errorInfo"
+      } else {
+        append retval .
+      }
+      set retcode 1
+    }
+  }
+
+  return -code $retcode $retval
+}
+
+proc subchk:notify { filter } {
+
+  set tree [ querytree open $filter ]
+
+  set detailed_text_buffer [ subchk:report $filter detailed text ]
+  set log [ get_pref_value SubmissionCheck.CheckinLog ]
+  set detailed_text_file [ subchk:writefile $log $detailed_text_buffer ]
+
+  set subject "SubmissionCheck"
+  set disposition [ querytree get $tree disposition ]
+  if { $disposition == "Reject" } {
+    append subject " \[REJECT\]"
+  } elseif { $disposition == "Warn" } {
+    append subject " \[WARNING\]"
+  } else {
+    append subject " \[ACCEPT\]"
+  }
+
+  # send detailed text:
+
+  set detailed_text_recipients [ querytree get $tree mail_dtl ]
+  if { [ querytree get $tree mail_dtu ] == "1" } {
+    lappend detailed_text_recipients [ subchk:username ]
+  }
+  if { $detailed_text_recipients != "" } {
+    subchk:sendmail $subject $detailed_text_recipients $detailed_text_buffer
+  }
+
+  # send summary text:
+
+  set summary_text_recipients [ querytree get $tree mail_stl ]
+  if { [ querytree get $tree mail_stu ] == "1" } {
+    lappend summary_text_recipients [ subchk:username ]
+  }
+  if { $summary_text_recipients != "" } {
+    set summary_text_buffer [ subchk:report $filter summary text ]
+    subchk:sendmail $subject $summary_text_recipients $summary_text_buffer
+  }
+}
+
+}

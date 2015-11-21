@@ -1,0 +1,9 @@
+CROOTS=\
+
+
+CPROOTS=\
+    gra_galaInterface \
+    gra_galaSymbol \
+    gra_galaWorld \
+
+YLROOTS=symParser

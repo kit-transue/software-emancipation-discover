@@ -1,0 +1,170 @@
+# Makefile.src
+#
+# This is a uniform Makefile for all source directories
+#
+
+MAKEMF = $(TOOL)/makemf
+UXCGEN = /users/uimx2.0/bin/uxcgen
+FLEX = /paraset/src/flex/sun4-O/flex
+SUBLEX = /paraset/src/sublex/sun4-O/sublex
+
+
+SHAREINCL = $(BASE)/include
+
+ASETINCLUDES = \
+	-I$(BASE)/include \
+	-I$(SYSBASE)/include \
+	-I$(SYSBASE)/include \
+	-I$(SYSBASE)/obj/$(ARCH)/gcc/src \
+	-I$(SYSBASE)/obj/$(ARCH)/gcc/src/cp  \
+	-I$(SYSBASE)/obj/$(ARCH)/gcc/src/config
+	
+
+XINCLUDES = \
+	-I/usr/include/Xm \
+        -I/usr/openwin/include \
+	-I/usr/local/include/uimx
+
+CCDEFINES = -DGCC2 -Dcplusplus_2_1 -Div2_6_compatible -DUSE_SPARCWORKS -DSUN4_SPARCWORKS
+
+CCINCLUDES = \
+	$(ASETINCLUDES) \
+	-I/usr/local/include/InterViews/2.6 \
+	-I/usr/local/include/IV-look/2.6 \
+	-I/usr/local/include \
+	$(XINCLUDES)
+
+TARGET_ARCH = -D`ParaArch`
+
+CCFLAGS = $(CPPFLAGS) $(DEBUG) $(CCDEFINES) $(CCINCLUDES) $(TARGET_ARCH)
+
+CDEFINES = -DGCC2 -D_NO_PROTO -DUSE_SPARCWORKS -DSUN4_SPARCWORKS
+
+CINCLUDES = $(ASETINCLUDES) $(XINCLUDES)
+
+CFLAGS = $(CPPFLAGS) $(DEBUG) $(CDEFINES) $(CINCLUDES) $(TARGET_ARCH) 
+
+OBJDIR = `pwd | sed 's!src!obj/$(ARCH)!'`
+
+# Default make target
+default : all
+
+# Complain and die if $(ARCH) is not set.
+ARCH_must_be_set :
+	@test "$(ARCH)"  ||  (echo '*** $$ARCH is not set ***'  &&   false)
+
+# Create the architecture-specific subdirectory.
+objdir_must_exist :
+	@-if [ ! -d $(OBJDIR) ]; then mkdir -p $(OBJDIR); fi
+	@-if [ ! -f $(OBJDIR)/Makefile ] ; then \
+	cd $(OBJDIR); $(MAKEMF) > Makefile ; fi
+
+rafile : rfile afile
+
+# Targets that are passed on to the architecture-specific subdirectory.
+all afile depend xref xrefs : ARCH_must_be_set objdir_must_exist
+	@- cd $(OBJDIR); $(MAKE) -k XREFLOG=$(XREFLOG) $@
+
+rfile:
+	    @- cd $(OBJDIR); $(MAKE) -k XREFLOG=$(XREFLOG) $@
+
+makemf: ARCH_must_be_set objdir_must_exist
+	@cd $(OBJDIR); if [ ! -f Makefile ]; then \
+            $(MAKEMF) >Makefile ; \
+            echo "Created new Makefile for" `pwd`; \
+        else \
+            $(MAKE) $@; \
+            echo "Re-created Makefile for" `pwd`; \
+        fi
+
+makemfci:
+	   -cp $(OBJDIR)/Makefile $(OBJDIR)/Makefile.save.`date +%m%y%H%M%S'
+	   @cd $(OBJDIR);  \
+	   if [ "`/usr/atria/bin/cleartool describe Makefile | fgrep 'version:'`" ] ; then  \
+	            /usr/atria/bin/cleartool co -nc Makefile ; \
+	   else \
+	           echo ' ' ;\
+	           echo '**Makefile currently is not an element. Will create it**' ; \
+	           echo ' ' ; \
+	           /usr/atria/bin/cleartool co -nc . ; \
+	           /usr/atria/bin/cleartool mkelem -nc Makefile ; \
+	           /usr/atria/bin/cleartool ci -c createdMakefile . ; \
+	   fi ;\
+	   if [ ! -f Makefile ]; then \
+	       $(MAKEMF) >Makefile ; \
+	       echo "Created new Makefile for" `pwd`; \
+	   else \
+	       $(MAKE) makemf; \
+	       echo "Re-created Makefile for" `pwd`; \
+	   fi ; \
+	   /usr/atria/bin/cleartool ci -identical -nc Makefile 
+
+
+# Delete junk files
+clean : ARCH_must_be_set objdir_must_exist
+	rm -f *.o *~ \#*\#
+	cd $(OBJDIR); $(MAKE) clean makemf
+
+$(SHAREINCL) :
+	mkdir -p $@
+
+includes : $(SHAREINCL)
+	@-if [ ! -d ../include ]; then \
+	    echo 'No module include directory.'; \
+	else \
+	    cd ../include; \
+	    files=`echo *`; \
+	    if [ "$$files" != '*' ]; then \
+		relpath=`pwd | sed -e 's%^.*/\([^/]*/[^/]*/include\)%\1%'`; \
+		for i in $$files; do \
+		    if [ \
+			`expr match "$$i" '.*[~#]$$'` -eq 0 -a \
+			! -d "$$i" -a \
+			! -f "$(SHAREINCL)/$$i" \
+		    ]; then \
+			echo ln -s "../src/$$relpath/$$i" $(SHAREINCL); \
+			ln -s "../src/$$relpath/$$i" $(SHAREINCL); \
+		    fi; \
+		done; \
+	    fi; \
+	fi
+	
+
+# Rules for building [generally] architecture-independant intermediate files.
+.SUFFIXES :
+.SUFFIXES :	.C .I .T .l .if .c .i .asm .s
+
+.C.I :;	@ echo Preprocessing C++ file $<
+	$(CCC) -E $(CCFLAGS) $< > $@
+
+.C.T :;	@ echo Include tree for C++ file $<
+	inctree $(CCFLAGS) $< > $@
+
+.C.i :;	@ echo Translating C++ file $<
+	@$(CCC) -F $(CCFLAGS) $< > $@
+
+.c.T :;	@ echo Include tree for C file $<
+	inctree $(CFLAGS) $< > $@
+
+.c.i :;	@ echo Preprocessing C file $<
+	$(CC) -E $(CFLAGS) $< > $@
+
+.if.c :; @ echo Translating UIM/X file $<
+	$(UXCGEN) $<
+
+.lt.o :; @  echo Translating lex token  
+	$(SUBLEX) $*.inc < $< > $*.lex
+	$(FLEX) -Sflex.skel.cpp  -t $*.lex > $*.C
+	$(CCC) -F $(CCFLAGS) < $*.C > $@ 
+
+.bits.o :; echo Copying object file $<
+	cp $< $@
+
+# If all else fails, just try to make it in the architecture sub-dir.
+.DEFAULT:; cd $(OBJDIR); $(MAKE) $@
+
+
+
+
+
+

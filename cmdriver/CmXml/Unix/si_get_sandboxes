@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Get sandboxes from MKS Source Integrity.
+#
+
+# Is 'si' accessible? For this try to run 'si'.
+if si about > /dev/null 
+then
+
+  # Opening XML tag.
+  echo "<cm_attr>"
+
+  # Get all sandboxes, put them into XML tag.
+  si sandboxes | sed 's/ ->.*//' | sed 's/.*/  <cm_li key="&"\/>/'
+
+  # Closing XML tag.
+  echo "</cm_attr>"
+
+  exit 0
+
+else
+
+  # Return error code to the client.
+  exit $?
+
+fi
+

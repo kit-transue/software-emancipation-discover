@@ -1,0 +1,59 @@
+<html>
+<body>
+
+<p><b>AOSMTO - Access Of Static Members Through Objects</b></p>
+
+<p>Static members should be referenced through class
+names rather than through objects.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class AOSMTO1 {<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; AOSMTO1 obj1 = new AOSMTO1();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; AOSMTO2 obj2 = new AOSMTO2();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>obj1.attr = 10; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>obj2.attr = 20; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>obj1.oper(); </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>obj2.oper(); </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>this.attr++; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>this.oper(); </font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; static int attr;<br>
+&nbsp; &nbsp; static void oper () {}<br>
+}<br>
+class AOSMTO2 {<br>
+&nbsp; &nbsp; static int attr;<br>
+&nbsp; &nbsp; static void oper () {}<br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+Always reference static members via class names
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class AOSMTO1 {<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; AOSMTO1 obj1 = new AOSMTO1();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; AOSMTO2 obj2 = new AOSMTO2();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>AOSMTO1.attr = 10; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>AOSMTO2.attr = 20; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>AOSMTO1.oper(); </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>AOSMTO2.oper(); </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>AOSMTO1.attr++; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>AOSMTO1.oper(); </font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; static int attr;<br>
+&nbsp; &nbsp; static void oper () {}<br>
+}<br>
+class AOSMTO2 {<br>
+&nbsp; &nbsp; static int attr;<br>
+&nbsp; &nbsp; static void oper () {}<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

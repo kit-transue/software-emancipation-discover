@@ -1,0 +1,45 @@
+#!/bin/csh -f
+
+   if ( ! $?DISTutorHome )  setenv DISTutorHome  ~/DISCOVER/Tutor
+   if ( ! -d  $DISTutorHome ) then
+		mkdir -p $DISTutorHome
+		if ($status != 0 ) then
+			echo " Could not create tutor home directory"
+			echo " Exiting.."
+			exit 1
+		endif
+   endif
+   if ( $DISTutorHome != ~/DISCOVER/Tutor ) then 
+	if ( -d ~/DISCOVER/Tutor ) then
+		$test -h ~/DISCOVER/Tutor
+		if ( $status != 0 ) then
+			mv   ~/DISCOVER/Tutor ~/DISCOVER/Tutor.old
+			echo " Moved old Tutor directory in ~/DISCOVER"
+			echo " to ~/DISCOVER/Tutor.old
+		endif
+	endif
+	if ( ! -d ~/DISCOVER ) mkdir ~/DISCOVER
+	if ( $status != 0 ) then
+		echo "Could not create ~/DISCOVER"
+		echo "Needed to link DISTutor home"
+		echo "directory to."
+	endif
+	ln -s $DISTutorHome ~/DISCOVER/Tutor
+	if ( $status != 0 ) then
+		echo "Could not  ln -s $DISTutorHome ~/DISCOVER"
+		echo "Please make ~/DISCOVER a writable directory."
+	endif
+    endif	
+    if ( `ls -i $DISTutorHome | wc -l` == 0 ) then
+	echo ""
+        echo "Installing the Tutor directory in $DISTutorHome"
+	(/bin/cp -r $PSETHOME/lib/Tutor/* $DISTutorHome)
+	ln -s ~/DISCOVER/Tutor/local/basics/Makefile.`DISarch`  $DISTutorHome/local/basics/Makefile
+	ln -s ~/DISCOVER/Tutor/local/debug/Makefile.`DISarch`  $DISTutorHome/local/debug/Makefile
+        chmod -R u+w ~/DISCOVER/Tutor
+	echo "Finished installing DISCOVER Tutorial."
+    endif
+    echo ""
+    echo "Starting Tutorial..."
+    echo ""
+    set DIS_other_args = ("-prefs" "$HOME/DISCOVER/Tutor/tutor.prefs" "-noUserPrefs" "-P" "$DISTutorHome/tutor.pdf")

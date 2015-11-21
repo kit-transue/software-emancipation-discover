@@ -1,0 +1,12 @@
+CXXROOTS=\
+	BatchBuild \
+	Hit \
+	PolicyTree \
+	ProjectTreeNode \
+	ServerInterface \
+	XMLTree \
+	ClientInterface \
+	HitsTable \
+	ProjectTree \
+	QAEngine \
+	TaskDriver

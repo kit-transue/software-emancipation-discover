@@ -1,0 +1,28 @@
+YLROOTS = \
+	descParser \
+	reportDataParser \
+	reportTemplateParser
+
+CXXROOTS = \
+	charOpts \
+	chartImage \
+	descParser \
+	inputItem \
+	inputs \
+	inventoryItem \
+	inventory \
+	metric \
+	metricFolder \
+	qualityItem \
+	query \
+	queryFolder \
+	reportDataParser \
+	reportItem \
+	reportItemList \
+	reportStream \
+	reportStreamText \
+	reportStreamHTML \
+	reportTemplate \
+	reporterArgs \
+	rootFolder \
+	sevreporter

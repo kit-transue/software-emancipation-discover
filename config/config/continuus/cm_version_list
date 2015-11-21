@@ -1,0 +1,2 @@
+#!/bin/sh
+$CCM_HOME/bin/ccm history -f "VVV:%version %modify_time" $cm_revision_file | grep VVV | sed -e 's/VVV://'

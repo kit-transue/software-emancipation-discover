@@ -1,0 +1,8 @@
+CPROOTS=\
+        prefs\
+        projscope\
+        extfile\
+
+
+CROOTS=\
+

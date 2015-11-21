@@ -1,0 +1,87 @@
+The following describes the Patch Release mechanism
+=====================================================
+
+CHANGES TO DISTRIBUTION:
+
+All distributions will have a file discover/README containing description of
+the release with the patch level. For each of this patch level the
+README file will also contain the description of issues that it fixes.
+
+All distributions will have an executable file discover/bin/apply_patch. This
+executable will be run as described below to apply the patch to existing
+distribution.
+
+DIRECTORY STRUCTURE:
+
+   /net/pluto/support/Releases/<platform>/<Major or Minor Release>
+
+This directory contains following directories
+
+   base
+   patch/01
+   patch/02
+   ...
+   patch/n         n <= 99
+   discover
+
+base and discover directory will contain full distribution.
+
+patch/02 to patch/n contains the necessary incremental tree with changed
+files from previous patch level. patch/01 contains the necessary incremental
+tree with changed files from base distribution.
+
+discover directory contains the currently shipping distribution. When a major or
+minor release occurs, the base and discover distributions are exactly the same.
+
+Every Patch will contain at least the following 4 files:
+
+   patch/n/New		- Containing list of new files
+   patch/n/Delete	- Containing list of deleted files
+   patch/n/Replace	- Containing list of modified files
+   patch/n/README	- Containing patch comments
+
+README files will contain the following.
+
+   in base:	Platform and release for this distribution
+   in patch/n:	Description of patches for each patch level.
+   in discover:	The sum of all READMEs in base and all patches.
+
+Working procedures:
+
+1. init_patch
+   This script does the following:
+   a. Tar copy the first R&D release into base. You should have the 
+      base/bin/ base/lib/ .... 
+   b. Write a README file for the base.
+   c. make a discover/ directory.
+   d. Tar copy everything from base/ into discover/.
+
+2. create_patch <patch tree root> <latest R&D release>
+
+   From the latest R&D release, the script creates a new patch level 
+   relative to the current discover/ release. Then the latest R&D release
+   distribution is copied to discover/ .
+
+   For example,  
+   >create_patch /patches/hp/3.0 /net/pluto/nexus/Releases/hp/950913/discover
+
+   If PSET_PATCH_DEBUG is set, the discover/ will not be modified, and the new 
+   patch was created in patch/.debug .
+
+3. merge_patch
+
+   Generates a merged patch from <from patch> to <to patch> and creates the
+   merged patch in <new patch path> directory. This way we can merge multiple
+   patches into a single patch, which can be sent to customers.
+
+4. apply_patch
+
+   Patch a DISCOVER distribution at a site to incorporate a new
+   patch from SET. Customer knows his current patch level by looking into 
+   the README file in his distribution.
+
+The scripts 1, 3 and 4 have no arguments. The script will ask you for the
+necessary informations. Currently all scripts are in ~support/bin/ .
+
+-Reggie Zhu
+09/95 

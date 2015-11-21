@@ -1,0 +1,2909 @@
+#!/usr/local/bin/perl
+
+$PROG = 'pdfgen'; # Name of script
+$Version = '5.8'; # Script version
+
+# List of new prefs (one per line)
+$PrefsAdded = "
+  projectInsertion
+  dirHasHeaders
+  testsExt
+  testsPrefix
+  ";
+
+$xFast = 0;
+$xManage = 0;
+
+# Enhancements (one per line)
+$Enhancements = "
+  NOTICE: preference '*pdfgen.privateProject' is no longer used, because it duplicates the value stored in '*psetPrefs.projectHome'. WARNING W07 is generated until you remove it from your preferences file.
+  Passing '-s' on the command line will perform a SelfTest.
+  Projects generated according to 'dis_toplevels' now append your extensions to the end of the project. There was previously no way to list files directly in a toplevel prior to this.
+  A selector is now supported as an optional third field for 'dis_toplevels'. This corresponds to the previous enhancement - and would restrict which extensions you are interested in.
+  Preferences for pdfgen ending with 'Ext' (eg. - frameDocExt) can now be blank. This implies that a file with no extension for these 'Special Rules' is now supported.
+  Users can now supply a script/program to provide 'Project specific Insertions' (see preference 'projectInsertion').
+  Previously, if a executable/library project needed header extensions, you had to list the directory explicitly to get the extensions (for each executable/library). When the preference 'dirHasHeaders' is yes, you get this functionality without having to list the directory explicity (each time).
+  NOTES now document the format of the data. This allows pdfgen to be 'self contained'. The format was previously in a separate document.
+  Appending to the preferences (passing '-a' on the command line) now backs up the original preferences file with extension '.Date_Time' as opposed to '.BAK'.
+  A selector 'T' (or 't') is now recognized to support Tests for 'dis_lowerlevels', 'dis_executables', and 'dis_libraries'. (See new preferences 'testsExt' and 'testsPrefix').
+  ";
+
+# Any bug fixes (one per line)
+$BugFixes = "
+  NOTES now show the User Setup Script.
+  Symbolic Link detection on files now pays attention to selectors you supply in 'dis_lowerlevels', 'dis_executables', and 'dis_libraries'.
+  Writing a new Preferences file failed when lines ended with a back-slash (implying the newline was escaped).  This is handled properly now.
+  WARNING W06 messages were given incorrectly for executables and libraries.  This has been fixed.
+  The '.boilerplate' rule was being added to your Private Project. It is now created as a high-level project instead. Also, a sample set of boilerplates is copied into its directory when you run admin_install.
+  SharedSrcRoot is now computed correctly when the value ends up being slash ('/').
+  ";
+
+###########################################################################
+
+# Add the Extensions to the pdf
+sub AddExtensions
+{
+  local ($fileID, $ind, $sel, $star) = @_;
+  local ($pat1, $patN);
+  $star = '*' if (!$star);
+  printf $fileID ("%s", &TAB($ind));
+  if ($sel =~ /[Tt]/) { # Tests selector
+    printf $fileID ("(%s)", $star);
+    printf $fileID (".%s", $Option{testsExt}) if ($Option{testsExt} =~ /\S/);
+    printf $fileID "\n";
+    return;
+  }
+  elsif ($sel =~ /[Ss]/ && $sel =~ /[Hh]/) {
+    ($pat1, $patN) = ($ext1Char, $extNChar);
+  }
+  elsif ($sel =~ /[Ss]/) { # source selector
+    ($pat1, $patN) = ($src1Char, $srcNChar);
+  }
+  elsif ($sel =~ /[Hh]/) { # header selector
+    ($pat1, $patN) = ($hdr1Char, $hdrNChar);
+  }
+  else {
+    ($pat1, $patN) = ($ext1Char, $extNChar);
+  }
+  foreach $ext (split(' ', $patN)) {
+    printf $fileID ("%s%s ", $star, $ext);
+  }
+  printf $fileID ("%s.%s", $star, $pat1) if ($pat1);
+  printf $fileID "\n";
+}
+
+# Append to the prefs file
+sub AppendPrefs
+{
+  local ($pref) = $Option{prefsFile};
+  local ($back) = sprintf("%s.%s", $pref, &TimeStamp);
+  local ($name) = &FileName($tmp, 'prefs', &BaseName($pref));
+  local ($max, $printFmt, $opt, $val);
+  system("cp $pref $tmp" . '/prefs');
+  foreach $xyz (keys(%Option)) {
+    $max = $xyz if (length($xyz) > length($max));
+  }
+  $printFmt = sprintf("%%%ds %%s\n", -length($max) -10);
+  &FileOpen(PREF, '>>', $name);
+  foreach $xyz (sort keys(%Option)) {
+    next if (!$Comment{$xyz} || $Preference{$xyz});
+    printf PREF ("\n#\n# %s\n#\n", $Comment{$xyz});
+    $opt = "*pdfgen.$xyz" . ':';
+    printf PREF ($printFmt, $opt, $Option{$xyz});
+  }
+  close(PREF);
+  $pref = &FileName($ENV{ADMINDIR}, 'prefs/build.prefs')
+    if ($pref eq "$defaultPrefs");
+  printf ("Backup Preference is named: %s\n", $back);
+  rename($pref, $back);
+  system("cp $name $pref");
+  exit(0);
+}
+
+# Setup the Comment hash table
+sub ArrayComment
+{
+  # If you add to %Comment, also add to %Option
+  %Comment = (
+    'boilerPlateDir', "Directory where Boilerplates are stored",
+    'boilerPlateExt', "Extension for Boilerplate files",
+    'frameDocDir', "Directory where Frame Documents are stored",
+    'frameDocExt', "Extension for Frame Document files",
+    'linkTypeDir', "Directory where Link Types are stored",
+    'linkTypeExt', "Extension for Link Type files",
+    'relationDir', "Directory where Relationships are stored",
+    'relationExt', "Extension for Relation files",
+    'rtlDir', "Directory where RTL are stored (for pre-4.0 groups)",
+    'rtlExt', "Extension for RTL files",
+    'subsysDir', "Directory where Groups/Subsystems are stored",
+    'subsysExt', "Extension for Group (or Subsystem) files",
+
+    'commandToRun', "Preliminary command to run",
+    'createStatsFile', "Yes writes to \$HOME/DISCOVER/$PROG/Date_Time.stats",
+    'dirHasHeaders', "Yes means the executables/libraries directory contains header files (implying you use -I.)",
+    'disBatchScript', "Script to run DISCOVER outside modelbuild envionment",
+    'envVarScript', "Script to set environment variables for DISCOVER outside modelbuild envionment",
+    'excludeDirs', "List of space separated directories to exclude",
+    'fieldSeparator', "Input field separator. DO NOT surround with quotes",
+    'filterFlags', "Script to filter compilation flags",
+    'getFlags', "Script to get compilation flags",
+    'headerPrefix', "Prefix for Header projects",
+    'installScript', "Script to copy files to the proper locations",
+    'makemfCommand', "Command to 'make' the Makefile (typically 'make makemf')",
+    'messageTypes', "Message Types to Show. E=Error, I=Info, W=Warning",
+    'preserveLevels', "Number of directories to preserve before using '**' (also see Option 'useStarStar')",
+    'privateDirectory', "Where checkouts occur",
+    'privateSelector', "Script to select files for PRIVATE",
+    'projectInsertion', "User Supplied script to add lines to a PDF which are Project Specific",
+    'standardFlags', "-D or -I flags to use for every Compiler",
+    'tabStops', "Number of spaces for Tab Stops",
+    'testsExt', "File extension for DISCOVER Tests",
+    'testsPrefix', "Prefix for DISCOVER Tests (Logical Path name)",
+    'useStarStar', "No will omit '**' syntax for Lower Levels",
+    'userSetupScript', "Script to setup a DISCOVER user's privateSrcRoot directory",
+  );
+}
+
+# Setup the HelpRef hash table
+sub ArrayHelpRef
+{
+  %HelpRef = (
+    # 'DOT' rules
+    '.boilerplate', 'rules PDF, boilerplate',
+    '.exec',        'rules PDF, exec',
+    '.lib',         '',
+    '.make',        'rules PDF, make rule',
+    '.makemf',      'rules PDF, makemf rule',
+    '.pset',        'rules PDF, pset rule',
+    '.pmoddir',     'rules PDF, pmoddir rule',
+    '.rtl',         'rules PDF, rtl',
+    '.LinkTypes',   'rules PDF, link types',
+
+    # Other rules
+    'DISCOVER-Relations',   'rules PDF, relations',
+    'DISCOVER-Subsystems',  'rules PDF, subsystems',
+    'Exclusions',           'project definition language, exclusion operator',
+    'FrameDocs',            'rules PDF, frame docs',
+    'Link Selectors',       'selectors, and substitution',
+    'Private Projects',     '',
+    'Projects',             'projects, root project',
+    'Read/Write Selectors', 'selectors, read/write',
+    'Rules',                'hiding projects',
+    'Script Selectors',     'selectors, script',
+    'Sub-Projects',         'subprojects',
+  );
+}
+
+# Setup the Messages hash tables
+sub ArrayMessages
+{
+  %Messages = (
+    # INFO Messages
+    'I01', "created for %s. Its foreign to dis_toplevels",
+    'I02', "%s was created under %s",
+    'I03', "No link rule added for %s",
+    'I04', "for directory %s is %d",
+
+    # WARNING Messages
+    'W01', "Selector is NOT valid in field %d",
+    'W02', "Compiler flags are blank",
+    'W03', "Defaulting %s to /bin",
+    'W04', "Path '%s' does not exist",
+    'W05', "Project %s already exists",
+    'W06', "Selector for %s does NOT match a previous one",
+    'W07', "%s in NOT Supported",
+    'W99', "for Directory %s",
+
+    # ERROR Messages
+    'E01', "%s is an unrecognized language",
+    'E02', "%s. System Message: %s",
+    'E03', "Directory doesnt match any in dis_toplevels",
+    'E04', "Path must be an Absolute in Field %d",
+    'E05', "Suffixes for %s are NOT valid",
+    'E06', "Project %s can NOT begin with a slash",
+    'E07', "Path must begin with its dis_toplevel",
+    'E08', "Improper Format, Expected %s fields",
+    'E09', "Compiler must NOT be blank",
+    'E10', "Attempt to duplicate project %s",
+    'E11', "Component MUST be at or below %s",
+    'E12', "Link for %s",
+    'E13', "Selector [Tt] MUST stand by itself in Field %d",
+  );
+}
+
+# Setup miscellaneous hash tables
+sub ArrayMisc
+{
+  # Code indicators are the first character in %Messages
+  %Codes = (
+    'E', 'ERROR',
+    'W', 'WARNING',
+    'I', 'INFO',
+  );
+  # Values are the first part of the Dir and Ext indicies in %Option
+  %Special = (
+    '.boilerplate',        'boilerPlate',
+    '.rtl',                'rtl',
+    '.LinkTypes',          'linkType',
+    'DISCOVER-Relations',  'relation',
+    'DISCOVER-Subsystems', 'subsys',
+    'FrameDocs',           'frameDoc',
+  );
+}
+
+# Setup the Option hash table
+sub ArrayOption
+{
+  local ($platform) = &Unix("uname -s");
+  # If you add to here, also add to %Comment
+  %Option = (
+    # This set corresponds to %Special
+    'boilerPlateDir', 'bplate',
+    'boilerPlateExt', 'bp',
+    'frameDocDir',    'docs',
+    'frameDocExt',    'doc',
+    'linkTypeDir',    'ltypes',
+    'linkTypeExt',    'lt',
+    'relationDir',    'rels',
+    'relationExt',    'rel',
+    'rtlDir',         'rtl',
+    'rtlExt',         'rtl',
+    'subsysDir',      'groups',
+    'subsysExt',      'grp',
+
+    # Other prefs
+    'commandToRun',     'make',
+    'createStatsFile',  'yes',
+    'dirHasHeaders',    'yes',
+    'disBatchScript',   '$ADMINDIR/bin/disbat',
+    'envVarScript',     '$ADMINDIR/bin/setvars',
+    'excludeDirs',      'lost+found SCCS RCS CVS',
+    'fieldSeparator',   ',',
+    'filterFlags',      '$ADMINDIR/bin/filter_flags',
+    'getFlags',         '$ADMINDIR/bin/dis_flags',
+    'headerPrefix',     'INCLUDES',
+    'installScript',    'admin_install',
+    'makemfCommand',    'make makemf',
+    'messageTypes',     'EWI',
+    'preserveLevels',   5,
+    'privateDirectory', '$privateSrcRoot',
+    'privateSelector',  '',
+    'projectInsertion', '',
+    'standardFlags',    '-Dwchar_t=__wchar_t -I/usr/include',
+    'tabStops',         2,
+    'testsExt',         'pkapl',
+    'testsPrefix',      'Tests',
+    'useStarStar',      'no',
+    'userSetupScript',  '$ADMINDIR/bin/user_setup',
+  );
+  $Option{standardFlags} .= ' -D__STDC__=0' if ($platform =~ /^Sun/);
+}
+
+# Setup the Statistic Names array
+sub ArrayStats
+{
+  @statNames = (
+    'ERROR_Messages', 'WARNING_Messages', 'INFO_Messages', '',
+    'dis_compilers', 'lines_dis_compilers', 'black_dis_compilers', '',
+    'dis_excludes', 'lines_dis_excludes', 'black_dis_excludes', '',
+    'dis_executables', 'lines_dis_executables', 'black_dis_executables',
+        'files_in_dis_executables', 'dirs_in_dis_executables',
+        'links_in_dis_executables', '',
+    'dis_extensions', 'unique_dis_extensions', 
+        'lines_dis_extensions', 'black_dis_extensions', '',
+    'dis_libraries', 'lines_dis_libraries', 'black_dis_libraries',
+        'files_in_dis_libraries', 'dirs_in_dis_libraries',
+        'links_in_dis_libraries', '',
+    'dis_lowerlevels', 'lines_dis_lowerlevels', 'black_dis_lowerlevels', '',
+    'dis_toplevels', 'lines_dis_toplevels', 'black_dis_toplevels', '',
+    'symlinks', 'file_symlinks', 'dir_symlinks', '',
+  );
+}
+
+# Compute the file component of a path
+sub BaseName
+{
+  local ($p) = @_;
+  $p =~ m!^([^/]*/)*(.*)$!;
+  return $2 ? $2 : '/';
+}
+
+# Build the SubProject data structure
+sub BuildDataStructure
+{
+  local (*SP, $d, $sel, $p) = @_;
+  local ($fnd, $y) = (0, $d);
+  local ($q, $x, $z);
+  $p = &BaseName($d) if (!$p);
+  while (!$fnd) {
+    $x = &BaseName($y);
+    $y = &DirName($y);
+    for ($q = 1; $q <= $SP{$y, 0}; ++$q) {
+      if ($SP{$y, $q} eq $x) {
+        $z = $fnd = $q;
+        last;
+      }
+    }
+    if (!$fnd) {
+      $z = ++$SP{$y, 0};
+      $SP{$y, $z} = $x;
+    }
+    if (($y . '/' . $x) =~ m!^$d(/)?$!) {
+      $SP{$y, $z, 'proj'} = $p;
+      $SP{$y, $z, 'flag'} = $sel;
+    }
+    last if ($y eq $Option{sharedSrcRoot});
+  }
+}
+
+# Retrieve the compilers
+sub CaptureCompilers
+{
+  local ($lang, $compiler, $flags, $line);
+  local ($lc, $targ, $ec, @F) = (0, 'dis_compilers');
+  printf "Retrieving $targ ";
+  open(CMD, "$runCommand $targ |");
+  while ($line = <CMD>) {
+    ++$lc;
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    next if ($line !~ /\S/); # Ignore blank lines
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    $ec = 0;
+    @F = split("$Option{fieldSeparator}", $line);
+    $ec += &Msg('E08', $targ, $lc, 3) if ($#F != 2);
+    ($lang, $compiler, $flags) = @F;
+    $ec += &Msg('E01', $targ, $lc, $lang) if ($lang !~ /^(\s*[cC](\+\+)?)|cEsql\s*$/);
+    $ec += &Msg('E09', $targ, $lc) if ($compiler !~ /\S/);
+    $ec += &Msg('W02', $targ, $lc) if ($flags !~ /\S/);
+    next if ($ec);
+    printf ".";
+    ++$Stats{$targ}; # Compiler count
+    $compiler =~ s/\s+//; # Trim white
+    $compAll{$compiler} = $flags;
+	$compType{$compiler} .= ' ' . 'cEsql' if ($lang =~ 'cEsql');
+    $compType{$compiler} .= ' ' . (($lang =~ /\+\+/) ? 'cPlus' : 'c')  if ($lang !~ 'cEsql');
+  }
+  close(CMD); # Close the pipe
+  printf "\n";
+  $Stats{"lines_$targ"} = $lc;
+}
+
+# Retrieve the files to exclude
+sub CaptureExcludes
+{
+  local ($line, $p, $d);
+  local ($lc, $targ, $ec, $x, $name) = (0, 'dis_excludes');
+  printf "Retrieving $targ ";
+  open(CMD, "$runCommand $targ |");
+  while ($line = <CMD>) {
+    ++$lc;
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    next if ($line !~ /\S/); # Ignore blank lines
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    $line =~ s/\s+//g; # Trim white-space
+    @F = split("$Option{fieldSeparator}", $line);
+    $ec = 0;
+    $ec += &Msg('E08', $targ, $lc, 2) if ($#F != 1);
+    next if ($ec);
+    printf ".";
+    ($x, $p, $d) = (0, @F);
+    $p =~ s!/!_!g; # Change slash into underscore
+    $d =~ s!/$!!; # Remove trailing slash
+    $name = &FileName($tmp, "xclude/$p", '.lst');
+    &FileOpen(PROJ, '>>', $name);
+    while ($line = <CMD>) {
+      ++$lc;
+      chop($line);
+      next if ($line =~ /^\s*#/);
+      $line =~ s/#.*//; # Ignore comments
+      last if ($line !~ /\S/); # blank lines force section break
+      ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+      $line =~ s/\s+//g; # Trim white-space
+      $ec = 0;
+      $ec += &Msg('E04', $targ, $lc, 1) if ($line !~ m!^/!);
+      $ec += &Msg('E07', $targ, $lc) if ($line !~ m!$d/(.+)!);
+      next if ($ec);
+      printf PROJ ("%s\n", $1);
+      ++$x;
+    }
+    close(PROJ);
+    unlink($name) if (!$x);
+  }
+  close(CMD); # Close the pipe
+  close(PROJ); # Should be closed by now, but just in case
+  unlink($name) if (!$x);
+  printf "\n";
+  $Stats{$targ} = $x; # Excludes count
+  $Stats{"lines_$targ"} = $lc;
+}
+
+# Retrieve the extensions
+sub CaptureExtensions
+{
+  local ($line, $lang, $srcsuf, $hdrsuf, $s, $h);
+  local ($lc, $targ, $ec, @F) = (0, 'dis_extensions');
+  printf "Retrieving $targ ";
+  open(CMD, "$runCommand $targ |");
+  while ($line = <CMD>) {
+    ++$lc;
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    next if ($line !~ /\S/); # Ignore blank lines
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    @F = split("$Option{fieldSeparator}", $line);
+    $ec = 0;
+    $ec += &Msg('E08', $targ, $lc, 3) if ($#F != 2);
+    ($lang, $srcsuf, $hdrsuf) = @F;
+    $ec += &Msg('E05', $targ, $lc, "Source") if ($srcsuf !~ /\./);
+    $ec += &Msg('E05', $targ, $lc, "Header") if ($hdrsuf !~ /\./);
+    $ec += &Msg('E01', $targ, $lc, $lang) if ($lang !~ /^\s*([cC](\+\+)?)|cEsql\s*$/);
+    next if ($ec);
+    ++$Stats{$targ}; # Extension Lines
+	if ($lang =~ /\+\+/) {
+		$s = 'cPlus' . 'Suffix';
+		$h = 'cPlus' . 'HdrSuffix';
+	} elsif ($lang =~ /cEsql/) {
+		$s = 'cEsql' . 'Suffix';
+		$h = 'cEsql' . 'HdrSuffix';
+	} else {
+		$s = 'c' . 'Suffix';
+		$h = 'c' . 'HdrSuffix';
+	}
+    foreach $y (split(/\s+/, $srcsuf)) {
+      next if (!$y);
+      $extAll{$y} = 'Ss';
+      $Option{$s} .= $y . ' ';
+      printf ".";
+    }
+    foreach $y (split(/\s+/, $hdrsuf)) {
+      next if (!$y);
+      $extAll{$y} = 'Hh';
+      $Option{$h} .= $y . ' ';
+      printf ".";
+    }
+  }
+  close(CMD); # Close the pipe
+  &SetExtensionVars("unique_$targ");
+  printf "\n";
+  $Stats{"lines_$targ"} = $lc;
+}
+
+# Retrieve Top Level Projects
+sub CaptureProjects
+{
+  local ($lc, $targ) = (0, 'dis_toplevels');
+  local (@F, $line, $p, $d, $sel);
+  printf "Retrieving $targ ";
+  open(CMD, "$runCommand $targ |");
+  while ($line = <CMD>) {
+    ++$lc;
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    next if ($line !~ /\S/); # Ignore blank lines
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    $line =~ s/\s+//g; # Trim white-space
+    @F = split("$Option{fieldSeparator}", $line);
+    $Errors = 0;
+    if ($#F == 2) {
+      ($p, $d, $sel) = @F;
+      if ($sel !~ /^\[[HhSs]+\]$/) {
+        $sel = '[HS]';
+        &Msg('W01', $targ, $lc, 3);
+      }
+    }
+    elsif ($#F == 1) {
+      ($sel, $p, $d) = ('[HS]', @F);
+    }
+    else {
+      &Msg('E08', $targ, $lc, '2 or 3');
+    }
+    &Msg('E06', $targ, $lc, $p) if ($p =~ m!^/!);
+    &Msg('E04', $targ, $lc, 2) if ($d !~ m!^/!);
+    next if ($Errors);
+    ++$Stats{$targ}; # Project count
+    printf ".";
+    $p =~ s!/!_!g; # Change slashes into underscores
+    $d =~ s!/$!!; # Remove trailing slash
+    ($projs{$p}, $psels{$p}) = ($d, $sel);
+    $Option{sharedSrcRoot} = &GCD($d) if ($Option{sharedSrcRoot} ne '/');
+  }
+  close(CMD); # Close the pipe
+  printf "\n";
+  $Stats{"lines_$targ"} = $lc;
+}
+
+# Retrieve Lower Level Projects (sub-projects)
+sub CaptureSubProjects
+{
+  local ($prev, $prj, @F) = ' ';
+  local ($lc, $targ) = (0, 'dis_lowerlevels');
+  local ($line, $p, $d, $sel);
+  printf "Retrieving $targ ";
+  open(CMD, "$runCommand $targ |");
+  while ($line = <CMD>) {
+    ++$lc;
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    next if ($line !~ /\S/); # Ignore blank lines
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    $line =~ s/\s+//g; # Trim white-space
+    @F = split("$Option{fieldSeparator}", $line);
+    $Errors = 0;
+    if ($#F == 2) {
+      ($p, $d, $sel) = @F;
+      if ($sel !~ /^\[[HhSsLlTt]+\]$/) {
+        $sel = '[HS]';
+        &Msg('W01', $targ, $lc, 3);
+      }
+      if ($sel =~ /[Tt]/) {
+        &Msg('E13', $targ, $lc, 3) if ($sel =~ /[HhSsLl]/);
+      }
+      else {
+        substr($sel, -1, 1) = 'HS]' if ($sel !~ /[HhSs]/);
+      }
+    }
+    elsif ($#F == 1) {
+      ($sel, $p, $d) = ('[HS]', @F);
+    }
+    else {
+      &Msg('E08', $targ, $lc, "2 or 3");
+    }
+    &Msg('E04', $targ, $lc, 2) if ($d !~ m!^/!);
+    &Msg('W04', $targ, $lc, $d) if (! -e $d);
+    next if ($Errors);
+    printf ".";
+    $p =~ s!/!_!g; # Change slash into underscore
+    $d =~ s!/$!!; # Remove trailing slash
+    if ($d !~ m!^$prev!) {
+      $prj = &FindProject($d, 'E03', $targ, $lc);
+      next if ($Errors);
+      $prev = $HasSubProjs{$prj} = $projs{$prj};
+      $prev .= '/';
+    }
+    if ($prev eq ($d . '/')) {
+      &Msg('W05', $targ, $lc, $d);
+      next;
+    }
+    next if ($Errors);
+    &BuildDataStructure(*sub_projs, $d, $sel, $p);
+    ++$Stats{$targ}; # SubProject count
+  }
+  printf "\n";
+  $Stats{"lines_$targ"} = $lc;
+}
+
+# Retrieve the executables or libraries
+sub CaptureTarget
+{
+  local ($targ) = @_;
+  local ($el) = $1 if ($targ =~ /dis_(exec|lib)/);
+  local ($eorl) = &FileName($tmp, "rules/PROJ_", ".$el");
+  local ($lc, $prev, $line) = (0, ' ');
+  local ($uss) = &IsYes($Option{useStarStar});
+  local (@F, $f1, $f2, $f3, $prj);
+  &FileOpen(EORL, '>', $eorl);
+  &PDFHelpLine(EORL, ".$el");
+  printf EORL (".%s : / <-> /.%s\n", $el, $el);
+  printf EORL ("%s\n", $LBrace);
+  &UserSupplied(EORL, 'Top', $el);
+  printf "Retrieving $targ ";
+  open(CMD, "$runCommand $targ |");
+  while ($line = <CMD>) {
+    ++$lc;
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    next if ($line !~ /\S/); # Ignore blank lines
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    $line =~ s/\s+//g; # Strip white space
+    @F = split("$Option{fieldSeparator}", $line);
+    $Errors = 0;
+    &Msg('E08', $targ, $lc, 3) if ($#F != 2);
+    ($f1, $f2, $f3) = @F;
+    &Msg('E06', $targ, $lc, $f1) if ($f1 =~ m!^/!);
+    &Msg('E04', $targ, $lc, 2) if ($f2 !~ m!^/!);
+    &Msg('E04', $targ, $lc, 3) if ($f3 !~ m!^/!);
+    $f1 =~ s!/!_!g; # Change slash into underscore
+    $f2 =~ s!/$!!; # Remove trailing slash
+    $f3 =~ s!/$!!; # Remove trailing slash
+    &Msg('E10', $targ, $lc, $f1) if ($projs{$f1});
+    &Msg('W05', $targ, $lc, $f1) if ($projList{$f1});
+    next if ($Errors);
+    ++$projList{$f1}, ++$Stats{$targ}; # Target count
+    printf EORL ("%s%s\n", &TAB(1), $f3); # Finally found executable/library
+    if ($f2 !~ m!^$prev!) {
+      $prj = &FindProject($f2, 'E03', $targ, $lc);
+      next if ($Errors);
+      $prev = $projs{$prj} . '/';
+    }
+    next if ($Errors);
+    &GenerateTarget($prj, $uss);
+  }
+  close(CMD); # Close the pipe
+  &UserSupplied(EORL, 'Bottom', $el);
+  &ProjectEnd(EORL, 0);
+  printf "\n";
+  unlink($eorl) if (!$Stats{$targ});
+  $Stats{"lines_$targ"} = $lc;
+}
+
+# Process command line arguments
+sub CommandLine
+{
+  local ($copt, $carg);
+  while ($copt = shift(@ARGV)) {
+    if ($copt =~ /^-[adhmnsvx]/) { # These take no argument
+      $Args{$1} = 1 if (  ($copt =~ /^(-a)(ppend)?$/)
+                       || ($copt =~ /^(-h)(elp)?$/)
+                       || ($copt =~ /^(-m)(ods)?$/)
+                       || ($copt =~ /^(-n)(otes)?$/)
+                       || ($copt =~ /^(-s)(elftest)?$/)
+                       || ($copt =~ /^(-v)(ersion)?$/)
+                       );
+
+      $xFast = 1 if ($copt =~ /^(-xf)(ast)?$/);
+      $xManage = 1 if ($copt =~ /^(-xm)(ast)?$/);
+      $Args{$1} = $2 if ($copt =~ /^(-d)(.)$/); # Field Separator
+      next;
+    }
+    $carg = ($copt =~ /^-(.+)$/) ? shift(@ARGV) : "";
+    if (!$carg) { # Bad Argument
+      printf STDERR ("%s: Ignoring bad argument for option $copt.\n", $PROG);
+      next;
+    }
+    elsif ($copt eq '-f') { # Alternate makefile
+      $Args{'-f'} .= " -f $carg";
+    }
+    elsif (  ($copt eq '-c') # Alternate command
+          || ($copt eq '-prefs') # Alternate prefs file
+          )
+    {
+      $Args{$copt} = $carg;
+    }
+    else {
+      &Msg('W07', $PROG, 0, $copt);
+      unshift(@ARGV, $carg); # Have it be next argument
+    }
+  }
+}
+
+# Comments for top of pdf
+sub CommentsAtTop
+{
+  &FileOpen(TOP, '>', &FileName($tmp, "rules/comments", '.top'));
+  printf TOP ("# Generator: %s, version %s\n", $PROG, $Version);
+  printf TOP ("# Date_Time: %s\n", &TimeStamp);
+  printf TOP <<'END'
+#
+# Refer to the ADMIN/SET Reference Index
+#   to see more information about a given subject.
+# Comments below suggest what you might look for.
+#
+
+END
+;
+  &PDFHelpLine(TOP, 'Projects', 'Sub-Projects', 'Read/Write Selectors');
+  printf TOP "\n";
+  close(TOP);
+}
+
+# Compute the directory component of a path
+sub DirName
+{
+  local ($p) = @_;
+  local ($work) = $p;
+  return $p if ($p eq '/');
+  $work =~ m!(([^/]*/)*)(.*)$!;
+  $work = $1;
+  $work =~ s!/$!!;
+  return $work;
+}
+
+# Add Exclude lines for Directories
+sub ExcludeDirectories
+{
+  local ($fileID, $ind) = @_;
+  foreach $xyz (split(/\s+/, $Option{excludeDirs})) {
+    printf $fileID ("%s^%s\n", &TAB($ind), $xyz);
+  }
+}
+
+# Construct a file name
+sub FileName
+{
+  local (@fnm) = @_;
+  local ($fext) = pop(@fnm) if ($fnm[$#fnm] =~ /^\./);
+  return (join("/", @fnm) . $fext);
+}
+
+# Open a file
+sub FileOpen
+{
+  local ($fileID, $fmode, $fnm) = @_;
+  if (!$fnm) {
+    $fnm = $fmode;
+    $fmode = "<";
+  }
+  return $fnm if (open($fileID, "$fmode$fnm"));
+  &Msg('E02', 'Unable to open', 0, $fnm, $!);
+  return "";
+}
+
+# Locate command in the PATH
+sub FindCommand
+{
+  local ($cmd) = @_;
+  local ($line, $full_path);
+  foreach $p (split(/:/, $ENV{PATH})) {
+    $full_path = sprintf("%s/%s", ($p cmp '.') ? $p : $PWD, $cmd);
+    return $full_path if (-x $full_path);
+  }
+  if ($cmd ne 'perl') {
+    &Msg('W03', 'command NOT in PATH', 0, $cmd);
+    return ('/bin/' . $cmd);
+  }
+  # Not in path (perl specific)
+  open(PRG, __FILE__);
+  $line = <PRG>;
+  close(PRG);
+  chop($line);
+  $line =~ s/\#\!//;
+  $line =~ s/\s+.*//;
+  return $line;
+}
+
+# Determine which preference file to use
+sub FindPrefsFile
+{
+  local ($fn) = &FileName($ENV{HOME}, '.psetPrefs');
+  #return $fn if (-r $fn);
+  #$fn = &FileName($ENV{ADMINDIR}, 'prefs/build.prefs');
+  #return (-r $fn) ? $fn : $defaultPrefs;
+  return $defaultPrefs;
+}
+
+# Which project is the path in
+sub FindProject
+{
+  local ($Path, @Args) = @_;
+  foreach $prj (keys(%projs)) {
+    return $prj if ($Path eq $projs{$prj} || $Path =~ m!^$projs{$prj}/!);
+  }
+  &Msg(@Args);
+  return ''; # Not found
+}
+
+# Print Formatted Output
+sub Fmt
+{
+  local ($fileID, $num, $in_str, $ind, $max, $esc) = @_;
+  local ($count, $str) = 0;
+  $ind = 4 if (!$ind);
+  $max = 70 if (!$max);
+  printf $fileID ("%2d.", $num) if ($num > 0);
+  while (length($in_str) > $max) {
+    $str = substr($in_str, 0, $max);
+    $str = substr($str, 0, rindex($str, ' '));
+    printf $fileID ("%s", ' ' x $ind) if ($count++);
+    printf $fileID ("%s%s\n",  $str, $esc ? ' \\' : '');
+    $in_str = substr($in_str, length($str));
+  }
+  printf $fileID ("%s", ' ' x $ind) if ($count);
+  printf $fileID ("%s\n", $in_str);
+}
+
+# Greatest Common Directory (sharedSrcRoot)
+sub GCD
+{
+  local ($dir) = @_;
+  local ($ssr) = 'sharedSrcRoot';
+  local ($z, @X, @Z, $len) = &DirName($dir);
+  return $z if (!$Option{$ssr});
+  return $Option{$ssr} if ($z eq $Option{$ssr});
+  @Z = split('/', $z);
+  @X = split('/', $Option{$ssr});
+  $len = $#X;
+  for ($y=0; $y <= $len; ++$y) {
+    if ($X[$y] ne $Z[$y]) {
+      pop(@X) while ($y++ <= $len);
+      last;
+    }
+  }
+  $z = join('/', @X);
+  $z = '/' if (!$len || !$z);
+  return $z;
+}
+
+# Create Header Projects
+sub GenerateHeaders
+{
+  local ($prj, $pname, @iprj, %inc_projs);
+  foreach $hdr (sort keys(%IncludeDir)) {
+    $prj = &FindProject($hdr, 'I01', 'No Project', 0, $hdr);
+    next if (!$prj);
+    if ($pname ne $prj) {
+      push(@iprj, $prj);
+      $pname = $prj;
+    }
+    &BuildDataStructure(*inc_projs, $hdr, '[H]');
+  }
+  return if ($#iprj < 0);
+  foreach $prj (@iprj) {
+    $pname = $Option{headerPrefix} . "_$prj";
+    &FileOpen(PROJ, '>', &FileName($tmp, "include/$pname", '.pdf'));
+    printf ("Generating Headers Project: %s\n", $pname);
+    &ProjectBegin(PROJ, 0, $pname, $projs{$prj}, $prj);
+    &UserSupplied(PROJ, 'Top', $pname);
+    $projList{$pname} = 1;
+    &Traverse(*inc_projs, PROJ, $projs{$prj}, 1, 0);
+    &UserSupplied(PROJ, 'Bottom', $pname);
+    &ProjectEnd(PROJ, 0);
+  }
+}
+
+# Create projects and sub-projects
+sub GenerateProjects
+{
+  local ($uss, $name, $pdir) = &IsYes($Option{useStarStar});
+  foreach $projName (sort keys(%projs)) {
+    printf ("Generating Project: %s\n", $projName);
+    $name = &FileName($tmp, 'proj', $projName, '.pdf');
+    $pdir = $projs{$projName};
+    &FileOpen($projName, '>', $name);
+    &ProjectBegin($projName, 0, $projName, $pdir);
+    &UserSupplied($projName, 'Top');
+    &ProjectExcludes($projName, 1);
+    if ($pdir eq $HasSubProjs{$projName}) {
+      &ExcludeDirectories($projName, 1) unless ($uss);
+      &Traverse(*sub_projs, $projName, $pdir, 1, $uss);
+      &UserSupplied($projName, 'Bottom');
+      &AddExtensions($projName, 1, $psels{$projName});
+    }
+    else {
+      &UserSupplied($projName, 'Bottom');
+      &WildCards($projName, 1);
+    }
+    &ProjectEnd($projName, 0);
+  }
+}
+
+# Generate Shell Scripts
+sub GenerateScripts
+{
+  &ShellDisBat;
+  &ShellEnvVars;
+  &ShellGetFlags;
+  &ShellFilterFlags;
+  &ShellProjectInsert;
+  &ShellUserPrefs;
+  &ShellUserSetup;
+  &ShellAdminInstall;
+  undef(&PERL_CPlusOnCCode);
+  undef(&PERL_FilterCmdLine);
+  undef(&PERL_FilterSetup);
+  undef(&PERL_MassageLine);
+  undef(&SH_ConstructPDF);
+  undef(&SH_ConstructUserPrefs);
+  undef(&SH_InstallBoilerPlates);
+  undef(&SH_InstallFiles);
+  undef(&SH_InstallScripts);
+  undef(&SH_InstallUsage);
+  undef(&SH_OneProjectPerPDF);
+  undef(&SH_ProcessArgs);
+  undef(&ScriptBegin);
+  undef(&ScriptEnd);
+  undef(&ShellAdminInstall);
+  undef(&ShellDisBat);
+  undef(&ShellEnvVars);
+  undef(&ShellFilterFlags);
+  undef(&ShellGetFlags);
+  undef(&ShellProjectInsert);
+  undef(&ShellUserPrefs);
+  undef(&ShellUserSetup);
+}
+
+# Process Detail Lines for a Target
+sub GenerateTarget
+{
+  local ($prj, $uss) = @_;
+  local ($name) = &FileName($tmp, $el, $f1, '.pdf');
+  local ($td, $num_lnks, $curdir, $pd, $pb, $q, @F, $line) = (0, 0, 0);
+  local ($lpath, $ts, $ext, $path, $sel, %el_projs) = $prj;
+  $lpath .= $1 if ($f2 =~ m!$projs{$prj}(/.+)!);
+  &FileOpen($f1, '>>', $name);
+  &ProjectBegin($f1, 0, $f1, $f2, $lpath);
+  &UserSupplied($f1, 'Top');
+  printf ".";
+  while ($line = <CMD>) {
+    ++$lc;
+    next if ($line =~ /^\s*#/); # Comment no-data
+    chop($line);
+    $line =~ s/#.*//; # Ignore comments
+    $line =~ s/\s+//g; # Strip white space
+    last if ($line !~ /\S/); # blank lines force section break
+    ++$Stats{"black_$targ"}; # Non-blank/Non-comment line
+    @F = split("$Option{fieldSeparator}", $line);
+    $Errors = 0;
+    &Msg('E08', $targ, $lc, "1 or 2") if ($#F > 1);
+    ($path, $sel) = @F;
+    &Msg('W01', $targ, $lc, 2)
+      if (($#F == 1) && ($sel !~ /^\[([HhLlTt]+)\]$/));
+    &Msg('E04', $targ, $lc) if ($path !~ m!^/!);
+    if ($sel =~ /[Tt]/) {
+      &Msg('E13', $targ, $lc, 3) if ($sel =~ /[HhLl]/);
+    }
+    next if ($Errors);
+    ++$td;
+    $path =~ s!/$!!; # Remove trailing slash
+    $ext = rindex($path, '.');
+    $ext = substr($path, $ext) if ($ext > 0);
+    &Msg('W04', $targ, $lc, $path) if (! -e $path);
+    if (defined($extAll{$ext})) { # Probably a 'file'
+      if (!$sel || $sel !~ /[Ll]/) {
+        &Msg('W01', $targ, $lc, 2) if ($sel);
+        if ($path =~ m!$f2/(.+)!) {
+          ++$Stats{"files_in_$targ"};
+          printf $f1 ("%s%s\n", &TAB(1), $1);
+        }
+        else {
+          &Msg('E11', $targ, $lc, $path);
+        }
+      }
+      else {
+        &PDFHelpLine($f1, 'Link Selectors') if (!$num_lnks++);
+        substr($sel, -1, 1) = 'S]'; # Only check for source links
+        $Stats{"links_in_$targ"} += &SymLinkRule($f1, 1, $path, $sel, 'file');
+      }
+    }
+    else { # Probably a 'directory'
+      if ($sel) {
+        substr($sel, -1, 1) = 'H]'; # Only check for header links
+      }
+      else {
+        $sel = '[H]' if (!$sel);
+      }
+      if ($path =~ m!$f2(/.+)?!) {
+        ++$Stats{"dirs_in_$targ"};
+        if ($path eq $f2) {
+          $curdir = 1;
+          &HeaderSubProject($f1, 1, $f2, $path, $sel);
+        }
+        else {
+          &BuildDataStructure(*el_projs, $path, $sel);
+        }
+      }
+      else {
+        $pd = &DirName($path);
+        $pb = &BaseName($path);
+        for ($q=1; $q <= $sub_projs{$pd, 0}; ++$q) {
+          if ($sub_projs{$pd, $q, 'proj'} eq $pb) {
+            &Msg('W06', $targ, $lc, $path)
+              if ($sub_projs{$pd, $q, 'flag'} ne $sel);
+            last;
+          }
+        }
+        if (!$IncludeDir{$path}) {
+          $IncludeDir{$path} = $sel;
+        }
+        else {
+          if ($sel !~ /[lL]/) {
+            &Msg('W06', $targ, $lc, $path)
+              if ($IncludeDir{$path} ne $sel);
+            $IncludeDir{$path} = $sel;
+          }
+        }
+      }
+    }
+  }
+  &Traverse(*el_projs, $f1, $f2, 1, 0);
+  &UserSupplied($f1, 'Bottom');
+  &AddExtensions($f1, 1, '[H]', $uss ? '**' : '*')
+    if (!$curdir && &IsYes($Option{dirHasHeaders}));
+  &ProjectEnd($f1, 0);
+  unlink($name) if (!$td); # No files in executable/library
+}
+
+# Verify the AdminDir structure
+sub GuaranteeAdminDir
+{
+  local ($dir);
+  chdir($ENV{ADMINDIR});
+  opendir(DIR, ($ENV{PSETHOME} . "/lib/AdminDir"));
+  while ($dir = readdir(DIR)) {
+    next if ($dir =~ /^\./); # Ignore dot files
+    if (! -d $dir) {
+      mkdir($dir, 0777);
+      &Msg('I02', 'Directory', 0, $dir, 'ADMINDIR');
+    }
+  }
+  closedir(DIR);
+  $dir = 'src'; # not usually in PSETHOME/lib/AdminDir
+  if (! -d $dir) {
+    mkdir($dir, 0777);
+    &Msg('I02', 'Directory', 0, $dir, 'ADMINDIR');
+  }
+  chdir($PWD);
+}
+
+# Verify the ENV settings and permissions
+sub GuaranteeSetup
+{
+  local ($dirs) = 'bin exec include lib pdf prefs proj rules xclude';
+  # ADMINDIR must be set
+  die("  ADMINDIR must be set\n") unless defined ($ENV{ADMINDIR});
+  # ADMINDIR must be a directory
+  die("  ADMINDIR must be a directory\n") unless (-d $ENV{ADMINDIR});
+  # ADMINDIR must be writeable
+  die("  ADMINDIR must be writeable\n") unless (-w $ENV{ADMINDIR});
+  # PSETHOME must be set
+  die("  PSETHOME must be set\n") unless defined ($ENV{PSETHOME});
+  # PSETHOME must be readable
+  die("  PSETHOME must be readable\n") unless (-r $ENV{PSETHOME});
+  # PSETHOME must be a directory
+  die("  PSETHOME must be a directory\n") unless (-d $ENV{PSETHOME});
+  system("rm -rf $tmp");
+  system("mkdir -p $tmp");
+  die("  $tmp must exist and be writeable\n") unless (-d $tmp && -w $tmp);
+  # Current directory must be writeable for 'selftest'
+  die("  Current directory must be writeable\n") if ($Args{'-s'} && ! -w $PWD);
+  # Make subdirs under $tmp
+  foreach $dir (split(/\s+/, $dirs)) {
+    next if (!$dir);
+    mkdir(($tmp . "/$dir"), 0777);
+  }
+}
+
+# Generate a header sub-project
+sub HeaderSubProject
+{
+  local ($fileID, $ind, $pdir, $hdir, $sel, $uss) = @_;
+  local ($tab, $Header) = ($ind, $hdir);
+  $hdir =~ s!$pdir(/)?!!;
+  ++$tab if ($hdir =~ /\S/);
+  &ProjectBegin($fileID, $ind, $hdir, $hdir) if ($hdir);
+  &SymbolicLinks($fileID, $tab, $Header, $sel) if ($sel =~ /[lL]/);
+  &AddExtensions($fileID, $tab, $sel, $uss ? '**' : '*');
+  &ProjectEnd($fileID, $ind) if ($hdir);
+}
+
+# Create the Hidden Rules project
+sub HiddenRules
+{
+  local ($t, $sr, $mr, $name, $prj, $ra) = &TAB(1);
+  local ($gf, $ff) = ($Option{getFlags}, $Option{filterFlags});
+  foreach $area ('shared', 'private') {
+    printf ("Generating Rules: %s ", "\U$area\E");
+    ($sr, $mr, $ra) = ($area . 'SrcRoot', $area . 'ModelRoot', "RULES_$area");
+    $prj = sprintf("%s.%s", "\u$area", &TimeStamp);
+    $name = &FileName($tmp, 'rules', $ra, '.pdf');
+    &FileOpen(RULE, ">", $name);
+    &PDFHelpLine(RULE, 'Rules');
+    printf RULE ("__%s : \$%s <-> /__%s\n%s\n", $prj, $sr, $prj, $LBrace);
+    printf ".";
+    &PDFHelpLine(RULE, '.pset'); # Pset Rules
+    &UserSupplied(RULE, $ra, '.pset');
+    foreach $ext (split(' ', $extNChar)) {
+      printf ".";
+      printf RULE ("%s\$%s/(1)/(2).o :\n", $t, $sr);
+      printf RULE ("%s\$%s/(**)/(*)%s/%%/.pset =>\n", $t, $sr, $ext);
+      printf RULE ("%s\$%s/pset/(1)/(2)%s.pset\n\n", $t, $mr, $ext);
+    }
+    if ($ext1Char) {
+      printf ".";
+      printf RULE ("%s\$%s/(1)/(2).o :\n", $t, $sr);
+      printf RULE ("%s\$%s/(**)/(*).(%s)/%%/.pset =>\n", $t, $sr, $ext1Char);
+      printf RULE ("%s\$%s/pset/(1)/(2).(3).pset\n\n", $t, $mr);
+    }
+    printf ".";
+    &PDFHelpLine(RULE, '.make'); # Make Rules
+    &UserSupplied(RULE, $ra, '.make');
+    foreach $ext (split(' ', $extNChar)) {
+      next if ($extAll{$ext} eq 'Hh'); # No make rule for Headers
+      printf ".";
+      printf RULE ("%s\$%s/(1) :\n", $t, $sr);
+      printf RULE ("%s\$%s/(**)/(*)%s/%%/.make =>\n", $t, $sr, $ext);
+      printf RULE ("%s\"cd \$%s/(1); %s (2) %s | %s -stdin (2) %s\"\n\n",
+        $t, $sr, $gf, substr($ext, 1), $ff, substr($ext, 1));
+    }
+    if ($ext1Char) {
+      printf ".";
+      printf RULE ("%s\$%s/(1) :\n", $t, $sr);
+      printf RULE ("%s\$%s/(**)/(*).(%s)/%%/.make =>\n", $t, $sr, $ext1Char);
+      printf RULE ("%s\"cd \$%s/(1); %s (2) (3) | %s -stdin (2) (3)\"\n\n",
+        $t, $sr, $gf, $ff);
+    }
+    printf ".";
+    &PDFHelpLine(RULE, '.pmoddir'); # Pmoddir Rule
+    &UserSupplied(RULE, $ra, '.pmoddir');
+    printf RULE ("%s\"\" :\n", $t);
+    printf RULE ("%s\$%s/(**)/(*).pmod/%%/.pmoddir =>\n", $t, $sr);
+    printf RULE ("%s\$%s/pmod/(1)/(2).pmod\n\n", $t, $mr);
+    printf ".";
+    &PDFHelpLine(RULE, '.makemf'); # MakeMF Rule
+    &UserSupplied(RULE, $ra, '.makemf');
+    printf RULE ("%s\"\" :\n", $t);
+    printf RULE ("%s\$%s/(**)/%%/.makemf =>\n", $t, $sr);
+    printf RULE ("%s\"", $t);
+    printf RULE ("cd (1); %s", $Option{makemfCommand})
+      if ($Option{makemfCommand});
+    printf RULE ("\"\n");
+    &ProjectEnd(RULE, 0);
+    printf "\n";
+  }
+}
+
+# Set globals
+sub Init
+{
+  $; = ','; # Hash index separator
+  ($LParen, $RParen) = ('(', ')');
+  ($LBrace, $RBrace) = ('{', '}');
+  $commentRWSelector = '
+#
+# In build pdf the read/write selector is W
+# In user pdf the selector is R
+#
+';
+  $commentFilterFlags = '
+# Option -stdin says to use a pipeline
+#               and must come before ArgsList
+# Args = 1:
+#   Fully Qualified path to file
+# Args = 2:
+#   1. Name of file without extension
+#   2. File extension
+#      (you must already be in the correct directory)
+# Args = 3:
+#   1. File located in this directory
+#   2. Name of file without extension
+#   3. File extension
+';
+  &ArrayOption;
+  &ArrayComment;
+  &ArrayHelpRef;
+  &ArrayMessages;
+  &ArrayMisc;
+  &ArrayStats;
+}
+
+# Get user data and write files
+sub InputOutput
+{
+  &CaptureCompilers;
+  &CaptureExtensions;
+  &CaptureProjects;
+  &CaptureExcludes;
+  &GenerateScripts;
+  &HiddenRules;
+  &PrivateProject;
+  &SpecialRulesTop;
+  undef(%compAll);
+  undef(%compType);
+  undef(&BoilerProject);
+  undef(&CaptureCompilers);
+  undef(&CaptureExcludes);
+  undef(&CaptureExtensions);
+  undef(&CaptureProjects);
+  undef(&GCD);
+  undef(&GenerateScripts);
+  undef(&HiddenRules);
+  undef(&LongestFirst);
+  undef(&PrivateProject);
+  undef(&SetExtensionVars);
+  undef(&SpecialRulesSub);
+  undef(&SpecialRulesTop);
+  undef(&StartUp);
+  &CaptureSubProjects;
+  &CaptureTarget('dis_executables');
+  &CaptureTarget('dis_libraries');
+  &GenerateProjects;
+  &GenerateHeaders;
+  &WritePrefs;
+}
+
+# Does the value correspond to Yes
+sub IsYes
+{
+  local ($xyz) = @_;
+  return ($xyz =~ /^([Oo][Nn]|[Yy][Ee][Ss]|[Tt][Rr][Uu][Ee]|1)$/) ? 1 : 0;
+}
+
+# Determine the Link's type
+sub LinkType
+{
+  local ($dir, $lname) = @_;
+  local ($name, $typ, %Visited) = $lname;
+  while (-l $name) {
+    $name = &RelToAbs($dir, $name);
+    if ($Visited{$name}) { # Detect run-away link
+      &Msg('E12', 'run-away', 0, $lname);
+      return '';
+    }
+    $Visited{$name} = 1;
+    $name = readlink($name);
+  }
+  $typ = 'file' if (-f $name);
+  $typ = 'dir' if (-d $name);
+  &Msg('E12', 'cant determine', 0, $lname) if (!$typ); # Unknown or Empty link
+  return $typ;
+}
+
+# Determine Logical Path
+sub LogicalPath
+{
+  local ($d, $l, $n) = @_;
+  local ($lp, $Proj) = &RelToAbs($d, $l);
+  $Proj = &FindProject($lp, 'I03', 'NOT in model', 0, $n);
+  return '' if (!$Proj);
+  $lp =~ s!$projs{$Proj}(/)?!!;
+  return join('/', '', $Proj, $lp);
+}
+
+# Sort Criteria: Longest to Shortest (alphabeticaly otherwise)
+sub LongestFirst
+{
+  return -1 if (length($a) > length($b));
+  return  1 if (length($a) < length($b));
+  return ($a cmp $b);
+}
+
+# Print a message to standard error
+sub Msg
+{
+  local ($msg, $typ, $lnum, @Var) = @_;
+  local ($code, $fmt) = substr($msg, 0, 1);
+  local ($stat) = $Codes{$code} . '_Messages';
+  ++$Stats{$stat}; # Message counts
+  return if ($Option{messageTypes} && $code !~ /[$Option{messageTypes}]/);
+  if ($lnum) {
+    $fmt = sprintf("%%s: %%s: %%s line %%d, %s\n", $Messages{$msg});
+    printf STDERR ($fmt, $Codes{$code}, $msg, $typ, $lnum, @Var);
+  }
+  else {
+    $fmt = sprintf("%%s: %%s: %%s %s\n", $Messages{$msg});
+    printf STDERR ($fmt, $Codes{$code}, $msg, $typ, @Var);
+  }
+  return ($code eq 'E');
+}
+
+# Document the PDF rule
+sub PDFHelpLine
+{
+  local ($fileID, @cmnts) = @_;
+  foreach $xyz (@cmnts) {
+    printf $fileID ("# \"%s\" %s listed as: %s\n",
+      $xyz, ($xyz =~ /s$/) ? 'are' : 'is',
+      $HelpRef{$xyz} ? $HelpRef{$xyz} : 'NOT Listed in Index');
+  }
+}
+
+# Perl routine to determine if CPlus is used on CCode
+sub PERL_CPlusOnCCode
+{
+  printf ".";
+  printf SCR ("sub CPlusOnCCode\n%s\n", $LBrace);
+  printf SCR <<'END'
+  local ($comp, $ext) = @_;
+  if ($compType{$comp} =~ 'cPlus' && $compExts{$ext} eq 'c') {
+    foreach $c (keys(%%compExts)) {
+      return $c if ($compExts{$c} eq 'cPlus');
+    }
+    return 'C';
+  }
+  return '';
+END
+;
+  printf SCR ("%s\n\n", $RBrace);
+}
+
+# Perl routine to process command line args in Filter
+sub PERL_FilterCmdLine
+{
+  printf ".";
+  printf SCR ("sub FilterCmdLine\n%s\n", $LBrace);
+  printf SCR ("  \$PROG = '%s'; # Name of script\n", &BaseName($scr));
+  printf SCR <<'END'
+  if ($ARGV[0] eq '-stdin') {
+    $fileID = 'STDIN';
+    shift(@ARGV);
+  }
+  else {
+    $fileID = 'CMD';
+  }
+  $ARGC = 1 + $#ARGV; # Number of arguments
+
+  if ($ARGC < 1 || $ARGC > 3) {
+    printf <<"EOF"
+
+NAME
+  $PROG - filter input for a compilation line
+
+SYNOPSIS
+  $PROG /Directory/File.Extension
+  $PROG Directory File Extension
+  $PROG [-stdin] File Extension
+
+EOF
+;
+    exit(1);
+  }
+  elsif ($ARGC == 1) {
+    # Break the Fully Qualified path into its components
+    $ARGV[0] =~ m!(.*/)*([^.]+)\.(.+)!;
+    ($dir, $fil, $ext) = ($1, $2, $3);
+  }
+  elsif ($ARGC == 2) {
+    ($fil, $ext) = @ARGV;
+  }
+  else { # ($ARGC == 3)
+    ($dir, $fil, $ext) = @ARGV;
+  }
+  $dir =~ s!/$!! if ($dir); # Remove trailing slash
+END
+;
+  printf SCR ("%s\n\n", $RBrace);
+}
+
+# Perl routine to init the globals in Filter
+sub PERL_FilterSetup
+{
+  printf ".";
+  printf SCR ("sub FilterSetup\n%s\n", $LBrace);
+  printf SCR <<"END"
+  \$runCommand = 'dis_flags';
+  \$commandArgs = \$fil . ' ' . \$ext;
+  \$standardFlags = \'$Option{standardFlags}\';
+
+\# Compilers sorted Longest First
+END
+;
+  printf SCR ("  \@sortedComps =  %s\n", $LParen);
+  foreach $x (sort LongestFirst keys(%compAll)) {
+    printf SCR ("    '%s',\n", $x);
+  }
+  printf SCR ("  %s;\n\n", $RParen);
+  printf SCR ("  %%compType = %s\n", $LParen);
+  foreach $x (keys(%compType)) {
+    printf SCR ("    '%s', '%s',\n", $x, $compType{$x});
+  }
+  printf SCR ("  %s;\n\n", $RParen);
+  printf SCR ("  %%compFlags = %s\n", $LParen);
+  foreach $x (keys(%compAll)) {
+    chop ($compAll{$x});
+    printf SCR ("    '%s', '%s',\n", $x, $compAll{$x});
+  }
+  printf SCR ("  %s;\n\n", $RParen);
+  printf SCR ("  %%compExts = %s\n", $LParen);
+  foreach $y (cSuffix,cPlusSuffix,cEsqlSuffix) {
+    $y =~ m!^(.+)Suffix$!;
+    foreach $x (split(/\s+/, $Option{$y})) {
+      printf SCR ("    '%s', '%s',\n", substr($x, 1), $1);
+    }
+  }
+  printf SCR ("  %s;\n", $RParen);
+  printf SCR ("%s\n\n", $RBrace);
+}
+
+# Perl routine to Massage the compilation Line
+sub PERL_MassageLine
+{
+  printf ".";
+  printf SCR ("sub MassageLine\n%s\n", $LBrace);
+  printf SCR <<'END'
+  $new_ext = &CPlusOnCCode($x, $ext);
+  if ($new_ext) {
+    $z =~ s!\.$ext!\.$new_ext!;
+    $ext = "$new_ext";
+END
+;
+  $eSqlname = "$Option{cEsqlPp}";
+  $cname = "$Option{cCompiler}";
+  $cPlusname = "$Option{cPlusCompiler}";
+  printf ".";
+  printf SCR <<"END"
+  }
+  if (\$compExts{\$ext} eq 'cEsql') {
+   \$z =~ s!^.*/\$x !$eSqlname !;
+  }
+  elsif (\$compExts{\$ext} eq 'cPlus') {
+   \$z =~ s!^.*/\$x !$cPlusname !;
+  }
+  else {
+   \$z =~ s!\^.*/\$x !$cname !;
+END
+;
+  printf ".";
+  printf SCR <<'END'
+  }
+  $found += 1;
+  $z .= join(' ', '', $compFlags{$x}, $standardFlags);
+  $z =~ s/-(I|D)-//g;
+  $z =~ s/(-(I|D))\s+/$1/g;
+  $z =~ s/-(I|D)-/-/g;
+  $z =~ s/-(I|D)\s*($fil\.$ext)/$2/;
+  print "$z\n";
+END
+;
+  printf SCR ("%s\n\n", $RBrace);
+}
+
+# Create the Private project in the user pdf
+sub PrivateProject
+{
+  local ($prj) = $Option{projectHome};
+  local ($ps) = $Option{privateSelector};
+  printf ("Generating Private Project: %s...\n", $prj);
+  &FileOpen(PRIV, '>', &FileName($tmp, "rules/PRIVATE_proj", '.pdf'));
+  &PDFHelpLine(PRIV, 'Private Projects');
+  &PDFHelpLine(PRIV, 'Script Selectors') if ($ps =~ /\S/);
+  printf PRIV ("%s : %s ", $Option{projectHome}, $Option{privateDirectory});
+  printf PRIV ("[[ %s ]] ", $ps) if ($ps =~ /\S/);
+  if ($xFast) {
+    printf PRIV ("[[ get_files_co ]] <-> /\n%s\n", $LBrace);
+  } else {
+    printf PRIV (" <-> /\n%s\n", $LBrace);
+  }
+
+  &UserSupplied(PRIV, 'Top', $prj);
+  &SpecialRulesSub(PRIV);
+  &UserSupplied(PRIV, 'Bottom', $prj);
+  if ($ps =~ /\S/) {
+    &AddExtensions(PRIV, 1, '[HS]', '**');
+  }
+  else {
+    if ($xFast) {
+       printf PRIV ("  (**)\n");
+    } else {
+       &WildCards(PRIV, 1);
+    }
+  }
+  &ProjectEnd(PRIV, 0);
+}
+
+# Beginning of a project
+sub ProjectBegin
+{
+  local ($fileID, $ind, $proj, $dir, $lproj) = @_;
+  local ($ssr, $subdir) = 'sharedSrcRoot';
+  local ($opt, $line) = $Option{$ssr};
+  if (!$ind) {
+    $lproj = $proj if (!$lproj);
+    $subdir = substr($dir, $opt eq '/' ? 1 : length($opt) +1);
+    printf $fileID $commentRWSelector;
+    printf $fileID ("%s%s : \$%s/%s [[ R ]] <-> /%s\n",
+      &TAB($ind), $proj, $ssr, $subdir, $lproj);
+  }
+  else {
+    printf $fileID ("%s%s", &TAB($ind), $proj);
+    if ($proj ne $dir) {
+      if ($lproj =~ /^$Option{testsPrefix}\_$dir/
+      &&  $proj =~ /^tests\.$dir/)
+      {
+        printf $fileID (" : %s <-> %s", $dir, $lproj);
+      }
+      else {
+        printf $fileID (" : (%s) <-> (1)", $dir);
+      }
+    }
+  }
+  printf $fileID ("%s%s\n", $ind ? ' ' : '', $LBrace);
+}
+
+# End of a project
+sub ProjectEnd
+{
+  local ($fileID, $ind) = @_;
+  printf $fileID ("%s%s\n", &TAB($ind), $RBrace);
+  if (!$ind) {
+    printf $fileID "\n";
+    close($fileID);
+  }
+}
+
+# Add Exclude lines to Project
+sub ProjectExcludes
+{
+  local ($fileID, $ind) = @_;
+  local ($fname, $line) = &FileName($tmp, "xclude/$fileID", '.lst');
+  return if (! -f $fname);
+  &FileOpen(EXCL, $fname);
+  &PDFHelpLine($fileID, 'Exclusions');
+  while ($line = <EXCL>) {
+    printf $fileID ("%s^%s", &TAB($ind), $line);
+  }
+  close(EXCL);
+}
+
+# Read the prefs and set relevant Options
+sub ReadPrefs
+{
+  local ($name, $force) = @_;
+  local ($typ, $opt, $val, $line);
+  printf "Reading $name\n";
+  return if (! &FileOpen(PREF, $name));
+  while ($line = <PREF>) {
+    next if ($line !~ m!^\*($PROG|psetPrefs)\.([^:]+):\s*(.+)$!);
+    #$line =~ s/[\s]+$//;
+    #chop($line);
+    ($typ, $opt, $val) = ($1, $2, $3);
+    #chop($val);
+    $val =~ s/[\s]+$//;
+    if ($typ eq "$PROG") {
+      $Option{$opt} = $val if (defined($Option{$opt}));
+      ++$Preference{$opt};
+    } elsif ($opt !~ "Suffix") {
+      if ($force) {
+          $Preference{$opt} = $val;
+          $Option{$opt} = $val;
+       } else {
+	  $Preference{$opt} = $val if (defined($Preference{$opt}));
+          $Option{$opt} = $val if (defined($Option{$opt}));
+       }
+    }
+
+    if ($opt =~ /^privateProject$/) {
+      &Msg('W07', $PROG, 0, $opt);
+      $Option{projectHome} = $val;
+    }
+  }
+  close(PREF);
+}
+
+# Convert rel-path to abs-path
+sub RelToAbs
+{
+  local ($dir, $rel) = @_;
+  local (@d, @n);
+  return $rel if ($rel =~ m!^/!); # already absolute
+  @d = split('/', $dir);
+  @n = split('/', $rel);
+  while ($n[0] eq '..') {
+    pop(@d);
+    shift(@n);
+  }
+  return join('/', @d, @n);
+}
+
+# Show BugFixes and Enhancements this Release
+sub ReleaseNotes
+{
+  local ($z);
+  printf ("\n%s - RELEASE NOTES for Version %s\n\n", "\U$PROG\E", $Version);
+  if ($PrefsAdded =~ /\S/) {
+    printf "\nNEW PREFERENCES\n";
+    &ArrayComment;
+    &ArrayOption;
+    foreach $xyz (sort split(/\s+/, $PrefsAdded)) {
+      next if (!$xyz);
+      printf <<"END"
+
+Option  Name : $xyz
+Default Value: $Option{$xyz}
+END
+;
+      &Fmt(STDOUT, 0, "Option  Note : $Comment{$xyz}", 14);
+    }
+  }
+  $z = 0;
+  printf "\n\nENHANCEMENTS\n\n"
+    if ($Enhancements =~ /\S/);
+  foreach $xyz (split(/\n/, $Enhancements)) {
+    next if ($xyz !~ /\S/);
+    &Fmt(STDOUT, ++$z, $xyz);
+  }
+  $z = 0;
+  printf "\n\nBUG FIXES\n\n" if ($BugFixes =~ /\S/);
+  foreach $xyz (split(/\n/, $BugFixes)) {
+    next if ($xyz !~ /\S/);
+    &Fmt(STDOUT, ++$z, $xyz);
+  }
+  printf "\n";
+  exit(0);
+}
+
+# Script Routine to Construct a PDF
+sub SH_ConstructPDF
+{
+  printf ".";
+  printf SCR ("\nConstructPDF()\n%s\n", $LBrace);
+  printf SCR <<'END'
+ # Arguments
+ # 1. PDF Type (-b, -u)
+ # 2. PDF Name
+ # 3-N. List of Dirs for xargs
+  typ=$1; shift
+  pdf=$1; shift
+  cp rules/comments.top pdf/$pdf
+  if [ $typ = "-u" ]; then
+    cat rules/PRIVATE_proj.pdf >> pdf/$pdf
+    for d in $*
+    do
+      #ls -1 $d | xargs -i cat $d/{} >> pdf/$pdf
+      # BGP needs Exclude lines out of user pdf
+      #ls -1 $d | xargs -i sed '/\^/d' $d/{} >> pdf/$pdf
+END
+;
+    if (!$xFast) {
+      printf SCR <<'END'
+      for f in $d/*
+      do
+        pr=`echo $f | sed 's!.*/!!' | sed 's!.pdf!!'`
+        echo "$pr : \$sharedSrcRoot/$pr [[ R ]] <-> /$pr {" >> pdf/$pdf
+END
+;
+        $pattern = "    ";
+        foreach $y (keys(%extAll)) {
+	  $pattern .= " **$y ";
+        }
+        printf SCR <<"END"
+	echo "$pattern" >> pdf/\$pdf
+END
+;
+    printf SCR <<'END'
+        echo "}" >> pdf/$pdf
+        echo  >> pdf/$pdf
+      done
+END
+;
+} else {
+    printf SCR <<'END'
+      for f in $d/* 
+      do
+	base=`basename $f .pdf`
+	if [ "$base" != "*" ]; then
+	    echo "$base : \$sharedSrcRoot/$base [[ R ]] <-> /$base {" >> pdf/$pdf
+	    echo "    (**)" >> pdf/$pdf
+            echo "}" >> pdf/$pdf
+        fi
+      done
+END
+;
+}
+    printf SCR <<'END'
+    done
+  else
+    for d in $*
+    do
+      ls -1 $d | xargs -i sed 's/\[\[ R/[[ W/' $d/{} >> pdf/$pdf
+    done
+  fi
+  if [ $typ = "-u" ]; then
+    cat rules/PROJ_* >> pdf/$pdf
+    cat rules/RULES_private.pdf >> pdf/$pdf
+  fi
+  cat rules/RULES_shared.pdf >> pdf/$pdf
+END
+;
+  printf SCR ("%s\n", $RBrace);
+}
+
+# Script Routine to Construct User Prefs
+sub SH_ConstructUserPrefs
+{
+  printf ".";
+  printf SCR ("\nConstructUserPrefs()\n%s\n", $LBrace);
+  printf SCR <<"END"
+  UPREFS="user.prefs"
+  if [ \$PREFS != "build.prefs" ]; then
+    UPREFS=`expr \$PREFS : \'\\(.*\\)\\.prefs\'`_\$UPREFS
+  fi
+  awk -f uprefs.awk prefs/\$PREFS > prefs/\$UPREFS
+END
+;
+  printf SCR ("%s\n", $RBrace);
+}
+
+# Script Routine to Install the BoilerPlates
+sub SH_InstallBoilerPlates
+{
+  printf ".";
+  printf SCR ("\nInstallBoilerPlates()\n%s\n", $LBrace);
+  printf SCR <<"END"
+  if [ ! -d \$BD ]; then
+    mkdir -p \$BD
+  fi
+  cd \$BD
+  ls -1 \$BP | while read f
+  do
+    b=`echo \$f | sed 's/_/\!/'`
+END
+;
+    if ($Option{boilerPlateExt} =~ /\S/) {
+      printf SCR <<"END"
+    if [ ! -f \$BD/\${b}.\$BE ]; then
+      cp \$BP/\$f \$BD/\${b}.\$BE
+    fi
+  done
+END
+;
+    }
+    else {
+      printf SCR <<"END"
+    if [ ! -f \$BD/\${b} ]; then
+      cp \$BP/\$f \$BD/\${b}
+    fi
+  done
+END
+;
+    }
+  printf SCR ("%s\n", $RBrace);
+}
+
+
+# Script Routine to Install the Files we created
+sub SH_InstallFiles
+{
+  printf ".";
+  printf SCR ("\nInstallFiles()\n%s\n", $LBrace);
+  printf SCR <<'END'
+  # NOTE: THE FOLLOWING ASSUMES EXTENSIONS ARE pdf AND prefs
+  cd $DIR
+  for d in pdf prefs
+  do
+    echo "Installing files with extension: $d"
+    ls -1 $d | while read x
+    do
+      if [ -f $ADMINDIR/$d/$x ]; then
+END
+;
+if ($xManage) {
+    printf SCR <<'END'
+        $ADMINDIR/bin/admin_cm $ADMINDIR/$d/$x
+END
+;
+}
+    printf SCR <<'END'
+        cp $ADMINDIR/$d/$x $ADMINDIR/$d/$x.$BAK
+      fi
+      cp $d/$x $ADMINDIR/$d
+    done
+  done
+END
+;
+  printf SCR ("%s\n", $RBrace);
+}
+
+# Script Routine to Install the scripts we created
+sub SH_InstallScripts
+{
+  local ($scripts) = 'disBatchScript envVarScript filterFlags 
+                      getFlags userSetupScript';
+  printf ".";
+  printf SCR ("\nInstallScripts()\n%s\n", $LBrace);
+  printf SCR ("  echo 'Installing Shell Scripts'\n");
+  foreach $xyz (split(/\s+/, $scripts)) {
+    next if (!$xyz);
+    if ($xyz eq 'getFlags') {
+    printf SCR <<"END"
+  if [ ! -f $Option{$xyz} ]; then
+    cp bin/`basename $Option{$xyz}` $Option{$xyz}
+  fi
+END
+;
+    }
+    else {
+    printf SCR <<"END"
+  if [ -f $Option{$xyz} ]; then
+END
+;
+if ($xManage) {
+    printf SCR <<"END"
+    \$ADMINDIR/bin/admin_cm $Option{$xyz}
+END
+;
+}
+    printf SCR <<"END"
+    cp $Option{$xyz} $Option{$xyz}.\$BAK
+  fi
+  cp bin/`basename $Option{$xyz}` $Option{$xyz}
+END
+;
+    }
+  }
+  printf SCR ("%s\n", $RBrace);
+}
+
+# Script Routine to show usage
+sub SH_InstallUsage
+{
+  printf ".";
+  printf SCR ("\nInstallUsage()\n%s\n", $LBrace);
+  printf SCR <<'END'
+  echo ""
+  echo "Usage: $EXE [-help]"
+  echo "Usage: $EXE [-proj]"
+  cat << "DONE"
+
+  -help    Produce this message
+  -proj    Produce 1 project per PDF
+
+DONE
+  exit
+END
+;
+  printf SCR ("%s\n", $RBrace);
+}
+
+# Script Routine to Process the Command Line Arguments
+sub SH_ProcessArgs
+{
+  printf ".";
+  printf SCR ("\nProcessArgs()\n%s\n", $LBrace);
+  printf SCR <<'END'
+  proj=0
+  while [ $# -gt 0 ]
+  do
+    case $1 in
+    -help) InstallUsage ;;
+    -proj) proj=1 ;;
+    *) echo "${EXE}: Argument $1 is not supported" ;;
+    esac
+    shift
+  done
+END
+;
+  printf SCR ("%s\n", $RBrace);
+}
+
+# Script Routine to Create One Project per PDF
+sub SH_OneProjectPerPDF
+{
+  printf ".";
+  printf SCR ("\nOneProjectPerPDF()\n%s\n", $LBrace);
+  printf SCR <<'END'
+  for d in proj include exec lib
+  do
+    ls -1 $d | while read x
+    do
+      cp rules/comments.top pdf/$x
+      #cat $d/$x >> pdf/$x
+      # BGP needs Exclude lines out of user pdf
+      sed '/\^/d' $d/$x >> pdf/$x
+    done
+  done
+  for f in rules/*.pdf
+  do
+    x=`basename $f`
+    cp rules/comments.top pdf/$x
+    cat $f pdf/$x
+  done
+}
+END
+;
+}
+
+# Start a Shell Script
+sub ScriptBegin
+{
+  local ($opt, $desc, $sh_cmd) = @_;
+  local ($b) = &BaseName($Option{$opt});
+  local ($sname) = &FileOpen(SCR, '>', &FileName($tmp, 'bin', $b));
+  local (@sh_args);
+  $sh_cmd = 'sh' if (!$sh_cmd);
+  @sh_args = split(' ', $sh_cmd);
+  $sh_cmd = shift(@sh_args);
+  printf ("Generating '%s' Script .", $desc);
+  printf SCR ("#!%s %s\n\n", &FindCommand($sh_cmd), join(' ', @sh_args));
+  return $sname;
+}
+
+# End a Shell Script
+sub ScriptEnd
+{
+  local ($scr) = @_;
+  printf ".\n";
+  close(SCR);
+  chmod(0777, $scr);
+}
+
+# Set Variables associated with the Extensions read
+sub SetExtensionVars
+{
+  local ($stat_name) = @_;
+  foreach $ext (keys(%extAll)) {
+    if ($ext =~ /^\..$/) {
+      $ext1Char .= substr($ext, 1);
+      if ($extAll{$ext} eq 'Hh') {
+        $hdr1Char .= substr($ext, 1);
+      }
+      else {
+        $src1Char .= substr($ext, 1);
+      }
+    }
+    else {
+      $extNChar .= $ext . ' ';
+      if ($extAll{$ext} eq 'Hh') {
+        $hdrNChar .= $ext . ' ';
+      }
+      else {
+        $srcNChar .= $ext . ' ';
+      }
+    }
+    ++$Stats{$stat_name}; # Unique extensions
+  }
+  $extNChar =~ s/ $//; # Trim white at end
+  $hdrNChar =~ s/ $//; # Trim white at end
+  $srcNChar =~ s/ $//; # Trim white at end
+  $ext1Char = '[' . $ext1Char . ']' if (length($ext1Char) > 1);
+  $hdr1Char = '[' . $hdr1Char . ']' if (length($hdr1Char) > 1);
+  $src1Char = '[' . $src1Char . ']' if (length($src1Char) > 1);
+}
+
+# Perform a selftest
+sub SelfTest
+{
+  local ($st, $mf) =  ('selftest', 'Makefile.st');
+  local ($scr);
+  $Option{$st} = $st . "_$PROG";
+  $scr = &ScriptBegin($st, "\U$PROG\E \u$st", 'csh -f');
+  printf SCR <<"END"
+set ad=\$ADMINDIR
+source \$PSETHOME/bin/Learn.setup
+
+cd \$HOME/DISCOVER/Learn
+if ( ! -f $mf ) then
+  echo "  You MUST Download the file, /outgoing/pdfgen/learn.tar"
+  echo "  from the FTP site. Then, change directory to"
+  echo "  \$HOME/DISCOVER and enter the following command:"
+  echo "    tar xvf /your/path/leading/to/learn.tar"
+  echo "  This is temporary until these files can be added"
+  echo "  to the DISCOVER's Learn environment in the distribution"
+  exit
+endif
+make -f $mf clean
+make -f $mf
+setenv ADMINDIR \$HOME/DISCOVER/Learn/$st/AdminDir
+
+cd $st
+#cp \$PSETHOME/lib/AdminDir/prefs/build.prefs .
+cp \$PSETHOME/lib/psetPrefs.default build.prefs
+pdfgen -a -prefs ./build.prefs
+sed -e 's/^\\(\\*pdfgen\\.excludeDirs:\\).*/\\1 RCS/' \\
+    -e 's/^\\(\\*pdfgen\\.useStarStar:\\).*/\\1 no/' \\
+    -e 's/^\\(\\*pdfgen\\.dirHasHeaders:\\).*/\\1 no/' \\
+    < build.prefs > AdminDir/prefs/build.prefs
+pdfgen -c cat
+cd \$HOME/DISCOVER/$PROG
+./$Option{installScript}
+
+echo ""
+echo "Change Directory to \$ADMINDIR"
+echo "  then examine the pdf and prefs generated"
+
+setenv ADMINDIR \$ad
+rm -f $PWD/$Option{$st}
+END
+;
+  &ScriptEnd($scr);
+  system("mv $scr $PWD");
+#  system("$PWD/$Option{$st}");
+  exit(0);
+}
+
+# Create script to copy generated files to the proper locations
+sub ShellAdminInstall
+{
+  local ($prefs) = $Option{prefsFile};
+  local ($scr) = &ScriptBegin('installScript', 'Installation');
+  $prefs =~ s!$ENV{ADMINDIR}!\$ADMINDIR!;
+  printf SCR <<"END"
+SAV=`pwd`
+DIR=$tmp
+BAK=`date +%%m%%d%%y_%%H%%M%%S`
+EXE=`basename \$0`
+BLD=`basename $Option{pdfFileBuild}`
+USR=`basename $Option{pdfFileUser}`
+PREFS=build.prefs
+BP=\$PSETHOME/lib/Learn/src/xip/Boilerplate
+BD=$Option{boilerPlateDir}
+BE=$Option{boilerPlateExt}
+END
+;
+  &SH_ConstructPDF;
+  &SH_ConstructUserPrefs;
+  &SH_InstallBoilerPlates;
+  &SH_InstallFiles;
+  &SH_InstallScripts;
+  &SH_InstallUsage;
+  &SH_OneProjectPerPDF;
+  &SH_ProcessArgs;
+  printf ".";
+  printf SCR <<'END'
+
+ProcessArgs $*
+echo "Files in $ADMINDIR will be backed up with extension: $BAK"
+cd $DIR
+ConstructUserPrefs
+if [ $proj -eq 1 ]; then
+  OneProjectPerPDF
+else
+  ConstructPDF -u $USR proj include exec lib
+fi
+ConstructPDF -b $BLD proj include exec lib
+InstallBoilerPlates
+InstallFiles
+InstallScripts
+cd $SAV
+exit
+END
+;
+  &ScriptEnd($scr);
+  system("mv $scr $tmp");
+}
+
+# Create a script to run DISCOVER in batch mode
+sub ShellDisBat
+{
+  local ($prefs) = $Option{prefsFile};
+  local ($scr) = &ScriptBegin('disBatchScript', 'DISCOVER Batch');
+  $prefs =~ s!$ENV{ADMINDIR}!\$ADMINDIR!;
+  printf SCR <<"END"
+\# Any Arguments are passed on to 'discover'
+
+PDF=\"$Option{pdfFileBuild}\"
+PREFS=\"$prefs\"
+
+\# Make sure environment is set properly
+. \"$Option{envVarScript}\"
+
+discover -batch \\
+         -pdf   \$PDF \\
+         -prefs \$PREFS \\
+         \$\*
+END
+;
+  &ScriptEnd($scr);
+}
+
+# Create a script to set the environment variables
+sub ShellEnvVars
+{
+  local ($scr) = &ScriptBegin('envVarScript', 'Environment Variables');
+  printf SCR <<"END"
+if [ "X\$sharedModelRoot" = "X" ]; then
+  sharedModelRoot=$Option{sharedModelRoot}
+  export sharedModelRoot
+fi
+if [ "X\$sharedSrcRoot" = "X" ]; then
+  sharedSrcRoot=$Option{sharedSrcRoot}
+  export sharedSrcRoot
+fi
+if [ "X\$privateModelRoot" = "X" ]; then
+  privateModelRoot=$Option{privateModelRoot}
+  export privateSrcRoot
+fi
+if [ "X\$privateSrcRoot" = "X" ]; then
+  privateSrcRoot=$Option{privateSrcRoot}
+  export privateSrcRoot
+fi
+if [ "X\$LM_LICENSE_FILE" = "X" ]; then
+  LM_LICENSE_FILE=\"\$ADMINDIR/lib/license.dat:\$PSETHOME/lib/license.dat\"
+  export LM_LICENSE_FILE
+fi
+END
+;
+  &ScriptEnd($scr);
+}
+
+# Create a script to filter compilation flags
+sub ShellFilterFlags
+{
+  local ($scr) = &ScriptBegin('filterFlags', 'Filter Flags', 'perl');
+  local ($x, $y);
+  printf SCR ("%s\n", $commentFilterFlags);
+  &PERL_CPlusOnCCode;
+  &PERL_FilterCmdLine;
+  &PERL_FilterSetup;
+  &PERL_MassageLine;
+  printf ".";
+  printf SCR <<'END'
+&FilterCmdLine;
+&FilterSetup;
+if ($fileID ne 'STDIN') {
+  chdir($dir) if ($dir); # Already there if not passed
+  open($fileID, "$runCommand $commandArgs |");
+}
+$found = 0;
+$cCompiler = $Option{cCompiler};
+$cPlusCompiler = $Option{cPlusCompiler};
+LINE:
+while ($line = <$fileID>) {
+  chop($line); # Trim CRLF
+  while ($line =~ /\\$/) {
+    chop($line); # Trim BackSlash
+    $line .= <$fileID>; # Join next line
+    chop($line); # Trim CRLF
+  }
+  next if ($line !~ /$fil\.$ext/);
+  $probablyFound = 1;
+  foreach $z (split(';', $line)) {
+    foreach $x (@sortedComps) {
+       if ($ext eq 'pc') {
+ 	  #print "here\n";
+ 	  $found -= 1;
+ 	  $z =~ s!\.(C|c|cc|c\+\+|cpp)!.o!;
+          &MassageLine if ($z =~ /\s*$x\b\s+.*$fil\.$ext\b/);
+ 	  $ext = 'c';
+       } elsif ($z !~ /^.*\/proc /) {
+ 	  #print "there\n";
+          &MassageLine if ($z =~ /\s*$x\b\s+.*$fil\.$ext\b/);
+       } elsif ($z !~ /^.*\/proc16 /) {
+ 	  #print "there\n";
+          &MassageLine if ($z =~ /\s*$x\b\s+.*$fil\.$ext\b/);
+       }
+       #print ">>> $found\n";
+       exit(0) if ($found > 0);
+    }
+  }
+}
+close($fileID);
+exit(0) if ($found);
+printf STDERR ("%%s: File %s, Ext %s was NOT Found\n", $PROG, $fil, $ext);
+printf STDERR ("No compilers in dis_compilers matched\n") if ($probablyFound);
+exit(1);
+END
+;
+  &ScriptEnd($scr);
+}
+
+# Create a script to get compilation flags
+sub ShellGetFlags
+{
+  local ($scr) = &ScriptBegin('getFlags', 'Get Flags');
+  printf SCR <<'END'
+# Script runs in the directory where the file exists
+# Arguments
+#  1. Filename without extension
+#  2. File extension
+#
+
+END
+;
+  if ($runCommand =~ /[Mm]ake/) {
+    printf SCR ("%s -n \$1.o\n", $runCommand);
+  }
+  else {
+    printf SCR ("%s \$1.\$2\n", $runCommand);
+  }
+  &ScriptEnd($scr);
+}
+
+# Create script for Project Insertion
+sub ShellProjectInsert
+{
+  local ($scr);
+  $Option{projInsertScript} = '$ADMINDIR/bin/ProjectInsert';
+  $scr = &ScriptBegin('projInsertScript', 'Project Insertion');
+  printf SCR <<'END'
+# ARGS
+#  1. Project Name
+#     One you supply in dis_toplevels.
+#     Or it's an executable/library name.
+#     Or is one of the following RULES project specifiers:
+#       RULES_shared   (Shared Rules section)
+#       RULES_private  (Private Rules section)
+#       RULES_special  (Special Rules projects)
+#  2. Project Location
+#        THESE are passed for all but the RULES project specifiers
+#     Value: Top      (passed at top of project)
+#     Value: Bottom   (passed before * or ** written at end of project)
+#        THESE correspond to RULES_shared or RULES_private
+#     Value: .pset    (passed for '.pset' rule)
+#     Value: .pmoddir (passed for '.pmoddir' rule)
+#     Value: .make    (passed for '.make' rule)
+#     Value: .makemf  (passed for '.makemf' rule)
+#        THESE correspond to RULES_special
+#     Value: .boilerplate
+#     Value: .rtl
+#     Value: .LinkTypes
+#     Value: DISCOVER-Relations
+#     Value: DISCOVER-Subsystems
+
+
+#
+# This example allows files with extension 'txt' 
+# to be recognized in the PDF. Specifically, ones
+# which are in subdirectory, 'reports'.
+#
+if [ $2 = "Bottom" ]; then
+  cat << EOF
+  reports {
+    *.txt
+  }
+EOF
+fi
+END
+;
+  &ScriptEnd($scr);
+}
+
+# Create script for building user prefs
+sub ShellUserPrefs
+{
+  local ($scr);
+  $Option{userPrefsAwk} = 'uprefs.awk';
+  $scr = &ScriptBegin('userPrefsAwk', 'User Prefs', 'awk');
+  printf SCR <<"END"
+BEGIN {
+  BuildPdf = \"$Option{pdfFileUser}\"
+  ProjList = \"$Option{projectHome}\"
+}
+END
+;
+  printf ".";
+  printf SCR <<'END'
+
+/^\*psetPrefs\.getModel:/ {
+  printf "#%%s\n", $0
+  printf "*psetPrefs.getModel:\t\tno\n"
+  key = 1
+}
+
+/^\*psetPrefs\.putModel:/ {
+  printf "#%%s\n", $0
+  printf "*psetPrefs.putModel:\t\tno\n"
+  key = 1
+}
+
+/^\*psetPrefs\.pdfFileBuild:/ {
+  printf "#%%s\n", $0
+  printf "*psetPrefs.pdfFileBuild:\t\t%%s\n", BuildPdf
+  key = 1
+}
+
+/^\*psetPrefs\.projectList:/ , /^$/ {
+  if (NF) {
+    printf "#%%s\n", $0
+  }
+  else {
+    printf "*psetPrefs.projectList:\t\t\t%%s\n\n", ProjList
+  }
+  key = 1
+}
+
+# Default is to 'print'
+key == 0
+
+key == 1 { key = 0 }
+END
+;
+  &ScriptEnd($scr);
+  system("mv $scr $tmp");
+}
+
+# Create a script to setup a DISCOVER user
+sub ShellUserSetup
+{
+  local ($scr) = &ScriptBegin('userSetupScript', 'User Setup Script');
+  local (@list, $dir) = "$Option{logFileDir}";
+  foreach $d (values(%Special)) {
+    next if ($d eq '.boilerplate');
+    $dir = $d . 'Dir';
+    push(@list, "$Option{$dir}");
+  }
+  printf SCR <<"END"
+PRV_ROOT=$Option{privateSrcRoot}
+
+if [ ! -d \$PRV_ROOT ]; then
+  mkdir -p \$PRV_ROOT
+fi
+cd \$PRV_ROOT
+
+END
+;
+  foreach $dir (@list) {
+    printf SCR <<"END"
+if [ ! -d $dir ]; then
+  mkdir -p $dir
+fi
+END
+;
+  }
+  &ScriptEnd($scr);
+}
+
+# Show final messages
+sub ShutDown
+{
+  local ($opt) = @_;
+  $opt = 'installScript' if (!$opt);
+  printf <<"END"
+
+Generated files are currently stored in \$HOME/DISCOVER/$PROG
+Please enter the following command:
+
+  cd \$HOME/DISCOVER/$PROG
+  ./$Option{$opt}
+
+        --- OR ---
+
+  ./$Option{$opt}  -help
+END
+;
+  if ($opt eq 'installScript') {
+    printf ("\nMessage Log File is: %s\n", &BaseName($errlog))
+      if (&IsYes($Option{msgLogger}));
+    &Statistics if (&IsYes($Option{createStatsFile}));
+  }
+  printf "\n";
+  close(STDOUT);
+  close(STDERR);
+  exit(0);
+}
+
+# Create sub-projects for special rules
+sub SpecialRulesSub
+{
+  local ($fileID) = @_;
+  local ($t, $dir, $ext) = &TAB(1);
+  foreach $spec (sort keys(%Special)) {
+    next if ($spec eq '.boilerplate');
+    &PDFHelpLine($fileID, $spec);
+    $dir = $Special{$spec} . 'Dir';
+    $ext = $Special{$spec} . 'Ext';
+    printf $fileID ("%s%s : %s <-> /%s %s *",
+      $t, $spec, $Option{$dir}, $spec, $LBrace);
+    printf $fileID (".%s", $Option{$ext}) if ($ext =~ /\S/);
+    printf $fileID (" %s\n", $RBrace);
+  }
+  printf $fileID "\n";
+}
+
+# Build the Projects for Special Rules
+sub SpecialRulesTop
+{
+  local ($t, $dir, $ext, $nam) = &TAB(1);
+  foreach $spec (sort keys(%Special)) {
+    printf ("Generating Project: %s...\n", $spec);
+    $nam = &FileName($tmp, 'rules', "PROJ_$spec", '.pdf');
+    &FileOpen(SPEC, '>', $nam);
+    &PDFHelpLine(SPEC, $spec);
+    $dir = $Special{$spec} . 'Dir';
+    $ext = $Special{$spec} . 'Ext';
+    printf SPEC ("%s : %s <-> /%s\n%s\n",
+      $spec, $Option{$dir}, $spec, $LBrace);
+    &UserSupplied(SPEC, 'RULES_Special', $spec);
+    printf SPEC ("%s(*)", $t);
+    printf SPEC (".%s", $Option{$ext}) if ($ext =~ /\S/);
+    printf SPEC "\n";
+    &ProjectEnd(SPEC, 0);
+  }
+}
+
+# Start the program
+sub StartUp
+{
+  local (%Args);
+  local ($pn);
+  $tmp = join('/', $ENV{HOME}, 'DISCOVER', $PROG);
+  $defaultAdminPrefs = &FileName($ENV{ADMINDIR}, 'prefs/build.prefs');
+  #$defaultPrefs = &FileName($ENV{PSETHOME}, 'lib/AdminDir/prefs/build.prefs');
+  $defaultPrefs = &FileName($ENV{PSETHOME}, 'lib/psetPrefs.default');
+  $Args{'-prefs'} = &FindPrefsFile;
+  $PWD = &Unix("pwd");
+  $PWD =~ s!^/tmp_mnt!!; # Happens on Sun
+  &CommandLine;
+  &Usage if ($Args{'-h'});
+  &ReleaseNotes if ($Args{'-m'});
+  &Version if ($Args{'-v'});
+  printf "\nINITIALIZING...\n";
+  &GuaranteeSetup;
+  &Init;
+  $Option{prefsFile} = (-r $Args{'-prefs'}) ? $Args{'-prefs'} : &FindPrefsFile;
+  &ReadPrefs($Option{prefsFile}, 1);
+  &ReadPrefs($defaultAdminPrefs, 0);
+  $Option{fieldSeparator} = $Args{'-d'} if ($Args{'-d'});
+  $Option{commandToRun} = $Args{'-c'} if ($Args{'-c'});
+  $runCommand = $Option{commandToRun} . $Args{'-f'};
+  &UsageNotes if ($Args{'-n'});
+  &AppendPrefs if ($Args{'-a'});
+  &SelfTest if ($Args{'-s'});
+  &GuaranteeAdminDir;
+  &CommentsAtTop;
+  if (&IsYes($Option{msgLogger})) {
+    $errlog = &FileName($tmp, &TimeStamp, '.msgs');
+    &FileOpen(STDERR, '>', $errlog);
+  }
+# Release unneeded memory
+  undef(%Comment);
+  undef(&AppendPrefs);
+  undef(&ArrayComment);
+  undef(&ArrayHelpRef);
+  undef(&ArrayMessages);
+  undef(&ArrayMisc);
+  undef(&ArrayOption);
+  undef(&ArrayStats);
+  undef(&CommandLine);
+  undef(&CommentsAtTop);
+  undef(&FindPrefsFile);
+  undef(&GuaranteeAdminDir);
+  undef(&GuaranteeSetup);
+  undef(&Init);
+  undef(&ReadPrefs);
+  undef(&ReleaseNotes);
+  undef(&SelfTest);
+  undef(&Usage);
+  undef(&UsageNotes);
+  undef(&Version);
+}
+
+# Generate Statistics
+sub Statistics
+{
+  local ($statsFile) = &FileName($tmp, &TimeStamp, '.stats');
+  local ($numStats, $fmt, $maxStat, $s, $stat) = 0;
+  printf ("\nStatistics File is: %s\n", &BaseName($statsFile));
+  &FileOpen(STATS, '>', $statsFile);
+  foreach $s (@statNames) {
+    $maxStat = $s if (length($s) > length($maxStat));
+    ++$numStats;
+  }
+  $fmt = sprintf("%%%ds %%7s", -length($maxStat));
+  printf STATS ($fmt, 'STATISTIC', 'COUNT');
+  printf STATS "\n\n";
+  for ($s=0; $s < $numStats; ++$s) {
+    $stat = $statNames[$s];
+    printf STATS ($fmt, "\u$stat", $Stats{$stat}) if ($stat);
+    printf STATS "\n";
+  }
+  printf STATS "\n\n";
+  printf STATS "NOTE1: The prefix 'black' means non-comment/non-blank lines\n";
+  printf STATS "NOTE2: Symlink stats probably have links counted more than once\n";
+  close(STATS);
+}
+
+# Print a SymLink rule
+sub SymLinkRule
+{
+  local ($fileID, $ind, $nm, $sel, $type) = @_;
+  local ($sym, $xt, $rc) = 'symlinks';
+  local ($lnk, $lnkb, $lnkd, $log, $logd);
+  local ($sdir) = &DirName($nm);
+  local ($sfl) = &BaseName($nm);
+  return 0 if (! -l $nm); # Only work on symlinks
+  $lnk = readlink($nm);
+  $log = &LogicalPath($sdir, $lnk, $nm);
+  return 0 if (!$log); # Out of model
+  $type = &LinkType($sdir, $nm) if (!$type);
+  return 0 if (!$type); # Type unknown
+  ++$Stats{$sym};
+  $lnkb = &BaseName($lnk);
+  $lnkd = &DirName($lnk);
+  $logd = &DirName($log);
+  if ($type eq 'file') { # File sym-link
+    $xt = substr($nm, rindex($nm, '.'));
+    if (defined($extAll{$xt})) {
+      if ($extAll{$xt} =~ /$sel/) {
+        ++$Stats{"file_$sym"};
+        printf $fileID ("%s(1) : ", &TAB($ind));
+        printf $fileID ("(%s) [[ -> ", ($lnkb eq $sfl) ? $sfl : $nm);
+        printf $fileID ("%s/(%s) ]] ", $lnkd, ($lnkb eq $sfl) ? '1' : $lnkb);
+        printf $fileID ("-> %s/(%s)\n", $logd, ($lnkb eq $sfl) ? '1' : '2');
+        $rc = 1;
+      }
+    }
+    else {
+      &Msg('I03', 'NOT in model', 0, $nm);
+      $rc = 0;
+    }
+  }
+  else { # Directory sym-link
+    ++$Stats{"dir_$sym"};
+    &Msg('W99', 'symlink detected', 0, $sfl);
+#   foreach $xt (split(' ', $extNChar)) {
+#     printf $fileID ("%s(1) : (*%s) [[ ls %s/(1) ]] -> %s/(1)\n",
+#       &TAB($ind), $xt, $lnkd, $logd);
+#   }
+#   printf $fileID ("%s(1) : (*.%s) [[ ls %s/(1) ]] -> %s/(1)\n",
+#                   &TAB($ind), $ext1Char, $lnkd, $logd)
+#     if ($ext1Char);
+    $rc = 1;
+  }
+  return $rc;
+}
+
+# Handle symbolic links
+sub SymbolicLinks
+{
+  local ($fileID, $ind, $dir, $sel) = @_;
+  local ($lnk, $log, $lnkd, $logd, $type);
+  local ($cnt, $links, @files, $nm, $ext) = (0, 0);
+  if (!opendir(DIR, $dir)) {
+    &Msg('E02', 'Unable to open', 0, $dir, $!);
+    return;
+  }
+  @files = readdir(DIR);
+  closedir(DIR);
+  chdir($dir);
+  printf ("  Checking for Links in: %s\n", $dir);
+  foreach $fl (@files) {
+    next if ($fl =~ /^\./); # Ignore hidden files
+    next if (! -l $fl); # Only process links
+    &PDFHelpLine($fileID, 'Link Selectors') if (!$cnt++);
+    $links += &SymLinkRule($fileID, $ind, ($dir . "/$fl"), $sel);
+  }
+  printf $fileID "\n";
+  &Msg('I04', 'Link Count', 0, $dir, $links);
+  chdir($PWD);
+}
+
+# Simulate a tab stop
+sub TAB
+{
+  local ($n) = @_;
+  return (' ' x ($Option{tabStops} * ($n)));
+}
+
+# Build a date time stamp
+sub TimeStamp
+{
+  local (@tm) = localtime(time);
+  return sprintf("%02d%02d%04d_%02d%02d%02d",
+                  1+ $tm[4], $tm[3], 1900 + $tm[5], $tm[2], $tm[1], $tm[0]);
+}
+
+# Traverse the sub-projects
+sub Traverse
+{
+  local (*SP, $fileID, $prj, $ind, $uss) = @_;
+  local ($idx, $star, $child) = $SP{$prj, 0};
+  local ($f, $p, $d, $i, $l);
+  return if (!idx);
+  for ($i = 1; $i <= $idx; ++$i) {
+    $d = $SP{$prj, $i};
+    $p = $SP{$prj, $i, 'proj'};
+    $f = $SP{$prj, $i, 'flag'};
+    $p = $d if (!$p);
+    $f = '[HS]' if (!$f);
+    $l = $p;
+    if ($f =~ /[Tt]/) { # Tests hookup
+      $p = "tests.$p";
+      $l = $Option{testsPrefix} . "_$l";
+    }
+    &ProjectBegin($fileID, $ind, $p, $d, $l);
+    $child = $prj . '/' . $d;
+    if (defined($SP{$prj, $i, 'proj'})) {
+      $star = (!defined($SP{$child, 0}) && $uss) ? '**' : '*';
+      &SymbolicLinks($fileID, $ind +1, $child, $f) if ($f =~ /[Ll]/);
+      &ExcludeDirectories($fileID, $ind +1) if ($star eq '**');
+      &AddExtensions($fileID, $ind +1, $f, $star);
+    }
+    &Traverse(*SP, $fileID, $child, $ind +1, $uss);
+    &ProjectEnd($fileID, $ind);
+  }
+}
+
+# Execute a Unix command
+sub Unix
+{
+  local ($ucmd) = @_;
+  local ($ustr) = `$ucmd`;
+  chop($ustr);
+  return $ustr;
+}
+
+# Show program usage
+sub Usage
+{
+  printf <<"END"
+
+NAME
+  $PROG - PDF Generator
+
+SYNOPSIS
+  $PROG [-a/ppend] 
+  $PROG [-h/elp] 
+  $PROG [-m/ods] 
+  $PROG [-n/otes] 
+  $PROG [-s/elftest] 
+  $PROG [-v/ersion]
+  $PROG [-c/ached]
+  $PROG [-dc] [-f makefile1 [-f makefile2 ...]]
+         [-c command] [-prefs file]
+
+DESCRIPTION
+   The option notation with a slash means you can type the
+   entire word, or abbreviate it to the first character.
+
+   Command line options override values in a psetPrefs file.
+
+
+ Options with No argument (These perform action, then EXIT)
+  -a/ppend      APPEND to a psetPrefs File
+                A backup is made with extension '.Date_Time'
+                (also see '-prefs' below)
+  -h/elp        Produces this HELP message
+  -m/ods        Prints MODIFICATIONS (ReleaseNotes)
+  -n/otes       Prints Usage NOTES
+                (Output is dependent upon the following:
+                 CommandLineArguments and psetPrefs File)
+  -s/elftest    Perform a SELFTEST
+                (One can see sample input and output)
+  -v/ersion     Prints the program VERSION
+  -xf/ast	Use cached project files for system projects
+  -xm/anage	Use configuration management during admin_install
+
+ Options with Argument but NO Space
+  -dc           Uses 'c' as the DELIMETER (instead of Comma)
+                for example  -d:  would use colon as the delimeter
+                (See also: option fieldSeparator)
+
+ Options with Arguments
+  -c "command"  Uses 'command' instead of make
+                (See also: option commandToRun)
+  -f makefile   Indicates an alternate makefile
+                Multiple '-f' arguments are allowed
+                since 'make' supports multiple '-f' arguments.
+                These get appended to the 'commandToRun'
+  -prefs file   Uses 'file' instead of the default prefs (see NOTES)
+
+
+PSETPREFS
+  \$HOME/.psetPrefs  is read at startup
+
+END
+;
+  exit(0);
+}
+
+# Show usage notes
+sub UsageNotes
+{
+  local ($User_prefsFile, $doc) = 'user.prefs';
+  local ($d) = &DirName($Option{prefsFile});
+  local ($b) = &BaseName($Option{prefsFile});
+  $User_prefsFile = $` . '_' . $User_prefsFile
+    if ($b !~ /^build\.prefs$/);
+  $d =~ s!$ENV{ADMINDIR}!\$ADMINDIR!;
+  $Option{prefsFile} =~ s!$ENV{ADMINDIR}!\$ADMINDIR!;
+  $User_prefsFile = join('/', $d, $User_prefsFile);
+  printf <<"END"
+
+NOTES for $PROG:
+
+  1. PSETHOME must be set to a Readable Directory
+  2. ADMINDIR must be set to a Writable Directory
+  3. Your Preferences file is read at startup
+     Default prefs is \$HOME/.psetPrefs (if it exists)
+     Default prefs is \$ADMINDIR/prefs/build.prefs (if it exists)
+     Default prefs is \$PSETHOME/lib/AdminDir/prefs/build.prefs (otherwise)
+  4. Command Line options override values in a psetPrefs File
+  5. Standard Error is redirected to \$HOME/DISCOVER/$PROG/Date_Time.msgs
+       when '*psetPrefs.msgLogger' is yes.
+  6. The user prefs filename is 'user.prefs'
+       when the build prefs filename is 'build.prefs'
+     Otherwise, it is named xxx_user.prefs,
+       where 'xxx' is the filename prefix.
+  7. Use of perl version 4 will sometimes yield the following message:
+       Malformed cmd links
+     This happens attempting to free memory and can be safely ignored,
+       however, the problem is resolved in perl version 5.
+     To determine your version of perl, enter the following command:
+       perl -v
+
+
+FLAGS SCRIPT
+
+  You'll need to provide a script named, $Option{getFlags}
+    The name can be changed in your Preferences file.
+  It runs in the directory where the file exists.
+  It takes two arguments:
+    (1) FileName without extension
+    (2) File extension
+  Its purpose it to provide the -D and -I flags for the file passed.
+
+
+MAKEFILE or SHELL SCRIPT or DATA FILES
+
+  You'll need either a makefile or a shell script or data files.
+  If you prefer the makefile option, define the following targets.
+  If you prefer the script option, it must recognize these as its argument.
+  If you prefer the data file option, they must be these names.
+  The format of these can be found at the end of these NOTES.
+
+      dis_compilers
+      dis_excludes
+      dis_executables
+      dis_extensions
+      dis_libraries
+      dis_lowerlevels
+      dis_toplevels
+
+
+\U$PROG\E OUTPUT
+
+  The generator produces the following output files:
+
+- $Option{prefsFile}
+  This is used to set preferences for the DISCOVER System.
+
+- $User_prefsFile
+  This can be used to build a Private Model if you already
+  have source files checked out.
+
+- $Option{pdfFileBuild}
+  This is used to build the DISCOVER Information Model(s).
+
+- $Option{pdfFileUser}
+  This is used to invoke the GUI for the DISCOVER Information Model(s).
+
+- $Option{getFlags}
+  A default script to retrieve compilation flags.
+  It most likely will need to be customized for your site.
+  If you already have one, it will NOT be overwritten!
+
+- $Option{filterFlags}
+  This is used to filter compilation flags for your source files.
+
+- $Option{envVarScript}
+  This script sets environment variables to run DISCOVER
+  outside of the standard 'modelbuild' environment.
+
+- $Option{disBatchScript}
+  This script will allow you to run DISCOVER in batch mode
+  outside of the standard 'modelbuild' environment.
+  It makes use of the script listed above.
+
+- $Option{userSetupScript}
+  This script allows you to setup a user to run DISCOVER.
+
+- $Option{installScript}
+  This script installs the files listed above in the
+  appropriate locations under the administration directory.
+
+END
+;
+  while ($doc = <DATA>) {
+    print $doc;
+  }
+  exit(0);
+}
+
+# Support user supplied PDF lines
+sub UserSupplied
+{
+  local ($fileID, $loc, $proj) = @_;
+  local (@insert);
+  return if (!$Option{projectInsertion});
+  $proj = $fileID if (!$proj);
+  open(CMD, "$Option{projectInsertion} $proj $loc |");
+  @insert = <CMD>;
+  close(CMD);
+  if ($#insert >= 0) {
+    printf $fileID ("# UserSupplied (%s %s BEGIN)\n", $proj, $loc);
+    foreach $ins (@insert) {
+      print $fileID $ins;
+    }
+    printf $fileID ("# UserSupplied (%s %s END)\n", $proj, $loc);
+  }
+}
+
+# Show Version
+sub Version
+{
+  printf (" %s version is:  %s\n", $PROG, $Version);
+  exit(0);
+}
+
+# Create wildcard sub-projects
+sub WildCards
+{
+  local ($fileID, $ind) = @_;
+  local ($pl) = $Option{preserveLevels};
+  local ($uss) = &IsYes($Option{useStarStar});
+  local ($star, $q) = $uss ? '**' : '*';
+  for ($q = $ind; $q < $ind + $pl; ++$q) {
+    &AddExtensions($fileID, $q, '[HS]');
+    &ExcludeDirectories($fileID, $q);
+    printf $fileID ("%s* %s\n", &TAB($q), $LBrace);
+  }
+  &ExcludeDirectories($fileID, $ind + $pl) if ($uss);
+  &AddExtensions($fileID, $ind + $pl, '[HS]', $star);
+  for ($q = $pl + $ind -1; $q >= $ind; --$q) {
+    printf $fileID ("%s%s\n", &TAB($q), $RBrace);
+  }
+}
+
+# Write preferences from ADMINDIR prefs not in $PSETHOME/.../prefs
+sub WritePrefsDifferences
+{
+  #local ($name, $opt, $val, $hdr) = $Option{prefsFile};
+  local ($name, $opt, $val, $hdr, $newname) = $defaultPrefs;
+  &FileOpen(PREF3, &FileName($ENV{ADMINDIR}, 'prefs/build.prefs'));
+  printf "\nGenerating add-in's ";
+  while ($line = <PREF3>) {
+    $line =~ s/[\s]+$//;
+    #chop($line);
+    while ($line =~ /\\$/) {
+      chop($line); # Trim BackSlash
+      $line .= <PREF3>; # Join next line
+      chop($line); # Trim CRLF
+    }
+    if ($line !~ m!^\*psetPrefs\.([^:]+):\s*(.+)$!) {
+      next;
+    }
+    ($opt, $val) = ($1, $2);
+    if ($opt =~ /Suffix$/) {
+      next;
+    }
+    if (!defined($Option{$opt})) {
+      printf ".";
+      printf PREF2 "$line\n";
+    } else {
+    }
+  }
+}
+
+# Create build prefs from $PSETHOME/.../prefs as template
+sub WritePrefs
+{
+  #local ($name, $opt, $val, $hdr) = $Option{prefsFile};
+  local ($name, $opt, $val, $hdr) = $defaultPrefs;
+  &FileOpen(PREF1, $name);
+
+  if (&BaseName($name) eq "psetPrefs.default")  {
+      &FileOpen(PREF2, '>', &FileName($tmp, 'prefs', &BaseName("build.prefs")));
+  } else {
+      &FileOpen(PREF2, '>', &FileName($tmp, 'prefs', &BaseName($name)));
+  }
+
+  printf "Generating Preferences ";
+  while ($line = <PREF1>) {
+    $line =~ s/[\s]+$//;
+    #chop($line);
+    while ($line =~ /\\$/) {
+      chop($line); # Trim BackSlash
+      $line .= <PREF1>; # Join next line
+      chop($line); # Trim CRLF
+    }
+    if ($line !~ m!^\*psetPrefs\.([^:]+):\s*(.+)$!) {
+      printf PREF2 "$line\n";
+      next;
+    }
+    ($opt, $val) = ($1, $2);
+    printf ".";
+    if ($opt =~ /^c(Plus)?Defines$/) {
+      $line =~ s!PARASET!DISCOVER!;
+    }
+    if (defined($Preference{$opt})) {
+      $line =~ s!$val!$Preference{$opt}!;
+    }
+
+    if ($opt =~ /^(c|cPlus|cEsql)(Suffix)$/ && defined($Option{$opt})) {
+      $hdr = $1 . 'Hdr' . $2;
+      $line =~ s!$val!$Option{$opt}$Option{$hdr}!;
+    }
+    elsif ($opt =~ /^c(Plus)?HdrSuffix$/ && defined($Option{$opt})) {
+      $line =~ s!$val!$Option{$opt}!;
+    }
+    elsif ($opt =~ /^projectList$/) {
+      $line =~ s!:.*!: !;
+      $line .= join(' ', sort keys(%projs));
+      $line .= join(' ', '', sort keys(%projList));
+      #&Fmt(PREF2, 0, $line, 1, 75, 1);
+      #next;
+    }
+    elsif ($opt =~ /^sharedSrcRoot$/) {
+      $line =~ m!([^:]+:\s*)(.+)$!;
+      $line = $1 . $Option{$opt};
+    }
+    printf PREF2 "$line\n";
+  }
+  &WritePrefsDifferences;
+  close(PREF1);
+  close(PREF2);
+  printf "\n";
+}
+
+                    #############
+                    #  M A I N  #
+                    #############
+
+&StartUp;
+&InputOutput;
+&ShutDown;
+
+__END__
+
+

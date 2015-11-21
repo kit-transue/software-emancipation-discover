@@ -1,0 +1,26 @@
+CROOTS=\
+    glob \
+
+
+CXXROOTS=\
+    fileCache.h \
+    fileEntry \
+    fileXref.h \
+    proj.h \
+    projFile.h \
+    projHeader \
+    projList \
+    proj_clean \
+    projectDB \
+    projectHeader.h \
+    projectModule.h \
+    projectNode.h \
+    proj_save \
+    proj_restore \
+    prj_env_vars \
+    module_create \
+    pset_fn \
+    report \
+    viewable
+
+	

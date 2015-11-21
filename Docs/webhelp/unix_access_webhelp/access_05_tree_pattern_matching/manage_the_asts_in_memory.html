@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Manage the ASTs in Memory</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Manage the ASTs in Memory</b></p>
+<p class="p2">Second, remember that this linear search involves loading of the parse tree for the file. The AST is loaded automatically as required. There are two things to remember about having these parse trees in memory: a query runs faster when the AST is already in memory, and if you unload the AST tree when you are done with a query, DIScover consumes less process space.</p>
+<p class="p2"><span class="s1"><b>src_unload module</b></span> unloads the AST for the file <span class="s1">module</span>.</p>
+<p class="p2">If you are running multiple queries, try and write your queries so they can be run against individual files. Then you can iterate through all the files of interest, and for each run all your queries and then unload the AST.</p>
+</body>
+</html>

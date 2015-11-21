@@ -1,0 +1,303 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Integration Architecture Notes.
+------------------------------
+
+  The integration environment consists of the following major components:
+
+	1. Integration driver (ma or make_<exec>).
+	2. Set of makefiles (Make.general, Make.<EXEC_BRANCH>.component,
+	   Make.<EXEC_BRANCH>.link).
+	3. Specialized integration support tools (check, fudge_time).
+	4. Support scripts (make_depend, cat_depend, set_arch).
+	5. Environment (directory structures, special files).
+
+    The integration driver initializes the environment including the object
+  file trees, visits all specified components and builds the appropriate
+  object files by locally invoking make (Gnumake).  All components are build
+  with a common makefile (Make.<EXEC_BRANCH>.component).  It is possible to
+  control the visited components by overriding the component list on the
+  command line and thus limiting or changing the scope of the compilation.
+  The objects in individual components are compiled and linked into a single
+  partially linked object.  There is a single partially linked object for
+  each executable in each component.  Once the compile phase has finished,
+  the link phase is entered, where all partially linked objects are linked
+  together with the appropriate libraries to form the desired executables.
+  Both the compile and link phases can be individually disabled by command
+  line options to the driver (-nocompile and -nolink respectively).
+  
+  Dummy components.
+  The integration tree was modified to make the building operations highly
+  symmetrical.  Unfortunately, some of the older directory components did not
+  comply with the hierarchy and would present too many problems during the
+  conversion.  These components are built using "dummy" components, where the
+  old component with the original makefiles were left in its original location,
+  while a dummy canonical component was created in the appropriate place.
+  A dummy makefile was created in the canonical component to allow building
+  within the original environment, i.e., using the old makefiles and directory
+  structures.  The resulting object is then copied to the canonical component.
+
+
+1. Integration driver.
+---------------------
+
+1.1 Invocation.
+  The make_<exec> file itself is a link to a common executable script "ma".
+  The script switches on its invocation name and sets up certain parameters
+  accordingly.  Currently, only two parameters are set up: 
+    EXEC - a name of the executable family (not to be confused with
+	TARGET which is the actual executable.  For example, both aset
+	and aset.pure are targets which belong to a family "aset" (EXEC=aset).
+    EXEC_BRANCH - a name unifying a large group of executables all of which
+	are built in the same tree.  Currently, exec_branch can be set to
+	"aset" (for building executables in /paraset/src/paraset) or "clients"
+	(for building executables in /paraset/src/clients).
+  Additional parameters can be easily added if greater flexibility is desired.
+  
+  In order to create a new make_<exec> tool, all one has to do is to add
+  the appropriate case initialization of the above variables in the "ma"
+  script and to add a link with the appropriate name pointing to "ma".
+
+
+1.2 Execution.
+	The execution of the ma script goes through the following phases:
+
+	- Initialization
+	- Command line parsing
+	- Variable set up
+	- Object tree set up
+	- Object building
+	- Linking of the executables
+
+
+
+1.2.1 Initialization.
+
+1.2.2 Command line parsing.
+
+  During this phase all command line options and their arguments are parsed.
+  The parsing is done in two passes: during the first pass only options that
+  do not have any arguments (single word options) are evaluated.  The second
+  pass is used to process all remaining options.
+
+
+1.2.3 Variable set up.
+
+  Local and environmental variables are set up.
+  The following environmental variables are exported and used by the
+  underlying makefiles or scripts:
+
+	EXEC
+	SRC_ROOT
+	OBJ_ROOT
+	BIN_ROOT
+	INC_ROOT
+	COMP_ROOT
+	ARCH
+	VARIANT
+	COMPONENT
+	VERSION
+	LLIST
+	BUILDMODE
+	MAKELIB
+	TOOLDIR
+	TARGET
+	EXEC_BRANCH
+	NODEPENDCHECK
+	NOSYMTAB
+	PROMOTE
+	DEPENDGEN
+	OS_ROOTDIR
+	LM_LICENSE_FILE
+	LD_LIBRARY_PATH
+
+
+1.2.4 Object tree set up.
+
+    During this phase the directory tree is set up and initialized to hold
+  the specified version of the object files and dependencies.  The tree set
+  up is executed only once per a particular version of the tree.  Also during
+  this phase, existing object files are managed; the object files can be
+  removed if the "-clean" option has been specified, or they can be linked to
+  any of the older versions, thus implementing version promotion.
+
+
+1.2.5 Object building.
+
+    Components are visited (either all of them or the ones specified by
+  comp_list, and the local objects are built (see section on specialized
+  tools).  The modification times on the local objects are forced to be
+  in sync with the reference file.  All objects for a given executable are
+  linked (partially) into lib_<exec>.o file.
+
+1.2.6. Final linking.
+
+2. Makefiles.
+------------
+
+    Gnumake was selected as the tool for the basic management of building
+  because of its superiority in handling parametrization, conditional
+  building and other complex scenarios.  There are two highly parametrized
+  makefiles: Make.<EXEC_BRANCH>.component for compilation in the individual
+  components, and Make.<EXEC_BRANCH>.link for the final linking process.
+  A third file Make.general contains general purpose macros and is included
+  by both makefiles.
+
+2.1. Makefile customization.
+
+    The makefiles can be customized in several different ways.
+  ClearCase allows a view private version of a file; this enables having
+  a view private copy of any of the makefiles, thus limiting the scope
+  of changes to the ClearCase view.  Additionally, the ma driver implements
+  the following functionality: For each instance where a makefile is used,
+  it is possible to shadow the system makefile by a private version of the
+  same file.  This file must be located in the relevant working directory,
+  i.e., in the directory where the driver invokes the make, and must be
+  named appropriately.  If such makefile exists, it is used instead of the
+  system-wide makefile.
+
+
+3. Specialized Integration Tools.
+--------------------------------
+
+3.1. Analyzing dependencies for local builds ("check" tool).
+
+  The basic building methodology devised for the integration requires
+  that a local version of objects is built by an individual developer.
+  The local version is built from "local" objects, i.e., objects built
+  in the developers local area, and "shared" objects picked from the shared
+  system area.  Local objects are those that cannot be picked from the
+  system tree because they need to reflect a source code change made in
+  the developers local area.
+  In order to implement local builds, the "check" tool was designed.
+  This tool examines a list of desired objects, file dependencies, and
+  the status of the source and object files and determines which files
+  must be rebuilt locally.  Note that a simple modification time analysis
+  is insufficient in a case like this, since the system and local areas
+  are independent and unsynchronized.
+
+3.2. Managing modification times on objects ("fudge_time" tool).
+
+    The integration environment heavily relies on comparisons of the file
+  modification times, much the same way all make systems do. 
+  Unfortunately, such approach requires that the source files are not
+  modified during a time window starting when the integration begins
+  and ending when the last file has been compiled.  Without freezing the
+  source tree the following scenario may occur: a source file is updated
+  while it is being compiled; assuming that no file system inconsistencies
+  would be detected during this operation, an object would be created with
+  a modification time later than that of the source file, but with the
+  content reflecting the previous version of the corresponding source file.
+  This situation would never be detected by a conventional make system,
+  and can be avoided only by freezing the source tree during the compilation
+  phase.  Since compiling all files for large programs like paraset may take
+  several hours, traditional methodology may require prolonged periods of
+  time when the source three must be frozen.  
+
+    The above problems are eliminated by managing the file modification times
+  on new objects appropriately.  At the beginning of the compile phase
+  a reference file is created; any subsequent compilation is followed by
+  modifying the modification time on the newly created object to reflect
+  the reference file.  By employing this method all object files appear as
+  if they were created at the same time - time when the reference file was
+  created.  This functionality also enables recompilation at the later time
+  without affecting the time dependencies.  The actual inode modification
+  is done by "fudge_time" tool, which copies the time information from one
+  specified file (inode) to another.
+
+
+4. Support Scripts.
+------------------
+
+  The following scripts are invoked by the "ma" driver:
+
+  set_arch - This tool sets the ARCH variable to "sun4", "sun5", "hp700",
+    according to the machine on which it is executed.
+	
+  cat_depend - Is used to concatenate the individual dependency files
+    (<name>.d) into a single file (Make.depend), to be included in the
+	appropriate makefile when the component is built.
+
+  make_depend - Is a tool to generate the individual dependency files from
+    the source files.  It uses GCC to parse the source files; the resulting
+    stream is formatted, sorted and redirected to form the dependency files.
+
+
+
+5. Environment.
+--------------
+
+5.1. Version maintenance and mapping of derived files.
+
+    The integration tools were designed to run on top of the Atria ClearCase
+  tools; all source files and some of the control files are maintained under
+  ClearCase.  The derived files (object files, dependency files) are
+  kept under standard file system.  The source files are "frozen" periodically
+  and a new version is assigned to the resulting set.  For performance as
+  well as disk space resons the freezing is not done by attaching a label
+  but by locking all source files for a period of time and registering the
+  time, when they were locked. A single version string can then be assigned
+  to this time.
+
+    Each frozen version of source files is compiled into a separate physical
+  directory structure where the object files and dependencies are kept.
+  Since the version of source files is selected by means of the ClearCase
+  view specification (using the "-time" attribute), it is necessary to map
+  or synchronize the source files and the corresponding object files.  This
+  synchronization is implemented by a very simple mechanism: A file kept
+  under ClearCase is used to hold the version string, and the same version
+  string is used as a distinguishing component of the derived file paths.
+  The version file is then used automatically to select the corresponding
+  file paths for the derived files, thus forcing automatic synchronization
+  between the two domains.
+
+5.2 Version management.
+
+    As described in the previous section, each set of frozen source files
+  is associated with a unique version.  This version is an arbitrary string
+  kept in "/paraset/admin/version".  Even though the version could be
+  represented by any arbitrary string, it is advantageous to devise a scheme
+  where an automatic version updating can be done by a program, to provide
+  a new unique version each time the sources are frozen.  A prototype
+  <string>.<revision> is used in this integration environment, where the
+  revision is an integer automatically incremented for each new version.
+  It is then possible to map a standard x.y.z versioning scheme on top of
+  the implemented functionality as follows: version (x) and revision (y)
+  numbers are specified manually as the <string> determining the product
+  release.  The subrevision (z) is maintained automatically by the
+  integration procedures.  To specify a new product release the new version
+  string must be inserted manually in the version file (in form of x.y.0).
+  
+    The version is built into the executables and can be retrieved by the
+  standard "what" utility.  Please note that since many of the libraries
+  are also using the same identification mechanism it is necessary to filter
+  the "what" output.  The identification string always contains the word
+  "version" and also contains the value of the EXEC variable as specified
+  in "ma".  The following are typical shell commands to retrieve the version:
+  "what $PSETHOME/bin/aset | fgrep version" or
+  "what $PSETHOME/bin/aset | fgrep aset".

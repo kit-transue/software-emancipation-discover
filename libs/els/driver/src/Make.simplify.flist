@@ -1,0 +1,14 @@
+CPROOTS = \
+     fileSorter \
+     flagGenerator \
+     gmaker \
+     iffConsumer \
+     iffParser \
+     iffProducer \
+     langIffProducer \
+     language \
+     ldfInfo \
+     modelBuilder \
+     parserIffConsumer
+
+

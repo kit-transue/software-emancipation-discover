@@ -1,0 +1,525 @@
+###  Stats script
+
+proc inv_SetIfNotExists {var val} {
+    global $var
+    if {![info exists $var]} {
+        set $var $val
+    }
+}
+ 
+global STAT_SCOPE
+global STAT_CRITERIA
+global STAT_REBUILT_FILES
+global STAT_REBUILT_PROJECTS
+global STAT_METRICS_INFO
+global STAT_STATS_INFO
+global STAT_CC_THRESH
+global STAT_SWITCHES_THRESH
+global STAT_SHALLOW
+global STAT_STANDARD_DEV
+global STAT_FILE_INFO
+global STAT_PROJECT_INFO
+global STAT_FUNCT_INFO
+global STAT_CLASS_INFO
+global STAT_VAR_INFO
+global STAT_ENUM_INFO
+global STAT_MACRO_INFO
+global STAT_UNION_INFO
+global STAT_TEMPLATE_INFO
+global STAT_TYPEDEF_INFO
+global STAT_OUTPUT_FORMAT
+global STAT_OUTPUT_FILE
+
+
+## Default Values:
+inv_SetIfNotExists STAT_SCOPE  						  "/"
+inv_SetIfNotExists STAT_CRITERIA						""
+inv_SetIfNotExists STAT_REBUILT_FILES			  0
+inv_SetIfNotExists STAT_REBUILT_PROJECTS		1
+inv_SetIfNotExists STAT_METRICS_INFO 			  0
+inv_SetIfNotExists STAT_STATS_INFO 				  1
+inv_SetIfNotExists STAT_CC_THRESH					  0
+inv_SetIfNotExists STAT_SWITCHES_THRESH		  0
+inv_SetIfNotExists STAT_SHALLOW						  1
+inv_SetIfNotExists STAT_STANDARD_DEV				1
+inv_SetIfNotExists STAT_FILE_INFO					  1
+inv_SetIfNotExists STAT_PROJECT_INFO 			  1
+inv_SetIfNotExists STAT_FUNCT_INFO					1
+inv_SetIfNotExists STAT_CLASS_INFO					1
+inv_SetIfNotExists STAT_VAR_INFO						1
+inv_SetIfNotExists STAT_ENUM_INFO					  1
+inv_SetIfNotExists STAT_MACRO_INFO					1
+inv_SetIfNotExists STAT_UNION_INFO					1
+inv_SetIfNotExists STAT_TEMPLATE_INFO			  1
+inv_SetIfNotExists STAT_TYPEDEF_INFO				1
+inv_SetIfNotExists STAT_OUTPUT_FORMAT       STAT_ASCII_FILE
+inv_SetIfNotExists STAT_OUTPUT_FILE				  "Summary.txt"
+
+
+
+
+# set stats and metrics info to 1
+#  (users should not be able to set these any more)
+set STAT_METRICS_INFO 1
+set STAT_STATS_INFO   1
+
+# set STAT_METRICS_INFO to 0 if metrics commands don't work....
+if {[catch {met_CC [roots] 1} message]} {
+	set STAT_METRICS_INFO 0
+}
+
+# make sure the thresholds are numerical.....
+if {![regexp {^[0-9][0-9]*$} $STAT_CC_THRESH]} {set STAT_CC_THRESH 0}
+if {![regexp {^[0-9][0-9]*$} $STAT_SWITCHES_THRESH]} {set STAT_SWITCHES_THRESH 0}
+
+# make sure boolen vars are not strings
+if {[string compare 0 $STAT_REBUILT_FILES]} {set $STAT_REBUILT_FILES 1}
+if {[string compare 0 $STAT_REBUILT_PROJECTS]} {set $STAT_REBUILT_PROJECTS 1}
+if {[string compare 0 $STAT_METRICS_INFO]} {set $STAT_METRICS_INFO 1}
+if {[string compare 0 $STAT_STATS_INFO]} {set $STAT_STATS_INFO 1}
+if {[string compare 0 $STAT_SHALLOW]} {set $STAT_SHALLOW 1}
+if {[string compare 0 $STAT_STANDARD_DEV]} {set $STAT_STANDARD_DEV 1}
+if {[string compare 0 $STAT_FILE_INFO]} {set $STAT_FILE_INFO 1}
+if {[string compare 0 $STAT_PROJECT_INFO]} {set $STAT_PROJECT_INFO 1}
+if {[string compare 0 $STAT_FUNCT_INFO]} {set $STAT_FUNCT_INFO 1}
+if {[string compare 0 $STAT_CLASS_INFO]} {set $STAT_CLASS_INFO 1}
+if {[string compare 0 $STAT_VAR_INFO]} {set $STAT_VAR_INFO 1}
+if {[string compare 0 $STAT_ENUM_INFO]} {set $STAT_ENUM_INFO 1}
+if {[string compare 0 $STAT_UNION_INFO]} {set $STAT_UNION_INFO 1}
+if {[string compare 0 $STAT_TEMPLATE_INFO]} {set $STAT_TEMPLATE_INFO 1}
+if {[string compare 0 $STAT_TYPEDEF_INFO]} {set $STAT_TYPEDEF_INFO 1}
+
+
+
+##  the output file should get set here
+set OUTFILE [open $STAT_OUTPUT_FILE w]
+
+
+# make sure the criteria filter is valid
+if {(![info exists STAT_CRITERIA]) || 
+	  [catch {filter $STAT_CRITERIA [nil_set]}] || 
+		[regexp {^[^a-zA-Z]*$} $STAT_CRITERIA] } {
+	global STAT_CRITERIA
+	set STAT_CRITERIA "project||module"
+}
+
+
+
+
+
+##############################
+## RTF constants:
+##############################
+set RTF_HEADER1 "{\\rtf1\\ascii
+\\deff1
+\{\\fonttbl
+\{\\f0\\froman Times;\}
+\}
+\{\\info\{\\title "
+
+set RTF_HEADER2 "}}
+\\paperw12240\\paperh15840
+\\margl1440\\margr1440
+\\margt1440\\margb1440
+\\widowctrl\\ftnbj\\pgnstart1\\ftnstart1
+\\ftnrestart\\revbar1
+\\sectd\\sbkpage\{\\header \\pard\\plain\\s16\\f1\\fs20\\ulnone \\f1 \\qj\\sl-240\\tqc\\tx4680\\tqr\\tx9360 \\par
+\}
+\\cols1\\colsx0
+\\pard\\plain\\f0\\fs24\\ulnone\\cf1 \\sl280 \{\\qc\\fs32 "
+
+set RTF_HEADER3 "\\par }"
+
+set RTF_FOOTER1 "\\pard\\brdrt\\brdrs\\brdrw15\\brsp20 \{"
+set RTF_FOOTER2 "} \\par\}"
+
+
+##############################
+## Procedures For Calculations
+##############################
+
+proc apply_list_threshold_GT {list threshold} {
+	set result 0
+	foreach el $list {if {$el > $threshold} {set result [expr $result + 1]}}
+	return $result
+}
+
+proc apply_list_threshold_LT {list threshold} {
+	set result 0
+	foreach el $list {if {$el < $threshold} {set result [expr $result + 1]}}
+	return $result
+}
+
+# applys the command to every element in the set, and returns a list 
+# of the sizes of the resulting sets....
+proc apply_command {elements command} {
+	set list ""
+	foreach el $elements {
+		lappend list [size [eval $command $el]]
+	}
+	return $list
+}
+
+
+proc apply_metric {elements metric} {
+	set list ""
+	foreach el $elements {
+		set val [eval $metric $el]
+		if {$val != -1} {
+			lappend list $val
+		} 
+	}
+	return $list
+}
+
+
+#returns the average of a list of numbers
+proc laverage {list} {
+	if {[llength $list] == 0} {return 0.0}
+	set sum 0.0
+	foreach val $list {set sum [expr $sum + $val]}
+	return [expr 1.0 * $sum / [llength $list]]
+}
+
+proc lsum {list} {
+	set sum 0.0
+	foreach val $list {set sum [expr $sum + $val]}
+	return $sum
+}	
+
+#returns a list of the average and standard deviation of a list of numbers
+proc lstddev {list} {
+	if {[llength $list] == 0} {return "0.0 0.0"}
+	set result ""
+	set average [laverage $list]
+	lappend result $average
+	set difflist ""
+	foreach val $list {lappend difflist [expr pow([expr $val - $average],2)]}
+	set stddev [expr sqrt( [lsum $difflist] / [llength $difflist] ) ]
+
+	lappend result $stddev
+	return $result
+}
+
+
+proc calculate_statistic {elements command name {level 0}} {
+	global STAT_STANDARD_DEV
+	set list [apply_command $elements $command]
+	if {$STAT_STANDARD_DEV} {
+		set values [lstddev $list]
+		output_stat_and_dev_float $name [lindex $values 0] [lindex $values 1] $level
+	} {
+		output_stat_float $name [laverage $list] $level
+	}
+	return $list
+}
+
+proc calculate_metric {elements metric name {level 0}} {
+	global STAT_STANDARD_DEV
+	set list [apply_metric $elements $metric]
+	if {$STAT_STANDARD_DEV} {
+		set values [lstddev $list]
+		output_stat_and_dev_float $name [lindex $values 0] [lindex $values 1] $level
+	} {
+		output_stat_float $name [laverage $list] $level
+	}
+	return $list
+}
+
+
+
+
+###################################
+## Procedures For Generating Report
+###################################
+
+proc output_stat_int { name value {level 0}} {
+	set tabwidth [expr $level * 4]
+	set tabwidth_rtf [expr $level * 720]
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE [format "%${tabwidth}s%s: %d" "" $name $value]}
+		STAT_HTML_FILE {puts $OUTFILE [format "%${tabwidth}s%s: %d<BR>" "" $name $value]}
+		STAT_RTF_FILE {puts $OUTFILE [format "\\pard\\li%d {%s: %d} \\par" $tabwidth_rtf $name $value]}
+		default {}
+	}
+}
+
+proc output_stat_float { name value {level 0}} {
+	set tabwidth [expr $level * 4]
+	set tabwidth_rtf [expr $level * 720]
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE [format "%${tabwidth}s%s: %.2f" "" $name $value]}
+		STAT_HTML_FILE {puts $OUTFILE [format "%${tabwidth}s%s: %.2f<BR>" "" $name $value]}
+		STAT_RTF_FILE {puts $OUTFILE [format "\\pard\\li%d {%s: %.2f} \\par" $tabwidth_rtf $name $value]}
+		default {}
+	}
+}
+
+proc output_stat_and_dev_float { name value dev {level 0}} {
+	set tabwidth [expr $level * 4]
+	set tabwidth_rtf [expr $level * 720]
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE [format "%${tabwidth}s%s: %.2f .....  Std. Dev.: %.2f" "" $name $value $dev]}
+		STAT_HTML_FILE {puts $OUTFILE [format "%${tabwidth}s%s: %.2f .....  Std. Dev.: %.2f<BR>" "" $name $value $dev]}
+		STAT_RTF_FILE {puts $OUTFILE [format "\\pard\\li%d {%s: %.2f .....  Std. Dev.: %.2f} \\par" $tabwidth_rtf $name $value $dev]}
+		default {}
+	}
+}
+
+proc output_file_header {text} {
+	global STAT_OUTPUT_FORMAT OUTFILE RTF_HEADER1 RTF_HEADER2 RTF_HEADER3
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE [format "%s" $text]}
+		STAT_HTML_FILE {puts $OUTFILE "</HTML> <HEAD><TITILE> $text </TITLE></HEAD> <BODY> <H2><CENTER>$text</CENTER></H2><HR WIDTH=35%>"}
+		STAT_RTF_FILE {
+			puts $OUTFILE "$RTF_HEADER1 $text $RTF_HEADER2 $text $RTF_HEADER3"
+		}
+		default {}
+	}
+}
+
+proc output_file_footer {} {
+	global STAT_OUTPUT_FORMAT OUTFILE RTF_FOOTER1 RTF_FOOTER2
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE "This document was generated by DISCOVER Statistics."; 
+					 puts $OUTFILE "Copyright 1999, Software Emancipation Technology."}
+		STAT_HTML_FILE {puts $OUTFILE "<HR>This document was generated by DISCOVER Statistics.<br>&#169 1999, Software Emancipation Technology.</BODY></STAT_HTML_FILE>"}
+		STAT_RTF_FILE {puts $OUTFILE "$RTF_FOOTER1 This document was generated by DISCOVER Statistics.\\par Copyright 1999, Software Emancipation Technology. $RTF_FOOTER2"}
+		default {}
+	}
+}
+
+proc output_project_header {text {level 0}} {
+	set tabwidth [expr $level * 4]
+	set tabwidth_rtf [expr $level * 720]
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE [format "%${tabwidth}s%s" "" $text]}
+		STAT_HTML_FILE {puts $OUTFILE [format "%${tabwidth}s<DL><DT><H3>%s</H3><DD>" "" $text]}
+		STAT_RTF_FILE {puts $OUTFILE [format "\\pard\\li%d {%s} \\par" $tabwidth_rtf $text]}
+		default {}
+	}
+}
+
+proc output_project_footer {{level 0}} {
+	set tabwidth [expr $level * 4]
+	set tabwidth_rtf [expr $level * 720]
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {}
+		STAT_HTML_FILE {puts $OUTFILE [format "%${tabwidth}s</DL>" ""]}
+		STAT_RTF_FILE {}
+		default {}
+	}
+}
+
+proc output_category_header {text {level 0}} {
+	set text [string toupper [string range $text 0 0]][string range $text 1 end]
+
+	set tabwidth [expr $level * 4]
+	set tabwidth_rtf [expr $level * 720]
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE [format "%${tabwidth}s%s" "" $text]}
+		STAT_HTML_FILE {puts $OUTFILE [format "%${tabwidth}s<B>%s</B><BR>" "" $text]}
+		STAT_RTF_FILE {puts $OUTFILE [format "\\pard\\li%d \{\\b %s\} \\par" $tabwidth_rtf $text]}
+		default {}
+	}
+}
+
+proc output_newline {} {
+	global STAT_OUTPUT_FORMAT OUTFILE
+	switch -exact -- $STAT_OUTPUT_FORMAT {
+		STAT_ASCII_FILE {puts $OUTFILE ""}
+		STAT_HTML_FILE {puts $OUTFILE "<BR>"}
+		STAT_RTF_FILE {puts $OUTFILE "\\par"}
+		default {}
+	}
+}
+
+
+
+
+proc output_project_element_stat {project element_type {level 0}} {
+	global STAT_STANDARD_DEV STAT_METRICS_INFO STAT_STATS_INFO STAT_CC_THRESH STAT_SWITCHES_THRESH STAT_CRITERIA
+
+	set element_types ${element_type}s
+	if {[string compare $element_type class] == 0} {set element_types classes}
+	set display_element_types $element_types
+	if {[string compare $display_element_types modules] == 0} {set display_element_types files}
+	set elements [defines -$element_types $project]
+	output_category_header $display_element_types $level	
+	set size [size $elements]
+	output_stat_int "Total number of $display_element_types" $size $level	
+	if {$STAT_STATS_INFO} {	
+    if {[project $project]} {	
+      set subprojects [subprojects $project]
+		  set num_projects [size $subprojects]
+		  set modules [defines -files $project]
+		  set num_files [size $modules]
+    } {
+      if {[module $project]} {
+        set num_projects 0
+        set modules $project
+		    set num_files 1
+       } {
+        set num_projects 0
+        set modules $project
+		    set num_files 1
+       }
+    }
+
+		if {$size != 0} {
+
+
+			if {$num_projects != 0} {calculate_statistic $subprojects "defines -$element_types" \
+				"Average number of $display_element_types per subproject" $level}
+			if {($num_files > 1) && [string compare $element_type module]} {
+				calculate_statistic $modules "defines -$element_types" \
+					"Average number of $display_element_types per file" $level}
+			if {[string compare $element_type class] == 0} {
+				calculate_statistic $elements "get_friends" \
+					"Average number of friends per class" $level
+				calculate_statistic $elements "get_member_functions" \
+					"Average number of member functions per class" $level
+				calculate_statistic $elements "get_member_data" \
+					"Average number of data members per class" $level
+				proc get_public_data {sym {sym2 ""}} {filter !(private||protected) [get_member_data $sym $sym2]}
+				calculate_statistic $elements "get_public_data" \
+					"Average number of public data members per class" $level
+			}
+		}
+	}
+	
+	
+	if {$STAT_METRICS_INFO} {
+		if {[string compare $element_type module] == 0} {
+				calculate_metric $modules "met_ULOC" \
+					"Average number of (non-comment) lines of code per file" $level			
+		}		
+		if {[string compare $element_type class] == 0} {
+				set fanin_list [calculate_metric $elements "met_FANIN" \
+					"Average number of superclasses per class" $level]			
+				output_stat_int "Total number of orphan classes (no superclasses)" \
+		 			[apply_list_threshold_LT $fanin_list 1] $level
+				calculate_metric $elements "met_FANOUT" \
+					"Average number of subclasses per class" $level	
+		}
+		if {[string compare $element_type function] == 0} {
+				set cc_list [calculate_metric $elements "met_CC" \
+					"Average cyclomatic complexity per function" $level]	
+				output_stat_int "Functions with cyclomatic complexity > $STAT_CC_THRESH" \
+		 			[apply_list_threshold_GT $cc_list $STAT_CC_THRESH] $level
+				set switches_list [calculate_metric $elements "met_SWITCHES" \
+					"Average number of switch statements per function" $level]	
+				output_stat_int "Functions with more than $STAT_SWITCHES_THRESH switch statements" \
+		 			[apply_list_threshold_GT $switches_list $STAT_SWITCHES_THRESH] $level
+				calculate_metric $elements "met_ULOC" \
+					"Average number of (non-comment) lines of code per function" $level		
+				calculate_metric $elements "met_DEPTH" \
+					"Average depth of control stuctures per function" $level		
+		}		
+	}
+	output_newline
+}
+
+proc output_project {project {level 0}} {
+	global STAT_CRITERIA STAT_SHALLOW STAT_FILE_INFO STAT_PROJECT_INFO 
+	global STAT_FUNCT_INFO STAT_CLASS_INFO STAT_VAR_INFO STAT_TEMPLATE_INFO
+	global STAT_TYPEDEF_INFO STAT_MACRO_INFO STAT_ENUM_INFO STAT_UNION_INFO STAT_CRITERIA
+
+	catch {set project [filter $STAT_CRITERIA $project]}
+	if {[size $project] == 0} {return}
+
+	output_newline
+	output_newline
+	output_project_header "Summary of: [name $project]" $level
+	output_newline	
+	
+	set level [expr $level + 1]
+
+	if {$STAT_PROJECT_INFO && ![module $project]} {
+		output_category_header subprojects $level; 
+		output_stat_int "Number of subprojects" [size [subprojects $project]] $level;
+		output_newline
+	}
+	if {$STAT_FILE_INFO && ![module $project]} {output_project_element_stat $project module $level}
+	if {$STAT_FUNCT_INFO} {output_project_element_stat $project function $level}
+	if {$STAT_CLASS_INFO} {output_project_element_stat $project class $level}
+	if {$STAT_VAR_INFO} {output_project_element_stat $project variable $level}
+	if {$STAT_TEMPLATE_INFO} {output_project_element_stat $project template $level}
+	if {$STAT_TYPEDEF_INFO} {output_project_element_stat $project typedef $level}
+	if {$STAT_MACRO_INFO} {output_project_element_stat $project macro $level}
+	if {$STAT_ENUM_INFO} {output_project_element_stat $project enum $level}
+	if {$STAT_UNION_INFO} {output_project_element_stat $project union $level}
+
+	output_newline
+
+	if {$STAT_SHALLOW == 0} {
+		set conts [contents $project]
+		if {[size $conts]} {
+			foreach el $conts {
+        set good_el $el
+        if {! [catch {if {[module $el]} {set good_el [set_copy [name $el]]} }]
+	    && (![module $good_el] || [size [where defined $good_el]] > 0) } {
+          output_project $good_el [expr $level + 1]
+        }
+      }
+		}
+	}
+	output_project_footer $level
+}
+	
+
+
+#set scope [set_copy $STAT_SCOPE]
+set scope [nil_set]
+foreach el $STAT_SCOPE {catch {set scope [set_add $scope $el]}} 
+
+
+
+############# DO REPORT ####################
+
+output_file_header {DISCOVER Statistics Report}
+
+output_project_header "Scope: [apply name $scope]"
+output_project_footer
+foreach el $scope {output_project $el}
+
+if {$STAT_REBUILT_FILES} {
+	set modified_files [where defined [modified_entities [defines -files $scope]]]
+	
+	output_project_header "Modified Files: [apply name $modified_files]"
+	output_project_footer
+	foreach el $modified_files {output_project $el}
+}
+
+if {$STAT_REBUILT_PROJECTS} {
+	if {![info exists modified_files]}	{
+		set modified_files [where defined [modified_entities [defines -files $scope]]]
+	}
+	set modified_projects_list [apply {name["(/**)/*"]} $modified_files]
+	set modified_projects [nil_set]
+	foreach el $modified_projects_list {catch {set modified_projects [set_add $modified_projects $el]}} 
+	
+	output_project_header "Modified Projects: [apply name $modified_projects]"
+	output_project_footer
+	foreach el $modified_projects {output_project $el}
+}
+
+
+
+output_file_footer
+
+if {[string compare $OUTFILE stderr]} {close $OUTFILE}
+
+
+############################################
+
+
+
+
+

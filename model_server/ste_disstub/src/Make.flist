@@ -1,0 +1,10 @@
+CROOTS=\
+
+
+CPROOTS=\
+    disstub \
+    ste_init \
+    steHeader \
+    steEditor \
+    ste_communication \
+

@@ -1,0 +1,35 @@
+<html>
+<body>
+
+<p><b>GOWSNT - Group Operations With Same Name Together</b></p>
+
+<p>Enforces standard to improve readability.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.audit;<br>
+class GOWSNT {<br>
+&nbsp; &nbsp; void operation () {}<br>
+&nbsp; &nbsp; void function () {}<br>
+&nbsp; &nbsp; <font color='red'>void operation (int param) {} </font><br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+</p>
+<P>Place operations with similar names and different signatures together. </P>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package com.swemancipation.audit;<br>
+class GOWSNT {<br>
+&nbsp; &nbsp; void operation () {}<br>
+&nbsp; &nbsp; <font color='blue'>void operation (int param) {} </font><br>
+&nbsp; &nbsp; void function () {}<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

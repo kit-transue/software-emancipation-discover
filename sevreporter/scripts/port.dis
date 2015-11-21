@@ -1,0 +1,382 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+##############################################################################
+
+#
+# Direct call to foreign function:
+#
+
+proc port:foreign_call { src args } {
+
+  set res [ nil_set ]
+
+  set calls [ tree find -ignore \
+    { call_expr (ast_offset != 0) !operator !purevirt } "$src" ]
+
+  foreach call $calls {
+    set sym [ data symbol $call ]
+    set def [ where defined $sym ]
+    if { [ size $def ] <= 0 } {
+      sappend $res $call
+      # diagnostic:
+      set msg "Call to foreign function `[ name -ignore $call ]'"
+      set context [ tree navigate { r(<-) function_def } $call ]
+      if { [ size $context ] != 0 } {
+        append msg " in function `[ name -ignore $context ]'"
+      }
+      qdiag $call $msg
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Inline assembly block:
+#
+
+proc port:inline_asm { src args } {
+
+  set asm [ tree find -ignore asm_stmt "$src" ]
+  qdiag $asm "Platform-specific inline assembly code"
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $asm ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# The char type may be signed or unsigned depending on the
+# implementation. Find where chars are used to index an array:
+#
+
+proc port:char_sub { src args } {
+
+  set res [ nil_set ]
+
+  set refs [ tree find -ignore array_ref "$src" ]
+  set subs [ tree navigate -ignore ->, $refs ]
+  foreach sub $subs {
+    set type [ realtype $sub ]
+    if { $type == "char" } {
+      sappend $res $sub
+      qdiag $sub "Array subscript has type `char'"
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Conversion that may misalign data:
+#
+
+proc port:alignment { src args } {
+
+  set res [ nil_set ]
+
+  set typelist {char short int long float double {long double}}
+
+  itercon "$src" info {
+
+    if { ($info(from,level) > 0) && ($info(to,level) > 0) && \
+         ($info(from,level) == $info(to,level)) } {
+
+      set match 0
+
+      set x [ name -ignore $info(from,base) ]
+      set y [ name -ignore $info(to,base) ]
+
+      regsub {^unsigned *} $x {} x
+      regsub {^unsigned *} $y {} y
+
+      set ix [ lsearch -exact $typelist $x ]
+      set iy [ lsearch -exact $typelist $y ]
+
+      if { $ix != -1 && $iy == -1 } {
+        if { [ struct -ignore $info(to,base) ] } {
+          set match 1
+        }
+      } elseif { $ix == -1 && $iy != -1 } {
+        if { ([ struct -ignore $info(from,base) ]) && ($y != "char") } {
+          set match 1
+        }
+      } elseif { ($ix != -1) && ($iy != -1) && ($ix < $iy) } {
+        set match 1
+      }
+
+      if { $match } {
+        set expr $info(expr)
+        # a decent trade-off: ignore calls to any function with
+        # 'alloc' in the name; this will catch lots of user-defined
+        # routines as well as standard C allocators; however, a few
+        # non-allocators will get skipped erroneously:
+        set allocs [ tree find {call_expr strstr(name,"alloc")} $info(from,node) ]
+        if { [ size $allocs ] == 0 } {
+          sappend $res $expr
+          qdiag $expr "Conversion from `$info(from,name)' to `$info(to,name)'\
+            may result in improper alignment"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Right shift of signed quantity:
+#
+
+proc port:rshift { src args } {
+
+  set res [ nil_set ]
+
+  set shifts [ tree find -ignore { arshift_assign_expr || arshift_expr || \
+                                   lrshift_assign_expr || lrshift_expr } "$src" ]
+
+  foreach shift $shifts {
+    set target [ tree navigate -ignore -> $shift ]
+    set type [ realtype $target ]
+    if { [ lindex $type 0 ] != "unsigned" } {
+      if { ! [ expression_is_constant $target ] && \
+           ! [ expression_is_boolean $target ] } {
+        sappend $res $shift
+        qdiag $shift "Right shift of signed quantity"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Equality comparison between floating-point values:
+#
+
+proc port:float_eq { src args } {
+
+  set res [ nil_set ]
+
+  array set floats {float {} double {} {long double} {}}
+  set exprs [ tree find -ignore { eq_expr || ne_expr } "$src" ]
+  foreach expr $exprs {
+    set left [ tree navigate -> $expr ]
+    set right [ tree navigate , $left ]
+    if { ([ typeinfo $left left_type ] != "") && ([ typeinfo $right right_type ] != "") } {
+      if { ($left_type(level) == 0) && ($right_type(level) == 0) } {
+        if { [ info exists floats($left_type(basename)) ] && \
+             [ info exists floats($right_type(basename)) ] && \
+             (! [ expression_is_constant $left ]) && \
+             (! [ expression_is_constant $right ]) } {
+          sappend $res $expr
+          qdiag $expr "Testing equality of floating-point values"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# ANSI compiler limit. Characters in a character string literal or wide
+# string literal (after concatenation): 65536.
+# Strings larger than 10K are truncated to 9999 bytes in the IF file, 
+# therefore we need to get the actual length in such cases. 
+#
+
+proc port:string_lim { src args } {
+
+  set res [ nil_set ]
+
+  set lim [ getqlim $args 65536 ]
+
+  set strings [ uses -string "$src" ]
+  foreach string $strings {
+    set len [ llength [ split [ cname $string ] {} ] ]
+    if { $len >= 9999 } {
+      set str_type [ type $string ]
+      set st [ string first \[ $str_type ]
+      set end [ string first \] $str_type ]
+      set real_len [ string range $str_type [expr $st + 1] [expr $end - 1] ]
+      if { $real_len > $lim } {
+	sappend $res [ instances $string ]
+        qdiag $string "String length is $real_len (ANSI minimum is $lim)"
+      }
+    }
+  }
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# ANSI compiler limit. Data members in a single class, structure, or
+# union: 16384.
+#
+
+proc port:field_lim { src args } {
+
+  set res [ nil_set ]
+
+  set lim [ getqlim $args 16384 ]
+
+  set elems [ defines -class -struct -union "$src" ]
+  foreach el $elems {
+    set fields [ uses -field $el ]
+    set n [ size $fields ]
+    if { $n > $lim } {
+      sappend $res $el
+      # diagnostic:
+      set kind [ kind -ignore $el ]
+      switch -- $kind {
+        class   { set kind "Class" }
+        struct  { set kind "Struct" }
+        union   { set kind "Union" }
+        default { set kind "Entity" }
+      }
+      qdiag $el "$kind `[ name -ignore $el ]' defines $n fields (ANSI minimum is $lim)"
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# ANSI compiler limit. Enumeration constants in a single enumeration: 4096.
+#
+
+proc port:enum_lim { src args } {
+
+  set res [ nil_set ]
+
+  set lim [ getqlim $args 4096 ]
+
+  set nodes [ tree find -ignore enum "$src" ]
+  foreach node $nodes {
+    set consts [ tree find -ignore const_decl $node ]
+    set n [ size $consts ]
+    if { $n > $lim } {
+      set el [ data symbol $node ]
+      sappend $res $el
+      qdiag $el "Enum `[ name -ignore $el ]' defines $n constants (ANSI minimum is $lim)"
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# ANSI compiler limit. Nesting levels of compound statements, iteration
+# control structures, and selection control structures: 256.
+#
+
+proc port:nested_lim { src args } {
+
+  set lim [ getqlim $args 256 ]
+
+  set res [ tree find -ignore "if_stmt||while_stmt||switch_clause||ast_block \
+    ${lim}(r(<-) if_stmt||while_stmt||switch_clause||ast_block <-)" "$src" ]
+
+  # diagnostic:
+  foreach el $res {
+    qdiag $el "Compound statement is nested too deep (ANSI minimum is $lim levels)"
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# ANSI compiler limit. Identifiers with block scope declared in one
+# block: 1024.
+#
+
+proc port:block_lim { src args } {
+
+  set res [ nil_set ]
+
+  set lim [ getqlim $args 1024 ]
+
+  set blocks [ tree find -ignore ast_block "$src" ]
+  foreach block $blocks {
+    set block_etag [ etag $block ]
+    set ids [ tree find -ignore var_decl $block ]
+    set num 0
+    foreach id $ids {
+      set which_block [ tree navigate -ignore { r(<-) ast_block } $id ]
+      if { [ etag $which_block ] == $block_etag } {
+        incr num
+      }
+    }
+    if { $num > $lim } {
+      sappend $res $block
+      qdiag $block "Statement block defines $num identifiers (ANSI minimum is $lim)"
+    }
+  }
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}

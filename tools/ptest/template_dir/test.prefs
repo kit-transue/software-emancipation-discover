@@ -1,0 +1,14 @@
+*psetPrefs.ELS.EDG:			yes
+*psetPrefs.doBuildDFA:			yes
+*psetPrefs.cDefines:			-D__sparc
+*psetPrefs.cPlusDefines:		-D__sparc
+*psetPrefs.configuratorSystem:	
+
+*psetPrefs.DIS_model.Strings_Enabled:   1
+*psetPrefs.DIS_model.LocalVars_Enabled: 1
+*psetPrefs.DIS_model.Instances_Enabled: 1
+*psetPrefs.DIS_model.Ast_Enabled:       1
+*psetPrefs.DIS_model.SaveMetrics:	1
+
+*psetPrefs.msgLogger:                   yes
+*psetPrefs.DIS_msg.UseMsgLogger: 	1

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+file=$1
+lang=$2
+
+fullname=$PSETTEST/src/$file.$lang
+filename=`basename "$fullname"`
+
+if [ "$lang" = "pc" ] ; then
+	comp=proc
+else
+	comp=$lang$lang
+fi
+
+echo "$comp -I. -c $filename"

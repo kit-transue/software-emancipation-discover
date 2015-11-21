@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT cmdline (#PCDATA|translate|list|compilername|alternate)*>
+<!ATTLIST cmdline
+  nameintro CDATA #IMPLIED
+  flagintro CDATA #IMPLIED
+>
+<!ELEMENT translate (filesuffix|option)*>
+<!ATTLIST translate
+  unrecognized CDATA #IMPLIED
+>
+<!ELEMENT option ANY>
+<!ATTLIST option
+  name CDATA #IMPLIED
+  flag CDATA #IMPLIED
+  immarg CDATA #IMPLIED
+  separg CDATA #IMPLIED
+  remarg CDATA #IMPLIED
+  noarg CDATA #IMPLIED
+  intro CDATA #IMPLIED
+>
+<!ELEMENT filesuffix ANY>
+<!ATTLIST filesuffix
+  name CDATA #IMPLIED
+  foldcase CDATA #IMPLIED
+>
+<!ELEMENT list ANY>
+<!ATTLIST list
+  getenv CDATA #IMPLIED
+  separator CDATA #IMPLIED
+>
+<!ELEMENT compilername (#PCDATA)*>
+<!ELEMENT alternate EMPTY >
+<!ATTLIST alternate nameintro CDATA #IMPLIED >

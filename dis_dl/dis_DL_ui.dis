@@ -1,0 +1,234 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+################################################################################
+#
+#
+#
+################################################################################
+
+#
+# globals
+#
+global _DL_assignee
+global _DL_day
+global _DL_day_entry
+global _DL_defects_report_result 
+global _DL_defects_report_tablist
+global _DL_dr_show_results
+global _DL_dur_type
+global _DL_duration
+global _DL_duration_entry
+global _DL_entities_report_result
+global _DL_entities_report_tablist
+global _DL_er_limit
+global _DL_er_limit_entry
+global _DL_er_show_results
+global _DL_er_thresh
+global _DL_er_thresh_entry
+global _DL_fix_date
+global _DL_menu_init
+global _DL_month
+global _DL_num_ents
+global _DL_open_date
+global _DL_priority
+global _DL_dr_report_filename
+global _DL_er_report_filename
+global _DL_reported_by
+global _DL_severity
+global _DL_status
+global _DL_unrestricted
+global _DL_year
+global _DL_year_entry
+global _DL_years_list
+
+set _DL_assignee ""
+set _DL_day ""
+set _DL_day_entry ""
+set _DL_defects_report_result 0
+set _DL_defects_report_tablist ""
+set _DL_dr_show_results 1
+set _DL_dur_type "Years"
+set _DL_duration 1
+set _DL_duration_entry ""
+set _DL_entities_report_result 0
+set _DL_entities_report_tablist ""
+set _DL_er_limit 10
+set _DL_er_limit_entry ""
+set _DL_er_show_results 1
+set _DL_er_thresh 1
+set _DL_er_thresh_entry ""
+set _DL_fix_date ""
+set _DL_menu_init 0
+set _DL_month ""
+set _DL_num_ents 10
+set _DL_open_date ""
+set _DL_priority ""
+set _DL_er_report_filename "entity_report.txt"
+set _DL_dr_report_filename "defect_report.txt"
+set _DL_reported_by ""
+set _DL_severity ""
+set _DL_status ""
+set _DL_unrestricted 0
+set _DL_year ""
+set _DL_year_entry ""
+set _DL_years_list ""
+
+################################################################################
+#
+# Defect Link UI TCL routines
+#
+################################################################################
+
+# Initialize the browser menu for DefectLink
+if { $_DL_menu_init == "0" } {
+    global _DL_menu_init
+    set _DL_menu_init 1
+
+    if { [license dr feature] || [license dw feature] } {
+	# add menu to menu bar
+	add_menu "Report.DefectLink"
+	add_item "Report.DefectLink" "Entities Report..." run_DL_entities_report
+	add_item "Report.DefectLink" "Defects Report..." run_DL_defects_report
+    }
+}
+
+################################################################################
+#
+# UI Routines used by both the entity and defect reports
+#
+################################################################################
+
+proc DL_tab { tlist } {
+    set i [lsearch -exact $tlist [focus]]
+    incr i
+    if {$i >= [llength $tlist]} {
+	set i 0
+    }
+    focus [lindex $tlist $i]
+}
+
+proc DL_init_years_list {} {
+    global _DL_years_list
+    set year [clock format [clock seconds] -format "%Y"]
+    set _DL_years_list ""
+    for {set i 0} {$i <= 10} {set i [expr $i + 1 ] } {
+	lappend _DL_years_list $year
+	set year [expr $year - 1]
+    }
+}
+DL_init_years_list    
+
+proc DL_check_number {var limit1 limit2 name w} {
+    global $var
+    set result 1
+    set num [eval set $var]
+    set int_err [catch {set $var [expr int($num)]}]
+    if {$int_err} {
+	set $var ""
+	msg -error "$name must be an integer"
+	set result 0
+    } else {
+	set num [eval set $var]
+	if { ($num > $limit2) || ($num < $limit1) } {
+	    set $var ""
+	    msg -error "$name must be an integer between $limit1 and $limit2"
+	    set result 0
+	}
+    }
+    if {$result == 0} {
+	catch {global $w}
+	catch {focus $w}
+    }
+    return $result
+}
+
+proc DL_convert_month {month} {
+    set result 0
+    switch -glob $month {
+	[Jj]an -
+	[Jj]anuary {set result 1}
+	[Ff]eb -
+	[Ff]ebruary {set result 2}
+	[Mm]ar -
+	[Mm]arch {set result 3}
+	[Aa]pr -
+	[Aa]pril {set result 4}
+	[Mm]ay {set result 5}
+	[Jj]un -
+	[Jj]une {set result 6}
+	[Jj]ul -
+	[Jj]uly {set result 7}
+	[Aa]ug -
+	[Aa]ugust {set result 8}
+	[Ss]ep -
+	[Ss]eptember {set result 9}
+	[Oo]ct -
+	[Oo]ctober {set result 10}
+	[Nn]ov -
+	[Nn]ovember {set result 11}
+	[Dd]ec -
+	[Dd]ecember {set result 12}
+	default {set result 0}
+    }
+    return $result
+} 
+
+# DefectLink get file routine
+proc DL_get_valid_file { title } {
+    set result [tk_getSaveFile -title $title]
+    refresh_ui
+    update
+    return $result
+}
+
+
+################################################################################
+#
+# Source in the reports if there is a license for DefectLink
+#
+################################################################################
+
+if { [license dr feature] || [license dw feature] } { 
+    catch { source_dis "dis_DL_entity_report.dis" }	
+    catch { source_dis "dis_DL_defect_report.dis" }	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

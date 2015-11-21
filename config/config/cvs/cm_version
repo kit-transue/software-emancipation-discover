@@ -1,0 +1,5 @@
+#!/bin/sh -f
+
+revname=`$PSETCFG/util/cvs_find_name $cm_revision_file`
+cd `dirname $cm_workfile`
+cvs log -r $revname | $PSETCFG/util/rcs_revisions | $PSETCFG/util/cm_version_string

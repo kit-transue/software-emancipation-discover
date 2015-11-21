@@ -1,0 +1,38 @@
+# This is the starting AdminLearn user PDF, to be modified during the
+# ADMIN/sw Primer exercises
+
+Private : $privateSrcRoot <-> /
+{
+    **.[ch]
+} 
+
+__Rules : $HOME <-> /
+{
+# Shared
+
+       $sharedSrcRoot/(1)/(2).o
+    :  $sharedSrcRoot/(**)/(*).([ch])/%/.pset 
+    => $sharedModelRoot/pset/(1)/(2).(3).pset
+
+       $sharedSrcRoot/(1)
+    :  $sharedSrcRoot/(**)/(*).([ch])/%/.make
+    => "cd $sharedSrcRoot/(1); make -n (2).o"
+
+       ""
+    :  $sharedSrcRoot/(**).pmod/%/.pmoddir
+    => $sharedModelRoot/pmod/(1).pmod
+
+# Private
+
+       $privateSrcRoot/(1)/(2).o
+    :  $privateSrcRoot/(**)/(*).([ch])/%/.pset
+    => $privateModelRoot/pset/(1)/(2).(3).pset
+
+       $privateSrcRoot/(1)
+    :  $privateSrcRoot/(**)/(*).([ch])/%/.make
+    => "cd $privateSrcRoot/(1); make -n (2).o"
+
+       ""
+    :  $privateSrcRoot/(**).pmod/%/.pmoddir
+    => $privateModelRoot/pmod/(1).pmod
+}

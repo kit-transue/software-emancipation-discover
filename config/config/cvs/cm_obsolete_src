@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Obsolete does not exist in CVS"
+

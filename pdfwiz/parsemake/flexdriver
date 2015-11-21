@@ -1,0 +1,9 @@
+#!/bin/sh
+
+FILENAME=$1
+shift
+flex -+ -p -o$FILENAME.cxx $* $FILENAME.l
+sed -e "s/#include <unistd.h>//" -e "s/#include <io.h>/#include <ios>/" < $FILENAME.cxx > $FILENAME.cxx.tmp
+mv $FILENAME.cxx.tmp $FILENAME.cxx
+ed $FILENAME.cxx < addnamespace.ed
+

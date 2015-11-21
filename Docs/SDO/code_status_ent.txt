@@ -1,0 +1,63 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Date: 6/28/95
+File: code_status.txt
+Subject: ADL spec for entity "code_status<ent>"
+From: Trung Dung
+
+entity code_status < entity Ent >
+/* provide connection to pmod, extra information about status,
+   removed entity ent does not ref this anymore. Certain attributes only
+   apply to certain types of entities.
+*/
+{
+    Attributes:
+	ddKind kind;
+	char * name;
+	char * def_file;
+	Ent  owner_entity;
+	date last_modified;
+	char * version;
+	char * comment; /* eg. intended changes */
+	CM_state file_status; /* co_reserved, co_unreserved, not_co */
+	bool has_parse_err;
+	bool being_modified;
+	bool dependent; /* true if entity depended on this code */
+	bool belong_to; /* true if code is a part of entity */
+	bool completed; /* true if code is done, combined with dependent
+			   means expecting completion of code from someone else
+		        */
+	bool expected; /* mandatory item? optional item? for devProject */
+	bool foreign;  /* applied only to kind = DD_MODULE */
+
+    Query:
+    Function:
+    Action:
+    Filters: get_belong_to(), get_dependent()
+    Keys:
+}

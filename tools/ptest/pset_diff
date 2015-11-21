@@ -1,0 +1,3 @@
+sed 's%MODULE./[a-zA-Z0-9+-/]*/%MODULE.%g' $1 | sed 's%NUMBER\.([0-9]\.[0-9]*[eE][+-][0-9]*)%NUMBER%g' > $1.tmp1
+sed 's%MODULE./[a-zA-Z0-9+-/]*/%MODULE.%g' $2 | sed 's%NUMBER\.([0-9]\.[0-9]*[eE][+-][0-9]*)%NUMBER%g' > $2.tmp2
+diff -w $1.tmp1 $2.tmp2

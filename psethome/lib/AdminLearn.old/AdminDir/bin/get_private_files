@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd $privateSrcRoot
+cleartool lsco -r -short .

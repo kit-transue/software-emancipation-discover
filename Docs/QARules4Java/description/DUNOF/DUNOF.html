@@ -1,0 +1,27 @@
+<html>
+<body>
+
+<p><b>DUNOF - Don't Use Negation Operator Frequently</b></p>
+
+<p>The negation operator(!) slows down the readability of the program, so it
+is recommended that you do not use it frequently.
+Caliper will report an warning for methods with 3 or more negation operators.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class DUNOF {<br>
+&nbsp; boolean oper (boolean a, boolean b) {<br>
+&nbsp; &nbsp; <font color='red'> if (!a)<br>
+&nbsp; &nbsp; &nbsp; return !a;<br>
+&nbsp; &nbsp; else<br>
+&nbsp; &nbsp; &nbsp;return !b;</font><br>
+&nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Do not use the negation operator if possible.</p>
+
+</body>
+</html>

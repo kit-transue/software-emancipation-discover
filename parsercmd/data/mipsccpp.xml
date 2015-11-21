@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>MIPSpro C++</compilername>
+  <switch enable="ntt"/> <!-- default to n32 -->
+  <translate>
+    <option name="n32" noarg="1" enable="ntt"/>
+    <option name="o32" noarg="1" enable="ott"/>
+    <option name="64" noarg="1" enable="sf"/>
+  </translate>
+  <switch when="ott|sf" disable="ntt"/>
+CPP
+    -w
+    --allow_error_directive
+    -D__DISCOVER__
+    -D_WCHAR_T
+    -D__STDC__=0
+    -I%0%/include/CC
+    -I%0%/include/CC/std
+    -D_LANGUAGE_C_PLUS_PLUS
+    -D_MIPS_SZINT=32
+    -D_LONGLONG
+    -D_WCHAR_T_IS_KEYWORD
+    -D_BOOL
+    -D__EDG_ABI_COMPATIBILITY_VERSION=229
+    -D_COMPILER_VERSION=721
+    -D_NAMESPACES
+    -D_PARTIAL_SPECIALIZATION_OF_CLASS_TEMPLATES
+    -D_TYPENAME_IS_KEYWORD
+    -D_MEMBER_TEMPLATES
+    -D_EXPLICIT_IS_KEYWORD
+    -D__EXCEPTIONS
+    -D__EXTENSIONS__
+    -D__mips
+    -D__sgi
+    -Dsgi
+    -D_SGI_SOURCE
+    -D__cplusplus
+    -D_MIPSEB
+    -D__unix
+  <switch when="ott"> <!-- o32 -->
+    -D_MIPS_SIM=1
+    -D_MIPS_FPSET=16
+    -D_MIPS_SZLONG=32
+    -D_MIPS_SZPTR=32
+    -D_ABIO32=1
+    -D_MIPS_ISA=2
+  </switch>
+  <switch when="ntt"> <!-- n32 -->
+    -D_MIPS_SIM=2
+    -D_MIPS_FPSET=32
+    -D_MIPS_SZLONG=32
+    -D_MIPS_SZPTR=32
+    -D_ABIN32=2
+    -D_MIPS_ISA=4
+  </switch>
+  <switch when="sf"> <!-- 64 -->
+    -D_MIPS_SIM=3
+    -D_MIPS_FPSET=32
+    -D_MIPS_SZLONG=64
+    -D_MIPS_SZPTR=64
+    -D_ABI64=3
+    -D_MIPS_ISA=4
+  </switch>
+  <translate>
+    <option name="D" immarg="1">-D%</option>          <!-- Associate name with token as if by #define -->
+    <option name="E" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to stdout -->
+    <option name="I" immarg="1">-I%</option>          <!-- Add <dir> to preprocessor #include file search path -->
+    <option name="P" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to .i  file -->
+    <option name="U" immarg="1">-U%</option>          <!-- Delete initial definition of preprocessor symbol <name> -->
+    <option name="v" noarg="1"></option>              <!-- Do stricter semantic checking -->
+    <option name="w" noarg="1"></option>              <!-- Suppress compiler warning messages -->
+    <option name="Xa" noarg="1"></option>             <!-- Compile assuming ANSI C conformance, allow K & R extensions (default mode) -->
+    <option name="Xc" noarg="1">--strict</option>     <!-- Compile assuming strict ANSI C conformance -->
+    <option name="Xs" noarg="1">--old_c</option>      <!-- Compile assuming (pre-ANSI) K & R C style code -->
+    <option name="Xt" noarg="1">--old_c</option>      <!-- Compile assuming K & R conformance, allow ANSI C -->
+    <option name="xCC" noarg="1"></option>            <!-- Accept C++ style comments -->
+    <option name="xsfpconst" noarg="1"></option>      <!-- Represent unsuffixed floating point constants as single precision -->
+    <option name="YI" immarg="1"></option>            <!-- Change default directory searched for include files -->
+    <option name="xwe" noarg="1">-w2</option>         <!-- Convert all warnings to errors -->
+
+    <option name="o" separg="1"></option>             <!-- Set name of output file to <outputfile> -->
+    <option name="targ" separg="1">-TARG:</option>    <!-- Set target architecture to arch-type -->
+    <option name="xinline" immarg="1">-INLINE:%</option> <!-- Same as -inline, takes file names in brackets. -->
+  </translate>
+</cmdline>

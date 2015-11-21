@@ -1,0 +1,23 @@
+CROOTS=\
+    alloca \
+
+
+CXXROOTS=\
+    fd_fstream \
+    fd_streambuf \
+    machdep \
+    map_manager \
+    cLibraryFunctions \
+    test \
+    shell_calls \
+
+CPP_INCLUDES=\
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/model_server/IDE/include \
+-I$(BUILD_SRC_ROOT)/model_server/IDE/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \
+

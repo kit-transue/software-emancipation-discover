@@ -1,0 +1,14 @@
+ echo -n "$1 [y|N]? "
+
+ while read answer ;  do
+
+ if [ -z ${answer:=""} ]
+    then exit 1
+ elif [ $answer = "n" -o $answer = "N" -o $answer = "no" -o $answer = "NO" ]
+    then exit 1
+ elif [ $answer = "y" -o $answer = "Y" -o $answer = "yes" -o $answer = "YES" ]
+    then  exit 0
+ else
+    echo -n " [y|N]? "
+ fi
+ done

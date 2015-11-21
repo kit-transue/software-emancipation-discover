@@ -1,0 +1,7 @@
+ProjectFive : $sharedSrcRoot <-> /five
+{
+
+  **.[ch]
+
+}
+

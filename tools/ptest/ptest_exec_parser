@@ -1,0 +1,18 @@
+#!/bin/sh
+# Peter Goodrich 11-30-94
+#
+#	This script insures that the following enviroment vars
+#	are set even if parser is run remotely via rsh!
+#
+
+if [ `uname -s` = "dgux" ] ; then
+	LD_LIBRARY_PATH="/usr/opt/epc/ec++/lib"
+	export LD_LIBRARY_PATH
+fi
+
+HOOK_REPORT=""
+export HOOK_REPORT
+HOOK_GCC=""
+export HOOK_GCC
+
+$*

@@ -1,0 +1,494 @@
+<head>
+<title>Java IF Specification</title>
+</head>
+<body bgcolor="white">
+<table>
+<tr><td align="right">To:<td width="3"><td>Michael Brook
+<tr><td align="right">Cc:<td><td>Mikhail Gurevich, Alex Harlap, W. M. Miller, Pero Smrzlic
+<tr><td align="right">From:<td><td>Scott Turner
+<tr><td align="right">Date:<td><td>98-07-16, revised 98-07-17, 98-08-05 &amp; 98-08-17
+<tr><td align="right">Subject:<td><td>Java IF Specification
+</table>
+<hr>
+<p>
+This document specifies the IF which will be produced by
+DISCOVER's Java front end, and which drives the model build.
+Because IF is already used for the languages C, C++, and PL/SQL,
+and because the Java language is in most respects a subset of C++,
+most of the requirements and decisions are already determined.
+The IF for Java will use the same operators and relations
+that are being used by C++, to the extent that Java is a subset.
+The issues which need to be settled, and which this document
+will emphasize, relate to those features which are unique to Java.
+</p>
+<h3>Symbols</h3>
+<p>
+<table width="30%" border>
+<tr><th colspan="2">Symbol Kinds
+<tr><th>new<th>not used
+<tr><td><code>interface</code><td><code>struct</code><br>etc.
+</table>
+</p>
+<p>The <code>package</code> symbol kind will be used for Java packages.
+This kind is not used by C++, but is used by PL/SQL. 
+Java uses it in a more sophisticated way than PL/SQL.
+</p>
+<p>
+Package names will be included in the IF, as SYM lines with kind <code>package</code>.
+Interfaces will have kind <code>interface</code> in their SYM lines. No other kind names 
+are particular to Java. In particular, method symbols will have kind <code>function</code> on
+their SYM lines, even though they should be displayed to the user as "method".
+</p>
+<p>Member symbol names will appear qualified by their classes or interfaces.
+Class and interface names will appear qualified by their package (if any).
+For example,
+<pre>
+    SYM [1] function "java.lang.String.indexOf(char)"
+</pre>
+<h3>Attributes</h3>
+<p>
+<table width="30%" border>
+<tr><th colspan="2">Attributes
+<tr><th>new<th>not used
+<tr><td><code>transient
+<br>final
+<br>synchronized
+<br>abstract
+<br>native</code>
+<td><code>auto</code>
+</table>
+</p>
+<p>
+<ul>
+<li>The <code>abstract</code> attribute is used for methods and classes.
+It's an explicit keyword in Java, in contrast to C++ where the corresponding
+properties of abstract class and pure virtual member function are implicit.
+<li>The <code>native</code> attribute applies to methods and corresponds to
+the Java keyword.
+<li>The <code>destructor</code> attribute will appear for "finalize" methods.
+<li>The <code>virtual</code> attribute will be used for method symbols
+that are not declared <code>final</code>.
+<li>The <code>auto</code> attribute does not apply to Java.
+</ul>
+<h3>Relations</h3>
+<p>
+<table width="30%" border>
+<tr><th colspan="2">Relations
+<tr><th>new<th>not used
+<tr><td><code>context&nbsp;package<br>import</code>
+<td><code>type&nbsp;reference<br>type&nbsp;pointer<br>type&nbsp;const</code>
+</table>
+</p>
+<p>
+As with C++, the type of each field or method will be given as a <code>type</code> relation
+of the symbol.
+Structured types will be described using the <code>type</code> relation with the
+attributes <code>return</code> and <code>argument</code> (noting that in Java <code>reference</code>, <code>pointer</code>, and <code>const</code>
+do not apply to types).
+</p>
+<p>As with C++, the <code>context</code> relation will be given for members, with the appropriate
+<code>public</code>, <code>package</code>, <code>protected</code>, or <code>private</code> attribute. 
+The <code>context</code> relation will also be given for members of a package.
+</p>
+<p>The new <code>import</code> relation is used as follows:
+<blockquote><code>REL [&lt;file&gt;] "import" [&lt;symbol&gt;]</code></blockquote>
+where <code>&lt;symbol&gt;</code> is either a type symbol or a package symbol.
+The <code>import</code> relation indicates <em>explicit</em> importation by
+means of an <code>import</code> statement at the beginning of the compilation unit.
+The <code>&lt;file&gt;</code> symbol represents the Java compilation unit.
+</p>
+<p>
+Note that because Java classes can directly contain initialization blocks,
+the <code>uses</code> relation of a class can indicate more than just the
+class's members.
+</p>
+<p>Other relations that have direct C++ counterparts are supported,
+for instance the <code>call</code> relation.
+The <code>subclass</code> relation is used both when a Java class
+<code>extends</code> a class and when it <code>implements</code> an interface.
+</p>
+<h3>AST Operators &amp; Statements</h3>
+<p>
+<table width="30%" border>
+<tr><th colspan="2">Operators &amp; Statements
+<tr><th>new<th>not used
+<tr><td><code>interface<br>finally<br>synchronized
+<br>easy_new
+<br>java_vec_new
+<br>instanceof<br>initialization_block
+<br>lrshift_expr<br>lrshift_assign_expr
+<br>type_decl_modified
+<br>class_literal
+<br>super
+<br>implements
+<br>parens
+<br>unary_plus
+<br>dimensions
+<br>anonymous_class
+<br>throw_spec
+<br>typespec
+<br>this&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</code>
+
+<td><code>*namespace*
+<br>*template*
+<br>*ellipsis*
+<br>*asm*
+<br>*bit_field*
+<br>*typedef*
+<br>*union*
+<br>*dl_expr*
+<br>*pm*
+<br>*sizeof*
+<br>*enum*
+<br>const_decl
+<br>goto
+<br>typeid
+<br>compound_expr
+<!-- The following spaces are inserted so that Netscape formats this table right.
+     Otherwise, it places an extra gap between the longest item in this list and the
+     following item. -->
+<br>defined&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>
+</table>
+</p>
+<p>
+
+<h4>method invocation</h4>
+Method invocation will be of the form
+<pre>
+   call_expr {
+     function [method symbol] {}
+     variable [object-of-call symbol] {}
+     [ &lt;argument&gt; ... ]
+   }
+</pre>
+or in case of a static method
+<pre>
+   call_expr {
+     function [method symbol] {}
+     [ &lt;argument&gt; ... ]
+   }
+</pre>
+The first operand of <code>call_expr</code> is the method to be called, using the <code>function</code>
+operator.
+The remaining operands of <code>call_expr</code> represent the argument list of the 
+method. 
+If the method is non-static, then the first argument indicates the object
+for which the method is called.
+</p>
+
+<p><h4>object references</h4>
+Java has no address-of or indirection operators. Nor does it have explicit reference types.
+Nevertheless, object types are passed as references and object declarations declare
+references. 
+The simplest operations in Java involve the basic types and object references.
+The AST code for a name reference in the simple case will be a <code>variable</code>
+tree node. 
+In the case of a reference to a field, the AST code will look like
+<pre>
+    component_ref [type-symbol] {
+      variable [object-symbol] {}
+      field [field-symbol] {}
+    }
+</pre>
+Name references will have this form regardless of whether the context is any of the following:
+    <ul>
+    <li>a fetch (<code>name + 99</code>)
+    <li>assignment to a name (<code>name = 99</code>)
+    <li>passing an argument (<code>foo(name)</code>)
+    </ul>
+</p>
+
+<p><h4>statement with explicit constructor invocation</h4>
+Java permits the first statement of a constructor to be an explicit
+invocation of a constructor for this class or for the superclass.
+Semantically, the corresponding C++ construct is the base class initializer,
+which has its own peculiar syntax.
+The possibility of mimicing the C++ AST in this case was considered,
+but it really gains nothing over simply emitting a <code>call_expr</code>.
+The <code>call_expr</code> is distinguished by its method being a constructor,
+which otherwise does not occur directly within a block.
+This will generate AST as follows:
+<pre>
+     ast_block {
+       call_expr [4]  {
+         function [11]  {}
+         super {}                        (or this {})
+         [ &lt;argument&gt; ... ]
+       }
+       [ &lt;statement&gt; ... ]
+     }
+</pre>
+</p>
+
+<p>
+<h4><code>break</code> and <code>continue</code></h4>
+The Java <code>break</code> and <code>continue</code> statements accept an optional
+label indicating the construct to break out of or to reenter.
+The Java parser will emit the usual <code>exit_stmt</code>
+with either 0 or 1 operand, depending on whether the label is present.
+Until now, <code>exit_stmt</code> has not had an operand.
+</p>
+
+<h4>import</h4>
+<p>An <code>import</code> statement is represented by means of
+existing operators with C++ oriented names.
+<pre>
+     using_decl {
+       used_entity [sym] {}
+     }
+</pre>
+</p>
+There is no distinction in the AST between the Java constructs
+<pre>
+     import a.b.*
+</pre>
+importing all inner classes of a class, and
+<pre>
+     import a.b
+</pre>
+importing the class itself.      
+
+<h4>declarations</h4>
+<p>
+Java declarations resemble C and C++ declarations, but there are significant differences in
+formal syntax. 
+<ul>
+<li>In a method or field declaration, the type spec always comes just to the
+left of the declarator(s).
+<li>A class definition is its own, first-class declaration, with its own
+set of declaration modifiers.
+</ul>
+</p>
+<p>To support the latter we will have
+<pre>
+     type_decl_modified [class_sym] {
+       ast_declspec
+       name_clause {
+         class [class-sym] {}
+ 	[ ast_superclass {
+ 	    class [sym] {}
+ 	  }
+         ]
+ 	[ implements {
+             interface [sym] {}
+           }
+           ...
+         ]
+       }
+       ast_block {
+         [ &lt;declaration&gt; ... ]
+       }
+     }
+</pre>
+What's different here is first the <code>ast_declspec</code> as the first operand 
+of the <code>type_decl_modified</code>, and second the <code>name_clause</code> may contain
+<code>implements</code> operators to indicate a set of interface types.
+</p>
+
+<p>To support the nicely-positioned type specs in method and field declarations,
+the IF AST will have:
+<pre>
+     list_decl  {
+       ast_declspec  {
+         typespec [type-sym] {}
+       }
+       field_decl [declared-sym]   {
+         field [declared-sym]  {}
+         &lt;initializer&gt;
+       }
+     }
+</pre>
+</p>
+
+<p>
+<h4>funky declarators</h4>
+Java offers the ability to declare array objects with the <code>[]</code> brackets
+indicating one dimension of an array in either the type specifier or the
+object declarator, or even in both. This provides a bit of a challenge when
+generating IF. Here's an example of how it will be handled. Source code:
+<pre>
+	int [] aa [] = new int[2][2];
+</pre>
+Resulting IF:
+<pre>
+        list_decl_typed 1/2 29 {
+          ast_declspec 1/2 6 {
+            typespec [symbol for int[]] 1/2 6 {}
+          }
+          var_decl [symbol for aa] 1/9 21 {
+            variable [symbol for aa] 1/9 2 {}
+            java_vec_new 1/17 13 {
+              type [symbol for element type] 1/21 3 {}
+	      dimensions 1/24 6 {
+                constant [constant symbol] 1/25 1 {"2"}
+                constant [constant symbol] 1/28 1 {"2"}
+              }
+            }
+          }
+        }
+</pre>
+</p>
+
+<p>
+<h4>empty statement</h4>
+<dd>An empty statement will yield no operators in the AST.
+
+<h4>descriptions of new AST operators</h4>
+<table border>
+<tr><th>kinds<td>
+<dl>
+<dt><code>interface</code>
+<dd>The <code>interface</code> operator corresponds to the new <code>interface</code> kind.
+It has no operands but always references an interface symbol.
+</dl>
+<tr><th>declarations<td>
+<dl>
+<dt><code>type_decl_modified</code>
+<dd>This is a variant of the <code>type_decl</code> operator, 
+with a first operand inserted to indicate modifiers to the declared
+class or interface.
+<dt><code>initialization_block</code>
+<dd>introduces initializing code
+within a class definition. This declaration is a sibling to <code>list_decl</code>
+declarations of the class members.
+<dt><code>implements</code>
+<dd>For the <code>implements</code> clause of a class declaration, as in the
+example above. Takes one operand, the implemented interface symbol.
+<dt><code>throw_spec</code>
+<dd>The <code>throw_spec</code> operator optionally follows
+the last <code>parm_decl</code> in a <code>function_decl</code>.
+Its operands are <code>type</code> operators.
+<dt><code>typespec</code>
+<dd>The <code>typespec</code> operator is a leaf (i.e. has no operands).
+It occurs as an operand to <code>ast_declspec</code> to represent
+the type specifier of the declaration specifiers.
+It always has a symbol id, indicating the appropriate type symbol.
+</dl>
+<tr><th>statements<td>
+<dl>
+<dt><code>synchronized</code>
+<dd>The <code>synchronized</code> operator represents a statement, takes two operands:
+<ol><li>the object to be locked
+    <li>the statements to execute in a synchronized manner
+</ol>
+<dt><code>finally</code>
+<dd>Up to now, the <code>try_block</code> operator took operands as follows: first
+an <code>ast_block</code> operand, then one or more <code>catch</code>
+clauses. With Java, there is an optional last operand that is a <code>finally</code>
+clause. The <code>finally</code> operator has one operand which is an <code>ast_block</code>.
+</dl>
+<tr><th>expressions<td>
+<dl>
+<dt><code>instanceof</code>
+<dd>The <code>instanceof</code> operator takes two operands:
+<ol><li>an object reference expression
+    <li>a type name
+</ol>
+It performs a test of whether the object's (dynamic) class
+implements the given type, returning a true/false value.
+<dt><code>this</code>
+<dd>The <code>this</code> object, whether explicitly or implicitly referenced,
+is represented in the AST by the <code>this</code> operator.
+Having an operator to serve for <code>this</code> differs from the
+way C++ uses a symbol for the same purpose. The <code>this</code> operator has no operands.
+<dt><code>super</code>
+<dd>The <code>super</code> operator has no operands. It represents the
+current (<code>this</code>) object as implemented in its superclass.
+<dt><code>easy_new</code>
+<dd>The <code>new</code> operator in Java is much less complex than C++.  For C++ <code>new</code>
+you have first the symbol id of the <code>new</code> function to call, then the following
+operands.
+    <ol>
+    <li value="1">constructor call expression, with <code>dynamic_init</code>
+    <li>cleanup function (in case constructor fails?)
+    <li>amount of storage to allocate
+    </ol>
+    <code>easy_new</code> will take just 1 operand, the constructor call or anonymous class expression.
+<dt><code>anonymous_class</code>
+<dd>The <code>anonymous_class</code> operator occurs in <code>easy_new</code> expressions,
+and takes 2 operands.
+   <ol>
+   <li>the constructor call
+   <li>an <code>ast_block</code> tree for the class body
+   </ol>
+<dt><code>java_vec_new</code>
+<dd>The <code>new</code> operator for arrays in Java is quite different from C++.
+<code>java_vec_new</code> will have a type operand followed by a dimensions operand.
+The type operand gives the element type of the array.
+<dt><code>dimensions</code>
+<dd>The second operand of <code>java_vec_new</code>, its operands are a variable
+number of dimension operands. 
+Each operand provides the size of one dimension.
+<dt><code>lrshift_expr</code>
+<dt><code>lrshift_assign_expr</code>
+<dd>
+Because Java has no unsigned types, it makes up for this by having two kinds of
+right shift operations. The ordinary shift is based on the arithmetic value
+of the left operand, in which shifting by one bit is equivalent to a reasonable
+variant of division by 2. The alternative form is written <code>&gt;&gt;&gt;</code>
+and indicates a "logical" right shift in which the effect of shifting by one bit
+is to move each bit to the next less significant place, while filling the most significant
+bit with 0.
+<br>These two shift operators are in all other respects similar to <code>arshift_expr</code> and <code>arshift_assign_expr</code>.
+<dt><code>class_literal</code>
+<dd> A class literal expression, e.g. <code>boolean.class</code>, is expressed
+in the AST using the <code>class_literal</code> operator. It takes no operands,
+and indicates the type symbol of the class in question.
+<dt><code>parens</code>
+<dd>An expression using parentheses for grouping. Takes one operand, the
+contained expression.
+<dt><code>unary_plus</code>
+<dd>An expression with a unary plus operator. Takes one operand, obviously.
+</dl>
+</table>
+
+<h3>Unicode</h3>
+<p>
+Java is based on the Unicode character set.
+We don't encounter this immediately when looking at typical Java source code,
+because today's Java compilers are designed to work with today's text editors, which use ASCII.
+Escape sequences, such as <code>\u2603</code>
+are used to extend ASCII and incorporate Unicode characters into Java source.
+Non-ASCII characters can occur in literals and in identifiers.
+The EDG Java front end
+is throughly based on the principle that the characters of a Java program
+are Unicode characters, representing identifiers, characters, and strings using
+Unicode.
+Since every Unicode character has several possible ASCII representations
+in Java, a good Java front end quickly loses track of the original representation. 
+</p>
+<p>IF represents identifiers and strings based on the way they appear in source code.
+The source representation (including quotes if it's a string) is quoted.
+<blockquote><small>In my opinion, when quoting a string all included double-quotes and backslashes
+should be escaped using a backslash, so as to be able to find the concluding
+quote mark in a standard way. This is not handled consistently at present
+within DISCOVER.</small></blockquote>
+Java identifiers, characters, and strings will likewise go into IF using a
+quoted source-like representation.  Because a Java front end loses information, the
+representation from the actual source file will not always be duplicated.
+(Note also that a given identifier can be spelled different ways in the
+source file itself.)</p>
+<p>
+Here are examples of four different source code constructs and how they appear in IF.
+
+<center>
+<table border>
+<tr><td>           <th>identifier w/ Unicode<th>string w/ Unicode
+                   <th>string w/ Unicode<br>alternate representation<th>string w/ backslash
+<tr><th>source file<td><code>F\u00deirst</code>
+                   <td><code>"F\u00deirst"</code>
+                   <td><code>\u0022F\uu00deirst"</code><td><code>"\\u"</code>
+<tr><th>string value<td>
+                   <td><code>F&THORN;irst</code>
+                   <td><code>F&THORN;irst</code><td><code>\u</code>
+<tr><th>IF file    <td><code>"F\\u00deirst"</code><td><code>"\"F\\u00deirst\""</code>
+                                                  <td><code>"\"F\\u00deirst\""</code>
+                                                  <td><code>"\"\\\\u\""</code>
+</table></center>
+</p>
+<p>This is not a big deal, but it can be confusing since strings and identifiers
+go through so many stages of manipulation, and because IF is not currently used
+in a well-defined and consistent way when dealing with special characters within strings.
+</p>
+</body>

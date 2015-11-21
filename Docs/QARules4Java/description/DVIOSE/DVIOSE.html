@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<p><b>DVIOSE - Declare Variables In One Statement Each</b></p>
+
+<p>
+Several variables (attributes and local variables) should not be declared in the same statement.
+</p>
+
+<p>'Different types only' option can weaken this rule.
+When it is <i>on</i>, violation is raised only when variables are of different types,
+for example:
+<code><br>
+int foo, <font color='red'>fooarray[]</font>; // definitely wrong
+</code>
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class DVIOSE {<br>
+&nbsp; &nbsp; int attr1;<br>
+&nbsp; &nbsp; <font color='red'>int attr2, attr3; </font><br>
+&nbsp; &nbsp; void oper () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int var1;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>int var2, var3; </font><br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+declare variables in one statement each
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class DVIOSE {<br>
+&nbsp; &nbsp; int attr1;<br>
+&nbsp; &nbsp; <font color='blue'>int attr2; </font><br>
+&nbsp; &nbsp; <font color='blue'>int attr3; </font><br>
+&nbsp; &nbsp; void oper () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int var1;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>int var2; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>int var3; </font><br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

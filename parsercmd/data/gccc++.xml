@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- The language for a GCC compilation is based the suffix,
+     possibly overridden by -x <language>.
+     If no suffix is recognized, the gcc compiler does not default to
+     C or C++, but assumes an object file which we need to ignore.
+
+     This file exists so that gcc.xml will handle the -x c++ option correctly.
+  -->
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>GNU C++</compilername>
+reconfigure gcccpp(%0%)(%1%)(%2%)(%3%)(%4%)
+<translate/>
+</cmdline>

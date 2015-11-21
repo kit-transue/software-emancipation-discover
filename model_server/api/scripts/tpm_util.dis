@@ -1,0 +1,267 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis require.dis
+
+catch {require mrg.dis}
+
+proc patterns_list {} {
+    set files [extfile list pattern]
+    set list "default "
+    append list [ apply {name["/(**)/(*).ptn", "(2)"]} $files ]
+    return $list
+}
+
+proc pattern_verify { pattern } {
+    set x [> /dev/null { tree verify $pattern }]
+    return $x
+}
+
+proc load_and_test_pattern { patt do_test } {
+    if { "$patt" == "default" } {
+	set name [source_find "default.ptn"]
+    } else {
+	set all_patterns [extfile list pattern]
+	set p [filter "match(\"/**/$patt.ptn\")" $all_patterns]
+	set name [apply fname $p]
+    }
+    if { "$name" == "" } { return "" }
+    set pattern_list "$patt"
+    set p_file [open $name "r"]
+    set sz [gets $p_file line]
+    if { $sz > 0 } {
+	if { $line == "InclusiveBtn" } {
+	    lappend pattern_list 0
+	} else {
+	    lappend pattern_list 1
+	}
+    }
+    while { [eof $p_file] == 0 } {
+	set sz [gets $p_file tmp_line]
+	if { $sz > 0 } {
+	    regsub -all \01 $tmp_line \n line
+	    if { "$do_test" == "1" } {
+		# skip invalid patterns
+		set p [lindex $line 2]
+		if { [pattern_verify $p] == 0 } {
+		    msg -warning "Skipping invalid pattern expression: $p"
+		} else {
+		    lappend pattern_list $line
+		}
+	    } else {
+		lappend pattern_list $line
+	    }
+	}
+    }
+    close $p_file
+    return $pattern_list
+}    
+
+proc load_pattern { patt } {
+    return [load_and_test_pattern $patt 1]
+}
+
+proc save_pattern { name patt } {
+    if { "$name" == "" } { return "" }
+    set all_patterns [extfile list pattern]
+    set p [filter "match(\"/**/$name.ptn\")" $all_patterns]
+    set name [apply fname $p]
+    set p_file [open $name "w"]
+    set incl [lindex $patt 0]
+    puts stdout $incl
+    if { "$incl" == "0" } {
+	puts $p_file "InclusiveBtn"
+    } else {
+	puts $p_file "ExclusiveBtn"
+    }
+    set rows [lrange $patt 1 end]
+    foreach row $rows {
+	regsub -all \n $row \01 correct_row
+	puts $p_file $correct_row
+    }
+    close $p_file
+}
+
+proc create_new_pattern { name } {
+    set file_name [fname [extfile new pattern $name]]
+    set f [open $file_name "w"]
+    puts $f "InclusiveBtn"
+    close $f
+}
+
+proc apply_pattern { patt sel } {
+    set grp [apply_pattern_prefix $patt TPM_ $sel]
+    set res [group get $grp]
+    browser set results $res
+}
+
+proc tree_find { patt args } {
+  apply_per_file "tree find" [list tree find $patt] [eval set_copy $args]
+}
+
+proc tree_filter { patt args } {
+  apply_per_file "tree filter" [list tree filter $patt] [eval set_copy $args]
+}
+
+proc apply_per_file { title cmd sel } {
+    if {[llength $sel] == 0} { set sel [set_copy]}
+
+    set projs [filter project||scope||module $sel]
+    set other [filter ast||instance||cell||var||func $sel]
+    set obj   [defines -module $projs]
+    sappend $obj $other
+    set no_obj [size $obj]
+    if { $no_obj==0 } { return }
+
+    foreach lname ii $obj {
+	set table($lname) $ii
+    }
+    set modules [array names table]
+    set no_obj [llength $modules]
+    global apply_per_file_status
+    global apply_per_file_current
+    set apply_per_file_status 0
+    set apply_per_file_current ""
+    set progress [expr { [info commands status] != "" && $no_obj > 3}]
+    if $progress {
+	status start -ok -title $title "start processing files" $no_obj
+    }	
+
+    set count 0
+    set result [new_set]
+
+#    catch {
+     foreach lname $modules {
+        set ii $table($lname)
+        if $progress {
+	    if [status query $lname $count] {
+		puts "cancel at $lname. $count of $no_obj files processed"
+		set apply_per_file_status 1
+		set apply_per_file_current $lname
+		break
+	    }
+	}
+
+	set mod_obj [set_copy $obj $ii]
+	set m [where defined $mod_obj 1]
+	if { [size $m] == 0 } {
+	    puts_verbose "pattern: null module [ast_info $obj 1]"
+	    continue
+	}
+	set was_loaded [is_loaded $m]
+	if [catch {set res [eval $cmd $mod_obj]} msg] {
+	    puts "crash: $msg"
+	    continue
+	}
+	sappend $result $res
+	if {! $was_loaded} {src_unload $m}
+	incr count
+      }
+#    }
+    if $progress {status end}
+
+    return $result
+}
+
+proc apply_pattern_prefix { patt group_prefix sel} {
+    puts_verbose "apply_pattern_prefix $patt $group_prefix $sel [size $sel]"
+    set pattern_list [load_pattern $patt]
+    set len [llength $pattern_list]
+    if { $len < 3 } { 
+	msg -warning "pattern $patt is empty"
+	return 
+    }
+
+    set grps [apply_pattern_list $pattern_list $sel $group_prefix]
+    return $grps
+}
+
+proc apply_pattern_list { pattern_list sel prefix } {
+    set exclusive [lindex $pattern_list 1]
+    set group [create_pattern_group $pattern_list $prefix]
+    set full [generate_pattern_expr $pattern_list]
+    set cmd [list apply_patterns_to_module $full $group $exclusive]
+    set result [apply_per_file "TPM Pattern Filtering" $cmd $sel]
+    return $group
+}
+
+proc generate_pattern_expr { pattern_list } {
+    set exclusive [lindex $pattern_list 1]
+    set len [llength $pattern_list]
+    if { $len < 3 } { return }
+    for {set ii 2} {$ii < $len } {incr ii} {
+	set pattern [lindex $pattern_list $ii]
+	set patt_expr [lindex $pattern 2]
+	if { $ii == 2 } {
+	    set full "( $patt_expr )"
+	} else {
+	    append full " || ( $patt_expr )"
+	}
+    }
+    if $exclusive {
+	set full "! ( $full )"
+    }
+    return $full
+}
+proc apply_patterns_to_module { full gname  exclusive obj} {
+    if $exclusive {
+	set command filter
+    } else {
+	set command find
+    }
+
+    puts_verbose "tree $command $full [apply ast_info $obj]"
+
+    set result [tree $command -ignore $full $obj]
+    group add $gname $result
+
+    return $result
+}
+
+proc create_pattern_group { pattern_list prefix } {
+    set nm [lindex $pattern_list 0]
+    set gname $prefix
+    append gname $nm
+
+    if [group exists $gname] {
+	group set $gname [nil_set]
+    } else {
+	group tmp $gname
+    }
+    return [ group realname $gname ]
+}
+
+proc Y2K_pattern_node { pattern gprefix sel} {
+    global Y2K_GROUPS
+    global Y2K_RESULTS
+
+    set _Y2K_GROUPS [ apply_pattern_prefix $pattern $gprefix $sel]
+    set _Y2K_RESULTS [ group get $_Y2K_GROUPS ]
+    puts_verbose "Y2K_pattern_node: $_Y2K_GROUPS [size $_Y2K_RESULTS]"
+    set Y2K_GROUPS $_Y2K_GROUPS
+    set Y2K_RESULTS $_Y2K_RESULTS
+}

@@ -1,0 +1,366 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis require.dis
+
+set mrg_all_modules [nil_set]
+set mrg_ready_modules [nil_set]
+set name_after_co  "mrg_failed_after_co"
+
+proc mrg_copy { from to } {
+    set res -1
+    if { [ catch { file delete $to } msg ] == 0 } {
+	if { [ catch { file copy $from $to } msg ] == 0 } {
+	    set res 0
+	} else {
+	    puts "mrg copy failed: $msg"
+	}
+    } else {
+	puts "mrg delete failed: $msg"
+    }
+    return $res
+}
+
+proc mrg_init { mod_set } {
+    global mrg_all_modules
+    global mrg_ready_modules
+    global name_after_co
+
+    set mrg_all_modules   [defines -modules $mod_set]
+    set mrg_ready_modules [nil_set]
+
+    if { [ group exists $name_after_co ] } {
+	group set $name_after_co [nil_set]
+    } else {
+	group tmp $name_after_co [nil_set]
+    }
+}
+
+proc mrg_apply_module { mod indent } {
+    set nm       [name $mod]
+    set phys_nm  [fname $mod]
+    set src_name [mrg_psetname $mod "src"]
+    set diff_nm  [diff_result_name $mod]
+
+    puts_verbose "$indent module $nm: apply merge"
+    puts_verbose "$indent old src: $src_name"
+    puts_verbose "$indent    diff: $diff_nm"
+    puts_verbose "$indent phys nm: $phys_nm"
+
+    global env
+
+    if { [ info exists env(TMPDIR) ] } {
+        set FILE [ tempnam $env(TMPDIR) MRG_ ]
+    } else {
+        set FILE [ tempnam "" MRG_ ]
+    }
+
+    set res -1
+    if { "$FILE" != "" } {
+	global errorCode
+	set error_msg ""
+	puts_verbose ""
+	set cmd $env(PSETHOME)/bin/mrg_update
+	puts_verbose "$indent running:    $cmd -merge $src_name $diff_nm $FILE"
+	if { [ regexp {[ ]} $cmd ] } {
+		set sss [catch { exec "$cmd" -merge $src_name $diff_nm $FILE } error_msg]
+    	} else {
+		set sss [catch { exec $cmd -merge $src_name $diff_nm $FILE } error_msg]
+	}
+
+	if { $sss == 0 } {
+	    puts_verbose "$indent copying $FILE into $phys_nm"
+	    if { [ mrg_copy $FILE $phys_nm ] == 0 } {
+		set res 0
+	    }
+	} else {
+	    puts_verbose "$indent mrg_update error"
+	    puts_verbose ""
+	    puts_verbose $error_msg
+	    puts_verbose ""
+	}
+    } else {
+	puts_verbose "$indent ERROR: Cannot create temporary filename"
+    }
+
+    if { $res == 0 } {
+	puts_verbose "$indent module $nm: merge succeeded."
+    	puts_verbose "$indent module $nm: delete src file $src_name"
+    	catch { file delete $src_name }
+    	catch { file delete $diff_nm } 
+    } else {
+	puts_verbose "$indent module $nm: ERR: merge failed"
+    }
+    return $res
+}
+
+proc apply_diff_to_file {mod} {
+    mrg_apply_module $mod "    "
+    src_reload $mod
+    return $mod
+}
+
+proc mrg_apply { mods } {
+    apply_per_file "Apply Diff Files" apply_diff_to_file $mods
+}
+
+proc mrg_continue_after_interactive { failed_mods status } {
+    global name_after_co
+    global mrg_ready_modules
+
+    puts_verbose "mrg_continue_interactive: Start"
+    if { [size $mrg_ready_modules] == 0 } {
+	puts_verbose "mrg_continue_interactive: Empty set mrg_ready_modules. Done"
+	return
+    }
+    set sz_fail [size $failed_mods]
+
+    if { $sz_fail > 0 } {
+	puts_verbose "mrg_continue_interactive: failed to merge $sz_fail modules. Aborting ..."
+	return -1
+    } else {
+	mrg_apply $mrg_ready_modules
+    }
+    puts_verbose "mrg_continue_interactive: Done"
+}
+
+proc mrg_continue_after_co { failed_mods status } {
+    global name_after_co
+    global mrg_ready_modules
+
+    puts_verbose "mrg_continue_co: Start"
+    if { [size $mrg_ready_modules] == 0 } {
+	puts_verbose "mrg_continue_co: Empty set mrg_ready_modules. Done"
+	return
+    }
+    set sz_all  [size $mrg_ready_modules]
+    set sz_fail [size $failed_mods]
+    set sz_succ [expr $sz_all - $sz_fail]
+    
+    puts_verbose "mrg_continue_co: Processed $sz_all, succeeded $sz_succ, failed $sz_fail"
+    if { $sz_fail > 0 } {
+	group set $name_after_co $failed_mods
+	puts_verbose "mrg_continue_co: Modules needed user interaction are in group $name_after_co."
+	puts_verbose "mrg_modules: running mrg_diffs in interactive mode ..."
+        mrg_diffs $failed_mods mrg_continue_after_interactive 0
+    } else {
+	if { $sz_succ != 0 } {
+	    mrg_apply $mrg_ready_modules
+	} else {
+	    puts_verbose "mrg_continue_co: No automatically merged modules. Done"
+	}
+    }
+    puts_verbose "mrg_continue_co: Done"
+}
+
+# returns: "" if no cm: *psetPrefs.configuratorSystem is either empty or "no_cm"
+           get_pref_value configuratorSystem
+proc mrg_get_cm { } {
+    set prev_cm [get_pref_value configuratorSystem]
+    if { $prev_cm == "no_cm" } {
+	set prev_cm ""
+    }
+    return $prev_cm
+}
+
+# returns set with all modules writable, source extracted, and diffed.
+proc mrg_make_writable { all_mods } {
+    set ready_mods [nil_set]
+
+    set sz_all  [size $all_mods]
+
+    foreach mod $all_mods {
+	set res ""
+	set to_ret 0
+	set nm [apply fname $mod]
+	if { ![file writable $nm] } {
+	    puts_verbose "mrg_make_writable: module $nm is readonly;  try checkout ..."
+	    set res [mrg_module_checkout $mod]
+	    puts_verbose "mrg_make_writable: module $nm;  checkout result = $res"
+	    # note on "diffed" at this point.  The view/merge diffs has already
+	    # accomodated diffs from the current version, at least we hope.
+	    # The problem is that a checkout may change the current version, too.
+	    # We work with this in the next step:
+	}
+
+	if { $res == "failed" } {
+	    puts_verbose "mrg_make_writable: ** ERR: module $nm failed to make writable"
+	    puts " ** ERR: module $nm is not writable"
+	    set to_ret -1
+	} elseif { $res == "diffed" } {
+	    puts_verbose "mrg_make_writable: module $nm modified since modelbuild"
+	} else {
+	    # identical
+	    set phys_nm [fname $mod]
+	    set src_nm  [mrg_psetname $mod "src"]
+	    if { [ mrg_copy $phys_nm $src_nm ] == 0 } {
+		puts_verbose "mrg_make_writable: module $nm is not changed; created src file"
+	    } else {
+		puts_verbose "mrg_make_writable: ** ERR: module $nm failed to create src file"
+		set to_ret -1
+	    }
+	}
+	
+	if { $to_ret != -1 } {
+	    sappend $ready_mods $mod
+	}
+    }
+    catch {
+	   validate_set "mrg_readymods" $ready_mods
+	}
+    return $ready_mods
+}
+
+proc mrg_modules { mod_set } {
+    global mrg_all_modules
+    global mrg_ready_modules
+    
+    puts_verbose ""
+    puts_verbose "mrg_modules: Start"
+    puts " Start mrg_modules\n"
+
+    mrg_init $mod_set
+    set sz_all [size $mrg_all_modules]
+    if { $sz_all == 0 } {
+	puts_verbose "mrg_modules: Empty set mrg_all_modules. Done"
+	return
+    }
+
+    set mrg_ready_modules [mrg_make_writable $mrg_all_modules]
+    set sz_ready [size $mrg_ready_modules]
+    if { $sz_all != $sz_ready } {
+	puts_verbose "mrg_modules: Made writable only $sz_ready modules out of $sz_all. Aborting ..."
+	puts " ** Aborted mrg_modules: set contains readonly modules"
+    } else {
+	puts_verbose "mrg_modules: running mrg_diffs in batch mode ..."
+        mrg_diffs $mrg_ready_modules mrg_continue_after_co 1
+    }
+    puts_verbose "mrg_modules: Done"
+}
+
+proc mrg_diffs { modules callback_function batch_flag } {
+    global GLOBAL_mrg_callback_function
+    global env
+ 
+    set mod_list ""
+    foreach fname ii $modules {
+        append mod_list "[apply fname $fname]\n"
+    }
+    setvar GLOBAL_mrg_modules $mod_list
+    set GLOBAL_mrg_callback_function $callback_function
+    set script [source_find mrg.dis]
+
+    set phome $env(PSETHOME)
+    set exe_name "$phome/bin/mrg_ui"
+    if { [ regexp {[ ]} $exe_name ] } {
+      set exe_name "\"$exe_name\""
+    }
+
+    if $batch_flag {
+        set client [start_client -source $script -shutdown mrg_ui_quit "$exe_name -batch"]
+	puts_verbose "wait_client $client"	
+	wait_client $client
+        puts_verbose "client $client done"
+    } else {
+        start_client -source $script -shutdown mrg_ui_quit $exe_name
+    }
+}
+
+proc mrg_files_with_conflicts {} {
+    set mods [getvar GLOBAL_mrg_files_with_conflicts]
+    set x [nil_set]
+    foreach el $mods {
+	sappend $x $el
+    }
+    return $x
+}
+
+proc mrg_ui_quit { } {
+    global GLOBAL_mrg_callback_function
+    if { $GLOBAL_mrg_callback_function != "" } { 
+	set x [mrg_files_with_conflicts]
+	eval $GLOBAL_mrg_callback_function $x 1	
+    }
+}
+
+proc get_selected_diff { } {
+    set files [getvar GLOBAL_mrg_modules]
+    return $files
+}
+
+proc get_diff_files { mod } {
+    return [diff_list [ join $mod ] ]
+}
+
+proc diff_result_name { mod } {
+    set diff_file_root [ get_pref_value TPM.diffFileRoot ]
+    if { $diff_file_root != "" } {
+	set fname [ file root [ name [ join $mod ] ] ]
+	regsub -all {/|\\|:|\ } $fname _ mapped_fname
+	set root $diff_file_root/$mapped_fname
+    } else {
+	set pset [psetfile $mod]
+	set root [file root $pset]
+    }
+    return $root.diff.0
+}
+
+proc mrg_psetname { mod ext } {
+    set diff_file_root [ get_pref_value TPM.diffFileRoot ]
+    if { $diff_file_root != "" } {
+	set fname [ file root [ name $mod ] ]
+	regsub -all {/|\\|:|\ } $fname _ mapped_fname
+	set root $diff_file_root/$mapped_fname
+    } else {
+	set pset [psetfile $mod]
+	set root [file root $pset]
+    }
+    return $root.$ext
+}
+
+proc diff_files_with_conflicts { mods } {
+    setvar GLOBAL_mrg_files_with_conflicts $mods
+}
+
+proc merge_tpm_all { args } {
+
+    set modlist [chprop_find_files_with_diffs $args]
+
+    if [size $modlist]  {
+	mrg_modules $modlist
+    } else {
+	puts_verbose "No diff-files in scope\n [apply name $args]"
+    }
+
+    return 0
+}
+
+proc merge_tpm_file { arg } {
+    return [merge_tpm_all $arg]
+}
+
+require chprop.dis

@@ -1,0 +1,83 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis closure.dis
+
+proc dependents_of_file { file } {
+    set dependentFiles [nil_set]
+    set lang [string tolower [language $file]]
+    if {$lang == "c" || $lang == "cpp"} {
+        sappend $dependentFiles $file
+        set MAX_FILES 10000
+        sappend $dependentFiles [query_closure $MAX_FILES "where included" $file]
+    } elseif {$lang == "java"} {
+        #if the file is a java source file then all the files that use
+        #anything defined in the file.
+        sappend $dependentFiles $file
+        sappend $dependentFiles [where referenced [defines -all $file]]
+    } else {
+        #For other files (like .class/.jar/.zip) add the files that 
+        #reference them.
+        sappend $dependentFiles [where referenced $file]
+    }
+    return $dependentFiles
+}
+
+proc get_all_dependent_files { inputFile outputFile } { 
+    set initialFileSet [nil_set]
+    set finalFileSet [nil_set]
+
+    #read initial file set from input file
+    set IN_FP [open "$inputFile" "r"]
+    while { [gets $IN_FP line] >= 0 } {
+        set file $line
+        sappend $initialFileSet "$file"
+    } 
+    close $IN_FP
+
+    msg normal_sev "Impact analysis: initial number of files: \$1" "[ size $initialFileSet ]"
+
+    if { [size $initialFileSet] > 0 } {
+        foreach file $initialFileSet {
+            sappend $finalFileSet [dependents_of_file $file]
+        }
+        set finalFileSet [set_unique $finalFileSet]
+    
+        msg normal_sev "Impact analysis: final number of files: \$1" "[ size $finalFileSet ]"
+        set OUT_FP [open "$outputFile" "w"]
+        foreach file $finalFileSet {
+            puts $OUT_FP [lname $file]
+        }
+        close $OUT_FP
+    }
+}
+
+#invoke the procedure to read input_file and calculate all the files
+#that are dependent on these files and write to output_file
+set input_file "$env(DISBUILD_TMPDIR)/analysis_initial.lst"
+set output_file "$env(DISBUILD_TMPDIR)/analysis_final.lst"
+get_all_dependent_files "$input_file" "$output_file"

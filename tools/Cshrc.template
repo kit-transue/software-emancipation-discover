@@ -1,0 +1,120 @@
+##########
+#
+# .cshrc - C-Shell start up file.
+#
+##### Flow
+#
+# 1. Set the SHELL_TYPE variable. There are five different types of shells
+#    that this script and the .login script care about:
+#	CONSOLE_LOGIN - We are logging into a workstation console and must
+#			start up the window manager.
+#	REMOTE_LOGIN  - We are logging in but not onto the console.
+#	NEW_SHELL     - We are starting a new shell but no ClearCase view
+#			has been set.
+#	NEW_VIEW      - We are starting a new shell and a ClearCase view
+#			has already been set.
+#	NOT_INTERACTIVE - We are starting a non-interactive shell.
+#
+# 2. Make sure that the MY_VIEW variable is set properly.
+#    This variable is set in one of two different ways.
+#	If ( ~/.my_view file exists) Then
+#		MY_VIEW is set by 'cat'ing ~/.my_view into it.
+#	Else
+#		MY_VIEW is set to $USER
+#	Endif
+#
+# 3. Load in system wide defaults from $Cshrc_File.
+#
+# 4. Define personnal preferences.
+#
+# 5. Start up a ClearCase view only if this is a NEW_SHELL.
+#
+##### History
+#
+# 10/26/95 tlw  Created.
+#
+##########
+
+
+
+### 1. Set SHELL_TYPE environment variable.
+if ($?MY_VIEW == 0) then	### No view defined, must be a login shell.
+   if ($?prompt == 0) then	### Not an interactive shell
+      set SHELL_TYPE="NOT_INTERACTIVE"
+   else if (`tty` == "/dev/console") then	### On console, set SHELL_TYPE.
+      set SHELL_TYPE="CONSOLE_LOGIN"
+   else					### Not console, call it REMOTE.
+      set SHELL_TYPE="REMOTE_LOGIN"
+   endif
+else		### View is defined, Check for ClearCase shell.
+   set VIEW="`/usr/atria/bin/cleartool pwv -short`"
+   if ("$VIEW" == "$MY_VIEW") then	### Must be a ClearCase shell.
+      set SHELL_TYPE="NEW_VIEW"
+   else			### View not set, standard shell.
+      set SHELL_TYPE="NEW_SHELL"
+   endif
+endif
+###echo "SHELL_TYPE = '$SHELL_TYPE'"
+
+
+
+### 2. Set MY_VIEW environment variable and make sure view is started.
+if ($?MY_VIEW == 0) then	### No view defined, must be initial login.
+   if (-e ~/.my_view) then	### view name stored in .my_view file.
+      setenv MY_VIEW `cat ~/.my_view`
+   else			### no .my_view file.
+      setenv MY_VIEW $USER
+   endif
+   if (! -e /view/$MY_VIEW) then	### View not started yet.
+      set ATRIA_HOME=/usr/atria/bin
+      set VIEW_EXISTS=`$ATRIA_HOME/cleartool lsview | grep $MY_VIEW`
+      ###echo "VIEW_EXISTS = '$VIEW_EXISTS'"
+      ### Start up the view.
+      /usr/atria/bin/cleartool startview $MY_VIEW
+   endif	### Done insuring view is started.
+endif
+###echo "MY_VIEW is '$MY_VIEW'"
+
+
+
+### 3. Load in system wide defaults.
+setenv USE_LATEST_GALAXY 2.5
+set Cshrc_File=/view/$MY_VIEW/paraset/tools/SET.cshrc
+if (-x $Cshrc_File) then	### Found SET.cshrc, good view
+   source $Cshrc_File
+else				### No SET.cshrc, bad view
+   if ($SHELL_TYPE != "NOT_INTERACTIVE") then ### Print message.
+      echo "WARNING\!\!\! SET.cshrc in $MY_VIEW view not found\!"
+      echo "Using /ParaSET/tools/SET.cshrc instead\!"
+   endif
+   source /ParaSET/tools/SET.cshrc	### Use default file.
+endif
+
+
+### 4. Define personal preferences/overrides.
+###	Note - Make sure it isn't already defined in the global
+###	     Cshrc_File and Login_File.
+
+setenv LOCAL_ROOT /export/home/twight-local
+setenv G $SYSBASE/src/clients/gala
+
+# My print command.
+alias print 'mp -l -o -s "\!*" <\!* | lp'
+
+
+
+
+### 5. Start up a ClearCase view if this is a NEW_SHELL.
+if ($SHELL_TYPE == "NEW_SHELL") then
+   if (-x $Cshrc_File) then	### View exists.
+      exec cleartool setview $MY_VIEW
+   else
+      echo "Cshrc_File '$Cshrc_File' not found."
+   endif
+endif
+
+
+
+
+
+##########     end of .cshrc     ##########

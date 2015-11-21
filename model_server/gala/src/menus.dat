@@ -1,0 +1,783 @@
+#
+# File (master)
+#
+set m [dis_MenuCreate AppFileMenu "F_ile" "All=S"] 
+  
+  dis_MenuAppendItem $m FileOpenItem            "O_pen Definition" {
+	reval_async DISmain "dis_view -definition -rtl $GLOBAL_LastServerRTL"
+#	dis_file -open [dis_prompt_file "Open File" -open] TextBuffer
+	}
+
+  dis_MenuAppendItem $m FileSaveItem            "S_ave" {
+        reval_async DISmain "dis_ModuleSave $GLOBAL_LastServerRTL"
+        }
+
+  dis_MenuAppendItem $m FileUpdateFileItem      "U_pdate" {
+        reval_async DISmain "dis_moduleUpdate $BROWSERSourceServerRTL"
+        } "State=Browser=S,Group=S"
+
+  dis_MenuAppendSeparator $m
+
+   dis_MenuAppendItem $m FileModifiedEntitiesItem      "M_odified Entities" {
+      if {[info exists GLOBAL_LastServerRTL]} {
+	  dis_client_access_eval "set_result \[modified_objects \[get_gala_selection $GLOBAL_LastServerRTL\]\]"
+      } else {
+	  dis_confirm1 "Modified Entities" "OK" "You must select one or more files."
+      }
+  } "State=Browser=S,Group=S"
+  dis_MenuAppendSeparator $m
+
+
+# Source Control Sub-Menu 
+  set CMsubmenu [dis_MenuAppendSubmenu $m CM_Menu   "S_ource Control" "State=Brwser=S" ]
+        dis_MenuAppendItem $CMsubmenu CMCheckOutItem     "Check Out" {
+        	if {[info exists GLOBAL_LastServerRTL]} {
+        		reval_async DIScm "dis_cm_operation -check_out $GLOBAL_LastServerRTL"
+		} else {
+			dis_confirm1 "CM Check Out" "OK" "You must select one or more files to Check Out."
+		}
+	} "State=Browser=S" 
+        dis_MenuAppendItem $CMsubmenu CMCheckInItem     "Check In" {
+        	if {[info exists GLOBAL_LastServerRTL]} {
+     	   		reval_async DIScm "dis_cm_operation -check_in $GLOBAL_LastServerRTL"
+		} else {
+			dis_confirm1 "CM Check In" "OK" "You need to select one or more files to Check In."
+		}
+	} "State=Browser=S" 
+        dis_MenuAppendItem $CMsubmenu CMUndoCheckOutItem     "Undo Check Out" {
+        	if {[info exists GLOBAL_LastServerRTL]} {
+        		reval_async DIScm "dis_cm_operation -undo_check_out $GLOBAL_LastServerRTL"
+		} else {
+			dis_confirm1 "CM Undo Check Out" "OK" "You need to select one or more files to Uncheck Out."
+		}
+	} "State=Browser=S" 
+        dis_MenuAppendItem $CMsubmenu CMLockItem    "Lock" {
+        	if {[info exists GLOBAL_LastServerRTL]} {
+        		reval_async DIScm "dis_cm_operation -lock $GLOBAL_LastServerRTL"
+		} else {
+			dis_confirm1 "CM Lock" "OK" "You need to select one or more files to Lock."
+		}
+	} "State=Browser=S" 
+        dis_MenuAppendItem $CMsubmenu CMUnlockItem   "Unlock" {
+        	if {[info exists GLOBAL_LastServerRTL]} {
+        		reval_async DIScm "dis_cm_operation -unlock $GLOBAL_LastServerRTL"
+		} else {
+			dis_confirm1 "CM Unlock" "OK" "You need to select one or more files to Unlock."
+		}
+	} "State=Browser=S" 
+  dis_MenuAppendSeparator $m
+
+# Software Evaluator Submenu
+
+set SEVsubmenu [dis_MenuAppendSubmenu $m SEV_Menu   "So_ftware Evaluator Session" "State=EvaluatorNT=S" ]
+		dis_MenuAppendItem $SEVsubmenu SEVOpen "_Open..." {
+			MenuOpen
+			}  "State=EvaluatorNT=S"
+		dis_MenuAppendSeparator $SEVsubmenu
+		dis_MenuAppendItem $SEVsubmenu SEVSaveSession     "_Save" {
+			MenuSave
+		}  "State=EvaluatorNT=S" 
+		dis_MenuAppendItem $SEVsubmenu SEVSaveSessionAs "Save _As..." {
+			MenuSaveAs
+			} "State=EvaluatorNT=S"
+		dis_MenuAppendSeparator $SEVsubmenu
+		dis_MenuAppendItem $SEVsubmenu SEVRemove "_Remove..." {
+			MenuRemove
+			} "State=EvaluatorNT=S"
+
+
+ dis_MenuAppendSeparator $m
+
+##Project submenu
+
+
+  set sm1 [dis_MenuAppendSubmenu $m ProjectMenu "P_roject"]
+
+     dis_MenuAppendItem $sm1 SetHomeprojectItem  "H_ome Project" {
+        if { $LastProjectServerRTL == $BROWSERSourceServerRTL } then {
+           reval_async DISmain "dis_set_homeproj $LastProjectServerRTL"
+           dis_query -update -rtl $BROWSERSourceRTL
+        } else {
+           dis_Message "No project is selected."
+        }
+     } "State=Browser=S"
+
+     dis_MenuAppendItem $sm1 ProjectScopeItem      "Project S_cope" {
+         update_browser_RTLs FirstColumn
+         dis_launch_dialog ProjectScope "$BROWSERSourceRTL $BROWSERTargetRTL" 
+      } "State=Browser=S"
+
+  dis_MenuAppendItem $m FilePreferences		"Pref_erences"	{
+	dis_layer -open DialogLayer "Preferences"
+        }
+
+  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m BRViewCloseView         "C_lose Window" {
+	dis_layer -close
+	}
+
+  dis_MenuAppendSeparator $m 
+
+  dis_MenuAppendItem $m FileQuit              	"Ex_it" {
+	if { [ info exists QACockpit_opened ] } {
+	   SaveQACSession
+	}
+	dis_quit
+	}
+
+#
+# Edit
+#
+set m [dis_MenuCreate EditMenu "E_dit" "All=S"]
+
+  dis_MenuAppendItem $m MemberCut	"Cut_"   {
+	dis_clipboard -cut
+  }
+
+  dis_MenuAppendItem $m MemberCopy	"C_opy"  {
+	dis_clipboard -copy
+  }
+
+  dis_MenuAppendItem $m MemberPaste 	"P_aste" {
+	dis_clipboard -paste
+  }
+
+#  dis_MenuAppendItem $m EdCutItem       "Cut_" {dis_Edit -cut} "State=Editor/sw=S" 
+#  dis_MenuAppendItem $m EdCopyItem      "C_opy" {dis_Edit -copy} "State=Editor/sw=S" 
+#  dis_MenuAppendItem $m EdPasteItem     "P_aste" {dis_Edit -paste} "State=Editor/sw=S"
+#  dis_MenuAppendItem $m EdClearSelItem  "Cl_ear Selection" {dis_Edit -clear} "State=Editor/sw=S" 
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m NewGroupItem      "N_ew Group..." {
+	 if { [ info exists GLOBAL_LastServerRTL ] } {
+	   if { [ reval DISmain "dis_rtl_nsel $GLOBAL_LastServerRTL" ] > 0 } {
+	     dis_update_gdTextItem GrpNameString
+	     set SID -1
+	     if [ info exists GrpNamesRTLServerId ] { set SID $GrpNamesRTLServerId }
+             dis_launch_dialog GROUPCreate $SID $GLOBAL_LastServerRTL
+  	   } else {
+             dis_Message "This operation requires one or more selections."
+           }
+         } else {
+           dis_Message "This operation requires one or more selections."
+         }
+  } "State=Browser=S,Group=S,Graph=S,Metrics/sw=S,AutoDoc/sw=S,Dormant/sw=S,Extract/sw=S,Partition/sw=S,Y2K=S"
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m EdIMPACTsw "I_mpact Analysis..." {
+        if {[info exists GLOBAL_LastServerRTL]} {
+	    dis_layer -open DialogLayer "Impact/Propagate" $GLOBAL_LastServerRTL
+        } else {
+	    set promptString "Nothing is selected.  Please select entities on which to perform Impact Analysis."
+            set temp [dis_confirm1 "Impact Analysis" "OK" "$promptString"]
+        }
+  } "State=Browser=S,Group=S,Graph=S,AutoDoc/sw=S,Dormant/sw=S,Extract/sw=S,Partition/sw=S,Y2K=S"
+
+#  dis_MenuAppendItem $m SmartSearchItem "S_mart Search..." {dis_smart_search}
+
+
+#
+# Extract Subsystem
+#
+set m [dis_MenuCreate ExtractMenu "S_ettings" "Extract/sw=S"]
+ 
+  dis_MenuAppendItem $m EXRestoreSaveFile                       "L_oad..." {
+        set tempfilename [dis_prompt_file "selectExtract" -open "Load Subsystem Settings" "Subsystem settings file"]
+        if {$tempfilename != ""} {
+	    set fileBuffer [dis_file_read $tempfilename]
+	    set tempList [list "{" $fileBuffer "}"]
+	    set joinList [join $tempList ""]
+            set tempFileList [list "{" $tempfilename "}"]
+            set joinFileList [join $tempFileList ""]
+	    set tempStr [concat "dis_extractRestore" joinFileList $joinList $v]
+	    reval_async "DISextract" $tempStr
+	    set extractLastFile $tempfilename
+        }
+    } 
+  dis_MenuAppendItem $m EXOpenSaveFile                          "Save A_s..." {
+        set tempfilename [dis_prompt_file "selectExtract" -open "Save Subsystem Settings" "Subsystem settings file"]
+        if {$tempfilename != ""} {
+            dis_gdDialogIDEval [dis_getvar -global "ExtractDialogID"] [concat "SaveSettings" $tempfilename]
+	    set extractLastFile $tempfilename
+            }
+        } 
+
+  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m EXSetDefaultFile                        "Set D_efault" {
+	dis_Message "the current default file is $extractLastFile"
+	set promptString "Save the current settings in $extractLastFile and set as default?"
+        set temp [dis_prompt "YesNoDialog" "Extract" "$promptString"]
+        if {$temp == "Yes"} {
+	    set extractDefaultFile $extractLastFile
+            dis_gdDialogIDEval [dis_getvar -global "ExtractDialogID"] [concat "SaveSettings" $extractLastFile]
+            dis_putStringPreference "DIS_misc.SubsysSettingFile" $extractLastFile
+	}
+    } 
+  dis_MenuAppendItem $m EXRestoreDefaultFile			"R_estore" {
+	    set fileBuffer [dis_file_read $extractDefaultFile]
+	    set tempList [list "{" $fileBuffer "}"]
+	    set joinList [join $tempList ""]
+            set tempFileList [list "{" $extractDefaultFile "}"]
+            set joinFileList [join $tempFileList ""]
+	    set tempStr [concat "dis_extractRestore" $joinFileList $joinList $v]
+	    reval_async "DISextract" $tempStr
+    }
+
+#
+#  Impact/Propagate
+#
+# set m [dis_MenuCreate ImpactMenu "I_mpact/Propagate" "Impact/Propagate=S"]
+#  dis_MenuAppendItem $m CPUndoSelected "U_ndo Selected" {
+#	reval_async DISia "dis_ia_propagate -undo_selected"
+#  }
+
+#  dis_MenuAppendItem $m CPAbandon      "A_bandon" {
+#	reval_async DISia "dis_ia_propagate -abandon"
+#	dis_layer -close
+#  }
+
+#  dis_MenuAppendItem $m CPReport       "R_eport" {
+#	reval_async DISia "dis_ia_propagate -report"
+#  }
+
+#  dis_MenuAppendItem $m CPTurbo        "T_urbo" {
+#	reval_async DISia "dis_ia_propagate -turbo"
+#  }
+
+
+#
+# Create
+#
+
+#set m [dis_MenuCreate CreateMenu "C_reate"]
+#  dis_MenuAppendItem $m CreateClassItem              "Class..." {dis_launch_dialog "CreateClassDialog"}
+#  dis_MenuAppendItem $m CreateStructItem             "Structure..." {dis_launch_dialog "CreateStructDialog"}
+#  dis_MenuAppendItem $m CreateFunctionItem           "Function..." {dis_launch_dialog "CreateFunctionDialog"}
+#  dis_MenuAppendItem $m CreateRelationItem           "Relation..." {dis_launch_dialog "CreateRelationDialog"}
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m CreateSubsystemItem          "Subsystem..." {dis_launch_dialog "CreateSubsystemDialog"} 
+#  dis_MenuAppendItem $m CreateLinkTypeItem           "Link Type..." {dis_launch_dialog "CreateLinkTypeDialog"} 
+
+#
+# Notes
+#
+
+#set m [dis_MenuCreate NoteMenu "N_otes"]
+#  dis_MenuAppendItem $m NoteNewItem                  "New..." {dis_note -new}
+#  dis_MenuAppendItem $m NoteOpenItem                 "Open..." {dis_note -open}
+#  dis_MenuAppendItem $m NoteDeleteItem               "Delete..." {dis_note -delete}
+#  dis_MenuAppendItem $m NoteDeleteAllItem            "Delete All..." {dis_note -deleteall}
+
+#
+# Links
+#
+
+#set m [dis_MenuCreate "LinkMenu" "L_inks"]
+#  dis_MenuAppendItem $m LinkHotLinkItem              "Follow Hotlink" {dis_link -hotlink}
+#  dis_MenuAppendItem $m LinkNextSectionItem          "Next Section" {dis_link -nextsection}
+#  dis_MenuAppendItem $m LinkPreviousSectionItem      "Previous Section" {dis_link -prevsection}
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m LinkStartLinkItem            "Start Link" {dis_link -startlink}
+#  dis_MenuAppendItem $m LinkCloseLinkItem            "Close Link" {dis_link -closelink}
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m LinkHardAssocItem            "Hard Associate" {dis_link -hardassoc}
+#  dis_MenuAppendItem $m LinkSoftAssocItem            "Soft Associate" {dis_link -softassoc}
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m LinkBrowseLinksItem           "Browse Links..." {dis_link -browselinks}
+#  dis_MenuAppendSeparator $m
+
+
+#
+# Query
+#
+
+#
+# Subsystem Menu 
+#
+set m [dis_MenuCreate "GroupMenu" "S_ubsystem"  "Group=S"]
+    dis_MenuAppendItem $m GroupSave             "S_ave" {
+        reval_async DISgroup "dis_group_file -save $GroupsRTLServerId "}
+### Since Change Propagation doesn't work yet, we cannot rename subsystems.
+#    dis_MenuAppendItem $m GroupImpactAnalysis   "R_ename..." {
+#        dis_layer -open DialogLayer "Impact/Propagate" $GroupsRTLServerId}
+    dis_MenuAppendItem $m GroupDelete           "D_elete" {
+        reval_async DISgroup "dis_group_file -delete $GroupsRTLServerId "
+    }
+#   dis_MenuAppendItem $m GroupConvert          "Conv_ert" {
+#       reval_async DISgroup "dis_group_file -convert $GroupsRTLServerId "}
+#   dis_MenuAppendSeparator $m
+#   dis_MenuAppendItem $m GroupIntersection     "I_ntersection" {
+#       reval_async DISgroup "dis_group_ops -intersect $GroupsRTLServerId $ResultsRTLServerId"}
+#   dis_MenuAppendItem $m GroupUnion            "U_nion" {
+#       reval_async DISgroup "dis_group_ops -union $GroupsRTLServerId $ResultsRTLServerId"}
+#   dis_MenuAppendItem $m GroupSubtractAB       "A_ - B" {
+#       reval_async DISgroup "dis_group_ops -subtractAB $GroupsRTLServerId $ResultsRTLServerId"}
+#   dis_MenuAppendItem $m GroupSubtractBA       "B_ - A" {
+#       reval_async DISgroup "dis_group_ops -subtractBA $GroupsRTLServerId $ResultsRTLServerId"}
+
+#   dis_MenuAppendSeparator $m
+#   dis_MenuAppendItem $m GroupSetClients     "Set C_lient" {
+#       reval_async DISgroup "dis_group_setGroupRelations -clients $GroupsRTLServerId $ResultsRTLServerId"
+#	if {[llength $LastAskSelection] > 0} then {
+#	    reval_async DISgroup "dis_group_ask $LastAskSelection $GroupsRTLServerId $ResultsRTLServerId"
+#	}
+#   }
+
+#   dis_MenuAppendItem $m GroupSetServers     "Set S_erver" {
+#       reval_async DISgroup "dis_group_setGroupRelations -servers $GroupsRTLServerId $ResultsRTLServerId"
+#	if {[llength $LastAskSelection] > 0} then {
+#	    reval_async DISgroup "dis_group_ask $LastAskSelection $GroupsRTLServerId $ResultsRTLServerId"
+#	}
+#   }
+
+#   dis_MenuAppendItem $m GroupSetPeers       "Set P_eer" {
+#       reval_async DISgroup "dis_group_setGroupRelations -peers $GroupsRTLServerId $ResultsRTLServerId"
+#	if {[llength $LastAskSelection] > 0} then {
+#	    reval_async DISgroup "dis_group_ask $LastAskSelection $GroupsRTLServerId $ResultsRTLServerId"
+#	}
+#   }
+
+#   dis_MenuAppendItem $m GroupSetUnrelated   "Set Unrel_ated" {
+#       reval_async DISgroup "dis_group_setGroupRelations -unrelated $GroupsRTLServerId $ResultsRTLServerId"
+#	if {[llength $LastAskSelection] > 0} then {
+#	    reval_async DISgroup "dis_group_ask $LastAskSelection $GroupsRTLServerId $ResultsRTLServerId"
+#	}
+#   }
+
+    dis_MenuAppendSeparator $m
+
+    set sm [ dis_MenuAppendSubmenu $m GroupElements "E_lements" ]
+
+    dis_MenuAppendItem $sm GroupMemberAdd	"A_dd"		{
+      reval_async DISgroup "dis_group_edit -paste $GroupsRTLServerId $ResultsRTLServerId"
+    }
+
+    dis_MenuAppendItem $sm GroupMemberRemove	"R_emove"	{
+      reval_async DISgroup "dis_group_edit -cut $GroupsRTLServerId $ResultsRTLServerId"
+    }
+
+    dis_MenuAppendItem $sm GroupMemberReplace	"Rep_lace"	{
+      reval_async DISgroup "dis_group_edit -assign $GroupsRTLServerId $ResultsRTLServerId"
+    }
+
+    dis_MenuAppendSeparator $sm
+
+    dis_MenuAppendItem $sm GroupMemberPublic 	"Set Pub_lic"   {
+        reval_async DISgroup "dis_group_setMemberRelations -public $GroupsRTLServerId $ResultsRTLServerId"
+	if {[llength $LastAskSelection] > 0} then {
+	    reval_async DISgroup "dis_group_ask $LastAskSelection $GroupsRTLServerId $ResultsRTLServerId"
+	}
+    }
+
+    dis_MenuAppendItem $sm GroupMemberPrivate 	"Set Priv_ate"  {
+        reval_async DISgroup "dis_group_setMemberRelations -private $GroupsRTLServerId $ResultsRTLServerId"
+	if {[llength $LastAskSelection] > 0} then {
+	    reval_async DISgroup "dis_group_ask $LastAskSelection $GroupsRTLServerId $ResultsRTLServerId"
+	}
+    }
+
+    dis_MenuAppendSeparator $m
+
+    set sm [ dis_MenuAppendSubmenu $m GroupExport "Ex_port" ]
+
+    dis_MenuAppendItem $sm GroupExportGrp	"G_roup"	{
+	reval_async DISgroup "dis_group_export group $GroupsRTLServerId"
+    }
+
+    set sm [ dis_MenuAppendSubmenu $m GroupImport "I_mport" ]
+
+    dis_MenuAppendItem $sm GroupImportPackage	"P_ackage"	{
+	dis_setvar -global {session(path)} {\\}
+	dis_setvar -global {session(defaultFilter)} {Session}
+	set session [dis_prompt_file session -open {Package Session}]
+	if {"$session" != ""} then {
+	    reval_async DISgroup "dis_group_import -package \{[file root $session]\}"
+	    reval_async DISgroup "dis_group_init -groupsList $GroupsRTLServerId"
+	}
+    }
+
+#
+# Relations
+#
+
+#set m [dis_MenuCreate "RelationsMenu" "R_elations"]
+#    set sm [dis_MenuAppendSubmenu $m RelationsShowAllItem "Show All"]   
+#        dis_MenuAppendItem $sm RelationsShowAllAttributesItem              "Attributes" {dis_relation_show -allattributres}
+#        dis_MenuAppendItem $sm RelationsShowAllOperationsItem           "Operations" {dis_relation_show -allrelations}
+#    set sm [dis_MenuAppendSubmenu $m RelationsHideAllItem "Hide All"]   
+#        dis_MenuAppendItem $sm RelationsHideAllAttributesItem              "Attributes" {dis_relation_hide -allattributes}
+#        dis_MenuAppendItem $sm RelationsHideAllOperationsItem           "Operations" {dis_relation_hide -allrelations}
+#    dis_MenuAppendItem $m RelationsShowBuiltInRelationsItem     "Show Built-in Relations..." {}
+#    dis_MenuAppendItem $m RelationsShowOtherRelationsItem       "Show Other Relations..." {}
+#    dis_MenuAppendItem $m RelationsShowMembersItem      "Members..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m RelationsNewClassItem                 "New Class..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m RelationsInsertClassItem      "Class..." {}
+#    dis_MenuAppendItem $m RelationsRemoveClassItem      "Remove Class..." {}
+
+#
+# Data-Chart
+#
+
+#set m [dis_MenuCreate "DataChartMenu" "D_ata-Chart"  ]
+#    set sm [dis_MenuAppendSubmenu $m DataChartShowAllItem "Show All"]   
+#        dis_MenuAppendItem $sm AttributesItem              "Attributes" {dis_datachart_show -allattributes}
+#        dis_MenuAppendItem $sm RelationsItem                    "Relations" {dis_datachart_show -allrelations}
+#    set sm [dis_MenuAppendSubmenu $m DataChartHideAllItem "Hide All"]   
+#        dis_MenuAppendItem $sm AttributesItem              "Attributes" {dis_datachart_hide -allattributes}
+#        dis_MenuAppendItem $sm RelationsItem                    "Relations" {dis_datachart_hide -allrelations}
+#    dis_MenuAppendItem $m DataChartShowBuiltInRelationsItem "Built-in Relations..." {}
+#    dis_MenuAppendItem $m DataChartShowOtherRelationsItem       "Show Other Relations..." {}
+#    dis_MenuAppendItem $m DataChartShowMembersItem      "Members..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m DataChartNewClassItem                 "New Struct..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m DataChartInsertClassItem      "Insert Struct..." {}
+#    dis_MenuAppendItem $m DataChartRemoveClassItem      "Remove Struct" {dis_datachart_remove_struct}
+
+#
+# Subsystem Map
+#
+
+#set m [dis_MenuCreate "SubsystemMapMenu" "S_ubsystem-Map"  ]
+#    dis_MenuAppendItem $m SubsystemsShowMembers                 "Show Members..." {}
+#    dis_MenuAppendItem $m SubsystemsSortMembers                 "Sort Members..." {}
+#    dis_MenuAppendSeparator $m
+#    set sm [dis_MenuAppendSubmenu $m RelationsInsertNewItem "Hide All"] 
+#        dis_MenuAppendItem $sm StructItem               "Struct..." {}
+#        dis_MenuAppendItem $sm ClassItem                "Class..." {}
+#        dis_MenuAppendItem $sm FunctionItem                     "Function..." {}
+#        dis_MenuAppendItem $sm SubsystemItem                    "Subsystem..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m SubsystemsInsertMember                "Insert Member..." {}
+#    dis_MenuAppendItem $m SubsystemsRemoveMember                "Remove Member" {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m SubsystemsNewClassItem                "New Subsystem..." {}
+#    dis_MenuAppendItem $m SubsystemsInsertClassItem     "Insert Subsystem..." {}
+#    dis_MenuAppendItem $m SubsystemsRemoveClassItem     "Remove Subsystem" {}
+
+#
+# Inheritance
+#
+
+#set m [dis_MenuCreate "InheritanceMenu" "I_nheritance"  ]
+#    dis_MenuAppendItem $m InheritanceShowRelatedItem    "Show Related..." {}
+#    dis_MenuAppendItem $m InheritanceShowMembersItem    "Show Members..." {}
+#    dis_MenuAppendItem $m InheritanceSortMembersItem    "Sort Members..." {}
+#    dis_MenuAppendItem $m InheritanceExpertModeItem     "Expert Mode..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m InheritanceChangeAttributesItem       "Change Attributes..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m InheritanceInsertMemberItem   "Insert Member..." {}
+#    dis_MenuAppendItem $m InheritanceAddSuperclassItem  "Add Superclass..." {}
+#    dis_MenuAppendItem $m InheritanceAddSubclassItem    "Add Subclass..." {}
+#    dis_MenuAppendItem $m InheritanceAddRelationItem    "Add Relation..." {}
+
+#
+# Merge
+#
+
+#set m [dis_MenuCreate "MergeMenu" "M_erge"  ]
+#    dis_MenuAppendItem $m MergePrevItem                         "Prev" {dis_merge -prev}
+#    dis_MenuAppendItem $m MergeCurrItem                         "Curr" {dis_merge -curr}
+#    dis_MenuAppendItem $m MergeNextItem                         "Next" {dis_merge -next}
+#    dis_MenuAppendItem $m MergeDoneItem                         "Done" {dis_merge -done}
+#    dis_MenuAppendItem $m MergeCancelItem                       "Cancel" {dis_merge -cancel}
+#    dis_MenuAppendItem $m MergeStatusItem                       "Status" {dis_merge -status}
+
+#
+# Debug
+#
+
+#set m [dis_MenuCreate "DebugMenu" "De_bug"]
+#    dis_MenuAppendItem $m DebugSetExecutableItem                "Set Executable..." {}
+#    dis_MenuAppendItem $m DebugSetArgumentsItem         "Set Arguments..." {}
+#    dis_MenuAppendItem $m DebugAttachToProcessItem      "Attach To Process..." {}
+#    dis_MenuAppendItem $m DebugRunProgramItem           "Run Program" {dis_run_program}
+#    set sm [dis_MenuAppendSubmenu $m DebugSetDebuggerItem  "Set Debugger"]      
+#        dis_MenuAppendToggleItem $sm GDB42Item                  "GDB 4.2 (FSF, Inc)" {dis_print 1; dis_set_debugger "GDB 4.2"} {}
+#        dis_MenuAppendToggleItem $sm GDB411Item                 "GDB 4.11 (FSF, Inc)" {dis_print 2; dis_set_debugger "GDB 4.11"} {}
+#        dis_MenuAppendToggleItem $sm GDB413Item                 "GDB 4.13 (FSF, Inc)" {dis_print 3; dis_set_debugger "GDB 4.13"} {}
+#        dis_MenuAppendSeparator $sm     
+#        dis_MenuAppendToggleItem $sm DBX2Item                   "DBX (SPARCworks v2)" {dis_print 4; dis_set_debugger "DBX v2"} {}
+#        dis_MenuAppendToggleItem $sm DBX3Item                   "DBX (SPARCworks v3)" {dis_print 5; dis_set_debugger "DBX v3"} {}
+#        dis_MenuAppendSeparator $sm
+#        dis_MenuAppendToggleItem $sm DDEItem                    "DDE (HP-UX)" {dis_print 6; dis_set_debugger "DDE"} {}
+#        dis_MenuAppendToggleItem $sm XDBItem                    "XDB (HP-UX)" {dis_print 7; dis_set_debugger "XDB"} {}
+#    dis_MenuAppendItem $m DebugActiveSessionsItem               "Active Sessions..." {}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m DebugShowInterpretedItem              "Show Interpreted..." {}
+#    set sm [dis_MenuAppendSubmenu $m DebugInterpretItem "Interpret"]    
+#        dis_MenuAppendItem $sm DebugInterpretSelectedEntitiesItem        "Selected Entities" {dis_debug_interpret -interp -selectedentities}
+#        dis_MenuAppendItem $sm DebugInterpretFileInViewItem             "File in View" {dis_debug_interpret -interp -fileinview}
+#        dis_MenuAppendItem $sm DebugInterpretModifiedHomeItem           "Modfied Home Project Files" {dis_debug_interpret -interp -modhomeproj}
+#    set sm [dis_MenuAppendSubmenu $m DebugUninterpretItem "Uninterpret"]                
+#        dis_MenuAppendItem $sm DebugUninterpretSelectedEntitiesItem        "Selected Entities" {dis_debug_interpret -uninterp -selectedentities}
+#        dis_MenuAppendItem $sm DebugUninterpretFileInViewItem           "File in View" {dis_debug_interpret -uninterp -fileinview}
+#        dis_MenuAppendItem $sm DebugUninterpretModifiedHomeItem         "Modfied Home Project Files" {dis_debug_interpret -uninterp -modhomeproj}
+#    dis_MenuAppendSeparator $m
+#    set sm [dis_MenuAppendSubmenu $m DebugBreakpointsItem "Breakpoints"]                
+#        dis_MenuAppendItem $sm SetItem                  "Set" {dis_debug_break -set}
+#        dis_MenuAppendItem $sm RemoveItem                       "Remove" {dis_debug_break -remove}
+#        dis_MenuAppendItem $sm EnableItem                       "Enable" {dis_debug_break -enable}
+#        dis_MenuAppendItem $sm DisableItem                      "Disable" {dis_debug_break -disable}
+#        dis_MenuAppendSeparator $sm
+#        dis_MenuAppendItem $sm ShowItem                 "Show" {dis_debug_break -show}
+#        dis_MenuAppendItem $sm RemoveAllItem            "RemoveAll" {dis_debug_break -removeall}
+#    dis_MenuAppendItem $m DebugKillProcessItem          "Kill Process" {dis_kill_process}
+#    dis_MenuAppendSeparator $m
+#    dis_MenuAppendItem $m DebugStartDebuggerItem                "Start Debugger" {dis_start_debugger}
+#    dis_MenuAppendItem $m DebugQuitDebuggerItem         "Quit Debugger" {dis_quit_debugger}
+
+
+
+#
+# Partition
+#
+  set m [dis_MenuCreate "PartitionMenu" "P_artition"  "Partition/sw=S" ]
+
+  dis_MenuAppendItem $m SuggestRelatedEntitiesItem  "Suggest Related Entities" {
+      reval_async DISmain "dis_partition -related $BROWSERSourceServerRTL $BROWSERTargetServerRTL" }
+
+#
+# Home project
+#
+#  set m [dis_MenuCreate "HomeProjectMenu" "H_omeProject"  "Browser=S" ]
+ 
+#  dis_MenuAppendItem $m SetupHomeprojectItem  "Set Home Project" {
+#      reval_async DISmain "dis_set_homeproj $LastProjectServerRTL" }
+ 
+
+#
+# Server
+#
+
+#set m [dis_MenuCreate "ServerMenu" "S_erverRequest" "All=S"]
+#  dis_MenuAppendItem $m StopItem          "Stop" {
+#       reval DIScancel DIScancel "dis_cancel"} "State=InProgress=0"
+
+#
+# View
+#
+
+set m [dis_MenuCreate ViewMenu "V_iew" "Browser=S,Group=S,Graph=S,Metrics/sw=S,Dormant/sw=S,Extract/sw=S,Partition/sw=S,Y2K=S"]
+
+  dis_MenuAppendItem $m CallTreeView		"T_ree Diagram" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Calltree"
+        }
+	}
+
+  dis_MenuAppendItem $m InheritanceView		"I_nheritance" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Inheritance"
+        }
+	}
+
+  dis_MenuAppendItem $m RelationsView		"ER_D" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Relations"
+        }
+	}
+
+  dis_MenuAppendItem $m DataChartView		"D_ata Chart" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Datachart"
+        }
+	}
+
+  dis_MenuAppendItem $m OutlineView		"O_utline" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Outline"
+        }
+	}
+
+  dis_MenuAppendItem $m FlowChartView		"F_low Chart" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Flowchart"
+        }
+	}
+
+  dis_MenuAppendItem $m SubsystemView		"S_ubsystem" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_open_view $GLOBAL_LastServerRTL Subsystem"
+        }
+	}
+
+#############################
+#				
+# Group page in browser layer
+#				
+#############################
+
+set m [ dis_MenuCreate "ExtGroupMenu" "G_roup" "Browser=S,Y2K=S" ]
+
+  dis_MenuAppendItem $m ExtGroupSave "S_ave" {
+    reval_async DISgroup "dis_group_manage save $GrpNamesRTLServerId"
+  }
+
+  dis_MenuAppendItem $m ExtGroupRename "R_ename..." {
+    if { [ reval DISmain "dis_rtl_nsel $GrpNamesRTLServerId" ] == 1 } {
+      dis_update_gdTextItem GrpNameString
+      dis_launch_dialog GroupRename $GrpNamesRTLServerId
+    } else {
+      dis_Message "This operation requires exactly one selection."
+    }
+  }
+
+  dis_MenuAppendItem $m ExtGroupDelete "D_elete" {
+    reval_async DISgroup "dis_group_manage delete $GrpNamesRTLServerId"
+  }
+
+  #
+  # Elements submenu:
+  #
+
+  dis_MenuAppendSeparator $m
+
+  set sm [ dis_MenuAppendSubmenu $m ExtGroupElements "E_lements" ]
+
+    dis_MenuAppendItem $sm ExtGroupElementsAdd "A_dd" {
+      reval_async DISgroup "dis_group_manage add $GrpNamesRTLServerId $GrpElemsRTLServerId"
+    }
+
+    dis_MenuAppendItem $sm ExtGroupElementsRemove "R_emove" {
+      reval_async DISgroup "dis_group_manage remove $GrpNamesRTLServerId $GrpElemsRTLServerId"
+    }
+
+    dis_MenuAppendItem $sm ExtGroupElementsAssign "Rep_lace" {
+      reval_async DISgroup "dis_group_manage assign $GrpNamesRTLServerId $GrpElemsRTLServerId"
+    }
+
+  #
+  # Export submenu:
+  #
+
+  #dis_MenuAppendSeparator $m
+
+  set sm [ dis_MenuAppendSubmenu $m ExtGroupExport "Ex_port" ]
+
+    dis_MenuAppendItem $sm ExtGroupExportSubsystem "S_ubsystem" {
+      reval_async DISgroup "dis_group_manage export $GrpNamesRTLServerId"
+    }
+
+    dis_MenuAppendItem $sm ExtGroupExportFile "T_ext File" {
+      reval_async DISgroup "dis_group_manage print $GrpNamesRTLServerId"
+    }
+
+# dis_MenuAppendSeparator $m
+
+# dis_MenuAppendItem $m ExtGroupRefresh "Ref_resh" {
+#   reval_async DISgroup "dis_group_manage refresh $GrpNamesRTLServerId"
+# }
+
+###########
+# Access
+###########
+
+set m [dis_MenuCreate "AccessMenu" "A_ccess" "Browser=S,Graph=S,AutoDoc/sw=S,Dormant/sw=S,Extract/sw=S,Metrics/sw=S,Partition/sw=S,Y2K=S"]
+
+
+###########
+# Package
+###########
+
+set m [dis_MenuCreate "PackageMenu" "S_ession" "Package/sw=S"]
+dis_MenuAppendItem $m SessionNew		"N_ew" {package_new_session}
+dis_MenuAppendItem $m SessionOpen		"O_pen" {package_open_session}
+dis_MenuAppendItem $m SessionClose		"C_lose" {package_close_session}
+dis_MenuAppendItem $m SessionDelete		"D_elete" {package_delete_session}
+dis_MenuAppendSeparator $m
+dis_MenuAppendItem $m SessionPartition		"P_artition" {package_partition}
+
+
+#
+# Window/History
+#
+
+set m [dis_MenuCreateDynamic "HistoryMenu" "W_indow" {dis_build_menu HistoryMenu {dis_view -layer}} ]
+
+  dis_MenuAppendItem $m WindowBROWSERsw		"Browser" {
+	dis_layer -open DialogLayer "Browser"
+	}
+
+  dis_MenuAppendItem $m GraphView		"G_raph" {
+	set rtl_id -1
+	if {[info exists GLOBAL_LastServerRTL]} then {
+		set rtl_id $GLOBAL_LastServerRTL
+	}
+	dis_layer -open DialogLayer "Graph" $rtl_id
+	}
+
+  dis_MenuAppendItem $m WindowMETRICsw		"M_etrics" {
+        dis_layer -open DialogLayer "Metrics/sw"
+	}
+
+  set sm1 [dis_MenuAppendSubmenu $m WindowRPT	"R_eport"]
+
+    dis_MenuAppendItem $sm1 WindowAutoDoc	"A_utoDoc" {
+	dis_layer -open DialogLayer "AutoDoc/sw"
+	}
+
+    dis_MenuAppendItem $sm1 WindowINVENTORYsw	"S_tatistics" {
+	dis_layer -open DialogLayer "Summary/sw" 
+	}
+ 
+  set sm1 [dis_MenuAppendSubmenu $m WindowENG	"Reen_gineer"]
+
+    dis_MenuAppendItem $sm1 WindowDORMANTsw	"D_ormant" {
+	dis_layer -open DialogLayer "Dormant/sw"
+	}
+
+    dis_MenuAppendItem $sm1 WindowEXTRACTsw	"Ex_tract" {
+	dis_layer -open DialogLayer "Extract/sw"
+	}
+
+  dis_MenuAppendItem $sm1 WindowPACKAGEsw	"P_ackage" {
+  dis_layer -open DialogLayer "Package/sw"
+	}
+
+  
+    dis_MenuAppendItem $sm1 WindowPARTITIONsw	"Par_tition" {
+        dis_layer -open DialogLayer "Partition/sw"
+	}
+
+    dis_MenuAppendItem $sm1 WindowSIMPLIFYHsw	"Simplify_.h" {
+        if {[info exists GLOBAL_LastServerRTL]} {
+            reval_async DISmain "dis_SimplifyIncludes $GLOBAL_LastServerRTL"
+        } else {
+	    set promptString "Nothing is selected.  Please select source files to simplify."
+            set temp [dis_prompt "OKDialog" "Simplify.h/sw" "$promptString"]
+        }
+        } "State=Browser=S,Dormant/sw=S,Extract/sw=S,Partition/sw=S"
+
+    dis_MenuAppendItem $sm1 WindowGROUPsw	"S_ubsystems" {
+	dis_layer -open DialogLayer "Group"
+	}
+
+  dis_MenuAppendItem $m Y2KBROWSERsw  "Taskflow" {
+	dis_layer -open DialogLayer "Y2K"
+	}
+	dis_MenuAppendItem $m EvaluatorNTsw "QA Cockpit" {
+		dis_layer -open DialogLayer "EvaluatorNT"
+	}
+  dis_MenuAppendSeparator $m
+
+#
+# Help
+#
+
+set m [dis_MenuCreate "HelpMenu" "H_elp" "All=S"]
+
+  dis_MenuAppendItem $m HelpContentsItem	"Table of Contents" {
+	dis_help -contents 0 "[dis_getenv PSETHOME]/lib/hyperhelp/DISCOVER_HELP.hlp"
+	}
+
+  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m HelpAboutDiscover	"About DISCOVER..." {
+	dis_launch_dialog About
+	}

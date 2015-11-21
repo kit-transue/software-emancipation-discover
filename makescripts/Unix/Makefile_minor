@@ -1,0 +1,194 @@
+# $Id: Makefile_minor 1.44 2003/03/19 13:44:37EST John Verne (jverne) Exp  $
+# Root Makefile - minor executables
+
+ifndef $(MODE)
+MODE=O
+endif
+
+include $(MAKELIB)/make_options
+
+MAKEOPTS=-k
+
+#####################################
+# Standard variables
+#####################################
+SRC_ROOT = $(BUILD_SRC_ROOT)
+
+OBJ_DIR = $(OBJ_ROOT)/$(Arch)-$(MODE)/obj
+
+# For sccs
+SCCS_DIR=sccs
+
+ifeq "${Arch}" "hp700"
+SCCS_DIR = sccs-hp
+endif
+
+ifeq "${Arch}" "hp10"
+        SCCS_DIR = sccs-hp
+endif
+
+# Sun5 chokes on MKS lex & no local Sun machine has /usr/bin/lex
+# Flex seems to work ok
+ifeq "${Arch}" "sun5"
+	LEX = $(OS_SHARED_DIR)/local/bin/flex
+endif
+
+#####################################
+# Standard targets
+#####################################
+all : admintool clearcase config configshell configurator continuus cvs DevXLauncher diff discrypt dish2 EditorDrivers flex lock nameserv rcs sccs serverspy tclsh vim wish xutil devxAdapter emacsAdapter md5
+
+FORCE :
+#####################################
+# Specific targets
+#####################################
+
+admintool : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/admintool
+	cd $(OBJ_DIR)/admintool ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/admintool/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+clearcase : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/config/clearcase
+	cd $(OBJ_DIR)/config/clearcase ; \
+	$(MAKE) $(MAKEOPTS) -f  $(SRC_ROOT)/config/config/clearcase/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/config/clearcase/src:$(BUILD_SRC_ROOT)/config/config/clearcase/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) LEX=$(LEX) all ; rm -f *.c
+
+config : rcs sccs clearcase continuus cvs
+
+configshell : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/configshell
+	cd $(OBJ_DIR)/configshell ;  \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/config/configshell/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/configshell/src:$(BUILD_SRC_ROOT)/config/configshell/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+configurator : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/configurator
+	cd $(OBJ_DIR)/configurator ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/config/configurator/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/configurator/src:$(BUILD_SRC_ROOT)/config/configurator/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+continuus : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/config/continuus
+	cd $(OBJ_DIR)/config/continuus ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/config/config/continuus/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/config/continuus/src:$(BUILD_SRC_ROOT)/config/config/continuus/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+cvs : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/config/cvs
+	cd $(OBJ_DIR)/config/cvs ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/config/config/cvs/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/config/cvs/src:$(BUILD_SRC_ROOT)/config/config/cvs/src  LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+DevXLauncher : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/DevXLauncher
+	cd $(OBJ_DIR)/DevXLauncher ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/DevXLauncher/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+
+diff : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/diff
+	cd $(OBJ_DIR)/diff ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/diff/$(Arch)/Makefile srcdir=$(SRC_ROOT)/diff/src VPATH=$(SRC_ROOT)/diff/src:$(SRC_ROOT)/diff/$(Arch) all
+
+discrypt : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/discrypt
+	cd $(OBJ_DIR)/discrypt ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/discrypt/Makefile VPATH=$(LOCAL_SRC_ROOT)/discrypt:$(BUILD_SRC_ROOT)/discrypt LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+dish2 : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/dish2
+	cd $(OBJ_DIR)/dish2 ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/dish/src/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+EditorDrivers : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/EditorDrivers
+	cd $(OBJ_DIR)/EditorDrivers ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/emacs_integration/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+flex : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/flex
+	cd $(OBJ_DIR)/flex ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/flex/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/flex/src:$(BUILD_SRC_ROOT)/flex/src SRCDIR=$(SRC_ROOT)/flex/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+lock : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/lock
+	cd $(OBJ_DIR)/lock ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/lock/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/lock/src:$(BUILD_SRC_ROOT)/lock/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+nameserv : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/nameserv
+	cd $(OBJ_DIR)/nameserv ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/nameserver/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/nameserver/src:$(BUILD_SRC_ROOT)/nameserver/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+rcs : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/config/rcs_src
+	cd $(OBJ_DIR)/config/rcs_src ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/config/config/rcs_src/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/config/rcs_src/src:$(BUILD_SRC_ROOT)/config/config/rcs_src/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+sccs : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/config/sccs
+	cd $(OBJ_DIR)/config/sccs ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/config/config/$(SCCS_DIR)/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/config/config/$(SCCS_DIR)/src:$(BUILD_SRC_ROOT)/config/config/$(SCCS_DIR)/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) all
+
+serverspy : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/serverspy
+	cd $(OBJ_DIR)/serverspy ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/serverspy/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+tclsh : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/dis_tcl
+	cd $(OBJ_DIR)/dis_tcl ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/dis_tcl8.3/$(Arch)/Makefile SRC_ROOT=$(SRC_ROOT) VPATH=$(SRC_ROOT)/dis_tcl8.3:$(SRC_ROOT)/dis_tcl8.3/$(Arch) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@
+
+vim : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/vim
+	cd $(OBJ_DIR)/vim ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/vim-5.3/$(Arch)/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) vim
+
+wish : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/dis_tcl
+	cd $(OBJ_DIR)/dis_tcl ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/dis_tcl8.3/$(Arch)/Makefile SRC_ROOT=$(SRC_ROOT) VPATH=$(SRC_ROOT)/dis_tcl8.3:$(SRC_ROOT)/dis_tcl8.3/$(Arch) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) libdis_tcl.a
+	mkdir -p $(OBJ_DIR)/dis_tk
+	cd $(OBJ_DIR)/dis_tk ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/dis_tk8.3/$(Arch)/Makefile SRC_ROOT=$(SRC_ROOT) VPATH=$(SRC_ROOT)/dis_tk8.3:$(SRC_ROOT)/dis_tk8.3/$(Arch) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) TCL_LIB_DIR=$(OBJ_DIR)/dis_tcl $@
+
+xutil : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/xutil
+	cd $(OBJ_DIR)/xutil ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/xutil/Makefile all VPATH=$(LOCAL_SRC_ROOT)/xutil:$(BUILD_SRC_ROOT)/xutil LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB)
+
+devxAdapter : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/devxAdapter
+	cd $(OBJ_DIR)/devxAdapter; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/devxAdapter/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB)  
+
+emacsAdapter : FORCE
+	@ echo "Building $(@) executables"
+	mkdir -p $(OBJ_DIR)/emacsAdapter
+	cd $(OBJ_DIR)/emacsAdapter ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/emacsAdapter/Makefile VPATH=$(LOCAL_SRC_ROOT):$(BUILD_SRC_ROOT) LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) 
+
+md5 : FORCE
+	@ echo "Building $(@)"
+	mkdir -p $(OBJ_DIR)/md5
+	cd $(OBJ_DIR)/md5 ; \
+	$(MAKE) $(MAKEOPTS) -f $(SRC_ROOT)/md5/src/Makefile VPATH=$(LOCAL_SRC_ROOT)/md5/src:$(BUILD_SRC_ROOT)/md5/src LOCAL_SRC_ROOT=$(LOCAL_SRC_ROOT) BUILD_SRC_ROOT=$(BUILD_SRC_ROOT) MAKELIB=$(MAKELIB) $@

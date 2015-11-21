@@ -1,0 +1,110 @@
+
+private	:%privateSrcRoot% <-> /xercesJavaParser {
+    *.java
+	
+}
+
+xercesJavaParser : %sharedSrcRoot% <-> /xercesJavaParser
+{
+    org  {
+         xml/sax  {
+            *.java
+            helpers  {
+                *.java
+            }
+            ext  {
+                *.java
+            }
+         } 
+         w3c/dom  {
+            *.java
+            traversal  {
+                *.java
+            }
+            ranges  {
+                *.java
+            }
+            html  {
+                *.java
+            }
+            events  {
+                *.java
+            }
+         }
+         apache  {
+            xml/serialize  {
+                *.java
+            }
+            xerces  {
+                 validators  {
+                       schema  {
+                             *.java
+                              identity  {
+                                     *.java
+                              }
+                       }
+                       dtd  {
+                             *.java
+                       }
+                       datatype  {
+                             *.java
+                       }
+                       common  {
+                             *.java
+                       }
+                 }
+                 utils  {
+                       *.java
+                       regex  {
+                             *.java
+                       }
+                 }
+                 readers  {
+                       *.java
+                 }
+                 parsers  {
+                       *.java
+                 }
+                 msg  {
+                       *.java
+                 }
+                 jaxp  {
+                       *.java
+                 }
+                 framework  {
+                       *.java
+                 }
+                 domx  {
+                       *.java
+                 }
+                 dom  {
+                       *.java
+                       events  {
+                              *.java
+                       }
+                 }
+            }
+            html/dom  {
+                *.java
+            }
+            wml  {
+                *.java
+                dom  {
+                       *.java
+                }
+            }
+         }
+    }
+    javax/xml/parsers  {
+         *.java
+    }
+}
+
+
+__rule001 : / <-> /__rule001
+{
+	"" : %sharedSrcRoot%/(**).pmod/%/.pmoddir => %sharedModelRoot%/pmod/(1).pmod
+	"" : %sharedSrcRoot%/(**)/(*)/%/.pset => %sharedModelRoot%/pset/(1)/(2).pset
+	.  : %sharedSrcRoot%/**/(*)/%/.make => ""$PSETHOME/bin/disperl" "$PSETHOME/mb/CR_GetFlags.pl""
+ 
+}

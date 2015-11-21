@@ -1,0 +1,81 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+source_dis report_core.dis
+
+
+############################################################################
+# proc 		RecursiveIncludesReport
+# Description:	Creates a text file listing number of recursively included
+#		files from the parse.
+############################################################################
+proc RecursiveIncludesReport { sel } {
+    global MenuOutputFile
+    set InputProjects [filter project $sel]
+    set InputFiles [filter -file $sel]
+    if {[size $InputProjects] != 0} {
+        sappend $InputFiles [defines -files $InputProjects]
+    }
+    if {[size $InputFiles] == 0} {
+        msg -error "This operation requires selection of at least one file or project."
+        return "No files selected."
+    } else {
+        doRecursiveIncludesReport "$MenuOutputFile" $InputFiles
+        emacs_command "(switch-to-buffer (find-file-noselect-orig \"$MenuOutputFile\"))"
+        return "Done"
+    }
+}
+
+
+################################################################################
+# proc 		CreateInventoryList
+# Description:	Print symbols used, declared, or defined in selected 
+# 		files/functions
+################################################################################
+proc CreateInventoryList { sel } {
+    global MenuOutputFile
+    set InputProjects [filter project $sel]
+    set InputFiles [filter -file $sel]
+    if {[size $InputProjects] != 0} {
+        sappend $InputFiles [defines -files $InputProjects]
+    }
+    if {[size $InputFiles] == 0} {
+        msg -error "This operation requires selection of at least one file or project."
+        return "No files selected."
+    } else {
+        doCreateInventoryList "$MenuOutputFile" $InputFiles
+        emacs_command "(switch-to-buffer (find-file-noselect-orig \"$MenuOutputFile\"))"
+        return "Done"
+    }
+}
+
+
+add_menu "Access.Report"
+add_item "Access.Report"	"Recursive Include Report"	RecursiveIncludesReport 		-optional
+add_item "Access.Report"	"Inventory Report"		CreateInventoryList 		-optional
+

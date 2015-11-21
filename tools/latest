@@ -1,0 +1,33 @@
+#!/bin/sh 
+ 
+# Returns latest installation dir or version dictated by config spec. 
+# If all goes well with the installation, and no extraneous dirs
+# appear in the install area, this should be fine -ab
+ 
+# Use an optional input parameter to set Arch
+ 
+if [ $# -eq 1 ] ; then
+  Arch=$1
+else
+  Arch=`/ParaSET/tools/DISarch`
+fi
+
+INSTALL_BASE="/users/builder/install_bases/${Arch}"
+
+if [ ! -d ${INSTALL_BASE} ] ; then
+	echo "$0: architecture ${Arch} doesn't exist in ${INSTALL_BASE}." 1>&2
+	exit 1;
+fi
+ 
+LATEST=`cat ${INSTALL_BASE}/latest`
+
+# stuff before 7.3.0.41 was stored in $Arch-O, and 7.4.0.8 as discover:
+if [ -d "${INSTALL_BASE}/${LATEST}/${Arch}-O" ] ; then
+	echo "${INSTALL_BASE}/${LATEST}/$Arch-O"
+elif [ -d "${INSTALL_BASE}/${LATEST}/discover" ] ; then
+	echo "${INSTALL_BASE}/${LATEST}/discover"
+else
+	echo "${INSTALL_BASE}/${LATEST}/codeintegrity"
+fi
+ 
+exit 0

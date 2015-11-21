@@ -1,0 +1,36 @@
+<!-- Test of:
+	element: switch element
+        attributes: when enable disable
+-->
+<!-- Test with a parsercmd argument of "zero" and:
+        x.c
+	x.c -a
+     Results:
+	1 2 3 4 5 6 7 8 9
+	1 2 3 4 5 6 7 eight 9
+-->
+<cmdline nameintro="-">
+<switch enable="on"/>
+<switch when="a">NO</switch>
+<switch when="on">1</switch>
+<switch when="on|on">2</switch>
+<switch when="on|a">3</switch>
+<switch when="a|on">4</switch>
+<switch when="a|a">NO</switch>
+<switch when="on&on">5</switch>
+<switch when="on&a">NO</switch>
+<switch when="a&on">NO</switch>
+<switch when="a&a">NO</switch>
+<switch when="on&on&on&on&on">6</switch>
+<switch when="!a">7</switch>
+<switch when="!on">NO</switch>
+<translate>
+<option name="a" noarg="true" disable="on">eight</option>
+</translate>
+<switch when="(on)">8</switch>
+<switch when="&quot;0&quot;==&quot;0&quot;">9</switch>
+<switch when="&quot;0&quot;==&quot;zero&quot;">NO</switch>
+<switch when="&quot;0&quot;==&quot;%0%&quot;">NO</switch>
+<switch when="on" disable="on"/>
+<switch when="on">NO</switch>
+</cmdline>

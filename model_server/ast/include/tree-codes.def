@@ -1,0 +1,131 @@
+/* This file contains the definitions and documentation for the
+   tree codes used in the MC system.  Argument 1 is the tree code,
+   argument 2 is the name of the code, argument 3 is the tree class, and
+   argument 4 is the number of children that code has.
+  */ 
+
+
+/* Misc */
+MCTREECODE (MC_TREE_LIST, "tree_list", 'x', 2, etree_t)
+MCTREECODE (MC_CASE_LABEL, "case_label", 'x', 0, case_etree_t)
+MCTREECODE (MC_ERROR_NODE, "error_node", 'x', 0, etree_t)
+MCTREECODE (MC_IDENTIFIER_NODE, "identifier_node", 'x', 0, etree_t)
+
+/* Types */
+MCTREECODE (MC_VOID_TYPE, "void_type", 't', 0, basetype_etree_t)
+MCTREECODE (MC_INTEGER_TYPE, "integer_type", 't', 0, basetype_etree_t)
+MCTREECODE (MC_REAL_TYPE, "real_type", 't', 0, basetype_etree_t)
+MCTREECODE (MC_COMPLEX_TYPE, "complex_type", 't', 0, typedtype_etree_t)
+MCTREECODE (MC_VECTOR_TYPE, "vector_type", 't', 0, basetype_etree_t)
+MCTREECODE (MC_ENUMERAL_TYPE, "enumeral_type", 't', 1, basetype_etree_t)
+MCTREECODE (MC_BOOLEAN_TYPE, "boolean_type", 't', 0, basetype_etree_t)
+MCTREECODE (MC_POINTER_TYPE, "pointer_type", 't', 0, typedtype_etree_t)
+MCTREECODE (MC_REFERENCE_TYPE, "reference_type", 't', 0, typedtype_etree_t)
+MCTREECODE (MC_ARRAY_TYPE, "array_type", 't', 0, typedtype_etree_t)
+MCTREECODE (MC_RECORD_TYPE, "record_type", 't', 1, basetype_etree_t)
+MCTREECODE (MC_UNION_TYPE, "union_type", 't', 1, basetype_etree_t)
+MCTREECODE (MC_QUAL_UNION_TYPE, "qual_union_type", 't', 1, basetype_etree_t)
+MCTREECODE (MC_FUNCTION_TYPE, "function_type", 't', 1, typedtype_etree_t)
+
+/* Constants. */
+MCTREECODE (MC_INTEGER_CST, "integer_cst", 'c', 0, integercst_etree_t)
+MCTREECODE (MC_REAL_CST, "real_cst", 'c', 0, realcst_etree_t)
+MCTREECODE (MC_COMPLEX_CST, "complex_cst", 'c', 0, typed_etree_t)
+MCTREECODE (MC_STRING_CST, "string_cst", 'c', 0, stringcst_etree_t)
+
+/* Declarations. */
+MCTREECODE (MC_FUNCTION_DECL, "function_decl", 'd', 3, decl_etree_t)
+MCTREECODE (MC_LABEL_DECL, "label_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_CONST_DECL, "const_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_TYPE_DECL, "type_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_VAR_DECL, "var_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_PARM_DECL, "parm_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_RESULT_DECL, "result_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_FIELD_DECL, "field_decl", 'd', 0, decl_etree_t)
+MCTREECODE (MC_NAMESPACE_DECL, "namespace_decl", 'd', 0, decl_etree_t)
+
+/* References to storage.  */
+MCTREECODE (MC_COMPONENT_REF, "component_ref", 'r', 2, typed_etree_t)
+MCTREECODE (MC_BIT_FIELD_REF, "bit_field_ref", 'r', 3, typed_etree_t)
+MCTREECODE (MC_INDIRECT_REF, "indirect_ref", 'r', 1, typed_etree_t)
+MCTREECODE (MC_ARRAY_REF, "array_ref", 'r', 2, typed_etree_t)
+
+/* Expressions */
+MCTREECODE (MC_CONSTRUCTOR, "constructor", 'e', 1, typed_etree_t)
+MCTREECODE (MC_COMPOUND_EXPR, "compound_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_MODIFY_EXPR, "modify_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_COND_EXPR, "cond_expr", 'e', 3, typed_etree_t)
+MCTREECODE (MC_CALL_EXPR, "call_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_PLUS_EXPR, "plus_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_MINUS_EXPR, "minus_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_MULT_EXPR, "mult_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_DIV_EXPR, "div_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_RDIV_EXPR, "rdiv_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_MOD_EXPR, "mod_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_CONVERT_EXPR, "convert_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_NEGATE_EXPR, "negate_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_MIN_EXPR, "min_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_MAX_EXPR, "max_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_LSHIFT_EXPR, "lshift_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_RSHIFT_EXPR, "rshift_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_LROTATE_EXPR, "lrotate_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_RROTATE_EXPR, "rrotate_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_BIT_IOR_EXPR, "bit_ior_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_BIT_XOR_EXPR, "bit_xor_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_BIT_AND_EXPR, "bit_and_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_BIT_ANDTC_EXPR, "bit_andtc_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_BIT_NOT_EXPR, "bit_not_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_TRUTH_ANDIF_EXPR, "truth_andif_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_TRUTH_ORIF_EXPR, "truth_orif_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_TRUTH_AND_EXPR, "truth_and_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_TRUTH_OR_EXPR, "truth_or_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_TRUTH_XOR_EXPR, "truth_xor_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_TRUTH_NOT_EXPR, "truth_not_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_LT_EXPR, "lt_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_LE_EXPR, "le_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_GT_EXPR, "gt_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_GE_EXPR, "ge_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_EQ_EXPR, "eq_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_NE_EXPR, "ne_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_SAVE_EXPR, "save_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_UNSAVE_EXPR, "unsave_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_ADDR_EXPR, "addr_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_COMPLEX_EXPR, "complex_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_CONJ_EXPR, "conj_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_REALPART_EXPR, "realpart_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_IMAGPART_EXPR, "imagpart_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_PREDECREMENT_EXPR, "predecrement_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_PREINCREMENT_EXPR, "preincrement_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_POSTDECREMENT_EXPR, "postdecrement_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_POSTINCREMENT_EXPR, "postincrement_expr", 'e', 2, typed_etree_t)
+MCTREECODE (MC_VA_ARG_EXPR, "va_arg_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_SIZEOF_EXPR, "sizeof_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_STMT_EXPR, "stmt_expr", 'e', 1, typed_etree_t)
+MCTREECODE (MC_ABS_EXPR, "abs_expr", 'e', 1, typed_etree_t)
+
+/* Type comparisons. Child 1 = expression (with class or pointer type), Child 2 = type tree */
+/* type is exactly equal */
+MCTREECODE (MC_TYPE_EQUAL, "type_equal", 'e', 2, typed_etree_t)
+/* type is a subtype */
+MCTREECODE (MC_TYPE_DERIVED, "type_derived", 'e', 2, typed_etree_t)
+
+/* Statements */
+MCTREECODE (MC_EXPR_STMT, "expr_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_COMPOUND_STMT, "compound_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_DECL_STMT, "decl_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_IF_STMT, "if_stmt", 's', 3, stmt_etree_t)
+MCTREECODE (MC_FOR_STMT, "for_stmt", 's', 4, stmt_etree_t)
+MCTREECODE (MC_WHILE_STMT, "while_stmt", 's', 2, stmt_etree_t)
+MCTREECODE (MC_DO_STMT, "do_stmt", 's', 2, stmt_etree_t)
+MCTREECODE (MC_RETURN_STMT, "return_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_BREAK_STMT, "break_stmt", 's', 0, stmt_etree_t)
+MCTREECODE (MC_CONTINUE_STMT, "continue_stmt", 's', 0, stmt_etree_t)
+MCTREECODE (MC_SWITCH_STMT, "switch_stmt", 's', 2, stmt_etree_t)
+MCTREECODE (MC_GOTO_STMT, "goto_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_LABEL_STMT, "label_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_ASM_STMT, "asm_stmt", 's', 4, stmt_etree_t)
+MCTREECODE (MC_SCOPE_STMT, "scope_stmt", 's', 1, stmt_etree_t)
+MCTREECODE (MC_TRY_STMT, "try_stmt", 's', 3, stmt_etree_t)
+MCTREECODE (MC_CATCH_STMT, "catch_stmt", 's', 2, stmt_etree_t)
+MCTREECODE (MC_DEAD_VAR_STMT, "dead_var_stmt", 's', 1, stmt_etree_t)
+

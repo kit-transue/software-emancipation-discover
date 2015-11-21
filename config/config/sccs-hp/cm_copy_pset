@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+if [ $cm_file_type = "NOT_SRC" ] ; then
+    $PSETCFG/cm_copy_src
+    exit 0
+fi
+
+if [ -f $cm_sysfile -a "$cm_workfile" != "$cm_sysfile" ] ; then
+  echo "rm -f $cm_workfile; cp $cm_sysfile $cm_workfile"
+        rm -f $cm_workfile; cp $cm_sysfile $cm_workfile
+fi
+
+exit 0

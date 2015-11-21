@@ -1,0 +1,45 @@
+#!/bin/sh 
+
+# Returns latest installation dir or version dictated by config spec. 
+# If all goes well with the installation, and no extraneous dirs
+# appear in the install area, this should be fine -ab
+
+Arch=`/ParaSET/tools/DISarch`
+
+if [ "$Arch" = "sun4" ]; then
+    base=/net/power/dis_sun4
+elif [ "$Arch" = "irix6" ]; then
+    base=/net/power/dis_irix
+elif [ "$Arch" = "hp700" ]; then
+    base=/net/power/dis_hp
+elif [ "$Arch" = "sun5" ]; then
+    base=/net/power/dis_sun5
+elif [ "$Arch" = "linux2" ]; then
+    base=/net/power/dis_linux2
+fi
+
+if [ ! -r /paraset/admin/version ] ; then
+  version=`cat /users/builder/latest_version`
+else
+  clearcase_version=`cat /paraset/admin/version`
+  if [ -d $base/$clearcase_version/$Arch-O ] ; then
+    version=$clearcase_version
+  else
+    version=`cat /users/builder/latest_version`
+  fi 
+fi
+
+echo "$base/$version/$Arch-O"
+
+
+exit 0
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+#!/bin/csh -f
+
+if ("$1" == "") then
+   echo " Command to analyze Test protocol:"
+   echo ""
+   echo "       ptest_analyze        fname"
+   echo ""
+   echo "            fname - Test protocol file name"                      
+   echo ""
+   echo " Output :"
+   echo "       **** Analyze $1 ****"
+   echo " Start: Thu Sep 30 16:21:59 EDT 1993"
+   echo "   End: Thu Sep 30 17:23:58 EDT 1993
+   echo " Tests  ZZZ    Succeeded FFF   Failed MMM"
+   echo ""
+   exit 1
+endif
+
+
+source ${PROJ_ROOT}/tools/ptest/ptest_set_tmpdir
+
+if ($status != 0) exit 1
+
+set t_result = $PTEST_TMPDIR/result.tmp
+echo "Using result temporary file $t_result"
+\rm -f $t_result >&! /dev/null
+
+echo "" > $t_result
+echo "" >> $t_result
+echo "       **** Analyze $1 ****" >> $t_result
+
+
+echo "User  $USER" >> $t_result
+set t_host = `hostname`
+set t_os = `uname -s -r`
+echo "Host  $t_host"  >> $t_result
+echo "  OS  $t_os" >> $t_result
+echo ""  >> $t_result
+
+grep Start $1 >>  $t_result
+grep End $1   >>   $t_result
+echo ""       >>  $t_result
+
+set all = (`grep "Test " $1 | wc`)
+set all_s = (`grep " succeeded" $1 | wc`)
+set all_f = (`grep " failed" $1 | wc`)
+echo " Scripts $all[1]     Succeeded $all_s[1]       Failed $all_f[1]" >>  $t_result
+echo "" >> $t_result
+
+# mailx lives in /usr/sbin on Irix; can't count on that being there:
+setenv PATH ${PATH}:/usr/sbin
+set mail = "mailx -s"
+
+grep 'failed$' $1 | head -13 >> $t_result
+cat $t_result
+
+if ("$2" != "") then
+	if ("${USER}" == "builder") then
+		${mail} "$2 results" aset_devlop < $t_result
+	else 
+		${mail} "$2 results" $USER < $t_result
+		if ("$2" == "ptest_all") then
+			${mail} "$2 results" ptest-notify < $t_result
+		endif
+	endif
+endif

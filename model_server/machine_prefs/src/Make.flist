@@ -1,0 +1,8 @@
+CXXROOTS=\
+	customize.h\
+	evalMetaChars.h\
+	pref_registry\
+	prefFile\
+	userPrefFile\
+
+

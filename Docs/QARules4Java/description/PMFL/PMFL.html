@@ -1,0 +1,30 @@
+<html>
+<body>
+
+<p><b>PMFL - Put the Main Function Last</b></p>
+
+<p>Tries to make the program comply with various coding
+standards regarding the form of class definitions.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class PMFL {<br>
+&nbsp; &nbsp; void func1 () {}<br>
+&nbsp; &nbsp; <font color='red'>public static void main (String args[]) {} </font><br>
+&nbsp; &nbsp; void func2 () {}<br>
+}
+</code></p></nobr>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class PMFL {<br>
+&nbsp; &nbsp; void func1 () {}<br>
+&nbsp; &nbsp; void func2 () {}<br>
+&nbsp; &nbsp; <font color='blue'>public static void main (String args[]) {} </font><br>
+}
+</code></p></nobr>
+
+</body>
+</html>

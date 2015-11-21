@@ -1,0 +1,33 @@
+
+CXXROOTS=\
+    get_smt_decl \
+    metricSMT \
+    smt \
+    smt.h \
+    smtScd.h \
+    smtScdTypes \
+    smt_ast \
+    smt_ast2 \
+    smt_categories \
+    smt_cppparm \
+    smt_ctree \
+    smt_cut \
+    smt_db \
+    smt_get_ast_new \
+    smt_get_node_type \
+    smt_ifl \
+    smt_ifl_CBS \
+    smt_interface \
+    smt_main \
+    smt_map_ast \
+    smt_modify \
+    smt_replace_text \
+    smt_sp \
+    smt_system \
+    smt_tcons \
+    smt_translate \
+    smt_tree \
+    smt_txt \
+    smt_view \
+
+YLROOTS=smt_spy

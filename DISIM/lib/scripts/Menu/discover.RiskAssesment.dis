@@ -1,0 +1,590 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+global Client
+
+global EntMod
+global EntAff
+global FilMod
+global FilAff
+global SubMod
+global SubAff
+global FilRec
+global SelectedObjects
+
+set EntMod [nil_set]
+set EntAff [nil_set]
+set FilMod [nil_set]
+set FilAff [nil_set]
+set SubMod [nil_set]
+set SubAff [nil_set]
+set FilRec [nil_set]
+set SelectedObjects [nil_set]
+
+############################################################################
+# proc		GenerateRiskAssessmentReportFile
+# Description:	Generate report of risk based on category lists in varying
+#		levels of detail, based on $type
+############################################################################
+proc GenerateRiskAssessmentReportFile { OutFileName VerbosityLevel } {
+	global env
+	global EntMod
+	global EntAff
+	global FilMod
+	global FilAff
+	global SubMod
+	global SubAff
+	global FilRec
+	global SelectedObjects
+
+	upvar ModifiedSubsystemsHash ModifiedSubsystemsHash
+	upvar AffectedSubsystemsHash AffectedSubsystemsHash
+	upvar RiskFactorResultHash RiskFactorResultHash
+
+	set OutFile [open "$OutFileName" w+]
+
+	#----------------------------------------------------
+	# Print the report based on the accumulated information
+	#----------------------------------------------------
+	puts $OutFile "================================================="
+	puts $OutFile "	Impact Report on [size $SelectedObjects] Selected Items  "
+	puts $OutFile "	Author: $env(USER)"
+	puts $OutFile "================================================="
+
+	puts $OutFile ""
+	puts $OutFile "Summary of Risk:"
+	puts $OutFile "----------------------------------"
+	foreach RiskFactor [lsort [array names RiskFactorResultHash]] {
+		puts -nonewline $OutFile "	$RiskFactor:"
+		if {[string length $RiskFactor] < 7} {
+			puts -nonewline $OutFile "	"
+		}
+		puts $OutFile "	$RiskFactorResultHash($RiskFactor)"
+	}
+	puts $OutFile "----------------------------------"
+	
+	if { $VerbosityLevel >= 1 } {
+		puts $OutFile ""
+		puts $OutFile "Number of Modified Objects:	[size $EntMod]"
+		puts $OutFile "Number of Affected Objects:	[size $EntAff]"
+		puts $OutFile "Number of Modified Sources:	[size $FilMod]"
+		puts $OutFile "Number of Affected Sources:	[size $FilAff]"
+		puts $OutFile "Number of Modified Subsystems:	[llength [array names ModifiedSubsystemsHash]]"
+		puts $OutFile "Number of Affected Subsystems:	[llength [array names AffectedSubsystemsHash]]"
+		puts $OutFile "Number of Files Needing Recompilation:	[size $FilRec]"
+	}
+
+	if { $VerbosityLevel >= 2 } {
+		puts $OutFile ""
+		puts $OutFile "Modified Subsystems (# of files):"
+		puts $OutFile "-----------------"
+		foreach Subsystem [array names ModifiedSubsystemsHash] {
+			puts $OutFile " $Subsystem	([llength $ModifiedSubsystemsHash($Subsystem)])"
+		}
+
+		puts $OutFile ""
+		puts $OutFile "Affected Subsystems (# of files):"
+		puts $OutFile "-----------------"
+		foreach Subsystem [array names AffectedSubsystemsHash] {
+			puts $OutFile " $Subsystem	([llength $AffectedSubsystemsHash($Subsystem)])"
+		}
+
+		puts $OutFile ""
+		puts $OutFile "Modified Sources:"
+		puts $OutFile "-----------------"
+		foreach ThisEntity [sort fname $FilMod] {
+			puts $OutFile " [fname $ThisEntity]"
+		}
+
+		puts $OutFile ""
+		puts $OutFile "Affected Sources:"
+		puts $OutFile "-----------------"
+		foreach ThisEntity [sort fname $FilAff] {
+			puts $OutFile " [fname $ThisEntity]"
+		}
+
+		puts $OutFile ""
+		puts $OutFile "Modified Objects:"
+		puts $OutFile "-----------------"
+		foreach ThisEntity [sort kind $EntMod] {
+			puts $OutFile " [kind $ThisEntity]      [name $ThisEntity]"
+		}
+
+		puts $OutFile ""
+		puts $OutFile "Affected Objects:"
+		puts $OutFile "-----------------"
+		foreach ThisEntity [sort kind $EntAff] {
+			puts $OutFile " [kind $ThisEntity]      [name $ThisEntity]"
+		}
+
+		puts $OutFile ""
+		puts $OutFile "Files Needing Recompilation:"
+		puts $OutFile "-----------------"
+		foreach ThisEntity [sort fname $FilRec] {
+			puts $OutFile " [fname $ThisEntity]"
+		}
+
+	}
+
+	if { $VerbosityLevel == 3 } {
+		puts $OutFile ""
+		puts $OutFile "Sorted List of Modified Entities by File"
+		puts $OutFile "----------------------------------------"
+		set ThisFileName "NoFile"
+			foreach ThisEntity [sort fname $EntMod] {
+			if {"[fname $ThisEntity]"!="$ThisFileName"} {
+				set ThisFileName [fname $ThisEntity]
+				if {"$ThisFileName"==""} {
+					puts $OutFile "Location: External"
+				} else {
+					puts $OutFile "Location: $ThisFileName"
+				}
+			}
+			puts $OutFile " [kind $ThisEntity]      [name $ThisEntity]"
+		}
+	
+		puts $OutFile ""
+		puts $OutFile "Sorted List of Affected Entities by File"
+		puts $OutFile "----------------------------------------"
+		set ThisFileName "NoFile"
+		foreach ThisEntity [sort fname $EntAff] {
+			if {"[fname $ThisEntity]"!="$ThisFileName"} {
+				set ThisFileName [fname $ThisEntity]
+				if {"$ThisFileName"==""} {
+					puts $OutFile "Location: External"
+				} else {
+					puts $OutFile "Location: $ThisFileName"
+				}
+			}
+			puts $OutFile " [kind $ThisEntity]      [name $ThisEntity]"
+		}
+	}
+
+	close $OutFile
+}
+
+############################################################################
+# proc		CreateImpactSets
+# Description:	Categorize all instances, nodes, and entities.
+############################################################################
+proc CreateImpactSets { sel } {
+	global env
+	global EntMod
+	global EntAff
+	global FilMod
+	global FilAff
+	global SubMod
+	global SubAff
+	global FilRec
+	global SelectedObjects
+
+	upvar ModifiedSubsystemsHash ModifiedSubsystemsHash
+	upvar AffectedSubsystemsHash AffectedSubsystemsHash
+
+	#----------------------------------------------------
+	# these things are external and don't have definitions
+	#----------------------------------------------------
+	set DiscardedObjects [filter stringl $sel]
+	sappend $DiscardedObjects [filter constant $sel]
+	sappend $DiscardedObjects [filter local $sel]
+
+	#----------------------------------------------------
+	# assume this means the line has changed, not necessarily the entity
+	#----------------------------------------------------
+	sappend $DiscardedObjects [filter instance $sel]
+	sappend $DiscardedObjects [filter ast $sel]
+
+	#----------------------------------------------------
+	# initialize Modified list with ALL selected things
+	#----------------------------------------------------
+	set SelectedObjects [set_copy $sel]
+	set EntMod [set_copy $sel]
+
+	#----------------------------------------------------
+	# resolve all instances to scope of instance
+	#----------------------------------------------------
+	foreach ThisInst [filter instance $DiscardedObjects] {
+		sappend $EntMod [inst_scope $ThisInst]
+	}
+
+	#----------------------------------------------------
+	# files and projects are special exeptions too
+	#----------------------------------------------------
+	sappend $DiscardedObjects [filter module $sel]
+	sappend $DiscardedObjects [filter project $sel]
+
+	#----------------------------------------------------
+	# adjust to contain only actual modified entities
+	#----------------------------------------------------
+	set EntMod [set_subtract $EntMod $DiscardedObjects]
+
+	#----------------------------------------------------
+	# Modified files contain location of Modified entities
+	# and all files specifically selected
+	#----------------------------------------------------
+	sappend $FilMod [where defined $EntMod]
+	sappend $FilMod [filter module $DiscardedObjects]
+
+	#----------------------------------------------------
+	# Set Affected list to 'where used' for functions,
+	# variables, and macros
+	#----------------------------------------------------
+	sappend $EntAff [where used [filter function $EntMod]]
+	sappend $EntAff [where used [filter variable $EntMod]]
+	sappend $EntAff [where used [filter macro $EntMod]]
+
+	#----------------------------------------------------
+	# Set Affected list to 'where used' and trace through
+	# typedefs for structures/classes, enums, and typedefs
+	#----------------------------------------------------
+	sappend $EntAff [where used [filter class $EntMod]]
+	sappend $EntAff [where used [filter enum $EntMod]]
+	sappend $EntAff [where used [filter typedef $EntMod]]
+	sappend $EntAff [where used [filter typedef [where used [filter class $EntMod]]]]
+	sappend $EntAff [where used [filter typedef [where used [filter enum $EntMod]]]]
+	sappend $EntAff [where used [filter typedef [where used [filter typedef $EntMod]]]]
+
+	#----------------------------------------------------
+	# Modified Entities takes precidence to affected
+	#----------------------------------------------------
+	set EntAff [set_subtract $EntAff $EntMod]
+
+	#----------------------------------------------------
+	# Affected files contain location of Affected entities
+	# but do not contain files already listed in Modified Files
+	#----------------------------------------------------
+	sappend $FilAff [where defined $EntAff]
+	set FilAff [set_subtract $FilAff $FilMod]
+
+	#----------------------------------------------------
+	# Create a hash of subsystems and the corresponding files
+	# for the affected and modified files list
+	#----------------------------------------------------
+	CreateSubsystemHash ModifiedSubsystemsHash $FilMod
+	set SubMod [array names ModifiedSubsystemsHash]
+	CreateSubsystemHash AffectedSubsystemsHash $FilAff
+	set SubAff [array names AffectedSubsystemsHash]
+
+	#----------------------------------------------------
+	# Find all files that will need to be re-compiled
+	#----------------------------------------------------
+	set LastSize 0
+	set FilRec $FilMod
+	while {[size $FilRec] != $LastSize} {
+		set LastSize [size $FilRec]
+		sappend $FilRec [where included $FilRec]
+	}
+	set EntMod [set_unique $EntMod]
+	set EntAff [set_unique $EntAff]
+	set FilMod [set_unique $FilMod]
+	set FilAff [set_unique $FilAff]
+	set FilRec [set_unique $FilRec]
+	set SelectedObjects [set_unique $SelectedObjects]
+
+
+}
+
+############################################################################
+# proc		CreateSubsystemHash
+# Description:	View the file in external editor
+############################################################################
+proc CreateSubsystemHash { SubsystemHashName SrcList } {
+	global env
+	upvar $SubsystemHashName ReturnSubsystemHash
+
+	set InFile [open "$env(SubsystemNameFile)" "r"]
+	while { [gets $InFile FullLine] != -1 } {
+		if { [regexp {^([^ 	]+_)[ 	]+csci..[ 	]+csc..[ 	]+#} $FullLine FullMatch SubsystemName] !=0 } {
+			set SubsystemHash($SubsystemName) ""
+		} elseif { [regexp {^([^ 	]+)[ 	]+csci..[ 	]+csc..[ 	]+#} $FullLine FullMatch SubsystemName] !=0 } {
+			set SubsystemHash($SubsystemName) ""
+		}
+	}
+	foreach SrcFile $SrcList {
+		set FoundMatch 0
+		foreach Subsystem [array names SubsystemHash] {
+			if {[regexp {^/.*/([^/]+)$} [name $SrcFile] FullMatch JustTheFileName] == 0} {
+				continue
+			}
+			if {[regexp ^$Subsystem $JustTheFileName] != 0} {
+				lappend SubsystemHash($Subsystem) $SrcFile
+				set FoundMatch 1
+				break
+			} 
+		}
+		if { $FoundMatch == 0 } {
+			lappend SubsystemHash(Unmatched) $SrcFile
+		}
+	}
+	foreach Subsystem [array names SubsystemHash] {
+		if {[size $SubsystemHash($Subsystem)] > 0} {
+			set ReturnSubsystemHash($Subsystem) [set_copy $SubsystemHash($Subsystem)]
+		}
+	}
+}
+
+############################################################################
+# proc		GetReportFileName
+# Description:	Get the name of the file to write the report into.
+############################################################################
+proc GetReportFileName {} {
+	global env
+	global RiskAssessmentReportOutFileName
+	set RiskAssessmentReportOutFileName [prompt "Write file to $env(HOME)/ImpactReport.txt\nOr enter a file name"]
+	if { "$RiskAssessmentReportOutFileName" == "" } {
+		set RiskAssessmentReportOutFileName $env(HOME)/ImpactReport.txt
+	}
+	return $RiskAssessmentReportOutFileName
+}
+
+############################################################################
+# proc		ShowFileInEditor
+# Description:	View the file in external editor
+############################################################################
+proc ShowFileInEditor { OutFileName } {
+	global env
+	exec emacs $OutFileName &
+}
+
+############################################################################
+# proc		RiskAssessmentReport
+# Description:	Report entities, files, subsystems, ...etc. affected by change
+############################################################################
+proc RiskAssessmentReport { sel Type } {
+	global env
+	
+	set ModifiedSubsystemsHash ""
+	unset ModifiedSubsystemsHash
+	set AffectedSubsystemsHash ""
+	unset AffectedSubsystemsHash
+	set RiskFactorResultHash ""
+	unset RiskFactorResultHash
+	set RiskFactorWeightHash ""
+	unset RiskFactorWeightHash
+	
+	if {[size $sel]==0} {
+		msg -error "Error: No Entities Have Been Selected"
+		return
+	}
+	CreateImpactSets $sel
+	set OutFileName [GetReportFileName]
+	CalculateRiskFactors RiskFactorResultHash RiskFactorWeightHash
+	GenerateRiskAssessmentReportFile $OutFileName $Type
+	ShowFileInEditor $OutFileName
+
+	return
+}
+
+############################################################################
+# proc		InitializeWeightAndNormilizeValues
+# Description:	Put values into the two hashes.
+############################################################################
+proc InitializeWeightAndNormilizeValues { RiskFactorWeightHashName } {
+	upvar $RiskFactorWeightHashName RiskFactorWeightHash
+	array set RiskFactorWeightHash {		\
+			EntMod_Num	{0  0  20 "NumberInList"  100000 }	\
+			EntMod_CC	{5  10 0  "CompositCC"    150000 }	\
+			EntMod_Depth	{5  10 0  "CompositDepth" 100000 }	\
+			EntMod_LOC	{0  0  8  "CompositLOC"   1000000}	\
+			EntAff_Num	{0  0  8  "NumberInList"  100000 }	\
+			EntAff_CC	{2  8  0  "CompositCC"    150000 }	\
+			EntAff_Depth	{2  8  0  "CompositDepth" 100000 }	\
+			EntAff_LOC	{0  0  5  "CompositLOC"   1000000}	\
+			FilMod_Num	{0  0  8  "NumberInList"  10000  }	\
+			FilMod_CC	{5  8  0  "CompositCC"    100000 }	\
+			FilMod_LOC	{0  0  6  "CompositLOC"   1000000}	\
+			FilMod_Sev	{10 0  0  "CompositSev"   10000  }	\
+			FilMod_Inst	{0  8  0  "CompositInst"  10000  }	\
+			FilAff_Num	{0  0  6  "NumberInList"  10000  }	\
+			FilAff_CC	{2  6  0  "CompositCC"    100000 }	\
+			FilAff_LOC	{0  0  4  "CompositLOC"   1000000}	\
+			FilAff_Sev	{8  0  0  "CompositSev"   10000  }	\
+			FilAff_Inst	{0  6  0  "CompositInst"  10000  }	\
+			SubMod_Num	{0  0  4  "NumberInList"  121    }	\
+			SubMod_Sev	{8  0  0  "CompositSev"   10     }	\
+			SubMod_Inst	{0  4  0  "CompositInst"  10     }	\
+			SubAff_Num	{0  0  2  "NumberInList"  121    }	\
+			SubAff_Sev	{6  0  0  "CompositSev"   10     }	\
+			SubAff_Inst	{0  2  0  "CompositInst"  10     }	\
+			FilRec		{0  0  2  "NumberInList"  10     }	\
+	}
+}
+
+############################################################################
+# proc		CalculateRiskFactors
+# Description:	Calculate the values of all risk factors
+############################################################################
+proc CalculateRiskFactors { RiskFactorResultHashName RiskFactorWeightHashName } {
+	global EntMod
+	global EntAff
+	global FilMod
+	global FilAff
+	global SubMod
+	global SubAff
+	global FilRec
+	global SelectedObjects
+
+	upvar $RiskFactorResultHashName RiskFactorResultHash
+	upvar $RiskFactorWeightHashName RiskFactorWeightHash
+
+	InitializeWeightAndNormilizeValues RiskFactorWeightHash
+
+	set RiskFactorResultHash(Impact) 0
+	set RiskFactorResultHash(Volatility) 0
+	set RiskFactorResultHash(Severity) 0
+	set ImpactDivisor 0
+	set VolatilityDivisor 0
+	set SeverityDivisor 0
+
+	foreach QueryName [array names RiskFactorWeightHash] {
+		set QueryAttributes $RiskFactorWeightHash($QueryName)
+		regexp {^([^_]+)_.*} $QueryName FullMatch QueryCategory
+		set QueryMethod [lindex $QueryAttributes 3]
+		set QueryNormalizationFactor [lindex $QueryAttributes 4]
+		set RawQueryValue [$QueryMethod $QueryCategory]
+		set QueryValue [expr [expr 1000 * $RawQueryValue] / $QueryNormalizationFactor]
+		if {$QueryValue > 100} {
+			set QueryValue 100
+		}
+		if {$QueryValue < 0} {
+			set QueryValue 0
+		}
+		set RiskFactorResultHash(Impact) [expr $RiskFactorResultHash(Impact) + [expr $QueryValue * [lindex $QueryAttributes 2]]]
+		set ImpactDivisor [expr $ImpactDivisor + [lindex $QueryAttributes 2]]
+		set RiskFactorResultHash(Volatility) [expr $RiskFactorResultHash(Volatility) + [expr $QueryValue * [lindex $QueryAttributes 1]]]
+		set VolatilityDivisor [expr $VolatilityDivisor + [lindex $QueryAttributes 1]]
+		set RiskFactorResultHash(Severity) [expr $RiskFactorResultHash(Severity) + [expr $QueryValue * [lindex $QueryAttributes 0]]]
+		set SeverityDivisor [expr $SeverityDivisor + [lindex $QueryAttributes 0]]
+	}
+	
+	set RiskFactorResultHash(Impact) [expr $RiskFactorResultHash(Impact) / $ImpactDivisor]
+	set RiskFactorResultHash(Volatility) [expr $RiskFactorResultHash(Volatility) / $VolatilityDivisor]
+	set RiskFactorResultHash(Severity) [expr $RiskFactorResultHash(Severity) / $SeverityDivisor]
+
+}
+
+############################################################################
+# proc		NumberInList
+# Description:	Get number of elements in list (entities or not)
+############################################################################
+proc NumberInList { ObjectListName } {
+	upvar $ObjectListName ObjectList
+	if {[regexp {^_DI_} $ObjectList]} {		;# DIScover entities
+		return [size $ObjectList]
+	} else {					;# non-DIScover entities
+		return [llength $ObjectList]
+	}
+}
+
+############################################################################
+# proc		CompositSev
+# Description:	Get the described severity of each item (entity or not)
+#		and compute the average
+############################################################################
+proc CompositSev { ObjectListName } {
+	upvar $ObjectListName ObjectList
+	return 0
+}
+
+############################################################################
+# proc		CompositInst
+# Description:	Get the described Instability of each item (entity or not)
+#		and compute the average
+############################################################################
+proc CompositInst { ObjectListName } {
+	upvar $ObjectListName ObjectList
+	return 0
+}
+
+############################################################################
+# proc		CompositCC
+# Description:	Get the cumulative Cyclomatic Complexity
+############################################################################
+proc CompositCC { ObjectListName } {
+	upvar $ObjectListName ObjectList
+	set CumulativeSum 0
+	foreach Entity $ObjectList {
+		set CumulativeSum [expr $CumulativeSum + [met_CC $Entity]]
+	}
+	return $CumulativeSum
+}
+
+############################################################################
+# proc		CompositDepth
+# Description:	Get the cumulative Depth
+############################################################################
+proc CompositDepth { ObjectListName } {
+	upvar $ObjectListName ObjectList
+	set CumulativeSum 0
+	foreach Entity $ObjectList {
+		set CumulativeSum [expr $CumulativeSum + [met_DEPTH $Entity]]
+	}
+	return [expr $CumulativeSum / [size $ObjectList]]
+}
+
+############################################################################
+# proc		CompositLOC
+# Description:	Get the cumulative Lines Of Code
+############################################################################
+proc CompositLOC { ObjectListName } {
+	upvar $ObjectListName ObjectList
+	set CumulativeSum 0
+	foreach Entity $ObjectList {
+		set CumulativeSum [expr $CumulativeSum + [met_LOC $Entity]]
+	}
+	return [expr $CumulativeSum / [size $ObjectList]]
+}
+
+############################################################################
+# proc		BriefRiskAssessmentReport
+# Description:	Run RiskAssessmentReport in brief mode
+############################################################################
+proc BriefRiskAssessmentReport { sel } {
+	RiskAssessmentReport $sel "1"
+}
+
+############################################################################
+# proc		VerboseRiskAssessmentReport
+# Description:	Run RiskAssessmentReport in verbose mode
+############################################################################
+proc VerboseRiskAssessmentReport { sel } {
+	RiskAssessmentReport $sel "2"
+}
+
+############################################################################
+# proc		VeryVerboseRiskAssessmentReport
+# Description:	Run RiskAssessmentReport in very verbose mode
+############################################################################
+proc VeryVerboseRiskAssessmentReport { sel } {
+	RiskAssessmentReport $sel "3"
+}
+
+add_menu "$Client.RiskAssesment"
+add_item "$Client.RiskAssesment"	"Brief Report"		BriefRiskAssessmentReport	-optional
+add_item "$Client.RiskAssesment"	"Verbose Report"	VerboseRiskAssessmentReport	-optional
+add_item "$Client.RiskAssesment"	"Very Verbose Report"	VeryVerboseRiskAssessmentReport	-optional
+

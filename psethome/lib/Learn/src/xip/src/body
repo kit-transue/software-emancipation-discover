@@ -1,0 +1,12 @@
+DAwid,i)
+Widget DAwid;
+int i;
+{
+   extern int FilterInit();
+   GPL.stage_color[i] =
+     (Pixel) DtAllocateColor(G_dpy, "orange");
+
+   GPL.stage[i] = (struct StageObj *)
+     CreateStage(FilterInit,
+                 DAwid, "Filter",
+                 GPL.stage_color[i]);

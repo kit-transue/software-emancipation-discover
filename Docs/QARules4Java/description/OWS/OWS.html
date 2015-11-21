@@ -1,0 +1,46 @@
+<html>
+<body>
+
+<p><b>OWS - Overloading Within a Subclass</b></p>
+
+<p>A superclass method may not be overloaded within a subclass unless
+all overloadings in the superclass are also overridden in the subclass.
+It is very unusual for a subclass to be overloading methods in its
+superclass without also overriding the methods it is overloading. More
+frequently this happens due to inconsistent changes between the superclass
+and subclass - i.e. the intention of the user is to override the method in
+the superclass, but due to the error, the subclass method ends up overloading
+the superclass method.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class Monkey extends Animal {<br>
+&nbsp; &nbsp; <font color='red'>public void oper (char c) {} </font><br>
+&nbsp; &nbsp; public void oper (Object o) {} <br>
+}<br>
+class Animal {<br>
+&nbsp; &nbsp; public void oper (int i) {}<br>
+&nbsp; &nbsp; public void oper (Object o) {}<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Overload other methods too.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class Monkey extends Animal {<br>
+&nbsp; &nbsp; public void oper (char c) {} <br>
+&nbsp; &nbsp; <font color='blue'>public void oper (int i) {}</font><br>
+&nbsp; &nbsp; public void oper (Object o) {}<br>
+}<br>
+class Animal {<br>
+&nbsp; &nbsp; public void oper (int i) {}<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

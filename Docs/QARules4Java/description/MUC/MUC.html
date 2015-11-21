@@ -1,0 +1,30 @@
+<html>
+<body>
+
+<p><b>MUC - Minimize Use of Casting</b></p>
+
+<p>Casting is not a free operation. Minimize using of castiong whenether it will be possible.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+&nbsp; &nbsp; int length = <font color='red'>((String)object).length()</font>;<br>
+&nbsp; &nbsp; char ch1 = <font color='red'>((String)object).charAt(0)</font>;<br>
+&nbsp; &nbsp; char ch2 = <font color='red'>((String)object).charAt(length - 1)</font>;<br>
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+ Do single cast only once through the use of temporary variable.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+&nbsp; &nbsp;<font color='blue'> String string = (String)object</font>;<br>
+&nbsp; &nbsp; int length = <font color='blue'>string.length()</font>;<br>
+&nbsp; &nbsp; char ch1 = <font color='blue'>string.charAt(0)</font>;<br>
+&nbsp; &nbsp; char ch2 = <font color='blue'>string.charAt(length -1)</font>;<br>
+</code></p></NOBR>
+
+</body>
+</html>

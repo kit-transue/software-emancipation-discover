@@ -1,0 +1,181 @@
+:DIS_auth
+	:AdministratorName 
+"Tech Support, support@setech.com, 617-863-5588"
+	:CompanyName 
+"Software Emancipation Technology Inc, Lexington MA"
+	:UserLoginName "$USER"
+	:UserRealName ""
+:DIS_bp
+	:after-class-decl ""
+	:after-class-def ""
+	:after-func-decl ""
+	:after-func-def ""
+	:after-member-decl ""
+	:after-member-def ""
+	:after-struct ""
+	:batch-mode +0
+	:before-class-decl ""
+	:before-class-def ""
+	:before-func-decl ""
+	:before-func-def ""
+	:before-member-decl ""
+	:before-member-def ""
+	:before-struct ""
+	:c-hdr-file-bottom ""
+	:c-hdr-file-top ""
+	:c-src-file-bottom ""
+	:c-src-file-top ""
+	:cpp-hdr-file-bottom ""
+	:cpp-hdr-file-top ""
+	:cpp-src-file-bottom ""
+	:cpp-src-file-top ""
+	:func-final ""
+	:func-init ""
+	:member-def-final ""
+	:member-def-init ""
+	:priv-decl ""
+	:prot-decl ""
+	:pub-decl ""
+	:relation-src-definition ""
+	:relation-src-header ""
+	:relation-src-member ""
+	:relation-trg-definition ""
+	:relation-trg-header ""
+	:relation-trg-member ""
+:DIS_build
+	:MakeExecutable "make"
+	:MakefileDir "."
+	:MakefileTargets 
+"default\nobjects\nall\ninstall\nlibraries\nexecutable\nmakefile\nclean"
+:DIS_buttonbar
+	:ButtonbarCalltree ""
+	:ButtonbarClass ""
+	:ButtonbarDatachart ""
+	:ButtonbarERD ""
+	:ButtonbarSMT ""
+	:ButtonbarSSBrowser ""
+	:ButtonbarSSMap ""
+	:ButtonbarVisible +0
+:DIS_c
+	:CCompiler "cc"
+	:CDefaultHeaderSuffix ".h"
+	:CDefaultSourceSuffix ".c"
+	:CDefines "-D__PARASET__"
+	:CFlags "-traditional -quiet -w -fsyntax-only"
+	:CHeaderSuffix ".h"
+	:CIncludes ""
+	:CParser "$PSETHOME/bin/c-parser"
+	:CPreprocessor "$PSETHOME/bin/aset_cpp"
+"Location of C Pre-Processor executable"
+	:CStyle +0
+	:CSuffix ".c .h"
+:DIS_cm
+	:CmBackupMerges +1
+	:CmCopyOptions ""
+	:CmCreateOptions ""
+	:CmCustomScriptsPath ""
+	:CmDeleteOptions ""
+	:CmDiffOptions ""
+	:CmExecutable "$PSETHOME/bin/configurator"
+	:CmFastPutMergeOptions +0
+	:CmGetOptions ""
+	:CmLockOptions ""
+	:CmObsoleteOptions ""
+	:CmPutOptions ""
+	:CmPutTrackBugs +1
+	:CmSystem "rcs"
+	:CmUngetOptions ""
+	:CmUnlockOptions ""
+	:GetWithComments +0
+	:GetWithComments!Ename "Get With Comments"
+	:OptionalScriptsDir ""
+	:PutLocks +1
+	:RemovePsets +0
+	:Stat ""
+	:Terse +0
+	:UseLocks +1
+	:UseSoftLinks +0
+:DIS_cpp
+	:CPP "$PSETHOME/bin/aset_cpp"
+	:CPlusCompiler "CC"
+	:CPlusDefaultHeaderSuffix ".H"
+	:CPlusDefaultSourceSuffix ".C"
+	:CPlusDefines "-D__PARASET__ -D__GNUG__"
+	:CPlusFlags "-quiet -w -fsyntax-only"
+	:CPlusHeaderSuffix ".H .h .hpp .hxx"
+	:CPlusIncludes "-I$PSETHOME/include/cp-include"
+	:CPlusParser "$PSETHOME/bin/cp-parser"
+	:CPlusSuffix ".C .H .h"
+:DIS_debug
+	:CppOutputFile "$ADMINDIR/tmp/CPPOutputFile"
+	:DebuggerPath "$PSETHOME/bin:./:"
+	:ShowMakeRuleOutput "no"
+:DIS_misc
+	:BrowserShowPermissions +0
+	:BuildMetrics +0
+	:DOCsetCommandLine "$FMHOME/bin/maker"
+	:DOCsetName "Frame"
+	:EditorMode +0
+	:Forgive +0
+	:Home "$HOME"
+	:Host "$HOST"
+	:InstallRoot "$PSETHOME"
+	:MiniBrowserHistory +15
+	:MiniBrowserTitles +1
+	:MsgLogFile "$PSETHOME/lib/messages.dat"
+	:MsgLogger +0
+	:MultiplePsets +0
+	:ParserExcludePaths 
+"/usr/include\n/usr/local/include\n/usr/include/X11\n
+/usr/openwin/include\n/usr/openwin/share/include/X11"
+	:StoreMetrics +1
+	:SubsysSettingFile "$PSETHOME/lib/subsysPrefs.default"
+:DIS_model
+	:DoPassSaveProj +1
+"Run Save-Proj Pass during Model Build"
+	:DoPassSaveRoot +1
+"Run Save-Root Pass during Model Build."
+	:RshProjInvoker ""
+"Executable used to invoke a distributed Model Build"
+	:SaveMetrics +1
+"Build and Store Metrics Model Information"
+:DIS_msg
+	:LogDiagnosticMessages +1
+	:LogDuringCompile +1
+	:LogDuringImport +1
+	:LogDuringPropagate +1
+	:LogErrorMessages +1
+	:LogInformativeMessages +1
+	:LogWarningMessages +1
+	:MsgLogFile "$PSETHOME/lib/messages.dat"
+	:UseMsgLogger +0
+:DIS_pdf
+	:BuildPDF "$ADMINDIR/pdf/build.pdf"
+	:DefaultPDF "$ADMINDIR/pdf/user.pdf"
+	:HomeProject "Private"
+	:ParallelProjects "no"
+	:PrivateModelRoot "$ADMINDIR/model/$USER"
+	:PrivateSourceRoot "$ADMINDIR/src/$USER"
+	:ProjectList "shared"
+	:SharedModelRoot "$ADMINDIR/model/SHARED"
+	:SharedSourceRoot "$ADMINDIR/src/SHARED"
+	:SystemProject "$PSET_SYSTEM_PROJECT"
+	:UserPDF "$ADMINDIR/pdf/user.pdf"
+:DIS_support
+	:DiscoverExecPath ""
+	:EnvSave "no"
+	:VariablesList ""
+:PSET
+	:Audio_File "$PSETHOME/bin/audio.dat"
+	:Cpp_File ""
+	:Dependency_Output +0
+	:Editor_Startup "$PSETHOME/emacs/src/emacs"
+	:Gra_Symbols "$PSETHOME/lib/symbols.dat"
+	:Mapping_Debug +0
+	:No_PDF_Warning +0
+	:Parts_Of_Speech "$PSETHOME/lib/parts_of_speech/pos"
+	:Show_Admin_Menu +0
+	:Show_Build_Date +1
+	:Show_Debug_Menu +0
+	:Verify_PDF +0
+	:Version +1

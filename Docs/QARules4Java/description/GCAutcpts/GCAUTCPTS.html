@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>GCAUTCPTS - GC Avoid Unnecessary Temporaries when Convert Primitive Types to String.</b></p>
+
+<p>Java provides wrapping classes for primitive types.
+Those classes provide a static method <i>toString (...)</i> to convert primitive types
+into their String equivalent.  Use this method instead of creating an object of
+the wrapping class and then using the instance <i>toString ()</i> method.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class AUTCPTS {<br>
+&nbsp; String operFoo (int var) {<br>
+&nbsp; &nbsp; <font color='red'> return new Integer (var).toString ();</font><br>
+&nbsp; }<br>
+}</code></nobr></p>
+
+<p><b>Tip:</b>
+Use a static method <i>toString (...)</i> to convert primitive types into their String equivalent.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class AUTCPTS {<br>
+&nbsp; String operFoo (int var) {<br>
+&nbsp; &nbsp; <font color='blue'> return Integer.toString  (var);</font><br>
+&nbsp; }<br>
+}</code></nobr></p>
+
+</body>
+</html>

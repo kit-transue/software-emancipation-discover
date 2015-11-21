@@ -1,0 +1,13 @@
+PACKAGE Developer setechd 6.000 C001DE73602B \
+	COMPONENTS="SET.Program/sw SET.Debug/sw SET.Metrics/sw \
+	SET.Model/sw.C" OPTIONS=SUITE
+PACKAGE Engineer setechd 6.000 75605E6E9D01 COMPONENTS="SET.Access/sw \
+	SET.Y2K/sw SET.Y2K/TaskFlow SET.TPM/sw SET.Dormant/sw \
+	SET.DFA/sw SET.QAR/sw" OPTIONS=SUITE
+PACKAGE Project_Leader setechd 6.000 B5D618270C57 \
+	COMPONENTS="SET.Admin/sw SET.Compliance/sw SET.AutoDoc/sw \
+	SET.DocLink/sw.Frame SET.TestLink/sw SET.Summary/sw \
+	SET.DefectLink/sw" OPTIONS=SUITE
+PACKAGE Architect setechd 6.000 D1FD424C0837 \
+	COMPONENTS="SET.Extract/sw SET.Simplify.h/sw SET.Partition/sw \
+	SET.Package/sw" OPTIONS=SUITE

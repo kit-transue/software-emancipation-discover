@@ -1,0 +1,24 @@
+#!/bin/sh
+if [ "$cm_version" = "" ] ; then 
+    version=`$PSETCFG/cm_src_version`
+    version=`$PSETCFG/util/prev_version $version`
+else
+    version=$cm_version
+fi
+
+
+if [ "$version" = "" ] ; then
+    echo No previous version found
+    exit 1
+fi
+
+ccm diff $cm_workfile,$version $cm_workfile > $TMPDIR/$$.ccmdiff
+cat  $TMPDIR/$$.ccmdiff 2>&1
+
+if [ -z $TMPDIR/$$.ccmdiff ] ; then
+    rm $TMPDIR/$$.ccmdiff
+    exit 0
+else
+    rm $TMPDIR/$$.ccmdiff
+    exit 1
+fi

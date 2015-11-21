@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>MIPS C</compilername>
+  <switch enable="ntt"/> <!-- default to n32 -->
+  <translate>
+    <option name="n32" noarg="1" enable="ntt"/>
+    <option name="o32" noarg="1" enable="ott"/>
+    <option name="64" noarg="1" enable="sf"/>
+  </translate>
+  <switch when="ott|sf" disable="ntt"/>
+C
+    -w
+    --c
+    --allow_error_directive
+    -D__DISCOVER__
+    -D_MIPS_SZINT=32
+    -D_LONGLONG
+    -D__EXTENSIONS__
+    -Dsgi
+    -D_SGI_SOURCE
+    -D_LANGUAGE_C
+    -D_MIPSEB
+    -D__unix
+  <switch when="ott"> <!-- o32 -->
+    -D_MIPS_SIM=1
+    -D_MIPS_FPSET=16
+    -D_MIPS_SZLONG=32
+    -D_MIPS_SZPTR=32
+    -D_ABIO32=1
+    -D_MIPS_ISA=2
+  </switch>
+  <switch when="ntt"> <!-- n32 -->
+    -D_MIPS_SIM=2
+    -D_MIPS_FPSET=32
+    -D_MIPS_SZLONG=32
+    -D_MIPS_SZPTR=32
+    -D_ABIN32=2
+    -D_MIPS_ISA=4
+  </switch>
+  <switch when="sf"> <!-- 64 -->
+    -D_MIPS_SIM=3
+    -D_MIPS_FPSET=32
+    -D_MIPS_SZLONG=64
+    -D_MIPS_SZPTR=64
+    -D_ABI64=3
+    -D_MIPS_ISA=4
+  </switch>
+  <translate>
+    <option name="D" immarg="1">-D%</option>          <!-- Associate name with token as if by #define -->
+    <option name="E" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to stdout -->
+    <option name="I" immarg="1">-I%</option>          <!-- Add <dir> to preprocessor #include file search path -->
+    <option name="P" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to .i  file -->
+    <option name="U" immarg="1">-U%</option>          <!-- Delete initial definition of preprocessor symbol <name> -->
+    <option name="v" noarg="1"></option>              <!-- Do stricter semantic checking -->
+    <option name="w" noarg="1"></option>              <!-- Suppress compiler warning messages -->
+    <option name="Xa" noarg="1">-xansi</option>       <!-- Compile assuming ANSI C conformance, allow K & R extensions (default mode) -->
+    <option name="Xc" noarg="1">-ansi</option>        <!-- Compile assuming strict ANSI C conformance -->
+    <option name="Xm" noarg="1">-dollar</option>      <!-- Support dollar character in C++ identifiers  -->
+    <option name="Xs" noarg="1">-cckr</option>        <!-- Compile assuming (pre-ANSI) K & R C style code -->
+    <option name="Xt" noarg="1">-xansi</option>       <!-- Compile assuming K & R conformance, allow ANSI C -->
+    <option name="xCC" noarg="1">-Xcpluscomm</option> <!-- Accept C++ style comments -->
+    <option name="xsfpconst" noarg="1">-float_const</option>      <!-- Represent unsuffixed floating point constants as single precision -->
+    <option name="YI" immarg="1"></option>            <!-- Change default directory searched for include files -->
+
+    <option name="o" separg="1"></option>             <!-- Set name of output file to <outputfile> -->
+  </translate>
+</cmdline>

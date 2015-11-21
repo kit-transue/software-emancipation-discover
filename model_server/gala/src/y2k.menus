@@ -1,0 +1,18 @@
+#
+# Y2K File Menu
+#
+
+
+set m [dis_MenuCreate AppFileMenu "F_ile" "All=S"]
+
+dis_MenuAppendItem $m FileQuit                "Ex_it" {
+        dis_quit
+    }
+
+#
+# Help
+#
+set m [dis_MenuCreate "HelpMenu" "H_elp" "All=S"]
+    dis_MenuAppendItem $m HelpContentsItem              "Table of Contents" {
+        dis_help -contents 0 "[dis_getenv PSETHOME]/lib/hyperhelp/DISCOVER_HELP.hlp"
+    }

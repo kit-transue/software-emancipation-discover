@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Closure</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Closure</b></p>
+<p class="p2">The DIScover Browser provides a <b>closure</b> button that modifies the operation of queries: when closure is selected, the results of a query are appended to the initial set and the query is run again. This process continues until the result set does not grow.</p>
+<p class="p2">The closure operation is not built into Access queries; instead a <span class="s1">query_closure</span> procedure is defined that uses the set operations to implement closure. Its syntax is:</p>
+<p class="p3">query_closure int query src</p>
+<p class="p2">This command starts by running the query on <span class="s1">src</span>, and repeats it on the union of the input and the resulting set until the result does not change. At most, it makes number of iterations specified by <span class="s1">int</span>.</p>
+<p class="p2">Depending on your query, it may be more efficient to implement your own closure.</p>
+<p class="p4"> </p>
+</body>
+</html>

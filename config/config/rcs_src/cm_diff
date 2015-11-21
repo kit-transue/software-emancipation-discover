@@ -1,0 +1,2 @@
+#!/bin/sh
+rcsdiff -r$cm_version $cm_workfile $cm_revision_file 2>&1

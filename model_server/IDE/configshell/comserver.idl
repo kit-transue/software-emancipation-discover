@@ -1,0 +1,45 @@
+//
+// Interface descriptions
+//
+import "unknwn.idl" ; 
+
+// Interface IConfigShell
+[
+	object,
+	uuid(2786c390-f18a-11d0-9699-00a0245836d0),
+	helpstring("IConfigShell Interface"),
+	pointer_default(unique)
+]
+interface IConfigShell : IUnknown
+{
+	HRESULT SetPSETCFG( [in, string] wchar_t* wcsPSETCFG );
+	HRESULT InitCM([out, string] wchar_t** wcsCMName) ;
+	HRESULT Run([in, string] wchar_t* wcsCmd);
+	HRESULT GetResult( [out, string] wchar_t** wcsResult);
+} ;
+
+
+//
+// Component descriptions
+//
+[
+	uuid(2786c391-f18a-11d0-9699-00a0245836d0),
+	version(1.0),
+	helpstring("ConfigShell 1.0 Type Library")
+]
+library ServerLib
+{
+	importlib("stdole32.tlb") ;
+
+	// ConfigShell
+	[
+		uuid(2786c392-f18a-11d0-9699-00a0245836d0),
+		helpstring("ConfigShell 1.0 Class")
+	]
+	coclass ConfigShell
+	{
+		[default] interface IConfigShell ;
+	};
+} ;
+
+  

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="warning">
+  <compilername>SDK Java</compilername>
+  <switch enable="needcp"/>
+  java -w --jdk 
+  <translate>
+    <option name="classpath" separg="1" disable="needcp">--classpath %_%%0%%1%/lib/rt.jar</option>  <!-- sets effective CLASSPATH -->
+    <option name="cp" separg="1" disable="needcp">--classpath %_%%0%%1%/lib/rt.jar</option>  <!-- sets effective CLASSPATH -->
+    <option name="sourcepath" separg="1"/>
+    <option name="sp" separg="1"/>
+  </translate>
+  <switch when="needcp">
+      --classpath %1%/lib/rt.jar
+  </switch>
+</cmdline>

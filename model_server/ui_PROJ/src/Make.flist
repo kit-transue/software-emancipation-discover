@@ -1,0 +1,4 @@
+CROOTS=PROJECT
+
+CPROOTS=PROJ_View_Pref.h PROJ_apl
+

@@ -1,0 +1,299 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+#
+# Internal utility procedure for the set manager:
+#
+
+source_dis require.dis
+require attview.dis
+
+global DIS_SMGR_SOURCED
+
+if { [ info exists DIS_SMGR_SOURCED ] } {
+  if { "$DIS_SMGR_SOURCED" == "1" } {
+    return
+  }
+}
+
+global DIS_SMGR_DEBUG
+set DIS_SMGR_DEBUG "0" 
+if { [ info exists env(DIS_SMGR_DEBUG) ] } { set DIS_SMGR_DEBUG $env(DIS_SMGR_DEBUG) }
+if { "$DIS_SMGR_DEBUG" == "1" } { puts "_smgr: Loading procedure..." }
+
+proc _smgr { ARGS } {
+
+  # Change this if you change the procedure's name:
+  set PROCNAME _smgr
+
+  global DIS_SMGR_DEBUG
+
+  if { "DIS_SMGR_DEBUG" == "1" } { puts "$PROCNAME: Begin." }
+
+  set SUBCMD [ lindex $ARGS 0 ]
+  set LAST_ARG [ expr [ llength $ARGS ]  - 1 ]
+  set PARAMS [ lrange $ARGS 1 $LAST_ARG ]
+  set LAST_PARAM [ expr [ llength $PARAMS ] - 1 ]
+
+  #
+  # Info and management routines:
+  #
+
+  if { "$SUBCMD" == "size" } {		# MUI
+    return [ llength [ group info ] ]
+  }
+
+  if { "$SUBCMD" == "lindex" } {	# MUI
+    set NUM [ lindex $PARAMS 0 ]
+    return [ lindex [ group info ] $NUM ]
+  }
+
+  if { "$SUBCMD" == "create" } {
+      set NAME [ lindex $PARAMS 0 ]
+      group tmp $NAME [ get_selection ]
+      return
+  }
+
+  if { "$SUBCMD" == "find" || "$SUBCMD" == "exists" } {
+    set NAME [ lindex $PARAMS 0 ]
+    return [ group exists $NAME ]
+  }
+ 
+  if { "$SUBCMD" == "rename" } {
+    set OLD [ lindex $PARAMS 1 ]
+    set NEW [ lindex $PARAMS 0 ]
+    group rename $OLD $NEW
+    return
+  }
+
+  if { "$SUBCMD" == "delete" } {
+    foreach GROUP [ lrange $PARAMS 0 $LAST_PARAM ] {
+      group delete $GROUP
+    }
+    return
+  }
+
+  if { "$SUBCMD" == "export" } {
+    foreach GROUP [ lrange $PARAMS 0 $LAST_PARAM ] {
+      ogroup export $GROUP [ group get $GROUP ]
+    }
+    return
+  }
+
+  if { "$SUBCMD" == "save" } {
+    foreach GROUP [ lrange $PARAMS 0 $LAST_PARAM ] {
+      group save $GROUP
+    }
+    return
+  }
+
+  #
+  # Element-based manipulations:
+  #
+
+  if { [ info exists CMD ] } { unset CMD }
+
+  if     { "$SUBCMD" == "add" } { set CMD "add" } \
+  elseif { "$SUBCMD" == "remove" } { set CMD "subtract" } \
+  elseif { "$SUBCMD" == "move" || "$SUBCMD" == "assign" } { set CMD set }
+
+  if { [ info exists CMD ] } {
+    switch "--" "[ lindex $PARAMS 0 ]" {
+      "sel"	{ set SEL [ get_selection ]; set PARAMS [ lrange $PARAMS 1 $LAST_PARAM ] }			# MUI
+      "nosel"	{ set SEL [ set_copy [ lindex $PARAMS 1 ] ]; set PARAMS [ lrange $PARAMS 2 $LAST_PARAM ] }	# VUI
+      default	{ set SEL "" }
+    }
+    set GROUPS $PARAMS
+    foreach GROUP $GROUPS {
+      eval group $CMD $GROUP $SEL
+    }
+    unset CMD
+    return
+  }
+
+  #
+  # Capture routines:
+  #
+
+  if { [ info exists CMD ] } { unset CMD }
+  if { [ info exists POST_CMD ] } { unset POST_CMD }
+
+  if     { "$SUBCMD" == "grabscr" } { set CMD "group tmp" } \
+  elseif { "$SUBCMD" == "grabsav" } { set CMD "group new" ; set POST_CMD "group save" } \
+  elseif { "$SUBCMD" == "grabsub" } { set CMD "ogroup create" } \
+  elseif { "$SUBCMD" == "grabsubflat" } { set CMD "ogroup createFlat" }
+
+  if { [ info exists CMD ] } {
+    set RESULT [ lindex $PARAMS 0 ]
+    set SEL [ lindex $PARAMS 1 ]
+    eval $CMD $RESULT $SEL
+    unset CMD
+    if { [ info exists POST_CMD ] } {
+      eval $POST_CMD $RESULT
+      unset POST_CMD
+    }
+    return
+  }
+
+  #
+  # Operations which, as a side-effect, create a new group:
+  #
+
+  if { "$SUBCMD" == "difference" || "$SUBCMD" == "intersection" || "$SUBCMD" == "union" || \
+       "$SUBCMD" == "identity" || "$SUBCMD" == "diff_ab" || "$SUBCMD" == "diff_ba" } {
+
+    switch "--" "[ lindex $PARAMS 0 ]" {
+      "-notmp"	{ set MKTMP 0; set RESULT "" ; set PARAMS [ lrange $PARAMS 1 $LAST_PARAM ] }
+      "-mktmp"	{ set MKTMP 1; set RESULT [ lindex $PARAMS 1 ]; set PARAMS [ lrange $PARAMS 2 $LAST_PARAM ] }
+      default	{ set MKTMP ""; set RESULT "" }
+    }
+
+    set ANSWER ""
+
+    if { "$SUBCMD" == "difference" || "$SUBCMD" == "diff_ab" } {
+      set GROUPS [ lrange $PARAMS 0 1 ]
+      set ELEMS ""
+      foreach GROUP $GROUPS { lappend ELEMS "[ group get $GROUP ]" }
+      set ANSWER [ eval set_subtract $ELEMS ]
+    }
+
+    if { "$SUBCMD" == "diff_ba" } {
+      set GROUPS "[ lindex $PARAMS 1 ] [ lindex $PARAMS 0 ]"
+      set ELEMS ""
+      foreach GROUP $GROUPS { lappend ELEMS "[ group get $GROUP ]" }
+      set ANSWER [ eval set_subtract $ELEMS ]
+    }
+
+    if { "$SUBCMD" == "intersection" } {
+      set GROUPS $PARAMS
+      set ELEMS ""
+      foreach GROUP $GROUPS { lappend ELEMS "[ group get $GROUP ]" }
+      set SET [ lindex $ELEMS 0 ]
+      set SIZE [ llength $ELEMS ]
+      set INDEX 1
+      while { "$INDEX" < "$SIZE" } {
+        set SET [ set_intersect $SET [ lindex $ELEMS $INDEX ] ]
+        incr INDEX 1
+      }
+      set ANSWER $SET
+    }    
+
+    if { "$SUBCMD" == "union" } {
+      set GROUPS $PARAMS
+      set ELEMS ""
+      foreach GROUP $GROUPS { lappend ELEMS "[ group get $GROUP ]" }
+      set SET [ new_set ]
+      set SIZE [ llength $ELEMS ]
+      set INDEX 0
+      while { "$INDEX" < "$SIZE" } {
+        set SET [ set_union $SET [ lindex $ELEMS $INDEX ] ]
+        incr INDEX 1
+      }
+      set ANSWER $SET
+    }
+
+    if { "$SUBCMD" == "identity" } {
+      set GROUPS $PARAMS
+      set ANSWER [ group get [ lindex $GROUPS 0 ] ]      
+    }
+
+    set RETURN_VAL ""
+
+    if { "$MKTMP" == "1" } {
+      group tmp $RESULT $ANSWER
+      set RETURN_VAL [ set_copy [ group get $RESULT ] ]
+    } elseif { "$MKTMP" == "0" } {
+      set RETURN_VAL [ set_copy $ANSWER ]
+    }
+
+    set BROWSE_ARGS "modelbrowse $RESULT"
+    eval $PROCNAME { $BROWSE_ARGS }
+
+    return $RETURN_VAL
+
+  }
+
+  #
+  # Routines which manipulate the GUI (confine this to old UI):
+  #
+
+  if { "$SUBCMD" == "print" } {
+      set file [filesb -title "Print to file"]
+      if { $prompt_canceled == "1" } { return }
+      if { [file exists [file dirname $file]] == 0 } {
+	  msg error_sev "Incorrect file name: \$1" "$file"
+	  return
+      }
+      if { [file tail $file] == "" || [file isdir $file] == 1 } {
+	  msg error_sev "Incorrect file name: \$1" "$file"
+	  return
+      }
+      foreach GROUP [ lrange $PARAMS 0 $LAST_PARAM ] {
+	  set elems [group get $GROUP]
+	  >> $file { print $elems }
+      }
+      return
+  }
+
+  if { "$SUBCMD" == "modelbrowse" || "$SUBCMD" == "minibrowse" || "$SUBCMD" == "iview" } {
+    set GROUPS [ lrange $PARAMS 0 $LAST_PARAM ]
+    set ELEMS ""
+    set TITLE ""
+    foreach GROUP $GROUPS {
+      lappend ELEMS "[ group get $GROUP ]"
+      if { "$TITLE" != "" } {
+        set TITLE "$TITLE, $GROUP"
+      } else {
+        set TITLE "$TITLE $GROUP"
+      }
+    }
+    if { "$SUBCMD" == "minibrowse" } {
+      set_mini -popup -title "\[MEMBERS\] $TITLE" $ELEMS
+    } 
+    if { "$SUBCMD" == "modelbrowse" } {
+	if {[is_gui]} {
+	  browser set elements $ELEMS
+	}
+    }
+    if { "$SUBCMD" == "iview" } {
+      if { [ info commands instance_view_title ] != "" } {
+        instance_view_title "\[INSTANCES\] $TITLE" $ELEMS
+      } else {
+        msg error_sev "Instance view not available."
+      }
+    } 
+    return
+  }
+
+  #
+  # If we get here, no valid argument was given:
+  #
+
+  return -code error -errorinfo "invalid parameters"
+}
+
+set DIS_SMGR_SOURCED "1"

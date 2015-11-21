@@ -1,0 +1,37 @@
+<head>
+<title>How Simplify Works</title>
+</head>
+<body bgcolor="white">
+<h4>The structure of the interactive simplify utility:</h4>
+
+<p>The user selects modules from the local project which he wants to simplify and presses the "Simplify/h" button.  At that moment DISCOVER calls the 'dis_interactive_simplify' TCL procedure that is located in the /paraset/src/paraset/api/scripts/simplify.dis module. </p>
+
+<p>The script checks for validity of the selected modules and creates a temporary data file which contains the names of the physical modules and flags necessary to correctly execute the C/C++ parser, then the script executes the Java program and passes the name of the temporary file to it. When Java starts, it reads the temporary data file and presents a graphical UI with various options. </p>
+
+<p>For each module the Java program executes the 'simplify' utility with corresponding flags, which in turn executes the C/C++ parser, parses the IF file, builds a header file tree and dumps that tree to standard output which is piped to the Java program. The Java UI presents the tree and allows the user to check/uncheck different nodes on the tree. It then reports the tree state back to the 'simplify' utility.</p>
+
+<p>The 'simplify' utility updates dependencies based on the user's changes and then proceeds to modify the file.</p>
+
+<h4>Where the sources are located:</h4>
+
+<p>
+<ul>
+<li>The source code for the DISCOVER part of Simplify sits in /paraset/src/paraset/partition/src.
+<li>The source code for the TCL script sits in /paraset/src/paraset/api/scripts/simplify.dis.
+<li>The source code for the 'simplify' utility sits in /paraset/src/paraset/simplify/...
+<li>The source code for the Java simplify GUI is checked in as a Visual Age for Java 2.0 repository under the name:
+/paraset/src/java/repository/discover.dat. If the code is changed, it needs to be "EXPORT"ed from VAJ to
+"discover.jar" and that jar file needs to be placed in the /paraset/src/java/jars directory. The install script will grab 
+"discover.jar" file for installations of the DISCOVER.
+</ul>
+</p>
+
+<p>
+Note how to import "discover.dat" into VAJ: 
+<ol>
+<li>/paraset/src/java/repository/discover.dat needs to be imported in VAJ in the "Discover" package
+<li>VAJ will create the folder "Discover" in its "project_resources" folder.
+<li>Icons that the software uses can be found in /paraset/src/java/icons/Discover/ and they need to copied to the "project_resources/Discover" folder under VAJ.  This will allow VAJ automatically to add the necessary icons into the "discover.jar" module when it's exported from VAJ.
+</ol>
+</p>
+</body>

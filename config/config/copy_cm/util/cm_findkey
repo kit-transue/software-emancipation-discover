@@ -1,0 +1,4 @@
+grep $1 | sed -n "s/.*$1[ :][ ]*\([^ ]*\).*/\1/p"
+echo This option is not supported.
+exit 1
+

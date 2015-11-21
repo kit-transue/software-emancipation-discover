@@ -1,0 +1,93 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+NT Build Procedure
+
+Below I outline the procedure for building and installing Code Rover and Discover for Windows NT.  Both procedures are fairly short and straightforward.  The only real difficult in the builds is diagnosing a build error.
+
+Discover:
+This requires a NT machine with at least 128 MBs of RAM (recommended 384 - look at Epsilon, the current build machine), approximately 500 MBs of free disk space (recommended about 1 GB), a Clearcase view mounted to N:, a Bourne shell (i.e. MKS Toolkit), the share drive "ntbldenv" mounted on S:, and Microsoft Visual C++ 6.0, Service Pack 3 or greater.
+
+1.) I suggest creating a directory to place one's logfiles (i.e. N:/nt-bin/build/logfile/DISCOVER/7.3.0.85)
+
+1a.) Modify your config_spec to reflect the latest Discover build.  The latest build can be determined from logging on to unix, and running: "latest", echo'ing $PSETHOME, or taking the number from "/paraset/admin/version".  For example:
+	[oxen][jnapoli][/users/jnapoli] > latest
+	/users/builder/install_bases/sun5/7.3.1.14/discover
+Once you have the latest build number, look up the config_spec in the build log directory, ~builder/build_logs.  For example:
+	[oxen][jnapoli][/users/jnapoli] > ls ~builder/build_logs/7.3.1.14/
+	7.3.1.14.checkin_list  config_spec            fridge
+	bigfoot                doc_generation.log     tweety
+	[oxen][jnapoli][/users/jnapoli] > cat ~builder/build_logs/7.3.1.14/config_spec
+	element /postsales/... /main/deployment/LATEST -time 24-Jun.23:01
+	element * /main/LATEST -time  24-Jun.23:01
+
+Edit the NT build config_spec ("cleartool edcs") and input the new config_spec.  Save the config_spec, and you're ready to build.
+
+2.) Run:
+	/nt-bin/build/make/make.all.sh Release > 7.3.0.85.make.all.log 2>&1 &
+Give the Release argument if one wants a Release build, or give no argument if one wants a debug build.  "7.3.0.85.make.all.log" is your build log - you want to examine this.
+
+3.) Examine your build log for any build errors and correct them.  Search for errors such as:
+	"STATUS: aset_jfe Failed (1)"
+If an executable fails to build, a "STATUS: <exec name> Failed ([0-9])" message will appear.
+
+4.) If all build errors have been resolved, install the build.  This is done by:
+	"/nt-bin/install.sh -r"
+The "-r" signifies that the build is a release build.  If it is a debug build, do not pass the "-r" argument.  This command copies all package components to the /tmp/CDstage directory, where they are prepared to be packaged into an InstallShield executable.
+
+5.) Package the build as an Installshield package.
+	"/nt-bin/makecd.sh <SHARED DRIVE:>/DISCOVER/7.3.0.85"
+where SHARED DRIVE is the drive one wishes to distribute builds from.  This command will take everything in /tmp/CDstage and bundle it into an InstallShield package.
+
+Code Rover:
+	The requirements for Code Rover are the same as Discover, with additional dependencies on InstallShield 6.1 with PackageForTheWeb utility installed, and JBuilder 3.5's compiler (as I understand it, one may be able to install the "free" compiler without the GUI), 
+
+1.) Create a directory for your logfiles (i.e. N:/nt-bin/build/logfile/CodeRover/2.0.3)
+
+2.) Run:
+	/nt-bin/CodeRover/scripts/Build_CodeRover.sh > coderover.log 2>&1 &
+Currently there's not a way to build a debug version of Code Rover.  This script, however, will build all executables needed for your installation.
+
+3.) Examine your build log for any build errors and correct them.  Search not only for the type of error described in part 3. of the Discover build, but also for errors during the compilation of the jar files and the MS Visual Studio projects.
+
+4.) If all build errors have been resolved, run:
+	"/nt-bin/CodeRover/scripts/Install_CodeRover.sh"
+This script outputs very little, but is needed to put into place extraneous parts of the Code Rover installation, and generate a couple of needed files.
+
+5.) Before starting up InstallShield 6.1, check out the following files and directories in the InstallShield project (/nt-bin/CodeRover/InstallShield_project/browser-enabled):
+Code Rover.ipr
+Media/Default
+Script Files/Setup.dbg
+Script Files/Setup.Inx
+Script Files/Setup.Obs
+We do this so that we might build the project in place.  InstallShield needs to modify/move these files around during build, but after the build is complete, they can be unco'd.
+
+6.) Select "Build -> Rebuild (Default) Media)" from InstallShield.  Look for errors and warnings.  This will build the InstallShield package into a directory.
+
+7.) After that initial build is complete, click on the little red box icon on the InstallShield toolbar, the PackageForTheWeb icon.  Proceed through the dialogs, and select either an existing project or import a project from the /nt-bin/CodeRover/InstallShield_projects/browser-enabled directory.  Note the output directory in which the final package is to be placed.
+
+8.) If the PackageForTheWeb process is successful, your package should be in the output directory.  Voila!

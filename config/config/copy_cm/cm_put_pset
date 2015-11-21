@@ -1,0 +1,17 @@
+#!/bin/sh
+echo rm -f $cm_workfile
+rm -f $cm_workfile
+exit 0
+set -e
+
+if [ $cm_file_type = "NOT_SRC" ] ; then
+    $PSETCFG/cm_put_src
+    exit 0
+fi
+
+if [ -f $cm_workfile -a "$cm_workfile" != "$cm_sysfile" ] ; then
+  echo "rm -f $cm_sysfile;cp $cm_workfile $cm_sysfile;rm -f $cm_workfile"
+  rm -f $cm_sysfile
+  cp $cm_workfile $cm_sysfile
+  rm -f $cm_workfile
+fi 

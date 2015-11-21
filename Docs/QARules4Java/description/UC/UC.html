@@ -1,0 +1,32 @@
+<html>
+<body>
+
+<p><b>UC - Unnecessary Casts</b></p>
+
+<p>Checks for the use of type casts that are not necessary.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class Animal {}<br>
+class Monkey extends Animal {<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int i;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>float f = (float) i; </font><br>
+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Monkey e1;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Monkey <font color='red'>e2 = (Monkey) e1; </font><br>
+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Animal a;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Monkey e;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>a = (Animal) e; </font><br>
+&nbsp; &nbsp; }<br>
+}</code></p></NOBR>
+
+<p><b>Tip:</b>
+Delete unnecessary cast to improve readability.
+</p>
+
+
+</body>
+</html>

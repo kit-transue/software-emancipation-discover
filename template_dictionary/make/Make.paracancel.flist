@@ -1,0 +1,8 @@
+CXXROOTS=\
+    message_templates
+
+CPP_INCLUDES= \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include

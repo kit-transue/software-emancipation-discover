@@ -1,0 +1,244 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include ".\include\resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""CategoriesCombo.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "CategoriesCombo OLE Control Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "CATEGORIESCOMBO\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "CATEGORIESCOMBO.OCX\0"
+            VALUE "ProductName", "CategoriesCombo OLE Control Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON    DISCARDABLE     "res/CategoriesCombo.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_CATEGORIESCOMBO     BITMAP  DISCARDABLE     "res/CategoriesComboCtl.bmp"
+IDB_CLEARPOP            BITMAP  DISCARDABLE     "res/bitmap1.bmp"
+IDB_CLEARPUSH           BITMAP  DISCARDABLE     "res/bmp00001.bmp"
+IDB_CATEGORYMAP         BITMAP  DISCARDABLE     "res/bmp00002.bmp"
+IDB_CLASSES             BITMAP  DISCARDABLE     "res/classes.bmp"
+IDB_FILES               BITMAP  DISCARDABLE     "res/files.bmp"
+IDB_FUNCTIONS           BITMAP  DISCARDABLE     "res/function.bmp"
+IDB_STRUCTURES          BITMAP  DISCARDABLE     "res/struct.bmp"
+IDB_UNIONS              BITMAP  DISCARDABLE     "res/union.bmp"
+IDB_ENUMS               BITMAP  DISCARDABLE     "res/enum.bmp"
+IDB_TYPEDEFS            BITMAP  DISCARDABLE     "res/typedef.bmp"
+IDB_TEMPLATES           BITMAP  DISCARDABLE     "res/template.bmp"
+IDB_STRINGS             BITMAP  DISCARDABLE     "res/strings.bmp"
+IDB_LOCALVARS           BITMAP  DISCARDABLE     "res/locvar.bmp"
+IDB_MACROS              BITMAP  DISCARDABLE     "res/macro.bmp"
+IDB_VARIABLES           BITMAP  DISCARDABLE     "res/variables.bmp"
+IDB_SUBSYSTEMS          BITMAP  DISCARDABLE     "res/groups.bmp"
+IDB_RELATIONS           BITMAP  DISCARDABLE     "res/relations.bmp"
+IDB_ASSOCIATIONS        BITMAP  DISCARDABLE     "res/assoc.bmp"
+IDB_LINKS               BITMAP  DISCARDABLE     "res/linktype.bmp"
+IDB_ERRORS              BITMAP  DISCARDABLE     "res/error.bmp"
+IDB_TESTS               BITMAP  DISCARDABLE     "res/test.bmp"
+IDB_DEFECTS             BITMAP  DISCARDABLE     "res/defects.bmp"
+IDB_METHODS             BITMAP  DISCARDABLE     "res/methods.bmp"
+IDB_CLASSVARS           BITMAP  DISCARDABLE     "res/classvar.bmp"
+IDB_INTERFACES          BITMAP  DISCARDABLE     "res/interfac.bmp"
+IDB_PACKAGES            BITMAP  DISCARDABLE     "res/packages.bmp"
+IDB_CURSOR              BITMAP  DISCARDABLE     "res/cursor.bmp"
+IDB_TABLE               BITMAP  DISCARDABLE     "res/table.bmp"
+IDB_XREF                BITMAP  DISCARDABLE     "res/xref.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX_CATEGORIESCOMBO DIALOGEX 34, 22, 260, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About CategoriesCombo Control"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,21,20
+    LTEXT           "CategoriesCombo Control, Version 1.0",IDC_STATIC,40,10,
+                    170,8
+    LTEXT           "Copyright © 1998, ",IDC_STATIC,40,25,83,8,0,
+                    WS_EX_TRANSPARENT
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+    CONTROL         "List1",IDC_LIST1,"SysListView32",WS_BORDER | WS_TABSTOP,
+                    136,28,102,20,WS_EX_CLIENTEDGE
+END
+
+IDD_PROPPAGE_CATEGORIESCOMBO DIALOG DISCARDABLE  0, 0, 250, 62
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of CategoriesCombo Control on this dialog.",
+                    IDC_STATIC,7,25,229,16
+END
+
+IDD_ABOUTBOX_QUERIESCOMBO DIALOG DISCARDABLE  34, 22, 260, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About QueriesCombo Control"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,20,20
+    LTEXT           "QueriesCombo Control, Version 1.0",IDC_STATIC,40,10,170,
+                    8
+    LTEXT           "Copyright © 1998, ",IDC_STATIC,40,25,170,8
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX_CATEGORIESCOMBO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_PROPPAGE_CATEGORIESCOMBO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_ABOUTBOX_QUERIESCOMBO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CATEGORIESCOMBO     "CategoriesCombo Control"
+    IDS_CATEGORIESCOMBO_PPG "CategoriesCombo Property Page"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CATEGORIESCOMBO_PPG_CAPTION "General"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "CategoriesCombo.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

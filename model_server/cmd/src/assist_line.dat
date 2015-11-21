@@ -1,0 +1,737 @@
+Browser.menubar.browser
+Items related to behavior of DIScover in general and Browser in particular.
+Browser.browser_menu.browser_about_paraset
+Displays logo, version number, and copyright notice.
+Browser.browser_menu.browser_new_browser_window
+Displays a new DIScover Browser, identified by a number in its title bar.
+Browser.browser_menu.browser_close_window
+Removes the current DIScover Browser. (If only one, you have option to exit DIScover.)
+Browser.browser_menu.browser_load_layout
+Reconfigure appearance of your current browser based on information saved earlier.
+Browser.browser_menu.browser_save_layout
+Stores appearance information about the current browser as it is presently configured.
+Browser.browser_menu.browser_preferences
+Displays Preferences dialog box for specifying defaults for various user-definable settings.
+Browser.browser_menu.browser_configurator
+Displays another Preferences dialog box, for setting source control and make file defaults.
+Browser.browser_menu.browser_messages
+Determines whether messages are displayed in separate windows or a single Message Logger window, and sets the quantity and type of information displayed.
+Browser.browser_menu.browser_quit
+Exits DIScover; you are prompted to save any modified files.
+Browser.menubar.file
+Contains items for saving, creating, loading, deleting, and updating files and directories.
+Browser.file_menu.file_save_all_files
+Displays a list with which you can choose what to save or not save.
+Browser.file_menu.file_new_file
+Displays a dialog box to specify name, path, and type of a new, empty file.
+Browser.file_menu.file_new_directory
+Displays a dialog box to specify the pathname of a new, empty directory.
+Browser.file_menu.file_delete
+Deletes any files, subsystems, or user-defined relations selected in the DIScover Browser.
+Browser.file_menu.file_preload
+Bring selected files into memory without displaying them. Loading for the first time imports the file.
+Browser.file_menu.file_update
+Parse the selected file(s). Use this in conjunction with the Unparsed Files project.
+Browser.file_menu.file_unload
+Remove the selected files from memory. You are given option to save.
+Browser.file_menu.file_language
+Specify the file type for the highlighted files in the ProjectBrowser.
+Browser.file_menu.file_update_directories
+Re-initializes the cache of information DIScover stores about files that it has accessed.
+Browser.file_menu.file_update_projects
+Refreshes Project Browser to reflect new or deleted files or directories, or changed PDF.
+Browser.refresh_menu.update_project_one_level
+Just update the current project.
+Browser.refresh_menu.update_project_all_visited
+Update all projects you have opened during this session.
+Browser.refresh_menu.load_pdf
+Change pdf file in the middle of a DIScover session. For debugging PDFs only.
+Browser.menubar.project
+Contains items related to Makefiles, source control, and projects.
+Browser.project_menu.project_home_project
+Make the highlighted, top-level, writable project to be your working project.
+Browser.project_menu.project_project_scope
+Displays dialog box to manage the number of projects you are working with.
+Browser.project_menu.project_get
+Checks out a file from your source control system to your current Home project.
+Browser.project_menu.project_get2
+Displays another menu consisting of Get with Options, Copy by Version, and Copy by Date.
+Browser.make_menu.project_get2
+Similar to Get, but allows you to specify user options set with Configurator dialog box.
+Browser.make_menu.project_get_version
+Displays a list of all versions, from which you select the one you wish to check out.
+Browser.make_menu.project_get_date
+Prompts you to enter a date string to check out the first file AFTER your specified date.
+Browser.project_menu.project_put
+Displays dialog boxes for checking in file(s) from your Home Project to your source control system.
+Browser.project_menu.project_merge
+Displays a pulldown menu offering Quick Merge, Detail Merge, and Merge From.
+Browser.merge_menu.merge_quick
+Merges and saves files as long as there are no conflicted areas.
+Browser.merge_menu.detail_quick
+Displays a Viewer showing differing areas of the files, for you to manually merge.
+Browser.merge_menu.merge_from
+Provided for Atria ClearCase environments, to merge from different ClearCase branches.
+Browser.project_menu.project_copy
+Copies highlighted file(s) to your Home Project.
+Browser.project_menu.project_diff
+Compare the specified file to the version checked into your source control system.
+Browser.project_menu.project_lock
+Prevents checkin access to selected file(s) by other users.
+Browser.project_menu.project_unlock
+Allows checkin access to file(s) by other users.
+Browser.project_menu.project_unget
+Cancel check-out for selected file(s). ClearCase reverts to previous version; others delete checked out file.
+Browser.project_menu.project_obsolete
+ClearCase(tm): performs "cleartool rmname". Continuus(tm): performs "ccm unuse". All others: no action. 
+Browser.project_menu.project_update_make
+Displays a dialog box to update a Makefile using the PDF Make rule.
+Browser.project_menu.project_make
+Displays a submenu of Make targets, as defined by the Configurator Preferences dialog box.
+Browser.make_menu.make_target
+Go to the Makefile directory (or directories) of whatever is selected, and execute make.
+Browser.menubar.view
+Contains items for displaying your files in a Viewer; also displays Association Browser.
+Browser.view_menu.view_new_viewer
+Display a new, empty Viewer.
+Browser.view_menu.view_text
+Display source code in Source Editor; text files in Document Editor; Frame files in Frame (opt.).
+Browser.view_menu.view_outline
+Display Source Editor and Document Editor views in a graphical hierarchy mode.
+Browser.view_menu.view_flowchart
+Display selected functions in a Flowchart diagram.
+Browser.view_menu.view_call_tree
+Display selected functions in Call Tree Diagrams. Documents are ignored.
+Browser.view_menu.view_inheritance
+Display selected classes and subsystems in Inheritance browser diagrams.
+Browser.view_menu.view_relationships
+Display selected classes or structs in an Entity Relation Diagram (ERD).
+Browser.view_menu.view_structures
+Display selected structs in a Data Chart.
+Browser.view_menu.view_subsystems
+Display selected subsystems in a Subsystem Map.
+Browser.view_menu.view_document
+Display Association Browser for selected items (requires PDF association rule).
+Browser.view_menu.view_graph
+Show the paths between two or more functions.
+Browser.menubar.utility
+Miscellaneous functions such as Query, Groups, new entities, external apps, etc.
+Browser.utility_menu.utility_query
+Display Query dialog box for searching for specific elements throughout your project(s).
+Browser.utility_menu.gm
+Display the DIScover Group Manager for creating and editing named groups of entities.
+Browser.utility_menu.utility_extract_subsystems
+Identify and display subsystems from your source code (REENGINEER/set option).
+Browser.utility_menu.utility_find_dormant_code
+Identifies uncalled code in your software (REENGINEER/set option).
+Browser.utility_menu.utility_metric_analysis
+Make metrics queries of entities selected in the Browser.
+Browser.utility_menu.utility_stat_report
+Create a statistics report of a project or set of files.
+Browser.utility_menu.utility_para_gpi_1
+Provides access to optional interface packages such as DOC/sw.FRAME.
+Browser.utility_menu.utility_new_struct
+Displays the Define Struct dialog box.
+Browser.utility_menu.utility_new_class
+Displays the Define Class dialog box.
+Browser.utility_menu.utility_new_function
+Displays the Define Function dialog box.
+Browser.utility_menu.utility_new_relation
+Displays the Define Relation dialog box. (Requires PDF Relation rule.)
+Browser.utility_menu.utility_new_subsystem
+Prompts you for the name of a new subsystem. (Requires PDF Subsystem rule.)
+Browser.utility_menu.utility_new_assoctype
+Displays dialog box to enter name and description of new Assoc. Group. (Requires PDF AssociationGroups rule.)
+Browser.utility_menu.utility_simplify_headers
+Removes unneeded header files from selected source files.
+Browser.utility_menu.utility_move_entities
+Scan mode only: moves selected entities to specified files.
+Browser.utility_menu.boilerplate
+Displays dialog box for creating, editing, deleting, and setting defaults for boilerplate files. (requires PDF boilerplate rule.)
+Browser.utility_menu.utility_change_prop
+Displays dialog boxes for renaming entities, changing arguments, and analyzing impact of changes.
+Browser.utility_menu.utility_mod_objects
+Creates a group of all objects modified since the last local Information Model build.
+Browser.utility_menu.utility_remove_assocs
+Display dialog box for browsing and removing associations from selected entities.
+Browser.utility_menu.utility_generate_report
+Generate a summary document about your software using the REPORT/sw option. 
+Browser.menubar.debugger
+Allows you to use the ProjectBrowser to select entities to use with DEBUG/sw or DEBUG+/sw option.
+Browser.debugger_menu.debugger_set_executable
+Make the highlighted file the executable to run during a DEBUG/sw or DEBUG+/sw session.
+Browser.debugger_menu.debugger_active_sessions
+Display a list of DEBUG/sw or DEBUG+/sw sessions that you have started, and the debugger used.
+Browser.debugger_menu.debugger_interpret
+Displays a submenu consisting of two options for running files in Mixed Mode.
+Browser.debugger_interpret_menu.debugger_selected_entities_interpret
+Flag all selected entities for use in Mixed Mode.
+Browser.debugger_interpret_menu.debugger_modified_hpf_uninterpret
+Flag all files that have been modified, for use in Mixed Mode.
+Browser.debugger_menu.debugger_uninterpret
+Displays a submenu consisting of two options for stopping Mixed Mode.
+Browser.debugger_uninterpret_menu.debugger_selected_entities_uninterpret
+Remove the selected entities from the list of those to be used in Mixed Mode.
+Browser.debugger_uninterpret_menu.debugger_modified_hpf_uninterpret
+Remove the selected entities from the list of those to be used in Mixed Mode.
+Browser.debugger_menu.debugger_breakpoints
+Displays a submenu for setting, removing, enabling, disabling, and listing breakpoint.
+Browser.breakpoints_menu.debugger_breakpoints_set
+Place a breakpoint at the start of the interpreted file or function so that execution stops when this point it reached.
+Browser.breakpoints_menu.debugger_breakpoints_delete
+Remove the selected breakpoint.
+Browser.breakpoints_menu.debugger_breakpoints_enable
+Resume stopping at a disabled breakpoint.
+Browser.breakpoints_menu.debugger_breakpoints_disable
+Leave the selected breakpoint in place, but ignore it.
+Browser.browse_scan.browse
+Shows your project structure as it actually exists on your disk.
+Browser.browse_scan.scan
+Shows only the Information Model of your project structure and allows you to explore and filter entities.
+Browser.project_buttons.up
+Cause the Browser point to the Project above the current one (if any). Similar to ".."
+Browser.project_buttons.group
+Create temporary, system-named groups from selected entities (for the current session only).
+Browser.project_buttons.reset
+Clears the Elements and Results columns, and unselects any highlighted items in the Categories and Ask columns.
+Browser.menubar.help
+Displays a list of entry points into DIScover's online hyperlinked documentation.
+Browser.help_menu.help_TOC
+Display a short list of broad topics from which to hyperlink into the doc.
+Browser.help_menu.help_index
+Display a long list of specific topics from which to hyperlink into the doc.
+Browser.help_menu.help_on_browser_menus
+Direct hyperlinks to Browser pulldown menus such as Browser, File, Manage, etc.
+Browser.help_menu.help_on_browsers
+General information about DIScover's Browser windows.
+Browser.help_menu.help_on_viewers
+General information about DIScover Viewer windows.
+Browser.help_menu.help_on_help
+How to use DIScover's online hyperlinked documentation.
+Browser.help_menu.help_release_notes
+Display a list of new features and known issues as of the current release.
+Browser.help_menu.help_getting_started
+General hints for new DIScover users.
+Browser.work_area.assist_line
+Browser minibuffer, for displaying messages, including this quick assist help.
+Browser.proj_listSW.proj_list
+Files and subprojects (browse mode) or entities and subprojects (scan mode). Click: select, double-click: open, Control-click: reverse, Control-/: select all. 
+Browser.list_button.list_status
+Displays Filter List dialog box for specifying what gets displayed or hidden.
+Browser.list_button.list_reset
+Resets the Filter List dialog box Show and Hide filters to null; leaves formatting filters untouched.
+Browser.project_browser.gt_string_ed
+Project Name field. Specify project path, not directory or logical name. In scan mode, you can specify multiple projects with spaces.
+Browser.project_buttons.closure
+Make queries iterative
+Browser.file_browser.gt_string_ed
+Directory name field. Specify path of directory to display in File Browser.
+Browser.directorySW.ListvScrollbar
+Scroll bar. Left click: increment. Middle click: absolute. Left click & hold: pan. Middle click & hold: drag.
+Browser.projSW.ListvScrollbar
+Scroll bar. Left click: increment. Middle click: absolute. Left click & hold: pan. Middle click & hold: drag.
+Browser.group_listSW.ListvScrollbar
+Scroll bar. Left click: increment. Middle click: absolute. Left click & hold: pan. Middle click & hold: drag.
+Browser.domain_listSW.ListvScrollbar
+Scroll bar. Left click: increment. Middle click: absolute. Left click & hold: pan. Middle click & hold: drag.
+Browser.show_listSW.ListvScrollbar
+Scroll bar. Left click: increment. Middle click: absolute. Left click & hold: pan. Middle click & hold: drag.
+Browser.result_listSW.ListvScrollbar
+Scroll bar. Left click: increment. Middle click: absolute. Left click & hold: pan. Middle click & hold: drag.
+Browser.xref_query.sep_button
+Sashes. Click and drag horizontally to resize the Project Browser columns.
+Browser.paned_window.sash
+Sash. Click and drag vertically to expose/hide the File Browser and Project Browser.
+Browser.group_listSW.group_list
+Select items for display in Elements column. Use click, click&hold, Control-click, and Control-/ to adjust selection.
+Browser.domain_listSW.domain_list
+Select items to display (use Return, or View pulldown, or just double-click), or to filter through Ask column. Use click, click&hold, Control-click, and Control-/ to adjust selection.
+Browser.show_listSW.show_list
+Choose filters for selected items in Elements and Results columns. (Elements selections processed immediately; Results selections processed after next Ask selection.
+Browser.result_listSW.result_list
+Select items to display (use Return, or View pulldown, or just double-click), or to filter through Ask column. Use click, click&hold, Control-click, and Control-/ to adjust selection.
+ViewerShell.form1.status_line
+Minibuffer. Displays definition of current selection (click in graphics view; double-click in text view), or messages from DIScover editor, or this quick assist help.
+ViewerShell.menubar.file
+Commands related to the display of files and views within the Viewer.
+ViewerShell.file_menu.file_open
+Display a new view containing only the element(s) selected in the current view.
+ViewerShell.file_menu.file_open_flowchart
+Display a new view of the selected entity as a flowchart.
+ViewerShell.file_menu.file_open_vert_hierarchy
+Display a new view of the selected entity as a hierarchal outline.
+ViewerShell.file_menu.file_open_defn
+Display a new view containing the definition of the entity at the current cursor position.
+ViewerShell.file_menu.file_open_erd
+Display a new view containing an Entity Relation Diagram based on the currently selected classes or structs.
+ViewerShell.file_menu.file_open_dc
+Display a new view containing a Structure Diagram (Data Chart) of the currently selected C struct(s).
+ViewerShell.file_menu.file_open_inheritance
+Display a new view containing an inheritance diagram of the currently selected class or structure.
+ViewerShell.file_menu.file_delete
+Deletes any files, subsystems, or user-defined relations selected in the Viewer or the Minibrowser.
+ViewerShell.file_menu.file_load
+Bring selected files into memory without displaying them. Loading for the first time imports the file.
+ViewerShell.file_menu.file_unload
+Remove the selected files from memory. You are given option to save.
+ViewerShell.file_menu.file_update
+Parse the selected file(s). Use this in conjunction with the Unparsed Files project.
+ViewerShell.file_menu.file_language
+Specify the file type for the highlighted files in the ProjectBrowser.
+ViewerShell.file_menu.file_open_calltree
+Display a new view containing a Call Tree diagram based on the currently selected functions.
+ViewerShell.file_menu.file_save
+Save the current view to disk (same as EMACS C-x C-s).
+ViewerShell.file_menu.file_save_btn_bar
+Save the current state of the custom Button Bar to ~/.psetPrefs.
+ViewerShell.file_menu.file_close_view
+Remove the current view from the Viewer.  Changes are saved in memory.
+ViewerShell.file_menu.file_print
+Display Print dialog box for outputting the current view to a PostScript printer or a file.
+ViewerShell.file_menu.file_close_window
+Remove the current Viewer from the screen.  Changes are maintained in memory.
+ViewerShell.menubar.partition
+Commands related to PARTITION/sw and SIMPLIFY.H/sw.
+ViewerShell.partition_menu.partition_simplify
+Removes unneeded header files from selected source files.
+ViewerShell.partition_menu.partition_move
+Moves selected entities to specified files using an interactive window.
+ViewerShell.partition_menu.partition_copy
+Copies selected entities to specified files using an interactive window
+ViewerShell.partition_menu.partition_insert
+Place selected entities at cursor point.
+ViewerShell.partition_menu.partition_grab
+Takes selected entities and places them in the Minibrowser (similar idea to creating a scratch group).
+ViewerShell.partition_menu.partition_select_methods
+Places methods for a select class in the Minibrowser.
+ViewerShell.partition_menu.partition_select_uses
+For a selected entities, shows the entities it uses in the current file.
+ViewerShell.partition_menu.partition_check_conflicts
+Show what other entities depend on the current selection.
+ViewerShell.menubar.edit
+Provides commands related to the editing of your imported files. (Commands are hazed for raw files.)
+ViewerShell.edit_menu.edit_cut
+Place selected items on the clipboard; remove them from the view. (Same as EMACS C-w.)
+ViewerShell.edit_menu.edit_copy
+Place selected items on the clipboard; leave originals in view. (Same as EMACS C-w C-y.)
+ViewerShell.edit_menu.edit_paste
+Copy clipboard item(s) to current cursor position. (Same as EMACS C-y.)
+ViewerShell.edit_menu.edit_search
+Display dialog box to scan current view for specific text strings or entities by attribute as well as by pattern matching.
+ViewerShell.edit_menu.edit_change_propagation
+Displays the Pre-propagation dialog box, to rename, change argument list, or analyze impact of proposed change.
+ViewerShell.edit_menu.edit_formatted
+(Doc only.) Restore "free formatted" text at cursor position to structured mode. (Same as C-x m toggle.)
+ViewerShell.edit_menu.edit_unformatted
+(Doc only.) Change paragraph or title at cursor postion to "free format" mode. (Same as C-x m toggle.)
+ViewerShell.edit_menu.edit_change_editor
+(Source code only.) Toggles default editor between EMACS and vi emulation.
+ViewerShell.edit_menu.edit_clear_selection
+Deselects and unhighlights all highlighted text in the current view.
+ViewerShell.menubar.manage
+Contains items related to your source control system (such as for checking files in and out.)
+ViewerShell.manage_menu.manage_home_project
+Make the highlighted, top-level, writable project to be your working project.
+ViewerShell.manage_menu.manage_project_scope
+Displays dialog box to manage the number of projects you are working with.
+ViewerShell.manage_menu.manage_get1
+Checks out the file in the current view from your source control system to your Home project.
+ViewerShell.manage_menu.manage_get2
+Similar to Get, but allows you to specify user options set in Configurator dialog box.
+ViewerShell.manage_menu.manage_put
+Appends file in current view to Put Analyzer for checking in from Home project to source control system.
+ViewerShell.manage_menu.manage_merge
+Displays a pulldown menu offering Quick Merge, Detail Merge, and Merge From.
+ViewerShell.manage_menu.manage_merge_from
+Provided for Atria ClearCase environments, to merge from different ClearCase branches.
+ViewerShell.manage_menu.manage_merge_detail
+Displays a Viewer showing differing areas of the files, for you to manually merge.
+ViewerShell.manage_menu.manage_merge_from
+Provided for Atria ClearCase environments, to merge from different ClearCase branches.
+ViewerShell.manage_menu.manage_copy
+Copies file in current view to your Home Project.
+ViewerShell.manage_menu.manage_diff
+Compare the current file to the version checked into your source control system.
+ViewerShell.manage_menu.manage_lock
+Prevent checkin access to file in current view by other users.
+ViewerShell.manage_menu.manage_unlock
+Allows checkin access to file in current view by other users.
+ViewerShell.manage_menu.manage_unget
+Deletes checked out file in current view.
+ViewerShell.manage_menu.manage_obsolete
+(Continuus and Atria ClearCase only.) Performs "cleartool rmname" on file in current view.
+ViewerShell.manage_menu.manage_update_makefile
+Updates the make file for the selected project directory, as specified by the %makemf rule in your PDF.
+ViewerShell.manage_menu.manage_make
+Displays a submenu of Make targets, as defined by the Configurator Preferences dialog box.
+ViewerShell.menubar.view
+Provides commands related to the the display of the Viewer.
+ViewerShell.view_menu.view_options
+Displays a submenu controlling Mode Buttons, Custom Buttons, and Decorated Source.
+ViewerShell.view_options_menu.view_options_mode_buttons
+Toggles display of Cardinality buttons at left of Viewer for use with drag and drop operations in ERD and Data Chart views.
+ViewerShell.view_options_menu.view_options_buttonbar
+Toggles display of user-defined button bar at the top of Viewer.
+ViewerShell.view_options_menu.view_options_decorate
+Toggle display of color and fonts in Source Mode views to identify entity types.
+ViewerShell.view_menu.view_split
+Creates another view (up to three) in your Viewer window. Click & drag sash button to resize.
+ViewerShell.view_menu.view_remove
+Deletes views in reverse order. You cannot delete the original view.
+ViewerShell.view_menu.view_collapse
+Display only the top level of hierarchy in the current selection. (Decorate Source must be active.)
+ViewerShell.view_menu.view_expand
+Reverses effect of Collapse.
+ViewerShell.view_menu.view_collapse_level
+Similar to Collapse, but applies to entire view and specifies how many levels to collapse.
+ViewerShell.view_collapse_level_menu.view_collapse_level_b1
+ViewerShell.view_collapse_level_menu.view_collapse_level_b2
+ViewerShell.view_collapse_level_menu.view_collapse_level_b3
+ViewerShell.view_collapse_level_menu.view_collapse_level_b4
+ViewerShell.view_collapse_level_menu.view_collapse_level_b5
+ViewerShell.view_menu.view_expand_level
+Reverses effect of Collapse to.
+ViewerShell.view_expand_level_menu.view_expand_level_b1
+ViewerShell.view_expand_level_menu.view_expand_level_b2
+ViewerShell.view_expand_level_menu.view_expand_level_b3
+ViewerShell.view_expand_level_menu.view_expand_level_b4
+ViewerShell.view_expand_level_menu.view_expand_level_b5
+ViewerShell.view_menu.view_magnify
+(Graphics only.) Increase view area by Scale Factor set with View Preferences.
+ViewerShell.view_menu.view_shrink
+(Graphics only.) Decrease view area by Scale Factor set with View Preferences.
+ViewerShell.view_menu.view_zoomtofit
+(Graphics only.) Sizes the graphics to just fit within your view.
+ViewerShell.view_menu.view_reset
+(Graphics only.) Restores view to original setting.
+ViewerShell.view_menu.gra_fresh
+Refresh the ERD, Data Chart, or Subsystem view (no effect in other views).
+ViewerShell.view_menu.view_pref
+Sets the scaling factor for the Zoom commands above.
+ViewerShell.menubar.annotation
+Contains commands related to DIScover Notes feature (hazed for raw files).
+ViewerShell.annotation_menu.annotation_note
+Displays a popup menu with Insert, Edit, and Delete options.
+ViewerShell.annotation_note_menu.annotation_note_insert
+Create a note associated with the currently-selected text (document file only).
+ViewerShell.annotation_note_menu.annotation_note_edit
+Display the existing note (indicated by yellow highlighting) associated with the currently selected text.
+ViewerShell.annotation_note_menu.annotation_note_delete
+Delete the current note.
+ViewerShell.annotation_menu.annotation_del_notes
+Removes all notes (indicated by yellow highlighting) from the current file.
+ViewerShell.menubar.link
+Contains commands related to Hyperlinking and Associativity
+ViewerShell.link_menu.link_hotlink
+Navigate the hyperlink (if any) at current cursor position. (Indicated by green highlighting, or under_score on mono screens.)
+ViewerShell.link_menu.link_next_section
+Navigate the section link (if any) at current cursor position. (Section links have no visual cue.)
+ViewerShell.link_menu.link_previous_section
+Navigate the section link (if any) at current cursor position. (Section links have no visual cue.)
+ViewerShell.link_menu.link_start_link
+Create a link (hyperlink or association) originating in the currently selected text or entity.
+ViewerShell.link_menu.link_start_section_link
+Create a section link originating in the title or paragraph at the current cursor position.
+ViewerShell.link_menu.link_close_link
+Complete creation of hyperlink or section link, with destination at the current cursor position.
+ViewerShell.link_menu.link_remove_links
+Display dialog box for deleting hyperlinks or section links.
+ViewerShell.link_menu.link_hard_associate
+reate a hard association between the currently selected text and/or entities.
+ViewerShell.link_menu.link_soft_associate
+Create a soft association between the currently selected text and/or entities. (Requires PDF rule.)
+ViewerShell.link_menu.link_browse_links
+Display the Link Browser dialog box for exploring and navigating hard and soft associations and hyperlinks.
+ViewerShell.link_menu.link_remove
+Display the Browse Association dialog box with a Remove button for exploring and deleting hard and soft associations.
+ViewerShell.menubar.debug
+Provides commands for optional DEBUG/sw or DEBUG+/sw commands (some hazed until a debugger session is active).
+ViewerShell.debug_menu.debug_executable
+Displays dialog box to specify an executable for use with DEBUG/sw or DEBUG+/sw.
+ViewerShell.debug_menu.debug_arguments
+Displays dialog box to enter arguments for use by executable specified with Set Executable.
+ViewerShell.debug_menu.debug_attach
+Displays a list of active processes to which you can attach the debugger.
+ViewerShell.debug_menu.debug_run
+Starts execution of the program specified with Set Executable.
+ViewerShell.debug_menu.debug_selection
+Provides a choice of debuggers compatible with DEBUG/sw. You can change in mid-session and run emulation of second debugger.
+ViewerShell.debug_selection_menu.debug_selection_GDB_4_2
+ViewerShell.debug_selection_menu.debug_selection_GDB_4_11
+ViewerShell.debug_selection_menu.debug_selection_GDB_4_13
+ViewerShell.debug_selection_menu.debug_selection_DBX_4
+ViewerShell.debug_selection_menu.debug_selection_DBX_5
+ViewerShell.debug_selection_menu.debug_selection_DDE
+ViewerShell.debug_selection_menu.debug_selection_XDB
+ViewerShell.debug_menu.debug_active_sessions
+Displays a list of current debugger sessions, including debugger name and version.
+ViewerShell.debug_menu.debug_show_interpreted
+Shows list of files or functions which are currently interpreted (Mixed Mode).
+ViewerShell.debug_menu.debug_interpret
+Displays Mixed Mode options: Selected Entities, File in View, Modified Home Project Files.
+ViewerShell.debug_interpret_menu.debug_interpret_selected
+Adds the function at the cursor location to the Mixed Mode list.
+ViewerShell.debug_interpret_menu.debug_interpret_view
+Adds the file displayed in the active view to the Mixed Mode list.
+ViewerShell.debug_interpret_menu.debug_interpret_modified
+When using a shared executable, adds all local (checked out) modified functions to the Mixed Mode list.
+ViewerShell.debug_menu.debug_uninterpret
+Displays Mixed Mode options: Selected Entities, File in View, Modified Home Project Files.
+ViewerShell.debug_uninterpret_menu.debug_uninterpret_selected
+Removes the function at the cursor location from the Mixed Mode list.
+ViewerShell.debug_uninterpret_menu.debug_uninterpret_view
+Removes the file currently displayed in the active view from the Mixed Mode list.
+ViewerShell.debug_uninterpret_menu.debug_unnterpret_modified
+When using a shared executable, removes all local (checked out) modified functions from the Mixed Mode list.
+ViewerShell.debug_menu.debug_breakpoint
+Displays a list of options for setting, showing, and removing breakpoints.
+ViewerShell.debug_breakpoint_menu.debug_brkpt_at_selection
+Places a breakpoint at the statement currently selected in the view. Same as the Stop At menubar button.
+ViewerShell.debug_breakpoint_menu.debug_remove_brkpt
+Removes the current breakpoint.
+ViewerShell.debug_breakpoint_menu.debug_enable_brkpt
+Make selected breakpoint active again; reverses the effect of Disable.
+ViewerShell.debug_breakpoint_menu.debug_disable_brkpt
+Allow execution to proceed through the selected breakpoint, but don't remove the breakpoint.
+ViewerShell.debug_breakpoint_menu.debug_show_brkpts
+Displays a list of current breakpoints. "#nnnn" = compiled; "I#nnnn" = interpreted.
+ViewerShell.debug_breakpoint_menu.debug_remove_brkpts
+Self-explanatory.
+ViewerShell.debug_menu.debug_kill
+Aborts the currently running program.
+ViewerShell.debug_menu.debug_toggle
+Toggle for beginning/ending debugger session. When starting, session is based on setting of the Set Debugger menu.
+ViewerShell.row_buttons.debug_step
+Executes one statement; if the statement contains function call, execution stops at the first statement of the called function.
+ViewerShell.row_buttons.debug_next
+Executes to the next statement of the current function. (Does not enter called functions like Step does.)
+ViewerShell.row_buttons.debug_continue
+Resumes execution at the current execution point. If a breakpoint exists at that location, it is ignored.
+ViewerShell.row_buttons.debug_jump
+Resumes execution at the selected line of code (the location of the cursor in the associated source window).
+ViewerShell.row_buttons.debug_finish
+Executes through the completion of the current function.
+ViewerShell.row_buttons.debug_up
+Moves the debugger context one stack frame away from the current execution point.
+ViewerShell.row_buttons.debug_down
+Moves the debugger context one stack frame toward the current execution point.
+ViewerShell.row_buttons.debug_where
+Displays the function call stack in reverse chronological order.
+ViewerShell.row_buttons.debug_halt
+Interrupts the running program and returns control to the debugger.
+ViewerShell.row_buttons.debug_stop_at
+Inserts a breakpoint at the location of the cursor in the associated source window.
+ViewerShell.row_buttons.debug_print
+Evaluate the currently-selected expression and print its value.
+ViewerShell.menubar.merge
+Provides commands for three-file Merge operations (hazed until Merge is started).
+ViewerShell.merge_menu.merge_prev
+Focus the view on the previous changed area of code.
+ViewerShell.merge_menu.merge_curr
+Return the view to the current location after you have changed the view by navigating around the file(s).
+ViewerShell.merge_menu.merge_next
+Focus the view on the next changed area of code
+ViewerShell.merge_menu.merge_done
+Save the file and end this Merge session.
+ViewerShell.merge_menu.merge_cancel
+End this Merge session.
+ViewerShell.merge_menu.merge_status
+Redisplay the status of all differing areas in the message window of the Viewer.
+ViewerShell.menubar.help
+Displays a list of entry points into DIScover's online hyperlinked documentation.
+ViewerShell.help_menu.help_TOC
+Display a short list of broad topics from which to hyperlink into the doc.
+ViewerShell.help_menu.help_index
+Display a long list of specific topics from which to hyperlink into the doc.
+ViewerShell.help_menu.help_viewer_menus
+Direct hyperlinks to Viewer pulldown menus such as Browser, File, Manage, etc.
+ViewerShell.help_menu.help_on_viewers
+General information about DIScover Viewer windows.
+ViewerShell.help_menu.help_on_help
+How to use DIScover's online hyperlinked documentation.
+ViewerShell.help_menu.help_release_notes
+Display a list of new features and known issues as of the current release.
+ViewerShell.help_menu.help_getting_started
+General hints for new DIScover users.
+ViewerShell.menubar.Category
+(Imported text views only) Displays commands related to named attributes called categories.
+ViewerShell.Category_menu.Modify,,,
+Displays two lists: category to modify and style to assign to the category.
+ViewerShell.Category_menu.Show,,,
+Turn on the display of specific categories.
+ViewerShell.Category_menu.Hide,,,
+Turn off the display of specific categories.
+ViewerShell.Category_menu.Save
+ViewerShell.menubar.Style
+Display commands related to DIScover's basic font and color attributes ("styles").
+ViewerShell.Style_menu.Assign,,,
+Associate a specific style with the currently selected text string(s).
+ViewerShell.Style_menu.Deassign,,,
+Disassociate a specific style with the currently selected text string(s).
+ViewerShell.menubar.Aliases
+Displays options for creating C++ classes from nouns or other text strings in the current file.
+ViewerShell.Aliases_menu.Use Highlighted,,,
+Identify selected strings as Nouns to be used for C++ class creation.
+ViewerShell.Aliases_menu.Use All Nouns,,,
+Displays list of all probable nouns in current file, that can be used to create C++ classes.
+ViewerShell.Aliases_menu.New Class,,,
+Take all nouns identified my Use Highlighted or Use All Nouns and start creating C++ classes.
+ViewerShell.menubar.Text
+Miscellaneous functions related to editing imported text files.
+ViewerShell.Text_menu.Highlight By
+Displays options for setting resolution of highlighting operations.
+ViewerShell.submenu0.Character
+Round off click and drag highlighting to the nearest character.
+ViewerShell.submenu0.Word
+Round off click and drag highlighting to nearest word (default).
+ViewerShell.Text_menu.Title/Paragraph
+Toggles the current text between Title and Paragraph. (Same as C-x t.)
+ViewerShell.Text_menu.Show Marks
+Toggles the display of paragraph symbols wherever a newline exists in the text.
+ViewerShell.menubar.Inheritance
+Provide commands for working with Inheritance diagrams.
+ViewerShell.Inheritance_menu.Show Related,,,
+Displays dialog box to turn on and off the display of specific objects.
+ViewerShell.Inheritance_menu.Show Members,,,
+Displays dialog box to control display of class members by type or name.
+ViewerShell.Inheritance_menu.Sort Members,,,
+Displays dialog box to control the order in which class members are displayed.
+ViewerShell.Inheritance_menu.Expert Mode
+Toggles the display of more graphical information.
+ViewerShell.Inheritance_menu.Change Attributes,,,
+Displays dialog box to change a member's access (visibility), binding, or storage.
+ViewerShell.Inheritance_menu.Insert Member,,,
+Displays dialog box to add a data member to a class, or a member function to a struct.
+ViewerShell.Inheritance_menu.Add Superclass,,,
+Displays dialog box to specify a new or existing class as a superclass to the current class.
+ViewerShell.Inheritance_menu.Add Subclass,,,
+Displays dialog box to specify a new or existing class as a subclass to the current class.
+ViewerShell.Inheritance_menu.Add Relation,,,
+Displays dialog box to create user-defined relations between objects.
+ViewerShell.menubar.Subsystem-Map
+Contains commands for working with Subsystem views
+ViewerShell.Subsystem-Map_menu.Show Members,,,
+Displays dialog box to turn on and off the display of specific objects.
+ViewerShell.Subsystem-Map_menu.Sort Members,,,
+Displays dialog box to specify order in which you want subsystem members displayed.
+ViewerShell.Subsystem-Map_menu.Insert New
+Displays submenu to create new entities for addition to the current subsystem.
+ViewerShell.submenu4.Struct,,,
+Display the Define Struct dialog box.
+ViewerShell.submenu4.Class,,,
+Display the Define Class dialog box.
+ViewerShell.submenu4.Function,,,
+Display the Define Function dialog box.
+ViewerShell.submenu4.Subsystem,,,
+Display the Create Subsystems dialog box.
+ViewerShell.Subsystem-Map_menu.Insert Member,,,
+Displays Selection Browser to add existing entity to subsystem.
+ViewerShell.Subsystem-Map_menu.Remove Member
+Removes the selected member from the subsystem (source code is not deleted, just subsystem membership).
+ViewerShell.Subsystem-Map_menu.Rename Subsystem,,,
+Displays dialog box to specify new name for the selected subsystem.
+ViewerShell.Subsystem-Map_menu.New Subsystem,,,
+Displays dialog box to specify a name for a new subsystem to be added to the view.
+ViewerShell.Subsystem-Map_menu.Insert Subsystem,,,
+Displays list of existing subsystems to select to add to the view.
+ViewerShell.Subsystem-Map_menu.Remove Subsystem
+Removes the selelected subsystem from the view.
+ViewerShell.menubar.Relations
+Provides commands for working with Entity Relation Diagram views.
+ViewerShell.Relations_menu.Show All
+Display submenu of entities to display: Attributes and Operations
+ViewerShell.submenu1.Attributes
+Turn on the display of data members.
+ViewerShell.submenu1.Operations
+Turn on the display of member functions (methods).
+ViewerShell.Relations_menu.Hide All
+Display submenu of entities whose visibility can be turned off: Attributes and Operations.
+ViewerShell.submenu2.Attributes
+Turn off the display of data members.
+ViewerShell.submenu2.Operations
+Turn off the display of member functions (methods).
+ViewerShell.Relations_menu.Show Built-in Relations,,,
+Displays dialog box controlling display of relationships like Contains, PointsTo, Method Type, etc.
+ViewerShell.Relations_menu.Show Other Relations,,,
+Displays dialog box to filter what user-defined and inherited relations get displayed.
+ViewerShell.Relations_menu.Show Members,,,
+Displays dialog box to control how much information is displayed in the view.
+ViewerShell.Relations_menu.New Struct,,,
+Displays the Define Struct dialog box; the new entity is added to the Data Chart.
+ViewerShell.Relations_menu.New Class,,,
+Displays the Define Class dialog box; the new entity is added to the ERD.
+ViewerShell.Relations_menu.Insert Class,,,
+Displays the Selection Browser allowing you to add any or all existing classes to the ERD.
+ViewerShell.Relations_menu.Insert Struct,,,
+Adds to the current Data Chart any structs that are selected in any view.
+ViewerShell.Relations_menu.Remove Struct
+Removes the current struct from the Data Chart (does not delete source code).
+ViewerShell.Relations_menu.Remove Class
+Removes the current class from the ERD (does not delete source code).
+ViewerShell.menubar.CallTree
+Contains commands for working with Call Tree views
+ViewerShell.CallTree_menu.Display Arguments
+Turn on the display of (potentially large) C++ function arguments.
+ViewerShell.CallTree_menu.Hide Arguments
+Turn off the display of (potentially large) C++ function arguments.
+ViewerShell.viewer_form.viewOptions
+View List button. Displays a list of previously-displayed views.
+ViewerShell.viewer_form.viewTypeOptionMenu
+View Mode button. Switch between text, outline, or flowchart views in source code; text, outline (no paragraphs), or full outline for documents.
+ViewerShell.viewer_form.reparse_button
+Update button. Reparses the source code in the current view.
+ViewerShell.Panner.thumb
+This, believe it or not, is a scroll bar. Use it in a zoomed graphics view to scroll in two dimensions.
+ViewerShell.list_button.up_button
+Click on this button to display the project just above this one (similar to 'cd ..').
+ViewerShell.list_button.list_reset
+Resets the Filter List dialog box Show and Hide filters to null; leaves formatting filters untouched.
+ViewerShell.viewWindow.sash
+Sash. Click and drag vertically to resize the views in a split viewer.
+ViewerShell.paned_window.sash
+Sash. Click and drag vertically to resize the panes in the Minibrowser.
+ViewerShell.query_menu.query
+Provides options like the Project Browser Ask column, plus Subsystems, Errors, and Relations from the Categories column, plus Overrides and Modified Entities operations.
+ViewerShell.query_pulldown.menu_item
+These are the same options available from the Project Browser Ask column, and are applied to any selection in any part of the Viewer.
+ViewerShell.query_pulldown.submenu1
+These are the same Uses options available from the Project Browser Ask column, and are applied to any selection in any part of the Viewer.
+ViewerShell.query_pulldown.submenu2
+These are the same Defines options available from the Project Browser Ask column, and are applied to any selection in any part of the Viewer.
+ViewerShell.query_pulldown.submenu3
+These are the same Show options available from the Project Browser Ask column, and are applied to any selection in any part of the Viewer.
+ViewerShell.query_pulldown.subsystem
+Displays in one Minibrowser pane any subsystems belonging to the project(s) selected in the other Minibrowser pane.
+ViewerShell.query_pulldown.overrides
+Takes the class(es) or member function(s) selected anywhere in the Viewer or Minibrowser, and show where the functions are overridden anywhere in the hierarchy.
+ViewerShell.query_pulldown.modified
+Same as the Project Browser Utility=>Modified Entities command. Displays any modifed entities in the file(s) selected in the Minibrowser.
+ViewerShell.query_pulldown.relations
+Displays in one Minibrowser pane any user-defined relations belonging to the entity or entities selected in the other Minibrowser pane.
+ViewerShell.query_menu.history
+Displays a list of previously displayed Minibrowser views. The selected view will appear in the pane that is NOT current.
+ViewerShell.history_pulldown.his_entry
+Views that have been displayed and which can be recalled. 
+ViewerShell.query_menu.group
+Displays a list of options for creating and saving groups from items selected in the Minibrowser. 
+ViewerShell.group_pulldown.group_create
+Similar to the Project Browser Group button: creates and displays a group from items selected in the Minibrowser.
+ViewerShell.group_pulldown.list_save_top
+Create a disk file consisting of a list of items displayed in the upper Minibrowser pane. Displays a dialog box for entering a filename.
+ViewerShell.group_pulldown.list_save_bottom
+Create a disk file consisting of a list of items displayed in the lower Minibrowser pane. Displays a dialog box for entering a filename.
+ViewerShell.buttons_rowcol.hyper_search
+Displays the DIScover Entity Search dialog box to locate text strings within the current page.
+ViewerShell.buttons_rowcol.hyper_forward
+Step forward through the history list of Helps screens you have already viewed.
+ViewerShell.buttons_rowcol.hyper_back
+Display in reverse order the Help screens you have already viewed.
+ViewerShell.buttons_rowcol.hyper_history
+Display a list of all help files you have already viewed; double-click to revisit.
+ViewerShell.buttons_rowcol.hyper_previous
+Go to the file logically preceding the current help file. (Same as Link->Previous Section; different from Back).
+ViewerShell.buttons_rowcol.hyper_next
+Go to the file that logically follows the current help file. Same as Link->Next Section.
+ViewerShell.buttons_rowcol.hyper_hotlink
+Jump from green or underlined text to related topic. Same as Link->Hotlink.
+

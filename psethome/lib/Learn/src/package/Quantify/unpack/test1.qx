@@ -1,0 +1,273 @@
+comment  Quantify data file:
+comment  Lines are either empty or begin with a key word.
+comment  Key words are followed by data to the end of the line.
+comment  Data fields are separated by tabs.
+comment  Key words and formats:
+keyword	comment	text
+keyword	program	program_name	pid	machine_name	MHz	Quantify_version
+keyword	function	function_name	calls	function_time	function_descendant_time	minimum_time	maximum_time	system_calls	register_window_traps
+keyword	caller	calling_function	called_function	calls	propagated_time
+
+program	src/SHARED/oldApplication/gunzip	16059	sparcstation_2	40	Quantify version 1.1.1
+
+function	signal	6	363	116733	54	67	0	0
+caller	main	signal	6	116733
+
+function	strncpy	1	256	256	256	256	0	0
+caller	main	strncpy	1	256
+
+function	name_too_long	1	31	26778	31	31	0	0
+caller	create_outfile	name_too_long	1	26778
+
+function	.udiv	1	45	45	45	45	0	0
+caller	morecore	.udiv	1	45
+
+function	memcpy	1	148	148	148	148	0	0
+caller	name_too_long	memcpy	1	148
+
+function	start	1	26	389357823	26	26	0	0
+caller	.root.	start	1	389357823
+
+function	demote	1	36	36	36	36	0	0
+caller	malloc	demote	1	36
+
+function	on_exit	1	35	22607	35	35	0	0
+caller	__do_global_ctors	on_exit	1	22607
+
+function	basename	1	11	325	11	11	0	0
+caller	main	basename	1	325
+
+function	main	1	250	381496498	250	250	0	0
+caller	start	main	1	381496498
+
+function	clear_bufs	1	22	22	22	22	0	0
+caller	treat_file	clear_bufs	1	22
+
+function	build_tree	1	29198	29198	29198	29198	0	0
+caller	unpack	build_tree	1	29198
+
+function	read	73	14047871	14047871	6167	383967	73	0
+caller	fill_inbuf	read	73	14047871
+
+function	start+0x80/static	1	7777296	7861296	7777296	7777296	0	0
+caller	start	start+0x80/static	1	7861296
+
+function	open	2	1572934	1572934	13607	1559327	2	0
+caller	create_outfile	open	1	1559327
+caller	treat_file	open	1	13607
+
+function	_getopt_internal	1	144	949	144	144	0	0
+caller	getopt_long	_getopt_internal	1	949
+
+function	sigvec	9	780	116370	78	94	0	0
+caller	signal	sigvec	9	116370
+
+function	lstat	3	80611	80611	10807	38342	3	0
+caller	do_stat	lstat	3	80611
+
+function	fstat	1	3487	3487	3487	3487	1	0
+caller	create_outfile	fstat	1	3487
+
+function	get_istat	1	86	82404	86	86	0	0
+caller	treat_file	get_istat	1	82404
+
+function	strcpy	4	375	375	78	133	0	0
+caller	get_suffix	strcpy	2	160
+caller	get_istat	strcpy	1	133
+caller	make_ofname	strcpy	1	82
+
+function	memcmp	4	106	106	20	29	0	0
+caller	get_method	memcmp	4	106
+
+function	fill_inbuf	72	4478	14052349	62	76	0	0
+caller	unpack	fill_inbuf	71	13699800
+caller	get_method	fill_inbuf	1	352549
+
+function	add_envopt	1	16	779	16	16	0	0
+caller	main	add_envopt	1	779
+
+function	morecore	1	117	22418	117	117	0	0
+caller	malloc	morecore	1	22418
+
+function	strrchr	1	314	314	314	314	0	0
+caller	basename	strrchr	1	314
+
+function	close	5	18310	18310	2806	4766	5	0
+caller	fclose	close	3	9978
+caller	treat_file	close	2	8332
+
+function	chmod	2	848854	848854	409647	439207	2	0
+caller	copy_stat	chmod	2	848854
+
+function	strncmp	2	69	69	23	46	0	0
+caller	main	strncmp	2	69
+
+function	utimes	1	3178967	3178967	3178967	3178967	1	0
+caller	utime	utimes	1	3178967
+
+function	malloc	1	118	22572	118	118	0	0
+caller	on_exit	malloc	1	22572
+
+function	strcat	2	227	227	109	118	0	0
+caller	get_istat	strcat	2	227
+
+function	_fwalk	1	452	10624	452	452	0	0
+caller	_cleanup	_fwalk	1	10624
+
+function	unlink	1	2878967	2878967	2878967	2878967	1	0
+caller	copy_stat	unlink	1	2878967
+
+function	create_outfile	1	50	1629285	50	50	0	0
+caller	treat_file	create_outfile	1	1629285
+
+function	insert	1	59	92	59	59	0	1
+caller	free	insert	1	92
+
+function	sbrk	2	19076	19076	6118	12958	2	0
+caller	getfreehdr	sbrk	1	12958
+caller	morecore	sbrk	1	6118
+
+function	start+0x228/static	2	54576	54576	24288	30288	2	0
+caller	start+0x80/static	start+0x228/static	2	54576
+
+function	utime	1	27	3178994	27	27	0	0
+caller	reset_times	utime	1	3178994
+
+function	getopt_long	1	12	961	12	12	0	0
+caller	main	getopt_long	1	961
+
+function	start+0x248/static	2	19456	19456	7728	11728	2	0
+caller	start+0x80/static	start+0x248/static	2	19456
+
+function	reset_times	1	21	3179015	21	21	0	0
+caller	copy_stat	reset_times	1	3179015
+
+function	sigblock	9	27863	27863	2247	5407	9	0
+caller	sigvec	sigblock	9	27863
+
+function	do_exit	1	25	10701	25	25	0	0
+caller	main	do_exit	1	10701
+
+function	chown	1	422487	422487	422487	422487	1	0
+caller	copy_stat	chown	1	422487
+
+function	get_method	1	117	352772	117	117	0	0
+caller	treat_file	get_method	1	352772
+
+function	start+0x268/static	1	9968	9968	9968	9968	1	0
+caller	start+0x80/static	start+0x268/static	1	9968
+
+function	strcmp	18	540	540	20	67	0	0
+caller	get_suffix	strcmp	13	362
+caller	make_ofname	strcmp	2	66
+caller	get_istat	strcmp	1	61
+caller	main	strcmp	1	31
+caller	treat_file	strcmp	1	20
+
+function	exit	1	29	10676	29	29	0	0
+caller	do_exit	exit	1	10676
+
+function	read_tree	1	6278	6278	6278	6278	0	0
+caller	unpack	read_tree	1	6278
+
+function	stat	2	66164	66164	26542	39622	2	0
+caller	check_ofname	stat	1	39622
+caller	name_too_long	stat	1	26542
+
+function	write	105	23577495	23577495	161487	1185607	105	0
+caller	write_buf	write	105	23577495
+
+function	.umul	1	19	19	19	19	0	0
+caller	morecore	.umul	1	19
+
+function	flush_window	106	4210	64872430	10	40	0	0
+caller	unpack	flush_window	106	64872430
+
+function	.root.	0	0	389357823	0	0	0	0
+
+function	__do_global_dtors	1	10	10	10	10	0	0
+caller	exit	__do_global_dtors	1	10
+
+function	getpagesize	1	2887	2887	2887	2887	1	0
+caller	morecore	getpagesize	1	2887
+
+function	getfreehdr	2	139	13097	33	106	0	2
+caller	morecore	getfreehdr	1	13064
+caller	insert	getfreehdr	1	33
+
+function	make_ofname	1	44	1052	44	44	0	0
+caller	treat_file	make_ofname	1	1052
+
+function	getenv	2	718	1568	359	359	0	0
+caller	_getopt_internal	getenv	1	805
+caller	add_envopt	getenv	1	763
+
+function	_cleanup	1	13	10637	13	13	0	0
+caller	exit	_cleanup	1	10637
+
+function	__do_global_ctors	1	18	22625	18	18	0	0
+caller	__main	__do_global_ctors	1	22625
+
+function	copy_stat	1	50	7329373	50	50	0	0
+caller	treat_file	copy_stat	1	7329373
+
+function	strlen	19	772	772	30	60	0	0
+caller	get_suffix	strlen	15	580
+caller	main	strlen	2	78
+caller	name_too_long	strlen	1	57
+caller	get_istat	strlen	1	57
+
+function	start_float	1	3	3	3	3	0	0
+caller	start	start_float	1	3
+
+function	write_buf	105	1365	23578860	13	13	0	0
+caller	flush_window	write_buf	105	23578860
+
+function	nvmatch	52	850	850	15	29	0	0
+caller	getenv	nvmatch	52	850
+
+function	treat_file	1	228	381343675	228	228	0	0
+caller	main	treat_file	1	381343675
+
+function	fclose	3	155	10172	49	53	0	0
+caller	_fwalk	fclose	3	10172
+
+function	sigsetmask	9	19423	19423	2127	2287	9	0
+caller	sigvec	sigsetmask	9	19423
+
+function	check_ofname	1	21	39643	21	21	0	0
+caller	create_outfile	check_ofname	1	39643
+
+function	updcrc	105	41289360	41289360	393232	393232	0	0
+caller	flush_window	updcrc	105	41289360
+
+function	do_stat	3	72	80683	24	24	0	0
+caller	get_istat	do_stat	3	80683
+
+function	strlwr	3	543	543	45	265	0	0
+caller	get_suffix	strlwr	2	498
+caller	make_ofname	strlwr	1	45
+
+function	free	1	55	147	55	55	0	0
+caller	morecore	free	1	147
+
+function	__main	1	15	22640	15	15	0	1
+caller	main	__main	1	22640
+
+function	unpack	1	293318874	371926580	293318874	293318874	0	0
+caller	treat_file	unpack	1	371926580
+
+function	_sigvec	18	68304	68304	2368	17168	18	0
+caller	sigvec	_sigvec	18	68304
+
+function	putfreehdr	1	21	21	21	21	0	0
+caller	morecore	putfreehdr	1	21
+
+function	get_suffix	2	372	1972	116	256	0	0
+caller	get_istat	get_suffix	1	1157
+caller	make_ofname	get_suffix	1	815
+
+function	fflush	2	39	39	9	30	0	0
+caller	fclose	fflush	2	39
+
+comment end of report.

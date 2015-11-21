@@ -1,0 +1,27 @@
+CROOTS=\
+
+CXXROOTS=\
+    copy_member \
+    ddHeader.h \
+    ddIfl.h \
+    dd_check_calls \
+    dd_check_macros \
+    dd_db \
+    dd_get_func_called \
+    dd_get_struct_rel \
+    dd_or_xref_node.h \
+    dd_set_baseclass \
+    dd_smt_util \
+    dd_style \
+    dd_type_string \
+    ddbuild \
+    ddfunc \
+    ddict.h \
+    ioErrorCheck.h \
+    parse_cplusplus_typename \
+    xref.h \
+    xrefMapper.h \
+    xref_dd \
+    xref_util \
+    moved_from_xref \
+    dd_utils \

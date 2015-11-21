@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>ITLRO - Iterate Through Loops in Reverse Order.</b></p>
+
+<p>Avoid using complex expressions as repeat conditions within loops.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; <font color='red'>for (int i = 0; i &lt; list.length(); i++) { </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; list.get(i).process();<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+You may have access to elements of collection in reverse order, if this way don't break logic of your application.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; <font color='blue'>for (int i = list.length(); i &gt;= 0; i--) { </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; list.get(i).process();<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+<b>See also CLE/Complex Loop Expressions.</b>
+</body>
+</html>

@@ -1,0 +1,8 @@
+CPROOTS = \
+	item \
+	itemenv \
+	persistent \
+	settings 
+
+
+	

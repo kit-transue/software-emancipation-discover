@@ -1,0 +1,38 @@
+############################################################
+# logical-name:          /project1
+# depth:                 3
+# patterns:              *.[CHchly] *.txt
+# private-dir:           $ROOT
+# private-name:          private
+# shared-dir:            $SYSROOT
+# shared-name:           shared
+# source:                /D1/F1.c
+# object:                /D1/F1.o
+# pset:                  /D1/F1.c.pset
+# comp-dir:              /D1
+# make-cmd:              make -n F1.o
+ 
+private : $ROOT <-> /project1
+{
+    src = SRC_DIR <-> /project1
+    {
+        */*/*.[CHchly]
+        */*/*.txt
+    }
+    .rtl  : RTL_GROUP <-> .rtl  { *.rtl }
+    Relations  : RELATION_DIR <-> /ParaSET-Relations  { * }
+    Subsystems : SUBSYSTEM_DIR <-> /ParaSET-Subsystems { * }
+}
+ 
+shared = $SYSROOT <-> /project1
+{
+    */*/*.[CHchly]
+    */*/*.txt
+}
+ 
+__rule001 : / <-> /__rule001
+{
+    /(1)/(2).o : /(**)/(*).c/%/.pset => /(1)/(2).c.pset
+    /(1) : /(**)/(*).c/%/.make => "make -n (2).o"
+}
+ 

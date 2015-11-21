@@ -1,0 +1,137 @@
+#!/bin/sh
+#
+# The script loops through all files in file list_of_diffs and calls ptest_create_diffs
+# to create .diff file for each source file in turn. The .diff file is created by 
+# comparing the .hook files from two specified directories. 
+#
+# The file names in list_of_diffs can be relative to -test directory (suggested), or
+# absolute. The advantage of relative names is that list_of_diffs does not change in
+# case that the whole directory structure is moved. If list_of_diffs is empty or missing,
+# the script loops through all *.[cC] files in subdirectories of -test directory.
+#
+# Example invocation of this script:
+#
+# ptest_create_all_diffs_from_list -test /net/homer/home/local/pmod_test/sun4/CVSCC.sun4 
+# -dir1 /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/gcc-2.6.3-hooks
+# -dir2 /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/gcc-2.6.0-hooks
+#
+# or, in relative paths, from directory /net/homer/home/local/pmod_test/sun4/CVSCC.sun4,
+#
+# ptest_create_all_diffs_from_list -dir1 gcc-2.6.0-hooks -dir2 gcc-2.6.3-hooks
+#
+# (-test defaults to current directory). 
+#
+# The resulting .diff files are placed in 
+#
+# /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/diffs
+#
+# directory for the above example.
+#
+# If any of the two .hook files for the source file is missing, that example is
+# skipped.
+#
+test=""
+while true 
+do
+
+if [ "$1" = "-test" ] ; then
+	[ -n "$2" ] && { test=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-dir1" ] ; then
+        [ -n "$2" ] && { dir1=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-dir2" ] ; then
+        [ -n "$2" ] && { dir2=$2 ; shift ; }
+        shift ;
+else
+	break;
+fi
+
+done
+
+if [ -z "$dir1" -o -z "$dir2" ] 
+then
+	echo "usage: $0"
+	echo " -test directory"
+        echo " -dir1 first_hook_directory"
+	echo " -dir2 second_hook_directory"
+	echo " [other flags passed to ptest_create_hooks]"
+	exit 0
+fi
+#
+# Create absolute paths and workspace.
+#
+if [ -z "$test" ] 
+then
+	test=`pwd`
+fi
+current=`pwd`
+cd $test
+test=`pwd`
+cd $current
+cd $dir1
+dir1=`pwd`
+cd $current
+cd $dir2
+dir2=`pwd`
+
+logname=`basename $test`
+aux=${test}/diffs 
+
+if [ ! -d $aux ]
+then 
+	echo "Making output directory $aux"
+	mkdir $aux || exit 1;
+else
+	rm -f $aux/$logname.log
+fi
+
+startdate=`date`
+
+n=0;
+list_file_flag="f"
+if [ -s $test/list_of_diffs ] 
+then
+	list_file_flag="t"
+fi
+#
+# Main loop. $file is the source code file, just for reference purposes - the differences
+# are investigated on .hook files corresponding to this source.
+#
+if [ "$list_file_flag" = "t" ]
+then
+	for file in `cat $test/list_of_diffs`
+	do
+		var=`echo $file | sed "s|$test||"`
+		cmprfilename=`echo $var | sed -e 's|\./||g' -e 's|^/||' -e 's|/|-|g'`.hook
+		[ -f $dir1/$cmprfilename -a -f $dir2/$cmprfilename ] &&
+		{
+		echo "Comparing hooks for file [$file]... (file no. $n)"
+#
+# Call ptest_create_diffs to compare the two .hook files.
+#
+		ptest_create_diffs -outdir $aux -file1 $dir1/$cmprfilename -file2 $dir2/$cmprfilename >> $aux/$logname.log 2>&1
+		n=`expr $n + 1`;
+		}
+	done
+else
+#
+# If list_of_diffs file does not exist or is empty, do the default - loop through all
+# source (*.[Cc]) files in this project.
+#
+	for file in `find $test -name "*.[cC]" -print`
+	do
+		var=`echo $file | sed "s|$test||"`
+		cmprfilename=`echo $var | sed -e 's|\./||g' -e 's|^/||' -e 's|/|-|g'`.hook
+		[ -f $dir1/$cmprfilename -a -f $dir2/$cmprfilename ] &&
+		{
+		echo "Comparing hooks for file [$file]... (file no. $n)"
+		ptest_create_diffs -outdir $aux -file1 $dir1/$cmprfilename -file2 $dir2/$cmprfilename >> $aux/$logname.log 2>&1
+		n=`expr $n + 1`;
+		}
+	done
+fi
+
+echo "Compared $n files."
+echo "Started  test on: $startdate"
+echo "Finished test on: `date`"

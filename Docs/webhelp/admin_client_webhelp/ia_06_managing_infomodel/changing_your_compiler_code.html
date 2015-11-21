@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Changing Your Compiler Code</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 11.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 8.0px 72.0px; font: 12.0px 'Courier New'}
+    p.p8 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #fff2f9}
+    p.p9 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p10 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p11 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px 'Courier New'}
+    p.p12 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p13 {margin: 0.0px 1.0px 2.7px 12.0px; font: 11.0px Verdana}
+    p.p14 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+    span.s3 {font: 12.0px Verdana}
+    span.s4 {font: 12.0px Helvetica}
+    span.s5 {font: 11.0px Verdana}
+    span.s6 {font: 9.0px 'Times New Roman'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 124.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 155.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 263.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 124.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td5 {width: 155.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td6 {width: 263.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td7 {width: 122.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td8 {width: 152.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td9 {width: 268.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td10 {width: 122.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td11 {width: 152.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td12 {width: 268.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td13 {width: 127.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td14 {width: 260.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td15 {width: 127.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td16 {width: 260.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Changing Your Compiler Code</b></p>
+<p class="p2">The parser emulates a native compiler using a configuration file, designated by one of the codes listed in the tables that follow.</p>
+<p class="p2">Overrides the built-in identification of compilers to match the command verbatim. If the build log contains various compiler commands, then multiple <span class="s1">COMPILER</span> lines can handle them.</p>
+<p class="p2">In, add the appropriate compiler ID to <span class="s1">#COMPILER=</span><span class="s2">.</span></p>
+<p class="p2">Unrecognized compiler flags are treated as errors. You can override these errors by adding the following line to :</p>
+<p class="p3">VAR=UnrecognizedFlag:&lt;action&gt;</p>
+<p class="p4"><span class="s3">where </span>&lt;action&gt;<span class="s3"> is one of the following: </span>normal<span class="s3">, </span>warning<span class="s3">, </span>error<span class="s3">, </span>catastrophe<span class="s3">, or </span>no_message<span class="s3">.</span></p>
+<p class="p2">or</p>
+<p class="p2">customize the flags translation configuration file. There is one flag translation config file per compiler id, For example if the compiler id is <span class="s1">ntclcpp</span> then the file name to customize is <span class="s1">ntclcpp.xml</span>. Each file contains a <span class="s1">cmdline</span> element, for example:</p>
+<p class="p5">&lt;cmdline nameintro="/" unrecognized="warning"&gt;</p>
+<p class="p2">which can be customized by changing the text from<span class="s4"> </span><span class="s1">"warning"</span><span class="s4"> </span>to one of the following:<span class="s4"> </span><span class="s1">normal</span><span class="s4">, </span><span class="s1">error</span><span class="s4">, </span><span class="s1">catastrophe</span><span class="s4">, </span>or<span class="s4"> </span><span class="s1">no_message</span><span class="s4">.</span></p>
+<p class="p5"><span class="s5"><b>1</b></span><span class="s6"><b>   </b></span><span class="s3">Copy </span>&lt;CodeIntegrityInstalldir&gt;/mb/IdentifyCompiler.pl<span class="s3"> to <br>
+</span>&lt;repository&gt;/template/&lt;informationmodel&gt;Template/config/<span class="s3">.</span></p>
+<p class="p5"><span class="s5"><b>2</b></span><span class="s6"><b>   </b></span><span class="s3">Open </span>&lt;repository&gt;/template/&lt;informationmodel&gt;Template/config/IdentifyCompiler.pl<span class="s3">.</span></p>
+<p class="p6"><span class="s5"><b>3</b></span><span class="s6"><b>   </b></span>Change the <span class="s1">IdentifyCompiler</span> function so that it returns a string with the desired code. For example, if every line of your build log is for the Sun Workshop C++ compiler, then you could edit <span class="s1">IdentifyCompiler.pl</span>, replacing the existing <span class="s1">IdentifyCompiler</span> function with the following:</p>
+<p class="p5">sub FilterBuildLog::IdentifyCompiler {</p>
+<p class="p7">return "sunccpp(/var/SUNWSCC)";</p>
+<p class="p5">}</p>
+<p class="p2">The following tables list available compiler IDs and parameters for C, C++, Java, and SQL/ESQL:</p>
+<p class="p8"><b>Important: </b>If you specify multiple parameters, use parentheses (), for example, <br>
+<span class="s2">gccc(/opt/gnu)(sparc-solaris2.5.1)(2.8.1)(SunOS)</span>.</p>
+<p class="p9"><b>C++ Compiler IDs and Parameters</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p10"><b>ID</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p10"><b>Description</b></p>
+      </td>
+      <td valign="middle" class="td3">
+        <p class="p10"><b>Parameters</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">acc</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">HP acc</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p12">the directory containing the compiler’s include directories</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">gcccpp</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">g++; gcc in C++ mode</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p13">•<span class="s6">   </span>the directory containing the compiler’s lib and includes</p>
+        <p class="p13">•<span class="s6">   </span>platform code (as displayed by <span class="s2">gcc -v</span>)</p>
+        <p class="p13">•<span class="s6">   </span>version (as displayed by <span class="s2">gcc -v</span>)</p>
+        <p class="p13">•<span class="s6">   </span>gcc version (e.g. <span class="s2">2</span>, <span class="s2">3</span>, ...)</p>
+        <p class="p13">•<span class="s6">   </span>operating system (e.g. <span class="s2">WIN32</span>, <span class="s2">SunOS</span>, or <span class="s2">HP-UX</span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">ntclcpp</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Microsoft CL.EXE in C++ mode</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p13">•<span class="s6">   </span>if installed, the Microsoft Visual C++ directory (e.g. <span class="s2">ntclcpp(C:\Program Files\Microsoft Visual Studio\VC98)</span>)</p>
+        <p class="p13">•<span class="s6">   </span>if Microsoft Visual C++ is not installed, leave the parameter empty (e.g. <span class="s2">ntclcpp</span>())</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">passccpp</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Useful when obtaining working compile-line flags for a supported compiler is difficult and when it makes more sense to generate the flags for DIScover’s C++ parser directly. Configure the compiler ID which corresponds to the language of the source code and configure <span class="s2">Setup.txt</span> for a build log which contains the flags for the corresponding DIScover parser.</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p12">none</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">sunccpp</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Sun Workshop C++</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p13">•<span class="s6">   </span>the directory containing cc’s include directory</p>
+        <p class="p13">•<span class="s6">   </span>Sun operating system version (e.g. <span class="s2">5_9</span>)</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p14"><b></b><br></p>
+<p class="p9"><b>C Compiler IDs and Parameters</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p10"><b>ID</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p10"><b>Description</b></p>
+      </td>
+      <td valign="middle" class="td3">
+        <p class="p10"><b>Parameters</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">gccc</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">gcc in C mode</p>
+        <p class="p12">gcc in C++ mode</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p13">•<span class="s6">   </span>the directory containing the compiler’s lib and includes</p>
+        <p class="p13">•<span class="s6">   </span>platform code (as displayed by <span class="s2">gcc -v</span>)</p>
+        <p class="p13">•<span class="s6">   </span>version (as displayed by <span class="s2">gcc -v</span>)</p>
+        <p class="p13">•<span class="s6">   </span>gcc version (e.g. <span class="s2">2</span>, <span class="s2">3</span>, ...)</p>
+        <p class="p13">•<span class="s6">   </span>operating system (e.g. <span class="s2">WIN32</span>, <span class="s2">SunOS</span>, or <span class="s2">HP-UX</span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">hpcc</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">HP cc</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p12">none</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">hpcc11</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">HP 11 C compiler with ANSI C support</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p12">none</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">ntclc</p>
+        <p class="p11">ntcl</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Microsoft CL.EXE in C mode</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p13">•<span class="s6">   </span>if installed, the Microsoft Visual C++ directory (e.g. <span class="s2">ntclc(C:\Program Files\Microsoft Visual Studio\VC98)</span>)</p>
+        <p class="p13">•<span class="s6">   </span>if Microsoft Visual C++ is not installed, leave the parameter empty (e.g. <span class="s2">ntclc</span>())</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">passcc</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Useful when obtaining working compile-line flags for a supported compiler is difficult and when it makes more sense to generate the flags for DIScover’s C++ parser directly. Configure the compiler ID which corresponds to the language of the source code and configure <span class="s2">Setup.txt</span> for a build log which contains the flags for the corresponding DIScover parser.</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p12">none</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p11">suncc</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Sun cc</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p13">•<span class="s6">   </span>the directory containing cc’s include directory</p>
+        <p class="p13">•<span class="s6">   </span>Sun operating system version (e.g. <span class="s2">5_9</span>)</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p14"><b></b><br></p>
+<p class="p9"><b>Java Compiler IDs and Parameters</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td7">
+        <p class="p10"><b>ID</b></p>
+      </td>
+      <td valign="middle" class="td8">
+        <p class="p10"><b>Description</b></p>
+      </td>
+      <td valign="middle" class="td9">
+        <p class="p10"><b>Parameters</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td10">
+        <p class="p11">javac</p>
+      </td>
+      <td valign="middle" class="td11">
+        <p class="p12">Sun javac</p>
+      </td>
+      <td valign="middle" class="td12">
+        <p class="p13">•<span class="s6">   </span>the classpath separator character (e.g. a semicolon on Windows and a colon on UNIX)</p>
+        <p class="p13">•<span class="s6">   </span>the JDK’s JRE directory (e.g. <span class="s2">C:\jdk1.3.1_06\jre</span> , then DIScover searches for the <span class="s1">rt.jar</span> file in <span class="s2">C:\jdk1.3.1_06\jre\lib\rt.jar</span>)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td10">
+        <p class="p11">jbuilder</p>
+      </td>
+      <td valign="middle" class="td11">
+        <p class="p12">Borland JBuilder</p>
+      </td>
+      <td valign="middle" class="td12">
+        <p class="p12">none</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p14"><b></b><br></p>
+<p class="p9"><b>SQL/ESQL Compiler IDs and Parameters</b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td13">
+        <p class="p10"><b>ID</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p10"><b>Description</b></p>
+      </td>
+      <td valign="middle" class="td14">
+        <p class="p10"><b>Parameters</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td15">
+        <p class="p11">passinformixsql</p>
+        <p class="p11">passplsql</p>
+        <p class="p11">passssqlcpp</p>
+        <p class="p11">passsqlc</p>
+        <p class="p11">passsybaseql</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p12">Useful when obtaining working compile-line flags for a supported compiler is difficult and when it makes more sense to generate the flags for DIScover’s C++ parser directly. Configure the compiler ID which corresponds to the language of the source code and configure <span class="s2">Setup.txt</span> for a build log which contains the flags for the corresponding DIScover parser.</p>
+      </td>
+      <td valign="middle" class="td16">
+        <p class="p12">none</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p14"><b></b><br></p>
+</body>
+</html>

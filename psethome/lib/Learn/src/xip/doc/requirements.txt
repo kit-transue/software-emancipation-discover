@@ -1,0 +1,36 @@
+
+    X Image Processor Requirements
+
+        Description 
+
+            The X Image Processor (XIP) is an unfinished image processing pipeline application, for which the UI skeleton exists. The program reads an image file and pushes it through a 5 stage pipeline. The user then has the ability to view the image at intra stage tap points. These tap points are represented by small squares midway between the stages.
+
+        Pipeline Stages 
+
+            1) Pre-processing functionality will include image scaling and/or cropping.
+
+            2) The FFT stage will transform the image into the frequency domain.
+
+            3) The filter stage(s) will apply a filter to the image from the following list: high pass, low pass, band pass, and band stop. The user will also have the option of modifying the parameters for the filter, such as cutoff frequencies.
+
+            4) The InvFFT stage will convert the image back to the pixel domain.
+
+            5) Post-processing will allow the user to play with mapping the image to a variety of colormaps. Available colormaps should include: 3:3:2 color ramp, 3:3:2 inverse color ramp, 256 red, green, blue color ramps, 256 grey scale color ramp, and power of 2 grey scale step ramp.
+
+        Intra-stage Tap Points 
+
+            1) Pre-processing - FFT ( purple1 ) 
+
+            2) FFT - Filter (yellow ) 
+
+            3) Filter - InvFFT ( green ) 
+
+            4) InvFFT - PostProcessing ( blue ) 
+
+            Use the right mouse button to select the tap point, and the left one to select new or remove image.
+
+        Enhancement
+
+            The enhancement calls for changing the software to allow the signal to be processed through more than filter. Presently, the image processing pipeline only allows only five (5) stages: pre-processing, fast fourier transform, filter, inverse fast fourier transform, and post-processing stages. Stages in the pipeline are indicated as blue rectangles. In addition, number each stage in terms of their sequential order.
+
+            Note: Navigate to the CreateStage and InitStages functions and the StageObj and the PipeObj structures.

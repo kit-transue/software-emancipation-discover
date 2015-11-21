@@ -1,0 +1,3 @@
+CROOTS=astgcc tr-expr
+
+CPROOTS=ast_fnames error_hook c-ast_hook c-ast_type_str

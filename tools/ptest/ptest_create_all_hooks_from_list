@@ -1,0 +1,190 @@
+#!/bin/sh
+#
+# The script loops through all files in file list_of_files and calls ptest_create_hooks 
+# to create hooks for each source file in turn. Hooks are created using parser executable
+# specified in the command line.
+#
+# Requires parser directory name. Example invocation:
+#
+# ptest_create_all_hooks_from_list -test /net/homer/home/local/pmod_test/sun4/CVSCC.sun4 
+# -pd $PSETHOME/bin -version gcc-2.6.0
+#
+# This will use parser $PSETHOME/bin/cp-parser. The output is a set of .hook and .err files. 
+# .hook files are created for examples which do not have parse errors, and are placed in 
+#
+# /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/gcc-2.6.0-hooks
+#
+# directory for the above example. For examples with parse errors, the .hook and .err files are 
+# placed in parse subdirectory of the above directory.
+#
+# -test directory is a sort of root directory for the project (set of source files)
+# being processed. This directory must have file source_and_include_paths. First line
+# in this file indicates the path, attached to -test, where source files will be
+# searched for (in whole subdirectory tree of -test directory + source path). The
+# remaining lines indicate include files paths, formed in the same way, by concatenating
+# that string to -test directory string. The advantage of this approach is that if
+# the whole root directory of tests (-test directory) is moved, source_and_include_paths
+# remain the same.
+#
+# In addition, if the -test directory contains non-empty file list_of_files, the hooks are
+# created for files in that list. If this file is missing, the hooks are created for all
+# files in project. The paths in list_of_files file must be relative to -test directory, 
+# or absolute. Example of relative paths:
+#
+# CVSCC/Sec5/5_5/p2m_op9.C
+# CVSCC/Sec5/5_5/p2m_op8.C
+# CVSCC/Sec5/5_5/p2memop1.C
+# CVSCC/Sec5/5_4/typcon.C
+# CVSCC/Sec5/5_4/cast_3S.C
+#
+# etc. 
+#
+# Equivalent to the above command issued from directory 
+# /net/homer/home/local/pmod_test/sun4/CVSCC.sun4:
+#
+# ptest_create_all_hooks_from_list -pd $PSETHOME/bin -version gcc-2.6.0
+#
+# (-test defaults to current directory).
+#
+# IMPORTANT: UNLESS -cOrC OPTION IS SPECIFIED, _ALL_ FILES WILL BE PARSED USING 
+# EXECUTABLE cp-parser IN -pd DIRECTORY.
+#
+cOrC="f"
+version=""
+test=""
+
+while true 
+do
+
+if [ "$1" = "-test" ] ; then
+	[ -n "$2" ] && { test=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-cOrC" ] ; then
+	cOrC="t"
+	shift ;
+elif [ "$1" = "-pd" ] ; then
+        [ -n "$2" ] && { pd=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-version" ] ; then
+        [ -n "$2" ] && { version=$2 ; shift ; }
+        shift ;
+else
+	break;
+fi
+
+done
+
+[ -z "$pd" ] && 
+{
+	echo "usage: $0"
+	echo " -cOrC  /* if .c use c-parser.  if .C use cp-parser */"
+	echo " -test directory"
+        echo " -pd parser_directory"
+	echo " -version parser_name"
+	echo " [other flags passed to ptest_hooks]"
+	exit 0;
+}
+#
+# Create absolute path for test directory, and workspace.
+#
+if [ -z "$test" ] 
+then
+	test=`pwd`
+fi
+cd $test
+test=`pwd`
+logname=`basename $test`
+if [ $version = "" ] ; then
+	aux=${test}/hooks ;
+else
+	aux="${test}/$version-hooks" ;
+fi
+
+if [ ! -d $aux ] ; then 
+	echo "Making output directory $aux"
+	mkdir $aux || exit 1;
+	echo "Making output directory $aux/parse"
+	mkdir $aux/parse || exit 1;
+else
+	rm -f $aux/$logname.log
+fi
+#
+# Get path for source files from source_and_include_paths file in $test
+# directory.
+#
+include_path=`
+(
+include_path=""
+read source_path
+while read line
+do
+	include_path="${include_path} -I $test/${line}"
+done
+echo ${include_path}
+) < $test/source_and_include_paths `
+#
+# Specify full parser name to be passed to ptest_create_hooks. Option "-oldParser"
+# is used for historical reasons, however just one parser is used in this code.
+#
+oldParser="-oldParser $pd/cp-parser"
+
+startdate=`date`
+
+n=0;
+list_file_flag="f"
+if [ -s $test/list_of_files ] ; then
+	list_file_flag="t"
+fi
+if [ "$list_file_flag" = "t" ] 
+then
+	for file in `cat $test/list_of_files`
+	do
+		var=`echo $file | sed "s!$test!!"`
+		cmprfilename=`echo $var | sed -e 's/\.\///g' -e 's/^\///' -e 's/\//-/g'`
+		echo "Testing file [$file] compressed name [$cmprfilename]... (file no. $n)"
+		if [ "$cOrC" = "t" -a "`basename $file`" = "`basename $file .c`.c" ]
+		then
+#
+# Use c-parser anc C include path for .c files if command line option -cOrC is given.
+#
+			oldParser="-oldParser $pd/c-parser"
+#
+# Call ptest_create_hooks to create hooks for $file. Put the result in file $cmprfilename.
+#
+			ptest_create_hooks -outdir $aux -file $cmprfilename -parse $aux/parse $oldParser -clean -incl +$test/$source_path $include_path $* $file >> $aux/$logname.log 2>&1
+		else
+#
+# For other files use cp-parser and C++ include path (given in CP_LANG_INCL).
+#
+			oldParser="-oldParser $pd/cp-parser"
+			ptest_create_hooks -outdir $aux -file $cmprfilename -parse $aux/parse $oldParser -clean -incl +$test/$source_path $include_path -I $CP_LANG_INCL $* $file >> $aux/$logname.log 2>&1
+		fi
+		n=`expr $n + 1`
+	done
+else
+#
+# If the list_of_files is empty or missing, do the default - loop through all source files
+# in this project and perform same processing as above. 
+#
+	for file in `find $test -name "*.[cC]" -print`
+	do
+		var=`echo $file | sed "s!$test!!"`
+		cmprfilename=`echo $var | sed -e 's/\.\///g' -e 's/^\///' -e 's/\//-/g'`
+		echo "Testing file [$file] compressed name [$cmprfilename]... (file no. $n)"
+
+		if [ "$cOrC" = "t" -a "`basename $file`" = "`basename $file .c`.c" ] 
+		then
+			oldParser="-oldParser $pd/c-parser"
+			ptest_create_hooks -outdir $aux -file $cmprfilename -parse $aux/parse $oldParser -clean -incl +$test/$source_path $include_path $* $file >> $aux/$logname.log 2>&1
+		else
+			oldParser="-oldParser $pd/cp-parser"
+			ptest_create_hooks -outdir $aux -file $cmprfilename -parse $aux/parse $oldParser -clean -incl +$test/$source_path $include_path -I $CP_LANG_INCL $* $file >> $aux/$logname.log 2>&1
+		fi
+		n=`expr $n + 1`
+	done
+fi
+
+rm -f aux
+echo "Tested $n files."
+echo "Started  test on: $startdate"
+echo "Finished test on: `date`"

@@ -1,0 +1,696 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc exec_shell { cmd } {
+    global tcl_platform
+    if { $tcl_platform(os) == "Windows NT" } {
+       exec cmd /c $cmd
+    } else {
+       exec sh -c $cmd
+    }
+}
+
+
+proc modules_collect { args } {
+    if [llength $args] {
+	set sel [set_copy $args]
+    } else {
+	set sel [set_copy $args]
+    }
+
+    set projs [filter project||scope $sel]
+    set other [filter var||funct||ast||instance||cell $sel]
+    set mods  [filter module $sel]
+    sappend $mods [modules $projs]
+    sappend $mods [where defined $other]
+    return [set_unique $mods]
+}
+
+proc dis_parse { args } {
+  set mods [modules_collect $args]
+  foreach mod $mods {
+      dis_parse_file $mod
+  }
+}
+set edg_languages "C CPP ESQL_C ESQL_CPP"
+proc dis_parse_file { mod } {
+    global edg_languages
+    set lan [language $mod]
+
+    if {[lsearch $edg_languages $lan] >= 0 } {
+        dis_parse_edg_file $mod
+    } else {
+	return dis_parse_els_file $mod 
+    }
+}
+
+proc els_tmpname { fn } {
+    global els_tmpname
+    if [info exists els_tmpname] {
+        return $els_tmpname
+    }
+
+    global env
+    if [info exists env(PSET_CPP_FILE)] {
+        set iff $env(PSET_CPP_FILE)
+    } else {
+        set iff [els tmpname]
+    }
+    if { "$iff" == "" } {
+        if [info exists env(TMPDIR)] {
+            set iff $env(TMPDIR)
+        } else {
+            set iff "$fn.iff"
+            dis_parse_puts "NULL filename for the iff file. Using $iff"
+        }
+    }
+
+    set host [els_exec hostname]
+
+    set  els_tmpname "$iff.$host@[pid]"
+    puts_verbose "tmpfile: $els_tmpname"
+
+    return $els_tmpname
+}
+
+# Returns name for temporary input file. This file is used for redirecting as standard input.
+proc els_tmpinputname {} {
+    global els_tmpinputname
+    if [info exists els_tmpinputname] {
+        return $els_tmpinputname
+    }
+    set  els_tmpoutputname "[els_tmpfilename].in"
+    return $els_tmpoutputname
+}
+
+# Returns name for temporary output file. This file is used for redirecting as standard ouput.
+proc els_tmpoutputname {} {
+    global els_tmpoutputname
+    if [info exists els_tmpoutputname] {
+        return $els_tmpoutputname
+    }
+    set  els_tmpinputname "[els_tmpfilename].out"
+    return $els_tmpinputname
+}
+
+# Returns name for temporary file.
+proc els_tmpfilename {} {
+    global env
+    if [info exists env(PSET_CPP_FILE)] {
+        set f $env(PSET_CPP_FILE)
+    } else {
+        set f [els tmpname]
+    }
+    if { "$f" == "" } {
+        if [info exists env(TMPDIR)] {
+            set f $env(TMPDIR)
+        } else {
+            set f "tmpfile"
+            dis_parse_puts "NULL filename for the tmp file. Using $f"
+        }
+    }
+
+    set  name "$f@[pid]"
+    puts_verbose "tmp file: $name"
+
+    return $name
+}
+
+# Executes command and return its output.
+proc els_exec { cmd } {
+    # Executes command and redirects its standard output to temporary file
+    set tmpoutname [els_tmpoutputname]
+    set code [catch {system $cmd >"$tmpoutname"} str]
+
+    # Reads result from temporary file
+    set res ""
+    if {$code == 0} {
+       set fd [open $tmpoutname r]
+       if {[gets $fd res] >= 0} {
+           while {[gets $fd line] >= 0} {
+               set res [format "%s\n%s" $res $line]
+           }
+       }
+       close $fd
+    }
+    return $res
+}
+
+# Replaces all curly braces to double quotes.
+proc els_curlybraces2doublequotes { str } {
+    set res ""
+    set len [string length $str]
+    set prev ""
+    for {set i 0} {$i < $len} {incr i} {
+        set ch [string index $str $i]
+        if {$ch == "\{"} {
+            set res "$res\""
+        } elseif {$ch == "\"" && $prev == "\{"} {
+            ;# skip this character, we should avoid doubling double quotes.
+        } elseif {$ch == "\}"} {
+            if {$prev != "\""} {
+                set res "$res\""
+            }
+        } else {
+            set res "$res$ch"
+        }
+        set prev $ch
+    }
+    return $res
+}
+
+# Retrieves value of flag '--relative_path_base' from parser's flags string.
+proc els_get_relative_path_base all_flags {
+
+    # Find necessary flag in the string
+    set beg [string first "--relative_path_base" $all_flags]
+    # skip '--relative_path_base ' phrase
+    incr beg 21
+
+    # This is total length of string with parser's flag
+    set len [string length $all_flags]
+
+    # These variable will store inices of first and last charactes of desired path.
+    set first_quote -1
+    set second_quote -1
+
+    # Go thru the parser's flags string starting from the end of the proper flag's name.
+    # And trying to find two double quotes which bound our path.
+
+    for {set i $beg} {$i < $len} {incr i} {
+        set ch [string index $all_flags $i]
+        if {$ch == "\""} {
+            if {$first_quote == -1} {
+                set first_quote [expr $i + 1]
+            } else {
+                 set second_quote [expr $i - 1]
+                 break
+            }
+        } else {
+        	if {$ch == "\{"} {
+                	set first_quote [expr $i + 1]
+        	} else {
+	        	if {$ch == "\}"} {
+                		set second_quote [expr $i - 1]
+                 		break
+	        	} else {
+				if {$ch == " "} {
+					if {$first_quote == -1} {
+			        		set first_quote $beg
+						set second_quote [expr $i - 1]
+						break
+					}
+				}
+			}
+		}
+	}
+    }
+
+    # Extract proper part of the string if possible.
+    set path_base ""
+    if {$first_quote != -1 && $second_quote != -1} {
+        set path_base [string range $all_flags $first_quote $second_quote]
+    }
+    return $path_base
+
+} ;# els_get_relative_path_base
+
+proc els_cd { fn } {
+    set dir [pdf_rule directory $fn]
+    if {([string index  $dir 0] == "/") || 
+        ([string index  $dir 1] == ":")} {
+    } else { 
+	set d [file dir $fn]
+	if { ($dir == "") || ($dir == ".")} {
+	    set dir $d
+	} else {
+	    set dir  "$d/$dir"
+	}
+    } 
+    if [file isdirectory $dir] {
+	    return $dir
+    } else {
+	dis_parse_puts "cd: directory $dir does not exist"
+	return [file dir $fn]
+    }  
+}
+
+proc dis_parse_els_file { mod } {
+    set fn [fname $mod]
+    set lang [language $mod]
+    if { "$lang" == "ELS" } {
+        set lang [els language $fn]
+    }
+    if { "$lang" == "" } {
+        dis_parse_puts "[name $mod]: Unknown language"
+	return 0
+    }
+
+    set ll [string tolower $lang]
+    set parser "dis_parse_$ll"
+
+    set pref_flags [els flags $lang]
+    # Escape all semicolons and backslashes with an extra backslash,
+    # because $flags is a TCL list of arg strings.
+    regsub -all \\\\|\; $pref_flags \\\\& esc_pref_flags
+    # Get the make rule without running make.
+    set pdf_flags  [pdf_rule make $fn]
+    catch {set pdf_flags [exec_shell $pdf_flags]}
+    set flags "$esc_pref_flags $pdf_flags"
+
+    set iff [els_tmpname $fn]
+    set code [catch { > $iff "" } msg]
+    if $code {
+	dis_parse_puts "cannot create $iff: $msg"
+	return 1;
+    }
+
+    dis_parse_puts "\nParsing $lang file: \'$fn\'..."
+    set code [$parser $flags $iff $fn]
+    if {$code > 0} {
+	set fo [get_pref_value acceptSyntaxErrors]
+	if { $fo != "yes" || [ file size $iff ] == 0 } {
+		return $code;
+	}
+	puts "Accepting parse errors."
+    }
+    # This will do "grep" for file names in iff to create a table of
+    # files.
+    scan_iff_file -home $iff "/" ELS
+
+    set code [catch {iff_parse $iff $mod} msg]
+    if $code {
+	return 3;
+    }
+    return 0
+}
+
+proc dis_parse_sql { flags iff fn } {
+
+  set cmd "dis_sql $flags -o $iff $fn 2>$iff.err"
+  set ret [exec_cmd "$cmd"]
+  if $ret {
+	puts_verbose "errorbrowser_report_errors $iff.err"
+	errorbrowser_report_errors $iff.err
+  }
+
+  return $ret
+}
+
+proc dis_parse_java { flags iff fn } {
+
+  # Change working directory:
+  set dir [els_cd $fn]
+  set dir [ ospath $dir ]
+  puts_verbose "cd $dir"
+  set cwd [ pwd ]
+  catch { cd $dir }
+
+  set cmd "aset_jfe $flags --IF_file $iff $fn 2>$iff.err"
+  set ret [exec_cmd "$cmd"]
+
+  # Restore working directory:
+  catch { cd $cwd }
+
+  if $ret {
+	puts_verbose "errorbrowser_report_errors $iff.err"
+	errorbrowser_report_errors $iff.err
+  }
+
+  # Prevent forgiving catastrophes, by truncating.
+  if {$ret > 2} {
+        catch { > $iff "" } msg
+  }
+
+  return $ret
+}
+
+proc dis_parse_rc {flags iff fn} {
+    set cmd "rcparser $fn $iff 2>$iff.err"
+
+    if {[catch {set ret [exec_cmd $cmd]}]} {
+        return 0
+    }
+
+    if $ret {
+	puts_verbose "errorbrowser_report_errors $iff.err"
+	errorbrowser_report_errors $iff.err
+    }
+
+    return $ret
+}
+
+proc dis_parse_tlb {flags iff fn} {
+    set cmd "tlb_parser $fn $iff 2>$iff.err"
+
+    if {[catch {set ret [exec_cmd $cmd]}]} {
+        return 0
+    }
+
+    if $ret {
+	puts_verbose "errorbrowser_report_errors $iff.err"
+	errorbrowser_report_errors $iff.err
+    }
+
+    return $ret
+}
+
+proc dis_parse_puts { MSG } {
+	puts stderr $MSG
+}
+
+if [info exists env(DIS_IFEXT)] {
+    set ifext $env(DIS_IFEXT)
+} else {
+    set ifext ifext
+}
+
+proc dis_parse_edg_file { mod } {
+    set newmod [src_get_parsable_file $mod]
+
+    if {[size $newmod] == 0} {
+	set fn [fname $mod]
+	set is_header [header $mod]
+	puts stdout "$fn is not parsable $is_header"
+	return 5
+    } else {
+	set mod $newmod
+    }
+
+    set fn [fname $mod]
+    set lang [language $mod]
+   
+    set dir [els_cd $fn]
+    set iff [els_tmpname $fn]
+
+    set code [catch { > $iff "" } msg]
+    if $code {
+	dis_parse_puts "cannot create $iff: $msg"
+	return 1;
+    }
+    set sql 0
+
+    if { $lang == "ESQL_C" } {
+        set suff [get_pref_value cDfltSrcSuffix]
+	set sql 1
+	set sql_lang $lang
+    } elseif { $lang == "ESQL_CPP" } {
+        set suff [get_pref_value cPlusDfltSrcSuffix]
+	set sql 2
+	set sql_lang $lang
+    }
+
+    if $sql {
+	set tmp_f $iff$suff
+        set sql_if $iff.sql.if
+	set sql_c_if $iff.c.if 
+
+	set flags  [parms_esql $mod]
+	set lang   [language   $mod]
+	if { $lang == "ESQL_C" } {
+	    set lang C
+	} else {
+	    set lang CPP
+	}
+
+        set status [exec_cmd "dis_sql $flags -o $sql_if -c $tmp_f $fn"]
+
+        if {$status > 1} {
+            dis_parse_puts "dis_sql failed"
+	    return $status
+	}
+
+	set all_parms   [parms_all  $fn$suff $lang]
+        set fn $tmp_f
+    } else {
+	set cpp_parms   [parms_cpp  $mod]
+	set comp_parms  [parms_comp $mod]
+        set all_parms "$comp_parms $cpp_parms"
+
+	# aset may update module language after above parms callbacks.
+	# Should not be applied to ESQL because of NT case issues.
+	set lang [language $mod]
+    }
+
+    set CCcc aset_CCcc
+
+    dis_parse_puts "\nParsing $lang file: \'$fn\'..."
+    
+    # Change working directory:
+    set dir [ ospath $dir ]
+    puts_verbose "cd $dir"
+    set cwd [ pwd ]
+    catch { cd $dir }
+
+    # Run aset_CCcc:
+    if { $lang == "C" } {
+        set all_parms "--c $all_parms"
+    } elseif { $lang == "CPP" } {
+        set all_parms "--c++ $all_parms"
+    } 
+    set cmd "$CCcc --IF_file $iff --GNU_compatible_AST $all_parms \{$fn\} 2> $iff.err"
+    set status [exec_cmd $cmd]
+
+    # Restore working directory:
+    catch { cd $cwd }
+
+    # Reset status to 0 if parse errors are to be forgiven;  preserve 
+    # original status in parse_failed
+    set parse_failed $status
+    if {$status == 2} {
+	set fo [get_pref_value acceptSyntaxErrors]
+	if { $fo == "yes" } {
+	    set status 0
+	}
+    }
+
+    # Report parser errors here in batch mode or if no further
+    # processing will take place
+    if { $status || ![is_gui] } {
+	report_if_errors $iff.err
+    }
+
+    if $parse_failed {
+        dis_parse_puts "$CCcc failed, exit status $parse_failed"
+	if {$status == 0} {
+		dis_parse_puts "Accepting parse errors."
+	}
+    }
+    if $status {
+	return $status;
+    }
+    set status [els_process_iff $dir $lang $iff]
+    if $status { return $status}
+    global ifext
+
+    if $sql {
+	set status [exec_cmd [list $ifext $iff -o $sql_c_if]]
+	if $status {return $status}
+	set status [els_process_iff $dir $sql_lang $sql_if $sql_c_if]
+    }
+    return $status
+#to do it the old way after all, (e.g if EDG failed), uncoment the next line
+# return -code continue
+}
+
+proc report_if_errors { errfile } {
+    if [ file isfile $errfile ] {
+	set sz [ file size $errfile ]
+	if { $sz > 0 } {
+	    puts_verbose "errorbrowser_report_errors $errfile"
+	    errorbrowser_report_errors $errfile
+	}
+    }
+}
+
+proc els_process_iff { dir lang iff {second_iff ""}} {
+    #prepare list_file for the if_extractor
+
+    set list_file "$iff.0"
+    set list [scan_iff_file -home -outdated $iff $dir $lang]
+    set ii 1
+    if { [llength $list ] == 0 } {
+        if { [is_gui] } { 
+            dis_parse_puts "
+	        No outdated files in this compilation unit
+	        belong to the home project.  Only files in
+                the home project can be updated.
+            "
+        } else {
+            dis_parse_puts "
+	        No outdated files in this compilation unit
+	        belong to the project [name [home_proj]].
+            "
+        }
+	return 0
+    }
+    > $list_file {
+	foreach el $list {
+	    puts $el
+	    puts "$iff.$ii"
+	    incr ii;
+	}
+    }
+    global ifext
+
+    # Overwrite parser errors in batch mode, since they've already been reported
+    if { ![is_gui] } {
+	set cmd "$ifext $iff $second_iff -f $list_file 2>$iff.err"
+    } else {
+	set cmd "$ifext $iff $second_iff -f $list_file 2>>$iff.err"
+    }
+    set status [exec_cmd $cmd]
+
+    report_if_errors $iff.err
+
+    if $status {
+	dis_parse_puts "$ifext failed, exit status $status"
+	scan_iff_reset $dir $lang
+	return $status;
+    }
+
+    set ii 1
+    foreach el $list {
+	set ln [scan_iff_ln $el]
+	dis_parse_puts "importing \'$ln\' ..."
+        set status  [catch {iff_parse $iff.$ii $ln}]
+	if $status {
+	    dis_parse_puts "iff_parse failed"
+	    scan_iff_reset $dir $lang	
+            return 6
+	} else {
+	    dis_parse_puts "done"
+	}
+
+	incr ii;
+    }
+    return 0
+}
+ 
+proc dis_preprocess_edg_file { mod cpp_file } {
+
+    if {[size $mod] == 0} {
+	set fn [fname $mod]
+	set is_header [header $mod]
+	puts stdout "$fn is not parsable $is_header"
+	return 5
+    } 
+
+    set fn [fname $mod]
+    set lang [language $mod]
+   
+    set dir [els_cd $fn]
+
+    set sql 0
+
+    if { $lang == "ESQL_C" } {
+        set suff [get_pref_value cDfltSrcSuffix]
+	set sql 1
+	set sql_lang $lang
+	set lang C
+
+    } elseif { $lang == "ESQL_CPP" } {
+        set suff [get_pref_value cPlusDfltSrcSuffix]
+	set sql 2
+	set sql_lang $lang
+	set lang CPP
+    }
+
+    if $sql {
+	set iff [els_tmpname $fn]
+	set mod $iff$suff
+        set sql_if $iff.sql.if
+	set sql_c_if $iff.c.if 
+
+	set flags [parms_esql $mod]
+        set status [exec_cmd "dis_sql $flags -o $sql_if -c $mod $fn"]
+        if {$status > 1} {
+            dis_parse_puts "dis_sql failed"
+	    return $status
+	}
+
+	set all_parms   [parms_all  $fn$suff $lang]
+        set fn $mod
+    } else {
+	set cpp_parms   [parms_cpp  $mod]
+	set comp_parms  [parms_comp $mod]
+        set all_parms "$comp_parms $cpp_parms"
+    }
+
+    set CCcc aset_CCcc
+    set lang [language $mod]
+
+    dis_parse_puts "\nPreprocessing $lang file: \'$fn\'..."
+    
+    # Change working directory:
+    set dir [ ospath $dir ]
+    puts_verbose "cd $dir"
+    set cwd [ pwd ]
+    catch { cd $dir }
+
+    # Run aset_CCcc:
+    if { $lang == "C" } {
+        set all_parms "--c $all_parms"
+    } elseif { $lang == "CPP" } {
+        set all_parms "--c++ $all_parms"
+    } 
+    set cmd "$CCcc -E $all_parms \{$fn\} > {$cpp_file}"
+    set status [exec_cmd $cmd]
+
+    # Restore working directory:
+    catch { cd $cwd }
+
+    if $status {
+        dis_parse_puts "$CCcc failed, exit status $status"
+    }
+    return $status
+}
+
+# run an executable and return exit status
+# according to Alex Boverman, this is safer than just using "system"
+proc exec_cmd {cmd} {
+    puts_verbose "exec_cmd $cmd"
+    set status [ catch { eval exec "$cmd" } OUTPUT ]
+
+    if {$status != 0} {
+	puts_verbose $OUTPUT
+	global errorCode
+	if { [ info exists errorCode ] } {
+	    puts_verbose $errorCode
+	    set ec $errorCode
+	    if { "$ec" != "NONE" } {
+	    set code [ lindex $ec 2 ]
+		if { [ regexp {[0-9]+} $code ] } {
+		    set status $code
+		}
+	    }
+	}
+    }
+
+    puts_verbose "Exit status: $status"
+    return $status
+}

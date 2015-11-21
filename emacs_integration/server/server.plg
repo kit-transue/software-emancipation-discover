@@ -1,0 +1,58 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: client - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jverne\LOCALS~1\Temp\2\RSP12.tmp" with contents
+[
+/nologo /MLd /W3 /GX /ZI /Od /I "..\..\src\\" /I ".\include" /I "..\include" /I "../../dislite/include" /I "D:/rd/ci_emancipation/dislite/include" /I "../../dish/include" /I "D:/rd/ci_emancipation/dish/include" /I "../../nameserver/include/" /I "D:/rd/ci_emancipation/nameserver/include/" /I "../../DevXLauncher/include" /I "D:/rd/ci_emancipation/DevXLauncher/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"Debug/" /Fd"Debug/" /FD /c 
+"D:\rd\ci_emancipation\emacs_integration\src\CommProto.cpp"
+"D:\rd\ci_emancipation\nameserver\src\nameServCalls.cxx"
+"D:\rd\ci_emancipation\nameserver\src\winmain.cxx"
+"D:\rd\ci_emancipation\dish\src\SocketComm.cxx"
+"D:\rd\ci_emancipation\emacs_integration\client\src\connect_mgr.cpp"
+"D:\rd\ci_emancipation\emacs_integration\client\src\driver.cpp"
+"D:\rd\ci_emancipation\emacs_integration\src\lib.cpp"
+"D:\rd\ci_emancipation\DevXLauncher\src\startproc.cpp"
+"D:\rd\ci_emancipation\emacs_integration\client\src\emacs_api.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jverne\LOCALS~1\Temp\2\RSP12.tmp" 
+Creating temporary file "C:\DOCUME~1\jverne\LOCALS~1\Temp\2\RSP13.tmp" with contents
+[
+Ws2_32.lib Advapi32.lib User32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/emacsclient.pdb" /debug /machine:I386 /out:"Debug/emacsclient.exe" /pdbtype:sept 
+.\Debug\CommProto.obj
+.\Debug\nameServCalls.obj
+.\Debug\winmain.obj
+.\Debug\SocketComm.obj
+.\Debug\connect_mgr.obj
+.\Debug\driver.obj
+.\Debug\lib.obj
+.\Debug\startproc.obj
+.\Debug\emacs_api.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\jverne\LOCALS~1\Temp\2\RSP13.tmp"
+<h3>Output Window</h3>
+Compiling...
+CommProto.cpp
+nameServCalls.cxx
+d:\rd\ci_emancipation\nameserver\src\nameservcalls.cxx(121) : warning C4244: 'initializing' : conversion from '__int64' to 'unsigned short', possible loss of data
+winmain.cxx
+SocketComm.cxx
+connect_mgr.cpp
+driver.cpp
+lib.cpp
+startproc.cpp
+emacs_api.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+emacsclient.exe - 0 error(s), 1 warning(s)
+</pre>
+</body>
+</html>

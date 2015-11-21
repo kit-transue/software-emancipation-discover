@@ -1,0 +1,46 @@
+<html>
+<body>
+
+<p><b>PTCOL - Place "Try/Catch" blocks Outside of Loops.</b></p>
+
+<p>Placing try/catch blocks inside loops can slow down the execution of code.
+If the JIT compiler is turned off or if you are running a JVM without a JIT,
+performance speed may decrease by about 21 percent.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class PTCOL {<br>
+&nbsp; void oper (FileInputStream fis) {<br>
+&nbsp; &nbsp; for (int i = 0; i &lt; size; i++) {<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> try {</font><br>                                      
+&nbsp; &nbsp; &nbsp; &nbsp; _sum += fis.read();<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> } catch (Exception e) {}</font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+&nbsp; private int _sum;<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Place try/catch block outside of the loop.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class PTCOL {<br>
+&nbsp; void oper (FileInputStream fis) {<br>
+&nbsp; &nbsp; <font color='blue'> try {</font><br>
+&nbsp; &nbsp; &nbsp; for (int i = 0; i &lt; size; i++) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; _sum += fis.read();<br>
+&nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; <font color='blue'> } catch (Exception e) {}</font><br>
+&nbsp; }<br>
+&nbsp; private int _sum;<br>
+}</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Peter Haggar: "Practical Java - Programming Language Guide".
+Addison Wesley, 2000, pp.81 - 83</p>
+
+</body>
+</html>

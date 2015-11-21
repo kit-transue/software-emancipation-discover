@@ -1,0 +1,166 @@
+#!/bin/sh
+
+Error ()
+{
+	echo "$*" 1>&2
+}
+
+if [ -z "$DISPLAY" ]; then
+	Error "Error: Can't open display		"
+	exit
+fi
+
+#remove the last slash from psethome
+PSETHOME=`echo $PSETHOME | sed 's#/$##'`
+export PSETHOME;
+
+while [ ! -z "$1" ]; do
+  case "$1" in
+    -service) 
+	if [ -z "$2" ]; then
+		if [ -f "$HOME/dislite/dislite.prefs" ]; then
+			rm $HOME/dislite/dislite.prefs
+		fi
+		break
+	fi
+	shift
+	m_name=`echo $1 | sed 's/.*@\(.*\)/\1/'`
+	for host in `$PSETHOME/bin/dish2 -all`
+	do
+		host_id=`echo $host | sed 's/^{\([0-9\.]*\)}/\1/' | grep '[0-9][0-9\.]*' | grep -v '[{}]'`
+		if [ ! -z "$host_id" ]; then
+			for model in `$PSETHOME/bin/dish2 -test $host_id`
+			do
+				if [ "$m_name" = "$model" ];then
+					DIS_SERVICE="$host_id@$model"
+					export DIS_SERVICE
+					break
+				fi
+			done
+		fi
+	if [ ! -z "$DIS_SERVICE" ];then
+		break
+	fi
+	done;;
+    -*)  
+
+	if [ "$DIS_EDITOR" = "3" ]; then
+		Error "Usage: disviper [-service service] [file1 ...]"
+	else 
+		if [ "$DIS_EDITOR" = "2" ]; then
+			Error "Usage: disvim [-service service] [file1 ...]"
+		else 
+			Error "Usage: dislite [-service service] [file1 ...]"
+		fi
+	fi
+	exit;;
+    *) file=$*; break;;
+  esac
+  shift
+done
+
+if [ ! -d "$HOME/dislite" ]; then
+	mkdir $HOME/dislite
+fi
+
+if [ -z "$DIS_INSTALL" ]; then
+	DIS_INSTALL="$PSETHOME/lib/dislite"
+	export DIS_INSTALL
+fi
+
+if [ -z "$DIS_WISH" ]; then
+	DIS_WISH="$PSETHOME/bin/wish"
+	export DIS_WISH
+fi
+
+if [ -z "$TCL_LIBRARY" ]; then
+	TCL_LIBRARY="$PSETHOME/lib/tcl8.0"
+	export TCL_LIBRARY
+fi
+
+if [ -z "$TK_LIBRARY" ]; then
+	TK_LIBRARY="$PSETHOME/lib/tk8.0"	
+	export TK_LIBRARY
+fi
+
+if [ ! -z "$DIS_EDITOR" ] ; then
+    default_editor=$DIS_EDITOR
+else
+    if [ ! -z "$DIS_VIM" ] ; then
+	default_editor="2"
+    else
+	if [ ! -z "$DIS_VIPER" ] ; then
+	    default_editor="3"
+	else
+	    default_editor="0"
+	fi
+    fi
+fi
+export default_editor
+
+if [ -z "$DIS_SERVICE" ];  then
+	if [ -f "$HOME/dislite/dislite.prefs" ]; then
+		set -- `wc -w $HOME/dislite/dislite.prefs`
+		if [ "$1" != "1" ]; then
+			rm $HOME/dislite/dislite.prefs
+		fi
+	fi
+	if [ -f "$HOME/dislite/dislite.prefs" ]; then
+		DIS_SERVICE=`cat $HOME/dislite/dislite.prefs`	
+		export DIS_SERVICE
+	else
+		DIS_LITESTARTUP=1
+		export DIS_LITESTARTUP
+		$DIS_WISH -f $DIS_INSTALL/ServiceChooser.tcl
+		unset DIS_LITESTARTUP
+		if [ -f "$HOME/dislite/dislite.prefs" ]; then
+			DIS_SERVICE=`cat $HOME/dislite/dislite.prefs`	
+			export DIS_SERVICE
+		else
+			exit
+		fi
+	fi	
+fi
+
+if [ -z "$DIS_EDITOR" ] ; then
+    if [ -f "$HOME/dislite/editor.prefs" ] ; then
+	DIS_EDITOR=`cat $HOME/dislite/editor.prefs`
+    else
+	DIS_EDITOR=$default_editor
+    fi	
+fi
+export DIS_EDITOR
+
+if [ "$DIS_EDITOR" = "0" -o "$DIS_EDITOR" = "1" -o "$DIS_EDITOR" = "3" ] ; then
+	EMACS_ARGS="-l $DIS_INSTALL/dislite.el"
+	if [ "$DIS_EDITOR" = "3" ] ; then
+		EMACS_ARGS="-l $DIS_INSTALL/viper.el $EMACS_ARGS"
+	fi
+
+	if [ -z "$DIS_EMACS" ] ;  then
+		DIS_EMACS=`$PSETHOME/bin/pset-which emacs`
+		path_emacs=1
+	fi
+
+	if [ ! -x "$DIS_EMACS" ] ; then
+		if [ "$path_emacs" = "1" ] ; then
+			Error "No emacs in path.  Please add emacs to path,"
+			Error "set DIS_EMACS to a valid emacs executable,"
+			Error "or run disvim to use dislite with vim."
+		else
+			Error "Invalid setting $DIS_EMACS for DIS_EMACS."
+			Error "Please set to a valid executable."
+		fi
+	else
+		$DIS_EMACS $EMACS_ARGS $file&
+	fi
+elif [ "$DIS_EDITOR" = "2" ] ; then
+	DIS_VIM_DEVXPRESS=1
+	export DIS_VIM_DEVXPRESS
+	VIM="$PSETHOME/lib/vim"
+	export VIM
+	$PSETHOME/bin/vim -g $file&
+else
+	Error "Invalid value \"$DIS_EDITOR\" for DIS_EDITOR.  Legal values are"
+	Error "0 (emacs), 1 (xemacs), 2 (vim), or 3 (viper)."
+fi

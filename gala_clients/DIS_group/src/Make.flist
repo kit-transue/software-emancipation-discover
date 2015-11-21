@@ -1,0 +1,7 @@
+CPROOTS=\
+	GROUPswApp\
+	CreateGroup\
+	groupCmds\
+	GroupApp\
+	
+CROOTS=\

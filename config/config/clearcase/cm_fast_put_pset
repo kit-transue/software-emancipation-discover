@@ -1,0 +1,16 @@
+#!/bin/sh
+
+tmpfile=$1
+cat $tmpfile | while read src_fname
+do	
+	read dst_fname
+
+	if [ -f "$src_fname" ]; then
+		cleartool ci -nc $src_fname 1> /dev/null 2>&1
+		cleartool unco -rm $src_fname 1> /dev/null 2>&1
+	else
+		cleartool unco -rm $src_fname 1> /dev/null 2>&1
+	fi
+done
+
+exit 0

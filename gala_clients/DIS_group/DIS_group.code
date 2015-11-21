@@ -1,0 +1,1408 @@
+/*************************************************************************
+* Copyright (c) 2015, Synopsys, Inc.                                     *
+* All rights reserved.                                                   *
+*                                                                        *
+* Redistribution and use in source and binary forms, with or without     *
+* modification, are permitted provided that the following conditions are *
+* met:                                                                   *
+*                                                                        *
+* 1. Redistributions of source code must retain the above copyright      *
+* notice, this list of conditions and the following disclaimer.          *
+*                                                                        *
+* 2. Redistributions in binary form must reproduce the above copyright   *
+* notice, this list of conditions and the following disclaimer in the    *
+* documentation and/or other materials provided with the distribution.   *
+*                                                                        *
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    *
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      *
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  *
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   *
+* HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, *
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       *
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  *
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  *
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    *
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
+*************************************************************************/
+#include <vport.h>
+ 
+#include vstartupHEADER
+#include vstdlibHEADER
+#include vsessionHEADER
+#include vserviceHEADER
+#include vscrapHEADER
+#include vdasservHEADER
+#include vstdioHEADER
+
+#include <signal.h>
+#include "Application.h"
+
+#ifdef SERVER
+#include <tcl.h>
+#endif /* SERVER */
+ 
+#ifndef _WIN32
+#ifndef SIG_TYP
+#ifdef sun4
+typedef void (*SIGHANDLER)(int,...);
+#else
+typedef void (*SIGHANDLER)(int);
+#endif
+#define SIG_TYP SIGHANDLER
+#endif
+#endif
+
+static int Block(vsessionStatement *statement)
+{
+#ifndef _WIN32
+    SIG_TYP old = signal(SIGALRM,SIG_IGN);
+#endif
+    int retval = statement->Block(NULL);
+#ifndef _WIN32
+    signal(SIGALRM,old);
+#endif
+    return retval;
+}
+
+typedef void async;
+typedef char* _charptr;
+typedef vstr* _vstrptr;
+
+#define g_push(s) {vscrapSetArrayCount(real_result,array_index2+1);vscrapSetElementAt(real_result,array_index2,s);array_index2++;}
+#define g_take() sarg? vscrapGetElementAt(sarg,array_index++): 0
+ 
+static vscrap*  marshall_char(char x){return vscrapFromCharacter(x);}
+static vscrap*  marshall_short(short x){return vscrapFromInteger((int)x);}
+static vscrap*  marshall_int(int x){return vscrapFromInteger(x);}
+static vscrap*  marshall_float(float x){return vscrapFromFloat(x);}
+static vscrap*  marshall_double(double x){return vscrapFromFloat(x);}
+static vscrap*  marshall__charptr(_charptr x){if (!x)x="";vstr*_x=vstrClone((vchar*)x);vscrap* s=vscrapFromString(_x);vstrDestroy(_x);return s;}
+static vscrap*  marshall__vstrptr(_vstrptr x){if (!x)x=(_vstrptr)"";return vscrapFromString(x);}
+ 
+static void demarshall_char(char* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetCharacter(s);delete s;
+    } else { 
+        *x = '\0'; 
+    } 
+} 
+ 
+static void demarshall_short(short* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_int(int* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_float(float* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+static void demarshall_double(double* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+ 
+extern "C" char* strdup(const char*);
+static void demarshall__charptr(char** x, vscrap* s) 
+{ 
+    if (s) { 
+        vstr*y = vstrCloneScribed(vscrapScribeString(s));delete s;
+        *x = strdup((char*)y);
+        vstrDestroy(y);
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static void demarshall__vstrptr(vstr** x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vstrCloneScribed(vscrapScribeString(s));delete s;
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static vscrap *answer_scrap;
+
+
+static void errmsg(char*msg){fprintf(stderr,msg);}
+static void std_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+    vscrap *sync_answer_scrap = NULL;
+
+    switch (vsessionStatement::GetEventCode (event)) {
+        case vsessionStatementEVENT_COMPLETED:
+	    statement->GetReturnValue(statement, &sync_answer_scrap);
+	    statement->SetData(sync_answer_scrap);
+	    break;
+	case vsessionStatementEVENT_CANNOT_SEND:
+	    errmsg("*** cannot send!\n");
+	    Application::SetCannotSend(vTRUE);
+	    break;
+	case vsessionStatementEVENT_END_SESSION:
+	    errmsg("*** end session!\n");
+	    break;
+	case vsessionStatementEVENT_FAILED:
+	    errmsg("*** failed!\n");
+	    break;
+    }
+}
+
+static void std_async_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+
+    Application::DecrementCount();
+}
+
+static Application* DISgroup_app;
+#ifdef SERVER
+#include "include/GROUPswApp.h"
+#include "include/CreateGroup.h"
+#include "SelectionIterator.h"
+#include "messages.h"
+static GROUPswApp* App = NULL;
+
+// Needed for DISui calls.
+#include "../../clients/communications/include/Application.h"
+#include "../../clients/DIS_ui/interface.h"
+extern Application* DISui_app;
+
+extern propManager* prop_manager;
+extern "C" void galaxyStartTimer (void);
+extern "C" void galaxyStopTimer (void);
+
+// Class kludge to improve performance.
+class galaxyBoost {
+    public:
+       galaxyBoost (void) { galaxyStopTimer (); }
+       ~galaxyBoost (void) { galaxyStartTimer (); }
+};
+
+// GROUP function to force consistent initialization.
+vbool GroupInit()
+{
+    galaxyBoost boost;
+    if (!App)
+	App = new GROUPswApp;
+    if (!GROUPswApp::isRunning() )
+        App->Startup();
+    return(vTRUE);
+};
+
+#include "include/GroupApp.h"
+GroupApp groupApp;
+
+#endif
+
+
+/*----------------------------- dis_group_init ------------------------------*/
+
+#ifdef SERVER
+int dis_group_init (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{    // Args: KnownGroupsList 
+    if (GroupInit() ) {
+        if (strcmp(argv[1], "-groupsList") == 0) {
+            if (argc == 3) {
+                int rtlId = atoi(argv[2]);
+                App->initGroupsList(rtlId);
+            } else {
+                dis_message(NULL, MSG_WARN, "dis_group_init -groupsList:%d args found instead of 3!!!", argc);
+            }
+
+        } else if (strcmp(argv[1], "-askList") == 0) {
+            if (argc == 2) {
+                char* askList = (char*) App->getAskListString();
+                Tcl_SetResult(interp, askList, TCL_VOLATILE);
+            } else {
+                dis_message(NULL, MSG_WARN, "dis_group_init -askList:%d args found instead of 2!!!", argc);
+            }
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_shutdown ------------------------------*/
+
+#ifdef SERVER
+int dis_group_shutdown (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    galaxyBoost boost;
+    if (GROUPswApp::isRunning() ) {
+	App->Shutdown();
+	delete App;
+	App = NULL;
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_create ------------------------------*/
+
+#ifdef SERVER
+int dis_group_create (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (strcmp(argv[1], "-setName") == 0) {
+            App->getCreatePtr()->setNextGroupName((vchar*) argv[2]);
+
+        } else if (strcmp(argv[1], "-getName") == 0) {
+            char* nextName = (char*) App->getCreatePtr()->getNextGroupName();
+            Tcl_SetResult(interp, (char*) nextName, TCL_VOLATILE);
+
+        } else if (strcmp(argv[1], "-create") == 0) {
+            RTListServer* groupsRTL = NULL;
+            int groupsId = atoi(argv[2]);
+            if (groupsId > 0) {
+                groupsRTL = RTListServer::find(groupsId);
+            }
+            int groupType = atoi(argv[3]);
+            symbolArr members(0);
+            RTListServer* membersRTL = NULL;
+            int membersId = atoi(argv[4]);
+            if (membersId > 0) {
+                membersRTL = RTListServer::find(membersId);
+                if (membersRTL) membersRTL->getSelArr(members);
+            }
+            int memberCopyType = atoi(argv[5]);
+            groupHdrPtr newGroup = App->getCreatePtr()->createNextGroup(groupType,
+                                             members, memberCopyType);
+            if (groupsRTL && newGroup) {
+                groupsRTL->insert(newGroup);
+            }
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_ask ------------------------------*/
+
+#ifdef SERVER
+int dis_group_ask (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (argc == 4) {
+            SelectionIterator sel((vchar*)argv[1]);
+
+            symbolArr groups(0);
+            int sourceId = atoi(argv[2]);
+            if (sourceId > 0) {
+                RTListServer* sourceRTL = RTListServer::find(sourceId);
+                if (sourceRTL) sourceRTL->getSelArr(groups);
+            }
+
+            int resultsId = atoi(argv[3]);
+            RTListServer* resultsRTL = NULL;
+            if (resultsId > 0) {
+                resultsRTL = RTListServer::find(resultsId);
+                if (resultsRTL) resultsRTL->clear();
+            }
+            symbolArr results(0);
+            while (sel.Next() )
+                App->Ask(sel.GetNext(), groups, results);
+            if (resultsRTL) resultsRTL->insert(results);
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_query:%d args found instead of 4!!!", argc);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_file ------------------------------*/
+
+#ifdef SERVER
+int dis_group_file (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (argc == 3) {
+            vbool status = vFALSE;
+            symbolArr groups(0);
+            RTListServer* sourceRTL = 0;
+            int sourceId = atoi(argv[2]);
+            if (sourceId > 0) {
+                sourceRTL = RTListServer::find(sourceId);
+                if (sourceRTL) sourceRTL->getSelArr(groups);
+            }
+
+            if (strcmp(argv[1], "-delete") == 0) {
+                // Delete each group, with prompting.
+                status = App->deleteGroups(groups);
+                // Update the Groups list.
+                App->initGroupsList(sourceId);
+            } else if (strcmp(argv[1], "-save") == 0) {
+                App->saveGroups(groups);
+            } else if (strcmp(argv[1], "-print") == 0) {
+                App->printGroups(groups);
+            } else if (strcmp(argv[1], "-rename") == 0) {
+                status = App->renameGroups(groups);
+            } else if (strcmp(argv[1], "-convert") == 0) {
+                status = App->convertGroups(groups);
+            }
+            if (status && sourceRTL) {
+//                sourceRTL->select(groups);
+                sourceRTL->_propagate();
+            }
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_file:%d args found instead of 3!!!", argc);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_ops ------------------------------*/
+
+#ifdef SERVER
+int dis_group_ops (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (argc == 4) {
+            vbool status = vFALSE;
+            symbolArr groups(0);
+            RTListServer* groupsRTL = NULL;
+            int groupsId = atoi(argv[2]);
+            if (groupsId > 0) {
+                groupsRTL = RTListServer::find(groupsId);
+                if (groupsRTL) groupsRTL->getSelArr(groups);
+            }
+            symbolArr members(0);
+            RTListServer* membersRTL = NULL;
+            int membersId = atoi(argv[3]);
+            if (membersId > 0) {
+                membersRTL = RTListServer::find(membersId);
+                if (membersRTL) membersRTL->clear();
+            }
+            if (strcmp(argv[1], "-union") == 0) {
+                status = App->unionGroups(groups, members);
+            } else if (strcmp(argv[1], "-intersect") == 0) {
+                status = App->intersectGroups(groups, members);
+            } else if (strcmp(argv[1], "-subtractAB") == 0) {
+                status = App->subtractABGroups(groups, members);
+            } else if (strcmp(argv[1], "-subtractBA") == 0) {
+                status = App->subtractBAGroups(groups, members);
+            }
+            if (status && membersRTL) {
+                groupHdrPtr newGroup = App->getCreatePtr()->createNextGroup(0, members, 0);
+                if (groupsRTL) groupsRTL->insert(newGroup);
+            }
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_file:%d args found instead of 4!!!", argc);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_edit ------------------------------*/
+
+#ifdef SERVER
+int dis_group_edit (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (argc == 4) {
+            vbool status = vFALSE;
+            symbolArr groups(0);
+            int groupsId = atoi(argv[2]);
+            RTListServer* groupsRTL = NULL;
+            if (groupsId > 0)
+                groupsRTL = RTListServer::find(groupsId);
+                if (groupsRTL) groupsRTL->getSelArr(groups);
+            symbolArr members(0);
+            int membersId = atoi(argv[3]);
+            RTListServer* membersRTL = NULL;
+            if (membersId > 0) {
+                membersRTL = RTListServer::find(membersId);
+                if (membersRTL) membersRTL->getSelArr(members);
+            }
+            if (strcmp(argv[1], "-cut") == 0) {
+                status = App->cutMembers(groups, members);
+            } else if (strcmp(argv[1], "-copy") == 0) {
+                status = App->copyMembers(groups, members);
+            } else if (strcmp(argv[1], "-paste") == 0) {
+                status = App->pasteMembers(groups, members);
+            } else if (strcmp(argv[1], "-assign") == 0) {
+                status = App->assignMembers(groups, members);
+            }
+            if (status && groupsRTL) groupsRTL->select(groups);
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_file:%d args found instead of 4!!!", argc);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_setGroupRelations ------------------------------*/
+
+#ifdef SERVER
+int dis_group_setGroupRelations (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (argc == 4) {
+            vbool status = vFALSE;
+            symbolArr groups(0);
+            int groupsId = atoi(argv[2]);
+            RTListServer* groupsRTL = NULL;
+            if (groupsId > 0) {
+                groupsRTL = RTListServer::find(groupsId);
+                //if (groupsRTL) groupsRTL->getSelArr(groups);
+		if (groupsRTL) groups = groupsRTL->getArr();
+            }
+            symbolArr targets(0);
+            int targetsId = atoi(argv[3]);
+            RTListServer* targetsRTL = NULL;
+            if (targetsId > 0) {
+                targetsRTL = RTListServer::find(targetsId);
+                //if (targetsRTL) targetsRTL->getSelArr(targets);
+		if (targetsRTL) targets = targetsRTL->getArr();
+            }
+            if (strcmp(argv[1], "-clients") == 0) {
+                status = App->setClientGroups(groups, targets);
+            }else if (strcmp(argv[1], "-servers") == 0) {
+                status = App->setServerGroups(groups, targets);
+            }else if (strcmp(argv[1], "-peers") == 0) {
+                status = App->setPeerGroups(groups, targets);
+            }else if (strcmp(argv[1], "-unrelated") == 0) {
+                status = App->setUnrelatedGroups(groups, targets);
+            }
+            //if (status && groupsRTL) groupsRTL->select(groups);
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_file:%d args found instead of 4!!!", argc);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_setMemberRelations ------------------------------*/
+
+#ifdef SERVER
+int dis_group_setMemberRelations (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (argc == 4) {
+            vbool status = vFALSE;
+            symbolArr groups(0);
+            int groupsId = atoi(argv[2]);
+            RTListServer* groupsRTL = NULL;
+            if (groupsId > 0) {
+                groupsRTL = RTListServer::find(groupsId);
+                if (groupsRTL) groupsRTL->getSelArr(groups);
+            }
+            symbolArr members(0);
+            int membersId = atoi(argv[3]);
+            RTListServer* membersRTL = NULL;
+            if (membersId > 0) {
+                membersRTL = RTListServer::find(membersId);
+                if (membersRTL) membersRTL->getSelArr(members);
+            }
+            if (strcmp(argv[1], "-public") == 0) {
+                status = App->setPublicMembers(groups, members);
+            }else if (strcmp(argv[1], "-private") == 0) {
+                status = App->setPrivateMembers(groups, members);
+            }else if (strcmp(argv[1], "-visible") == 0) {
+                status = App->setVisibleMembers(groups, members);
+            }else if (strcmp(argv[1], "-invisible") == 0) {
+                status = App->setInvisibleMembers(groups, members);
+            }
+            if (status && groupsRTL) groupsRTL->select(groups);
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_file:%d args found instead of 4!!!", argc);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_validate ------------------------------*/
+
+#ifdef SERVER
+int dis_group_validate (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (strcmp(argv[1], "-findViolations") == 0) {
+            if (argc == 5) {
+                vbool status = vFALSE;
+				const vchar* outputName   = (vchar*) argv[2];
+                const char* fileName = argv[3];
+                symbolArr groups(0);
+                int groupsId = atoi(argv[4]);
+                RTListServer* groupsRTL = NULL;
+                if (groupsId > 0) {
+                    groupsRTL = RTListServer::find(groupsId);
+                    if (groupsRTL) groupsRTL->getSelArr(groups);
+                    status = App->findViolations(groups, fileName, outputName);
+                }
+            } else {
+                dis_message(NULL, MSG_WARN, "dis_group_validate -findViolations:%d args found instead of 4!!!", argc);
+            }
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_validate:'%s' is an unknown option.", argv[1]);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_import ------------------------------*/
+
+#ifdef SERVER
+int dis_group_import (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (GroupInit() ) {
+        if (strcmp(argv[1], "-find") == 0) {
+            if (argc == 2) {
+                vbool status = vFALSE;
+                genString groupNames;
+                status = App->findRTLGroups(groupNames);
+                Tcl_SetResult(interp, (char*) groupNames, TCL_VOLATILE);
+            } else {
+                dis_message(NULL, MSG_WARN, "dis_group_import -find:%d args found instead of 2!!!", argc);
+            }
+
+        } else if (strcmp(argv[1], "-RTL") == 0) {
+            if (argc == 2) {
+                vbool status = vFALSE;
+                status = App->importRTLGroups();
+            } else {
+                dis_message(NULL, MSG_WARN, "dis_group_import -RTL:%d args found instead of 2!!!",
+                            argc);
+            }
+
+        } else if (strcmp(argv[1], "-package") == 0) {
+            if (argc == 3) {
+                vbool status = vFALSE;
+                const char* packageName = argv[2];
+                status = App->importPackageSession(packageName);
+            } else {
+                dis_message(NULL, MSG_WARN, "dis_group_import -package:%d args found instead of 3!!!",
+                            argc);
+            }
+        } else {
+            dis_message(NULL, MSG_WARN, "dis_group_import:'%s' is an unknown option.", argv[1]);
+        }
+    }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_GrabSubsysSel ------------------------------*/
+
+#ifdef SERVER
+int dis_group_GrabSubsysSel (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  if (argc >= 3) {
+    App->GrabSubsysSel(argc - 1, argv + 1);
+    ret = TCL_OK;
+  }
+  else {
+    genString usage;
+    usage.printf("Usage: %s <rtl> <id_1> [ <id_2> <id_3> ... ]", argv[0]);
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_shift_sel ------------------------------*/
+
+#ifdef SERVER
+int dis_group_shift_sel (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  if (argc >= 3) {
+    int src_id = atoi(argv[1]);
+    int res_id = atoi(argv[2]);
+    App->ShiftSel(src_id, res_id);
+    ret = TCL_OK;
+  }
+  else {
+    genString usage;
+    usage.printf("Usage: %s <rtl_1> <rtl_2>", argv[0]);
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_unselect_rtl ------------------------------*/
+
+#ifdef SERVER
+int dis_group_unselect_rtl (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  if (argc >= 2) {
+    for (int i = 1; i < argc; i++) {
+      int id = atoi(argv[i]);
+      if (id > 0) {
+        RTListServer *rtl = RTListServer::find(id);
+	    if (rtl) {
+	      symbolArr arr(0);
+	      arr = rtl->getArr();
+	      if (arr.size() > 0) {
+	        rtl->clear();	  
+	        rtl->insert(arr);
+          }
+        }
+      }
+    }
+    ret = TCL_OK;
+  }
+  else {
+    genString usage;
+    usage.printf("Usage: %s <id_1> [ <id_2> <id_3> ... ]", argv[0]);
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_remove_sel ------------------------------*/
+
+#ifdef SERVER
+int dis_group_remove_sel (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+  
+  if (argc >= 2) {
+	for (int i = 1; i < argc; i++) {
+	  int id = atoi(argv[i]);
+	  if (id > 0) {
+	    RTListServer *rtl = RTListServer::find(id);
+		if (rtl) {
+		  symbolArr sel(0);
+		  symbolArr arr(0);
+		  symbolArr usel(0);
+		  arr = rtl->getArr();
+		  rtl->getSelArr(sel);
+		  if (sel.size() > 0) {
+		    symbolPtr j;
+			ForEachS (j, arr) {
+			  symbolPtr k;
+			  bool unselected = true;
+			  ForEachS (k, sel) {
+			    if (j == k)
+				  unselected = false;
+			  }
+			  if (unselected)
+			    usel.insert_last(j);
+			}
+			rtl->clear();
+			rtl->insert(usel);
+		  }
+		}
+	  }
+	}
+    ret = TCL_OK;
+  }
+  else {
+    genString usage;
+    usage.printf("Usage: %s <id_1> [ <id_2> <id_3> ... ]", argv[0]);
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_export ------------------------------*/
+
+#ifdef SERVER
+int dis_group_export (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  genString usage;
+  usage.printf("Usage: %s group <rtl_id>", argv[0]);
+
+  if (argc >= 3) {
+    if (!strcmp(argv[1], "group")) {
+      int rtl_id = atoi(argv[2]);
+      if (rtl_id > 0) {
+        RTListServer *rtl = RTListServer::find(rtl_id);
+        if (rtl) {
+          symbolArr sel;
+          rtl->getSelArr(sel);
+          App->ConvertToGroup(sel);
+        }
+      }
+    }
+    else 
+      Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+  else
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_info ------------------------------*/
+
+#ifdef SERVER
+int dis_group_info (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  genString usage;
+  usage.printf("Usage: %s { names <src_id> } | { queries }", argv[0]);
+
+  if (argc >= 2) {
+    if (!strcmp(argv[1], "names")) {
+      if (argc == 3) {
+        int id = atoi(argv[2]);
+	groupApp.Refresh(id);
+        ret = TCL_OK;
+      }
+      else
+        Tcl_AppendResult(interp, (char *)usage, NULL);
+    }
+    else if (!strcmp(argv[1], "queries")) {
+      char *queries = (char *)groupApp.GetQueryList();
+      Tcl_SetResult(interp, queries, TCL_VOLATILE);
+      ret = TCL_OK;
+    }
+    else
+      Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+  else
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_query ------------------------------*/
+
+#ifdef SERVER
+int dis_group_query (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  genString usage;
+  usage.printf("Usage: %s <selection> <src_id> <res_id>", argv[0]);
+
+  if (argc == 4) {
+
+    symbolArr src(0);
+    int src_id = atoi(argv[2]);
+    if (src_id > 0) {
+      RTListServer *src_rtl = RTListServer::find(src_id);
+      if (src_rtl)
+        src_rtl->getSelArr(src);
+    }
+
+    RTListServer *res_rtl = NULL;
+    int res_id = atoi(argv[3]);
+    if (res_id > 0)
+      res_rtl = RTListServer::find(res_id);
+
+    symbolArr res(0);
+    SelectionIterator sel((vchar *)argv[1]);
+
+    while(sel.Next()) {
+      if (groupApp.PerformQuery(sel.GetNext(), src, res)) {
+	if (res_rtl) {
+	  res_rtl->clear();
+	  res_rtl->insert(res);
+        }
+        groupApp.Refresh(src_id);
+        ret = TCL_OK;
+      }
+    }
+  }
+  else
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_mktemp ------------------------------*/
+
+#ifdef SERVER
+int dis_group_mktemp (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  genString usage;
+  usage.printf("Usage: %s { get } | { set { 0 | 1 } }", argv[0]);
+
+  if (argc >= 2) {
+    if (!strcmp(argv[1], "get")) {
+      genString str;
+      int val = groupApp.GetMakeTempFlag();
+      str.printf("%d", val);
+      Tcl_SetResult(interp, (char *)str, TCL_VOLATILE);
+      ret = TCL_OK;
+    }
+    else if (!strcmp(argv[1], "set")) {
+      if (argc >= 3) {
+        int val = atoi(argv[2]);
+        if ((val == 0) || (val == 1))
+          groupApp.SetMakeTempFlag(val);
+        else
+          Tcl_AppendResult(interp, (char *)usage, NULL);
+      }
+      else
+        Tcl_AppendResult(interp, (char *)usage, NULL);
+    }
+    else
+      Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+  else
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_name ------------------------------*/
+
+#ifdef SERVER
+int dis_group_name (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  genString usage;
+  usage.printf("Usage: %s { get_current | get_prefix } | { { set_current | set_prefix } <prefix> }", argv[0]);
+
+  if (argc >= 2) {
+    if (!strcmp(argv[1], "get_current")) {
+      char *name = groupApp.SnatchResultName(true);
+      if (!name)
+        name = groupApp.GetResultName();
+      Tcl_SetResult(interp, name, TCL_VOLATILE);
+      ret = TCL_OK;
+    }
+    else if (!strcmp(argv[1], "get_prefix")) {
+      char *name = groupApp.GetResultPrefix();
+      Tcl_SetResult(interp, name, TCL_VOLATILE);
+      ret = TCL_OK;
+    }
+    else if (!strcmp(argv[1], "set_current")) {
+      if (argc >= 3) {
+        groupApp.SetResultName(argv[2]);
+      }
+      ret = TCL_OK;
+    }
+    else if (!strcmp(argv[1], "set_prefix")) {
+      if (argc >= 3) {
+        if (groupApp.SetResultPrefix(argv[2]))
+	  Tcl_SetResult(interp, "0", TCL_VOLATILE);  // 0 - Valid
+	else
+	  Tcl_SetResult(interp, "1", TCL_VOLATILE);  // 1 - Invalid
+      }
+      else
+	Tcl_SetResult(interp, "1", TCL_VOLATILE);    // Null prefix is invalid
+      ret = TCL_OK;
+    }
+    else
+      Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+  else
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_group_manage ------------------------------*/
+
+#ifdef SERVER
+int dis_group_manage (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  int ret = TCL_ERROR;
+
+  char *leftj = "       ";
+  genString usage;
+  usage.printf("Usage: %s %s\n%s%s%s",
+               argv[0],
+               "{ save | rename | delete | export | print | refresh } <src_id>",
+	       leftj,
+               argv[0],
+               "{ add | remove | assign | grabscr | grabsav | grabsub } <src_id> <res_id>");
+
+  int src_id = 0;
+  int res_id = 0;
+
+  symbolArr src(0);
+  symbolArr res(0);
+
+  RTListServer *src_rtl;
+  RTListServer *res_rtl;
+
+  if (argc >= 3) {
+    src_id = atoi(argv[2]);
+    if (src_id > 0) {
+      src_rtl = RTListServer::find(src_id);
+      if (src_rtl)
+        src_rtl->getSelArr(src);
+    }
+  }
+
+  if (argc >= 4) {
+    res_id = atoi(argv[3]);
+    if (res_id > 0) {
+      res_rtl = RTListServer::find(res_id);
+      if (res_rtl) {
+        res_rtl->getSelArr(res);
+      }
+    }
+  }
+
+  if (argc >= 3) {
+
+    GroupApp::UtilCode i = (GroupApp::UtilCode) -1;
+
+    if (!strcmp(argv[1], "rename"))
+      i = GroupApp::EXTGROUP_RENAME;
+    else if (!strcmp(argv[1], "delete"))
+      i = GroupApp::EXTGROUP_DELETE;
+    else if (!strcmp(argv[1], "add"))
+      i = GroupApp::EXTGROUP_ADD;
+    else if (!strcmp(argv[1], "remove"))
+      i = GroupApp::EXTGROUP_REMOVE;
+    else if (!strcmp(argv[1], "assign"))
+      i = GroupApp::EXTGROUP_ASSIGN;
+    else if (!strcmp(argv[1], "grabscr"))
+      i = GroupApp::EXTGROUP_GRABSCR;
+    else if (!strcmp(argv[1], "grabsav"))
+      i = GroupApp::EXTGROUP_GRABSAV;
+    else if (!strcmp(argv[1], "grabsub"))
+      i = GroupApp::EXTGROUP_GRABSUB;
+    else if (!strcmp(argv[1], "grabsubflat"))
+      i = GroupApp::EXTGROUP_GRABSUB_FLAT;
+    else if (!strcmp(argv[1], "export"))
+      i = GroupApp::EXTGROUP_EXPORT;
+    else if (!strcmp(argv[1], "save"))
+      i = GroupApp::EXTGROUP_SAVE;
+    else if (!strcmp(argv[1], "print"))
+      i = GroupApp::EXTGROUP_PRINT;
+    else if (!strcmp(argv[1], "refresh"))
+      {groupApp.Refresh(src_id); ret = TCL_OK;}
+    else
+      Tcl_AppendResult(interp, (char *)usage, NULL);
+
+    if (i != -1)
+      if (groupApp.PerformUtil(i, src, res)) {
+	groupApp.Refresh(src_id);
+        ret = TCL_OK;
+      }
+  }
+  else
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval ------------------------------*/
+
+#ifdef CLIENT
+static _vstrptr rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISgroup_app = app;
+    static _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval in DISgroup - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static _vstrptr dis_servereval (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    static vstr* myresult = NULL;
+    if (!myapp) 
+	myapp = DISgroup_app;
+    int e = myapp->eval((vchar*)str);
+    myresult = NULL;
+    myresult = myapp->getEvalResult();
+    return myresult;
+}
+
+
+static void dis_servereval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_servereval (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval_async ------------------------------*/
+
+#ifdef CLIENT
+static async rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISgroup_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval_async in DISgroup - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval_async"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static async dis_servereval_async (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    if (!myapp) 
+	myapp = DISgroup_app;
+    int e = myapp->eval((vchar*)str);
+    return;
+}
+
+
+static void dis_servereval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    dis_servereval_async (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISgroup_eval ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_DISgroup_eval (Application* app, _vstrptr str)
+{
+    DISgroup_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISgroup_eval in DISgroup - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISgroup_eval (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISgroup_eval"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_DISgroup_eval (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_DISgroup_eval (_vstrptr str)
+{
+    int e = DISgroup_app->eval((vchar*)str);
+    static vstr* result = NULL;
+    result = DISgroup_app->getEvalResult();
+    return result;
+}
+
+
+void dis_DISgroup_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISgroup_eval (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_DISgroup_eval (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISgroup_eval (Application* app, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISgroup_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_DISgroup_eval_async (Application* app, _vstrptr str)
+{
+    DISgroup_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISgroup_eval_async in DISgroup - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISgroup_eval_async (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISgroup_eval_async"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_DISgroup_eval_async (_vstrptr str)
+{
+   int e = DISgroup_app->eval((vchar*)str);
+}
+
+
+void dis_DISgroup_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISgroup_eval_async (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    dis_DISgroup_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISgroup_eval_async (Application* app, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+#ifdef SERVER
+
+    static int serverInited = 0;
+
+void DISgroupServerInit(){
+    DISgroup_app = Application::findApplication("DISgroup");
+    if (!serverInited) {
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_init", dis_group_init, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_shutdown", dis_group_shutdown, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_create", dis_group_create, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_ask", dis_group_ask, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_file", dis_group_file, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_ops", dis_group_ops, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_edit", dis_group_edit, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_setGroupRelations", dis_group_setGroupRelations, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_setMemberRelations", dis_group_setMemberRelations, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_validate", dis_group_validate, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_import", dis_group_import, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_GrabSubsysSel", dis_group_GrabSubsysSel, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_shift_sel", dis_group_shift_sel, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_unselect_rtl", dis_group_unselect_rtl, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_remove_sel", dis_group_remove_sel, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_export", dis_group_export, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_info", dis_group_info, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_query", dis_group_query, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_mktemp", dis_group_mktemp, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_name", dis_group_name, NULL, NULL);
+        Tcl_CreateCommand (DISgroup_app->interp(), "dis_group_manage", dis_group_manage, NULL, NULL);
+	serverInited = 1;
+    }
+}
+
+
+vscrap* DISgroupServer(    vservicePrimitive *primitive,
+    vsession          *session,
+    vscrap            *scrapArgs)
+{
+    DISgroupServerInit();
+
+    DISgroup_app = Application::findApplication(session);
+    vscrapArray *sarg=0;
+    int array_index,max_index,array_index2;
+    vstr *command;
+    primitive->GetArgs(scrapArgs,&sarg);
+    array_index=0;array_index2=0;
+    max_index=vscrapGetArrayCount(sarg);
+    demarshall__vstrptr (&command, g_take());
+    vscrap *real_result=vscrapCreateArray();
+
+    if (strcmp((char*)command, "dis_servereval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISgroup_eval") == 0) dis_DISgroup_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISgroup_eval_async") == 0) dis_DISgroup_eval_async_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+
+    vscrap *temp= primitive->MakeReturnScrap(session,real_result);
+    if (real_result) delete real_result;
+    if (command) vstrDestroy (command);
+    if (sarg) delete sarg;
+    return temp;
+}
+
+#endif /* SERVER */

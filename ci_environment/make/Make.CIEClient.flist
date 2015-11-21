@@ -1,0 +1,9 @@
+CROOTS=\
+
+CXXROOTS=\
+	env_lib 
+CXX_INCLUDES = \
+	-I$(LOCAL_SRC_ROOT)/ci_environment/include \
+        -I$(BUILD_SRC_ROOT)/ci_environment/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+        -I$(BUILD_SRC_ROOT)/machine/include \

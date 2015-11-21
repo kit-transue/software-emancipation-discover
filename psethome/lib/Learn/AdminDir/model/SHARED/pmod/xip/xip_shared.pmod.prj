@@ -1,0 +1,21 @@
+#ADMINDIR=/users/tatiana/New_Learn/AdminDir
+#HOST=10.19.0.4
+X 14992 /xip_shared $sharedSrcRoot/xip_FLDX_1011 /xip $sharedModelRoot/pmod/xip/xip_shared.pmod.sym_FLDX_1001
+  N 0 /xip_shared/include $sharedSrcRoot/xip/include_FLDX_1011 /xip/include NULL
+    h 0 /xip_shared/include/Dt.h $sharedSrcRoot/xip/include/Dt.h_FLDX_1000 /xip/include/Dt.h $sharedModelRoot/pset/xip/include/Dt.h.pset_FLDX_1000
+    h 0 /xip_shared/include/canvas.h $sharedSrcRoot/xip/include/canvas.h_FLDX_1000 /xip/include/canvas.h $sharedModelRoot/pset/xip/include/canvas.h.pset_FLDX_1000
+    h 0 /xip_shared/include/externals.h $sharedSrcRoot/xip/include/externals.h_FLDX_1000 /xip/include/externals.h $sharedModelRoot/pset/xip/include/externals.h.pset_FLDX_1000
+    h 1 /xip_shared/include/extra.h $sharedSrcRoot/xip/include/extra.h_FLDX_1000 /xip/include/extra.h $sharedModelRoot/pset/xip/include/extra.h.pset_FLDX_0000
+    h 1 /xip_shared/include/extra2.h $sharedSrcRoot/xip/include/extra2.h_FLDX_1000 /xip/include/extra2.h $sharedModelRoot/pset/xip/include/extra2.h.pset_FLDX_0000
+    h 0 /xip_shared/include/image_win.h $sharedSrcRoot/xip/include/image_win.h_FLDX_1000 /xip/include/image_win.h $sharedModelRoot/pset/xip/include/image_win.h.pset_FLDX_1000
+    h 0 /xip_shared/include/stage.h $sharedSrcRoot/xip/include/stage.h_FLDX_1000 /xip/include/stage.h $sharedModelRoot/pset/xip/include/stage.h.pset_FLDX_1000
+    h 0 /xip_shared/include/xip.h $sharedSrcRoot/xip/include/xip.h_FLDX_1000 /xip/include/xip.h $sharedModelRoot/pset/xip/include/xip.h.pset_FLDX_1000
+  N 0 /xip_shared/src $sharedSrcRoot/xip/src_FLDX_1011 /xip/src NULL
+    s 0 /xip_shared/src/canvas.c $sharedSrcRoot/xip/src/canvas.c_FLDX_1000 /xip/src/canvas.c $sharedModelRoot/pset/xip/src/canvas.c.pset_FLDX_1000
+    s 0 /xip_shared/src/color.c $sharedSrcRoot/xip/src/color.c_FLDX_1000 /xip/src/color.c $sharedModelRoot/pset/xip/src/color.c.pset_FLDX_1000
+    s 0 /xip_shared/src/fonts.c $sharedSrcRoot/xip/src/fonts.c_FLDX_1000 /xip/src/fonts.c $sharedModelRoot/pset/xip/src/fonts.c.pset_FLDX_1000
+    s 0 /xip_shared/src/image_win.c $sharedSrcRoot/xip/src/image_win.c_FLDX_1000 /xip/src/image_win.c $sharedModelRoot/pset/xip/src/image_win.c.pset_FLDX_1000
+    s 0 /xip_shared/src/init.c $sharedSrcRoot/xip/src/init.c_FLDX_1000 /xip/src/init.c $sharedModelRoot/pset/xip/src/init.c.pset_FLDX_1000
+    s 0 /xip_shared/src/pipeline.c $sharedSrcRoot/xip/src/pipeline.c_FLDX_1000 /xip/src/pipeline.c $sharedModelRoot/pset/xip/src/pipeline.c.pset_FLDX_1000
+    s 0 /xip_shared/src/stage.c $sharedSrcRoot/xip/src/stage.c_FLDX_1000 /xip/src/stage.c $sharedModelRoot/pset/xip/src/stage.c.pset_FLDX_1000
+    s 0 /xip_shared/src/xip.c $sharedSrcRoot/xip/src/xip.c_FLDX_1000 /xip/src/xip.c $sharedModelRoot/pset/xip/src/xip.c.pset_FLDX_1000

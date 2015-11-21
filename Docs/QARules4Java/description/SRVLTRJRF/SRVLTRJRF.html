@@ -1,0 +1,50 @@
+<html>
+<body>
+
+<p><b>Servlet API - Release JDBC resources when finished.</b></p>
+
+<p>Failing to close and release JDBC connections can cause other users to
+experience long waits for connections.  Although a JDBC connection that is
+left unclosed will be reaped and returned by application server
+after a timeout period, others may have to wait for this to occur.</p>
+<p>Close JDBC statements when you are through with them.  JDBC <i>java.jdbc.ResultSets</i> can be
+explicitly closed as well.  If not explicitly closed, <i>java.jdbc.ResultSets</i> are released
+when their associated statements are closed.</p>
+
+<B>Example</B>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import java.sql.*;<br>
+<br>
+public class DemoJdbcResourceRelease {<br>
+&nbsp; void testOper () {<br>
+&nbsp; &nbsp; Connection conn = null;<br>
+&nbsp; &nbsp; Statement stmt = null;<br>
+&nbsp; &nbsp; ResultSet rs = null;<br>
+&nbsp; &nbsp; try {<br>
+&nbsp; &nbsp; &nbsp; conn = DriverManager.getConnection ("some url");<br>
+&nbsp; &nbsp; &nbsp; stmt = conn.createStatement();<br>
+&nbsp; &nbsp; &nbsp; rs = stmt.executeQuery ("some query");<br>
+&nbsp; &nbsp; } catch (Exception e) {}<br>
+&nbsp; &nbsp; finally {<br>
+&nbsp; &nbsp; &nbsp; try {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; // should have rs.close () and stmt.close ()<br>
+&nbsp; &nbsp; &nbsp; } catch (Exception e) {}<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+}
+</code></nobr></p>
+
+<p><b>Tip:</b>
+Ensure that your code is sturctured to close and release JDBC resources in all
+cases, even in exception and error conditions.</p>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

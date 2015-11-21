@@ -1,0 +1,65 @@
+#!/bin/sh
+# cm_copy_pset (ClearCase) - Checkout the .pset file (unreserved)
+
+# exit script if we get any errors
+set -e
+
+# Check that pset file is exist in VOB
+if [ "$cm_sysfile" = "" ] ; then
+  echo "cm_sysfile is not set"
+  exit 1
+fi 
+ 
+if [ "$cm_workfile" = "" ] ; then
+  echo "cm_workfile is not set"
+  exit 0
+fi 
+ 
+if [ -f $cm_sysfile ] ; then
+  set +e
+  history=`cleartool lshist $cm_sysfile 2>/dev/null | head -1`
+  set -e
+else
+  exit 0
+fi
+
+if [ "$cm_sysfile" != "$cm_workfile" ] ; then
+  if [ "$history" != "" ] ; then
+      echo "$cm_workfile should not be a clearcase element"
+      exit 1
+  fi
+  workdir=`dirname $cm_workfile`
+  mkdir -p $workdir
+  echo "cp  $cm_sysfile $cm_workfile"
+  cp $cm_sysfile $cm_workfile
+  set +e
+  chmod +w $cm_workfile 2>/dev/null 
+  set -e
+else
+  if [ "$history" = "" ] ; then
+     echo "$cm_workfile should be a clearcase element"
+     exit 1
+  fi
+  # Looks like we have no $cm_revision_file here.. lets create it
+  cm_revision_file=`echo $cm_sysfile | sed -e 's/@@.*//'`	
+  set +e
+  unreserved=`cleartool describe $cm_revision_file | head -1 | grep CHECKEDOUT | grep reserved`
+  set -e
+
+  if [ "$unreserved" = "" ] ; then
+    echo "cleartool checkout -unreserved -nc $cm_sysfile"
+    cleartool checkout -unreserved -nc $cm_sysfile
+  fi
+fi
+
+exit 0
+
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = informational (displayed in configshell)
+####		   : stderr = error messages (displayed in config status dialog box)
+
+#### Environment Variables
+#	$cm_sysfile	  - path to system (public) copy of file to be processed
+#			    (already processed by the pending filter at this point)

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wizard><view img="new_model_wizard.gif" id="wizard type" title="Wizard type" tip="Select a convenient way for you to create a model" output="">
+	   <component type="radiobuttons" title="Do you want to create a model in the expert mode?" return="" required="">
+	       <value title="&lt;html&gt;You are an experienced Code Integrity administrator&lt;br&gt;who can manually edit a model's&lt;br&gt;configuration file&lt;/html&gt;">yes</value>
+	       <value title="&lt;html&gt;You are a new Code Integrity administrator&lt;br&gt;who is not familiar with building information &lt;br&gt;models&lt;/html&gt;" default="">no</value>
+	   </component>
+	</view><view img="new_model_wizard.gif" id="build method" title="Select one or more build method" tip="Code Integrity can obtain the location and details of your source files in several ways. See build methods for details." output="">
+        <component type="listselector" title="Choose a build method:" multi="" return="" required="">
+            <value title="ClearMake" tip="Model all derived objects in the current ClearCase view (or alternatively $BUILD_VIEW_NAME).">ClearMake</value>
+            <value title="Fully Logged Build" tip="Model all compilations logged during a custom build.">Log</value>
+            <value title="Scan DSP or DSW File" tip="Model the software built by Microsoft Visual C++.">DSX</value>
+            <value title="SQL Files from a Directory Structure" tip="Model the SQL source files within a directory.">SQL</value>
+            <value title="Java Files from a Directory Structure" tip="Model the Java source files within a directory.">Java</value>
+            <value title="Any Files from a Directory Structure" tip="Model the source files within a directory." default="">Directory</value>
+            <value title="Table of Files and Attributes" tip="&lt;html&gt;Model a set of files listed in a table which supplies specific attributes for each file.       &lt;ol&gt;      &lt;li&gt;project name      &lt;li&gt;compiler's working directory      &lt;li&gt;name of file that is compiled      &lt;li&gt;id of compiler      &lt;li&gt;compiler flags       &lt;/ol&gt;       The five fields of this table are tab-delimited.&lt;/html&gt;">Table</value>
+            <value title="Customize Perl Subroutine" tip="&lt;html&gt;Get the build log by modifying GetBuildLog.pl, as with Code Integrity 7.4.                        &lt;br&gt;Obsolescent.                       &lt;/html&gt;">Custom</value>
+	   </component>
+	</view><view img="new_model_wizard.gif" id="Directory" title="Any Files from a Directory Structure" tip="Model the source files within a directory." output="">
+    	<component type="dirselector" title="The directory containing source files" tip="the directory containing source files, not quoted" required=""><value>%sharedSrcRoot%/mfc</value></component>
+    	<component type="textfield" title="Compiler" tip="The compiler, as it would appear on a command line, e.g. javac." required=""><value>"-I%sharedSrcRoot%\INCLUDE" "-I%sharedSrcRoot%\MFC\INCLUDE" "-I%sharedSrcRoot%\ATL\INCLUDE"</value></component>
+    	<component type="textfield" title="Compiler options" tip="&lt;html&gt;compiler options, as they would appear on a command line                   &lt;br&gt;Possibly empty. For example, -nowarn -g                   &lt;html&gt;"><value/></component>
+    	<component type="textfield" title="File extensions" tip="list of file extensions to match, separated by spaces" required=""><value>c cxx cpp</value></component>
+    	<component type="dirselector" title="Working directory" tip="compiler working directory, not quoted"><value>%sharedSrcRoot%/mfc</value></component>
+	</view><view img="new_model_wizard.gif" id="different machine" title="Different machine" output="">
+	   <component type="radiobuttons" title="Are you building this model, on the same machine that is used to compile your software project?" return="" required="">
+	       <value default="">yes</value>
+	       <value>no</value>
+	   </component>
+	</view><view img="new_model_wizard.gif" id="compile extensions" title="Compile Extensions" output="">
+    	<component type="textfield" title="Setup line EXTENSION=CompileFiles:" tip="&lt;html&gt;The set of file extensions to recognize for the model.       &lt;br&gt;Header files are included automatically and need not be in this list.&lt;/html&gt;" required="">
+			<value>c cxx cpp cc C java sql</value>
+		</component>
+	</view><view img="new_model_wizard.gif" id="parallel parse" title="Parallel parse" output="">
+	    <component type="textfield" title="Number of parallel parsing hosts" required="">
+			<value>1</value>
+		</component>
+	</view><view img="new_model_wizard.gif" id="compiler" title="Specific Compiler Commands" output="">
+    	<component type="table" allowaddrows="" title="&lt;html&gt;Override the automatic build log analysis based on the         the name of the compiler as it appears in the build log&lt;/html&gt;" tip="&lt;html&gt;Resolves the identity and parameters of a compiler command.       &lt;br&gt;For example, the compiler command &lt;code&gt;CC&lt;/code&gt; could have &lt;code&gt;sunccpp(/usr/SUNWspro/SC5.0)&lt;/code&gt; as its identity.       &lt;br&gt;&lt;i&gt;See documentation for details of compiler identities (IDs).&lt;/i&gt;       &lt;/html&gt;">
+			<column editable="">Compiler Command</column>
+			<column editable="">Compiler ID(Parameters)</column>
+		<value>|</value></component>
+	</view><view img="new_model_wizard.gif" id="extra flags" title="Specify extra flags for compilers below (if necessary)" tip="See the documentation for details." output="">
+		<component type="table">
+			<column>Compiler ID</column>
+			<column editable="">Extra flags</column>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		<value>any|</value><value>acc|</value><value>gcc|</value><value>gccc++|</value><value>gccc|</value><value>gcccpp|</value><value>hpcc|</value><value>javac|</value><value>jbuilder|</value><value>mipscc|</value><value>mipscc64|</value><value>mipsccn32|</value><value>mipscco32|</value><value>mipsccpp|</value><value>mipsccpp64|</value><value>mipsccppn32|</value><value>mipsccppo32|</value><value>ntcl|</value><value>ntclc|</value><value>ntclcpp|-D_DEBUG -D_MBCX -D_X86_ -D_MT -D_DLL -D_WINDLL -D_AFXDLL -D_AFX_PORTABLE -D_AFX_CORE_IMPL -D_AFX_OLE_IMPL -D_AFX_DB_IMPL -D_AFX_NET_IMPL -D_MSC_VER="1200" -D__cplusplus="1"</value><value>ntclh|</value><value>ntjvc|</value><value>ntrc|</value><value>object|</value><value>passcc|</value><value>passccpp|</value><value>passinformixsql|</value><value>passplsql|</value><value>passsqlc|</value><value>passsqlcpp|</value><value>passsybasesql|</value><value>suncc|</value><value>sunccpp|</value></component>
+	</view><view img="new_model_wizard.gif" id="outdated check" title="Test Method" output="">
+        <component type="radiobuttons" title="When you perform an incremental model build, how should Code          Integrity determine which files in your software project are out of date?" required="">
+			<value title="&lt;html&gt;Time stamp&lt;br&gt;         &lt;i&gt;time stamps are a fast test and are usually correct. Recommended in for most models.&lt;/i&gt;&lt;html&gt;" default="">TS</value>
+			<value title="&lt;html&gt;Checksum&lt;br&gt;         &lt;i&gt;MD5 checksums are totally reliable, taking the time to scan all files.&lt;/i&gt;&lt;/html&gt;">CS</value>
+			<value title="&lt;html&gt;Time stamp and Checksum&lt;br&gt;         &lt;i&gt;Compares the timestamps of the file versions, and if they are different         calculates and compares the checksums.&lt;/i&gt;         &lt;/html&gt;">TS_CS</value>
+		</component>
+	</view><view img="new_model_wizard.gif" id="force publish" title="Force publish" output="">
+	   <component type="radiobuttons" title="When you perform an incremental model build, should a new model be built if it is identical to the baseline model?" required="" return="">
+	       <value default="">yes</value>
+	       <value>no</value>
+	   </component>
+	</view></wizard>

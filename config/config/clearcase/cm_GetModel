@@ -1,0 +1,37 @@
+#!/bin/sh
+# version /main/1
+. `util.sh -which`
+. `modelutil.sh -which`
+
+cm_GetModel()
+
+{
+
+  #
+  # The purpose of the 'cd' is to deal with the use of symbolic links, find(1) will not traverse
+  # them unless requested and cleartool find complains if they are not elements
+  # This is a safety precaution
+  # NB the Private pmods will also go in the shared area, they should NOT be elements, or they will
+  # also be worked with. They should correctly be view private files
+  #
+  if [ ! -d $sharedModelRoot/pmod ]
+  then
+    WARNING "The directory for 'pmod' files in a ClearCase environment ($sharedModelRoot/pmod) is missing"
+    return
+  fi
+  cd $sharedModelRoot/pmod
+  toCheckOutPmods=`cleartool find . -type -f -name '*.pmod.*' -exec 'echo $CLEARCASE_PN' 2>/dev/null`
+  if [ "X$toCheckOutPmods" = "X" ]
+  then
+    WARNING "There would seem to be no 'pmod' ClearCase elements in ($sharedModelRoot/pmod)"
+    return
+  fi
+  for toCheckOutPmod in $toCheckOutPmods
+  do
+    eval cleartool co -nc $toCheckOutPmod $actionLog
+  done
+
+}
+
+cm_GetModel
+exit $STATUS

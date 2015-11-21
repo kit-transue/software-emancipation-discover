@@ -1,0 +1,57 @@
+<html>
+<body>
+
+<p><b>Avoid accessing EJB entity beans from client code.</b></p>
+
+<p>Avoid accessing EJB entity beans from client or servlet code. Instead wrap
+and access EJB entity beans in EJB session beans.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.ejbtest;<br>
+<br>
+import javax.ejb.*;<br>
+import javax.naming.Context;<br>
+import javax.naming.InitialContext;<br>
+import javax.rmi.*;<br>
+<br>
+public class AEBSClient {<br>
+&nbsp; public static void main(String[] args) {<br>
+&nbsp; &nbsp; try {<br>
+&nbsp; &nbsp; &nbsp; Context initial = new InitialContext();<br>
+&nbsp; &nbsp; &nbsp; Object objref = initial.lookup("MyAccount");<br>
+&nbsp; &nbsp; &nbsp; AccountHome home = (AccountHome)PortableRemoteObject.narrow(<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; objref,AccountHome.class);<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> Account duke = home.create("123", "Duke", "Earl");</font><br>
+&nbsp; &nbsp; } catch (Exception ex) {<br>
+&nbsp; &nbsp; System.err.println("Caught an exception." );<br>
+&nbsp; &nbsp; ex.printStackTrace();<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+}
+</nobr></code></p>
+
+<p><b>Right</b>
+The best practice satisfies two performance concerns:
+<ul><li>
+  Reducing the number of remote method calls.  When the client application
+    accesses the entity bean directly, each getter method is a remote call.
+    A wrapping session bean can access the entity bean locally, and collect
+    the data in a structure, which it returns by value.</li>
+<li>    
+  Providing an outer transaction context for the EJB entity bean.  An entity
+    bean synchronizes its state with its underlying data store at the completion
+    of each transaction.  When the client application accesses the entity bean
+    directly, each getter method becomes a complete transaction.  A store and
+    load follow each method.  When the session bean wraps the entity bean to
+    provide an outer transaction context, the entity bean synchronizes its state
+    when outer session bean reaches a transaction boundary.</lu></ul></p>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

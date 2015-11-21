@@ -1,0 +1,39 @@
+!
+! #include this file in your ~/.Xdefaults for gray
+! colors (or reverse video) in the slave aset process.
+!
+
+#undef WHITE
+#undef BLACK
+
+#ifdef COLOR
+#define WHITE(COLOR_NAME) COLOR_NAME
+#define BLACK(COLOR_NAME) COLOR_NAME
+#else
+#define WHITE(COLOR_NAME) White
+#define BLACK(COLOR_NAME) Black
+#endif
+
+!
+! Special color resources for "slave" aset
+!
+pset_slave*foreground:			WHITE(White)
+pset_slave*topShadowColor:		BLACK(gray80)
+pset_slave*background:			BLACK(gray70)
+pset_slave*bottomShadowColor:		WHITE(gray30)
+pset_slave*selectColor:			WHITE(White)
+
+pset_slave*XmText.background:		BLACK(gray60)
+pset_slave*XmTextField.background:	BLACK(gray60)
+pset_slave*XmList.background:		BLACK(gray60)
+
+pset_slave*ViewerShell*topShadowColor:		BLACK(gray80)
+pset_slave*ViewerShell*background:		BLACK(gray70)
+pset_slave*ViewerShell*bottomShadowColor:	WHITE(gray30)
+pset_slave*ViewerShell*selectColor:		WHITE(White)
+
+pset_slave*XmForm*XmPushButton.background:	BLACK(gray80)
+pset_slave*ViewerShell*XmPushButton.background:	BLACK(gray70)
+pset_slave*ViewerShell*buttonBarSlot*XmPushButton.background: BLACK(gray80)
+pset_slave*ViewerShell*modeButtonSlot*XmToggleButton.background: BLACK(gray80)
+pset_slave*toggle_reset.background:		BLACK(gray60)

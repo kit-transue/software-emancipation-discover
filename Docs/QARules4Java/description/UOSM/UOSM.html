@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>UOSM - Use Of the 'synchronized' Modifier</b></p>
+
+<p>     The 'synchronized' modifier on methods
+can sometimes cause confusion during maintenance and debugging. This rule recommends
+to avoid using this modifier and encourages using 'synchronized' statements
+instead.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class UOSM {<br>
+&nbsp; &nbsp; public <font color='red'>synchronized</font> void method () {  <br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Use synchronized statements instead of synchronized methods.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class UOSM {<br>
+&nbsp; &nbsp;<font color='blue'> public void method () </font> { <br>
+
+&nbsp; &nbsp; &nbsp; &nbsp;<font color='blue'>synchronized(this) { </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; &nbsp; &nbsp;<font color='blue'>}</font><br>
+
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

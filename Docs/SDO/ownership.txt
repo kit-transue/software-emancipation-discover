@@ -1,0 +1,105 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Date: 6/28/95
+File: ownership.txt
+Subject: ADL spec for entity "ownership"
+From: Trung Dung
+
+entity Ownership : SDO_base
+/* what this developer own */
+{
+    Attributes:
+   	developer owner;
+	String alias_name; /* login id */
+
+    Entity_attributes:
+	enum RelType {all = 0, owner_code, user_code,
+		      docs, tests,};
+    /* could be implemented using relations */
+	Code<Ownership>[] owner_code;
+	Code<Ownership>[] user_code;
+	Code<Ownership>[] docs;
+	Code<Ownership>[] tests;
+
+    Queries:
+    Functions:
+	int match_owner(Code code)
+	{ return get_owner_codes().lookup(code); }
+
+	static Ownership * lookup_ownership(developer dev)
+	{   Table tb(Ownership);
+	    ForEach(OwnershipPtr el, tb)
+		if (el.owner == dev)
+		    return el;
+	    return NULL;
+	}
+	static Ownership[] lookup_ownership(RelType rel, Code code)
+	{   Table tb(Ownership);
+	    Ownership[] ret;
+	    ForEach(OwnershipPtr el, tb)
+		if (el.get_rel(rel).include(code))
+		    ret.include(el);
+	    return ret;
+	}
+
+        Action:
+	    static void register_owner(Developer dev, Code code) 
+	    { lookup_ownership(dev).put_owner_code(code); }
+
+	    static void register(RelType rel, Developer dev, Code code)
+	    { lookup_ownership(dev).put_rel(rel, code); }
+
+	    static void notify(Code code, char *msg)
+	    /* invoked during put, or on demand from cockpit */
+	    {
+		Table tb(Ownership);
+		ForEach(OwnershipPtr el, tb)
+		    if (el.match_owner(code))
+			el.owner.notitfy(...);
+  	    }
+	    
+	    Ownership & transfer_from(Ownership &here, RelType rel)
+		/*  transfer from here to this according to RelType */
+		{
+		    if (rel)
+			put_rel(rel, here.get_rel(rel));
+		    else
+			ForEach(rel, RelType)
+			    put_rel(rel, here.get_rel(rel))
+		    return this;
+		}
+    Views:
+        /* display views of resulting Ownership */
+	static void intersection(Ownership &o1, ...);
+	static void union(Ownership &o1, ...);
+	static void difference(Ownership &o1, Ownership &o2);
+
+    Filters:
+    Keys:
+    	FOREIGN_KEY: owner
+}

@@ -1,0 +1,20 @@
+TARGETS =
+	Application.o
+	ResourceNameIterator.o
+	SelectionIterator.o
+        getResource.o
+
+
+VPATH =
+	/paraset/src/paraset/communications/src
+
+CCINCLUDES =
+	/paraset/src/paraset/communications/include
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/interface/include
+	/paraset/src/paraset/ui/include
+	/paraset/src/paraset/nihcl/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/tcl7.6/generic
+	${GALAXYHOME}/include

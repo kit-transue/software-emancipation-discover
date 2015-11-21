@@ -1,0 +1,9 @@
+CXXROOTS = \
+	parray \
+	pstack \
+	listitem \
+	cstring
+
+
+
+	

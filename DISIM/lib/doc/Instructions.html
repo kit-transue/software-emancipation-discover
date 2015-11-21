@@ -1,0 +1,629 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (X11; U; SunOS 5.6 sun4u) [Netscape]">
+   <title>Instructions</title>
+</head>
+<body>
+
+<dl>
+<center>
+<dt>
+<b><font size=+3>Administration of DIScover Models</font></b></dt></center>
+</dl>
+
+<h1>
+
+<hr WIDTH="100%">Contents</h1>
+
+<ol>
+<li>
+<a href="#Chapter1">Setting up the DISIM template.</a></li>
+
+<li>
+<a href="#Chapter2">Configuring DISIM for a new model.</a></li>
+
+<li>
+<a href="#Chapter3">Building models.</a></li>
+
+<li>
+<a href="#Chapter4">Server Administration</a></li>
+
+<li>
+<a href="#Chapter5">Decription of administration scripts.</a></li>
+
+<li>
+<a href="#Chapter6">Client Utilities.</a></li>
+
+<li>
+<a href="#AppendiA">Appendix A.</a></li>
+</ol>
+
+<h1>
+
+<hr WIDTH="100%"><a NAME="Chapter1"></a>Chapter 1: Setting up the DISIM
+template</h1>
+Basic Steps:
+<ol>
+<li>
+<a href="#Chapter1Step1">Choose location for DISIM top-level.</a></li>
+
+<li>
+<a href="#Chapter1Step2">Define global environment variables</a></li>
+
+<li>
+<a href="#Chapter1Step3">Update start scripts.</a></li>
+</ol>
+
+<h2>
+<a NAME="Chapter1Step1"></a>Step 1: Choose location for DISIM top-level</h2>
+Create or select a directory to hold the DISIM structure.&nbsp; In this
+directory the DISIM.tar file will be extracted.&nbsp; This directory must
+be accessible to ALL machines that are intended to run the DIScover Browser,
+model builds or model servers.
+<p><b><i>Example</i></b>:($DISIM -> /opt/CODEINTEGRITY/DISIM)
+<br>(DISIM tar file -> $HOME/DISIM.tar)
+<blockquote><tt>prompt> cd /opt/CODEINTEGRITY</tt>
+<br><tt>prompt> tar xvf $HOME/DISIM.tar</tt></blockquote>
+
+<h2>
+<a NAME="Chapter1Step2"></a>Step 2: Define global environment variables</h2>
+Add/Change the the location and values of certain environment variables
+by editing the DISIM configuration file, <a href="Configuration.txt">$DISIM/lib/Configuration.txt</a>
+to reflect correct values/current location.
+<p>The format for defining variables in this file is as follows:
+<blockquote>VAR=<b><i>VARIABLE_NAME</i></b>:<b><i>VALUE</i></b></blockquote>
+The necesary variable are as follows:
+<br>&nbsp;
+<table BORDER WIDTH="96%" >
+<tr>
+<td>DISIM</td>
+
+<td>Location of top level of DISIM scripts</td>
+</tr>
+
+<tr>
+<td>(ARCHITECTURE)_PSETHOME</td>
+
+<td>Location of DIScover binary distributions.&nbsp; One for each platform.
+<br>&nbsp;&nbsp;&nbsp;&nbsp; valid platforms are currently:&nbsp;&nbsp;
+SUN5 and HP10</td>
+</tr>
+
+<tr>
+<td>LM_LICENSE_FILE</td>
+
+<td>Port_Number@License_Server_Hostname</td>
+</tr>
+
+<tr>
+<td>TEMPBUILD</td>
+
+<td>Writable directory where local builds are to be performed if -t option
+is not specified during modelbuild.</td>
+</tr>
+
+<tr>
+<td>BUILDSERVERHOST</td>
+
+<td>Hostname of machine that will be the SubmissionCheck server</td>
+</tr>
+
+<tr>
+<td>TMPDIR</td>
+
+<td>Writable directory for the DIScover Browser's temporary files.</td>
+</tr>
+</table>
+
+<p><b><i>Example</i></b>:($LM_LICENSE_FILE -> port 7572 on host "oxen")
+<br>Edit <tt><a href="Configuration.txt">$DISIM/lib/Configuration.txt</a></tt>
+and add the following line:
+<blockquote><tt>VAR=DISIM:/net/psales/opt/CODEINTEGRITY/DISIM</tt>
+<br><tt>VAR=SUN5_PSETHOME:/net/psales/opt/CODEINTEGRITY/sun5</tt>
+<br><tt>VAR=HP10_PSETHOME:/net/psales/opt/CODEINTEGRITY/hp10</tt>
+<br><tt>VAR=LM_LICENSE_FILE:7572@oxen</tt>
+<br><tt>VAR=TEMPBUILD:/net/psales/local/DISIM_TEST/tmp</tt>
+<br><tt>VAR=BUILDSERVERHOST:psales</tt>
+<br><tt>VAR=TMPDIR:/usr/tmp</tt></blockquote>
+<tt>There is a layering effect attached to the processing of all variables.&nbsp;
+If the variable name is preceeded by the configuration type (e.g. VAR=NT_TEMPBUILD:C:\TEMP)
+then that variable will override the default variable.&nbsp; If the variable
+name is preceeded by the hostname of the computer that is processing the
+file (e.g. VAR=solserv1_TEMPBUILD:/local/tmp) then that variable will override
+any other variables defined of that name.</tt>
+<h2>
+<a NAME="Chapter1Step3"></a>Step 3: Update start scripts</h2>
+Modify the DISIM location in the two startup scripts, <a href="bin/StartDevx.sh">$DISIM/bin/StartDevx.sh</a>
+and <a href="bin/StartBrowser.sh">$DISIM/bin/StartBrowser.sh</a> to reflect
+correct current location.
+<br>At the top of the two files there will be a line containing the path
+to the DISIM installation area:
+<blockquote>DISIM=<b><i>&lt;PATH TO DISIM TOP LEVEL></i></b></blockquote>
+
+<h1>
+
+<hr WIDTH="100%"><a NAME="Chapter2"></a>Chapter 2: Configuring DISIM for
+a new model</h1>
+Basic Steps:
+<ol>
+<li>
+<a href="#Chapter2Step1">Choose a name for the new model.</a></li>
+
+<li>
+<a href="#Chapter2Step2">Enable the new model.</a></li>
+
+<li>
+<a href="#Chapter2Step3">Configure new model template.</a></li>
+
+<ol TYPE=a>
+<li>
+<a href="#Chapter2Step3PartA">create ADMINDIR template.</a></li>
+
+<li>
+<a href="#Chapter2Step3PartB">setup environment</a></li>
+
+<li>
+<a href="#Chapter2Step3PartC">identify method of obtaining build log (compile
+flags)</a></li>
+
+<li>
+<a href="#Chapter2Step3PartD">identify compiler(s) and flags</a></li>
+
+<li>
+<a href="#Chapter2Step3PartE">configure triggers for cc and cd</a></li>
+
+<li>
+<a href="#Chapter2Step3PartF">configure file extension list</a></li>
+</ol>
+</ol>
+
+<h2>
+<a NAME="Chapter2Step1"></a>Step 1: Choose a name for the new model</h2>
+Decide on a name for the new model. This is typically named after the software
+application or application suite that is being modeled.
+<p><b><i>Example</i></b>: If you were building the source to netscape you
+might select a model name of "mozilla"
+<br>&nbsp;
+<h2>
+<a NAME="Chapter2Step2"></a>Step 2: Enable the new model</h2>
+Inform DISIM that there is a new model that reqires servicing. This is
+done simply by adding a single line to the DISIM configuration file, <tt><a href="Configuration.txt">$DISIM/lib/Configuration.txt</a></tt>
+<p><b><i>Example</i></b>:($MODELNAME -> mozilla)
+<br>Edit <tt><a href="Configuration.txt">$DISIM/lib/Configuration.txt</a></tt>
+and add the following lines:
+<blockquote><tt>MODELNAME=mozilla</tt></blockquote>
+
+<h2>
+<a NAME="Chapter2Step3"></a>Step 3: Configure new model template</h2>
+
+<h3>
+<a NAME="Chapter2Step3PartA"></a>PART a) create ADMINDIR template.</h3>
+Copy the default template <tt><a href="template/ModelTemplate">$DISIM/template/ModelTemplate</a></tt>
+to the new template name. The new template name is the name of the model
+followed by the word "Template".
+<p><b><i>Example</i></b>:($MODELNAME -> mozilla)
+<blockquote><tt>prompt> cd <a href="template">$DISIM/template</a></tt>
+<br><tt>prompt> cp -r <a href="template/ModelTemplate">ModelTemplate</a>
+mozillaTemplate</tt></blockquote>
+
+<h3>
+<a NAME="Chapter2Step3PartB"></a>PART b) setup template environment.</h3>
+Add/Change the the location and values of certain environment variables
+and configuration keys by editing the ADMINDIR Setup file,
+<br><tt><a href="template/ModelTemplate/config/Setup.txt">$DISIM/template/${MODELNAME}Template/config/Setup.txt</a></tt>:
+<p>The format for defining variables in this file is as follows:
+<blockquote><tt>VAR=<b><i>VARIABLE_NAME</i></b>:<b><i>VALUE</i></b></tt></blockquote>
+The necesary parameter are explained as follows:
+<br>&nbsp;
+<table BORDER WIDTH="100%" >
+<tr>
+<td>VARIABLE</td>
+
+<td>MODELNAME</td>
+
+<td>Name selected for this model (should already be chosen)</td>
+</tr>
+
+<tr>
+<td>ROOT</td>
+
+<td>MainSrcRoot</td>
+
+<td>Path to root of finding files</td>
+</tr>
+</table>
+
+<p><b><i>Example</i></b>:($MODELNAME -> mozilla)
+<br>(Roots are -> /usr/include,/usr/local/include,/usr/openwin/include,/src/mozilla)
+<br>Edit <tt><a href="template/ModelTemplate/config/Setup.txt">$DISIM/template/${MODELNAME}Template/config/Setup.txt</a></tt>
+and add the following lines:
+<blockquote><tt>VAR=MODELNAME:mozilla</tt>
+<br><tt>VAR=MainSrcRoot:/src/mozilla</tt></blockquote>
+
+<h3>
+<a NAME="Chapter2Step3PartC"></a>PART c) identify method of obtaining build
+log (compile flags)</h3>
+Identify or create a technique to assemble a list of every compile line
+used in the client's software build of the sources being modeled. The script,
+<tt><a href="template/ModelTemplate/config/GetBuildLog.pl" type="text/plain">$DISIM/template/${MODELNAME}Template/config/GetBuildLog.pl</a></tt>,
+has three basic configurations built in that will get the build log:
+<p>1.&nbsp; For software under ClearCase that uses clearmake for builds,
+<br><i><tt>&nbsp;&nbsp;&nbsp; ClearCaseGetBuildLog()</tt></i>
+<p>2.&nbsp; For software that is logged in one place for each build,
+<br><i><tt>&nbsp;&nbsp;&nbsp; FixedLocationGetBuildLog()</tt></i>
+<br><i><tt>&nbsp;&nbsp;&nbsp; GetFileListFromFileSystem()</tt></i>
+<p>3.&nbsp; For software developed by MS Visual C++ 5.x or 6.x,
+<br><i><tt>&nbsp;&nbsp;&nbsp; ParseDSX()</tt></i>
+<p>*If using configuration #2, in the function FixedLocationGetBuildLog(),
+set the variable $FixedLocationBuildLogName to the log of the software
+build.
+<br>*If using configuration #3, create a file $ADMINDIR/config/DSXList.txt
+that contains a list of full path names to DSP and/or DSW files.
+<p>At the end of the script, uncomment the routines that apply and feel
+free to make changes or add new routines if deemed necessary. This script
+will be called every time a model build is performed.
+<h3>
+<a NAME="Chapter2Step3PartD"></a>PART d) identify compiler(s) and flags</h3>
+All compiler flags used in the client's software build must be identified.
+This applies to the sources being modelled, and is
+managed automatically for recognized compilers.
+<p>
+For a new compiler, the model build must be configured for
+its include path and predefined macros.
+To obtain that information, create a test C file, foo.c,
+and a test C++ file, foo.C and compile them with the client's native compilers
+with the verbose options (try -v, -V, or -#). This should print out a list
+of all -I and -D flags that the compiler predefines.
+<p>
+<tt>$PSETHOME/lib</tt> holds configuration files for known compilers,
+which govern the handling of flags.
+Create a new flags-filtering file <tt>$PSETHOME/lib/&lt;compilerid&gt;.xml</tt>, similar to the <tt>.xml</tt> files already present in
+that directory, and insert the compiler's -I and -D flags.
+<p>
+The name of the file is used to distinguish its compiler from others.
+To incorporate this name, extend <tt>$PSETHOME/mb/trycompiler.pl</tt> so that it will
+return the new compiler id when appropriate.
+<br>&nbsp;
+<h3>
+<a NAME="Chapter2Step3PartE"></a>PART e) configure triggers for directory
+changes and compile statements</h3>
+In the file <tt><a href="template/ModelTemplate/config/FilterBuildLog.pl">$DISIM/template/${MODELNAME}Template/config/FilterBuildLog.pl</a></tt>
+in the subroutine "<i><tt>FilterBuildLog</tt></i>", there needs to exist
+a trigger that will correctly identify each necessary compile lines and
+convert them into lines beginning with "~C~", "~CPP~", "~java~", or "~sql~" (depending on language)
+and will append the appropriate compiler flags from the previous section.
+<p>There must also exist a trigger for an indication that the directory
+has been changed. The converted line must begin with the syntax "~cd~" and
+be followed by the <em>full path</em> to the new working directory.
+<br>&nbsp;
+<h3>
+<a NAME="Chapter2Step3PartF"></a>PART f) configure file extension lists</h3>
+Add/Change the the list of extensions by editing ADMINDIR Setup file, <tt><a href="template/ModelTemplate/config/Setup.txt">$DISIM/template/${MODELNAME}Template/config/Setup.txt</a></tt>:
+<p>The format for defining extensions that require DIScover to retrieve a
+compile line is as follows:
+<blockquote><tt>EXTENSION=CompileFiles:<b><i>&lt;Space separated list of
+extension></i></b></tt></blockquote>
+<b><i>Example</i></b>:
+<br>Edit <tt><a href="template/ModelTemplate/config/Setup.txt">$DISIM/template/${MODELNAME}Template/config/Setup.txt</a></tt>
+and add the following lines:
+<br>&nbsp;
+<blockquote><tt>EXTENSION=CompileFiles:c cxx cpp cc C</tt></blockquote>
+Every file intended to be in the model MUST have it's extension listed
+here.&nbsp; Do not put more extensions than are needed. This can sometimes
+overflow the maximum match rules limit in the generated project definition
+file and then force the DIScover model build to fail..
+<h1>
+
+<hr WIDTH="100%"><a NAME="Chapter3"></a>Chapter 3: Building Models</h1>
+
+<ol>
+<li>
+If using clearcase, set view to populated build view.</li>
+
+<li>
+Choose a version for this model (e.g. today's date). If the last 5 characters
+of the version name is "TODAY" then the last 5 characters will automacically
+by substituted with an 8 digit date stamp (e.g. integration_hpux_TODAY
+= integration_hpux_20000921).</li>
+
+<li>
+If you prefer to use a directory to build in temporarily that is other
+than the one specified in the DISIM configuration file, choose a local
+directory for intermediate building that has at least enough space to store
+one full model (e.g. /local/tmp).</li>
+
+<li>
+If build is incremental, choose version to base model off of (-b option).</li>
+
+<li>
+Add the -V (verbose) option, if desired.</li>
+
+<li>
+Run command to build model</li>
+
+<br><tt>perl <a href="#ModelAdmin.pl">$DISIM/bin/admin/CreateModel.pl</a>
+-m[<b>full</b>|<b>incr</b>] -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+[-t$TEMPBUILD] [-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>] [-V]</tt>
+<p><tt><b><i>Example full build</i></b>: (MODELNAME -> "mozilla")</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; perl $DISIM/bin/admin/CreateModel.pl -mfull
+-vmozilla/TODAY</tt>
+<p><tt><b><i>Example Incremental build</i></b>: (MODELNAME -> "mozilla")</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; perl $DISIM/bin/admin/CreateModel.pl -mincr
+-vmozilla/TODAY -bmozilla/20000910</tt></ol>
+
+<h1>
+
+<hr WIDTH="100%"><a NAME="Chapter4"></a>Chapter 4: Model server administration</h1>
+
+<ol>
+<li>
+<a href="#Chapter4Step1">Define windowing mechanism for models.</a></li>
+
+<li>
+<a href="#Chapter4Step2">Define windowing mechanism for servers.</a></li>
+
+<li>
+<a href="#Chapter4Step3">Setting up your cron.</a></li>
+
+<li>
+<a href="#Chapter4Step4">Manually starting and stopping servers.</a></li>
+</ol>
+
+<h2>
+<a NAME="Chapter4Step1"></a>Step 1: Define windowing mechanism for models</h2>
+Windowing means maintaining a fixed size window of DIScover models of a
+given set of code. Currently the windowing mechanism is solely dependent
+on date stamps incorporated into the version name for each model. It is
+sugested that model versions be specified by using a customer-specified
+trunk-name followed by an 8 digit datestamp of the form YYYYMMDD.A valid
+version would be:
+<blockquote><tt>mozilla/release_build_20000921</tt></blockquote>
+This would be for the 'mozilla' source using set of flags corresponding
+to the 'release' build done on Sept 21, 2000.
+<br>A valid version could also be:
+<blockquote><tt>mozilla/20000921</tt></blockquote>
+
+<p><br>To decide the number of versions of a specific kind of model to
+have, it is necessary to assess the intended usage by the customer as well
+as the available disk space on the partition used to store the models.
+<p>All windowing instructions are written to the DISIM configuration file,
+<tt><a href="Configuration.txt">$DISIM/lib/Configuration.txt</a></tt>,
+and the format for specifying the window size is as follows:
+<blockquote><tt>WINDOW=<b><i>HOSTNAME</i></b>:<b><i>MODELNAME</i></b>:KeepLatest:<b><i>WINDOWSIZE</i></b></tt></blockquote>
+<b><i>Example</i></b>:
+<br>Edit <tt><a href="Configuration.txt">$DISIM/lib/Configuration.txt</a></tt>
+and add the following line:
+<blockquote><tt>WINDOW=cotton:mozilla:KeepLatest:6</tt>
+<br><tt>WINDOW=cotton:mozilla6.0:KeepLatest:6</tt></blockquote>
+This would tell the machine "cotton" that is should check to make sure
+that there are only 6 versions of each of the models <b>mozilla</b> and
+<b>mozilla6.0</b>
+at any given time (do nothing if there are less, delete the oldest if there
+are more).&nbsp; This rule can be overriden by creating the override file,
+<b><i><tt>$ADMINDIR/tmp/Keep</tt></i></b>,
+in which case that version is considered an exception to the rule and will
+remain until manually removed.
+<p>As with all windowing instruction, it requires that all machines performing
+actions on the models invoke the windowing program, <tt><a href="bin/admin/VersionWindow.pl">$DISIM/bin/admin/VersionWindow.pl</a></tt>,
+at various intervals. This is most often done in the machine's crontab.
+In the case of windowing the number of builds, it is suggested that only
+1 machine perform windowing for a specific type of model
+<br>&nbsp;
+<h2>
+<a NAME="Chapter4Step2"></a>Step 2: Define windowing mechanism for servers</h2>
+Windowing means maintaining a fixed size window of DIScover models to be
+served on a given machine. Currently the windowing mechanism is solely
+dependent on date stamps incorporated into the version name for each model.
+It is sugested that model versions be specified by using a customer specified
+trunk-name followed by an 8 digit datestamp. A valid version would be:
+<blockquote><tt>mozilla/release_build_20000921</tt></blockquote>
+This would be for the 'mozilla' source using set of flags corresponding
+to the 'release' build done on Sep 21, 2000.
+<br>A valid version could also be:
+<blockquote><tt>mozilla/20000921</tt></blockquote>
+To decide the number of versions of a specific kind of model to have running
+servers for, it is necessary to assess the intended usage by the customer
+as well as the available system memory on the machine used to run the model
+servers.
+<p>All windowing instructions are written to the DISIM configuration file,
+<tt><a href="Configuration.txt">$DISIM/lib/Configuration.txt</a></tt>,
+and the format for specifying the window size is as follows:
+<blockquote><tt>WINDOW=<b><i>HOSTNAME</i></b>:<b><i>MODELNAME</i></b>:ServeLatest:<b><i>WINDOWSIZE</i></b></tt></blockquote>
+<b><i>Example</i></b>:
+<blockquote><tt>WINDOW=cotton:mozilla6.0:ServeLatest:3</tt>
+<br><tt>WINDOW=wool:mozilla6.0:ServeLatest:1</tt>
+<br><tt>WINDOW=cotton:mozilla:ServeLatest:3</tt>
+<br><tt>WINDOW=wool:mozilla:ServeLatest:1</tt></blockquote>
+This would tell the machine "cotton" that is should check to make sure
+that there are only 3 versions of each of the models <b>mozilla</b> and
+<b>mozilla6.0</b>
+at any given time and that they are the latest possible versions. The machine
+"wool" should check to make sure that there is only 1 version of each of
+the models <b>mozilla</b> and <b>mozilla6.0</b> at any given time and that
+they are the latest possible versions. This can be overriden by creating
+the override file, <b><i><tt>$ADMINDIR/tmp/Serve_$HOST</tt></i></b>, in
+which case that version is considered an exception to the rule and will
+continue to be served until either the model is removed or the override
+file is manually removed.
+<p>As with all windowing instruction, it requires that all machines performing
+actions on the models invoke the windowing program, <tt><a href="bin/admin/VersionWindow.pl">$DISIM/bin/admin/VersionWindow.pl</a></tt>,
+at various intervals. This is most often done in the machine's crontab.
+<h2>
+<a NAME="Chapter4Step3"></a>Step 3: Setting up your cron</h2>
+The cron is the mechanism by which servers are maintained.&nbsp; This involves
+at least 2 tasks.&nbsp; The first is to verify that the correct number
+and versions of the models are being served.&nbsp; The second task is to
+make sure that each server that is supposed to be running is indeed running.
+<p><b><i>Example</i></b>:
+<br>Edit your crontab by issuing the following command:
+<blockquote><tt>crontab -e</tt></blockquote>
+&nbsp;&nbsp;&nbsp; Add the following lines:
+<blockquote><tt><font size=-1>15,45&nbsp;&nbsp; * * * * $PSETHOME/bin/disperl
+$DISIM/bin/admin/VersionWindow.pl >> $DISIM/tmp/Window_psales.log 2>&amp;1
+&amp;</font></tt>
+<br><tt><font size=-1>0,30&nbsp;&nbsp;&nbsp; * * * * $PSETHOME/bin/disperl
+$DISIM/bin/admin/ServerAdmin.pl -mfix</font></tt></blockquote>
+This will cause the windowing mechanism to be invoked at 15 and 45 minutes
+past each hour and the server checking mechanism to be invoked at 0 and
+30 minutes past each hour.&nbsp; Remember that cron does not give you much
+of an environment so always use FULL PATH names to each file and never
+use environment variables (They were only used in the example above so
+that the lines would fit on this page).
+<h2>
+<a NAME="Chapter4Step4"></a>Step 4: Manually starting and stopping servers</h2>
+All server related functions involve the script <tt><a href="#ServerAdmin.pl">$DISIM/bin/admin/ServerAdmin.pl</a></tt>.&nbsp;
+Starting a server requires a published model version argument.&nbsp; Only
+1 server can be started at a time.&nbsp; Stopping servers can be done by
+providing a model version argument or simply omitting the version and defaulting
+to shutting down ALL servers on the current machine.
+<p><b><i>Example</i></b>:&nbsp; Stop all servers running on the current
+machine:
+<blockquote><tt>$PSETHOME/bin/disperl $DISIM/bin/admin/ServerAdmin.pl
+-mstop</tt></blockquote>
+<b><i>Example</i></b>:&nbsp; Stop the server for the model&nbsp; <b><tt>mozilla/20000921</tt></b>&nbsp;
+running on the current machine:
+<blockquote><tt>$PSETHOME/bin/disperl $DISIM/bin/admin/ServerAdmin.pl
+-mstop -vmozilla/20000921</tt></blockquote>
+<b><i>Example</i></b>:&nbsp; Start the server for the model&nbsp; <b><tt>mozilla/20000921</tt></b>&nbsp;
+on the current machine:
+<blockquote><tt>$PSETHOME/bin/disperl $DISIM/bin/admin/ServerAdmin.pl
+-mstart -vmozilla/20000921</tt></blockquote>
+*Remember that anything you do manually will be overriden when the crontab
+for ServerAdmin.pl and VersionWindow.pl set up in the previous step is
+invoked.&nbsp; So if your testing something, you may want to temporarily
+disable the crontab (you can do this by inserting a # in front of each
+line in the crontab).
+<h1>
+
+<hr WIDTH="100%"><a NAME="Chapter5"></a>Chapter 5: Description of administration
+scripts</h1>
+Each of the files in <tt><a href="bin/admin">$DISIM/bin/admin</a></tt>
+are described below:
+<h4>
+<a NAME="ModelAdmin.pl"></a><a href="bin/admin/ModelAdmin.pl">ModelAdmin.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl ModelAdmin.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+-m<b><i>full</i></b>|<b><i>incr</i></b> [-t<b><i>BUILD_LOCATION</i></b>]
+[-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Run the two scripts, <a href="#CreateModel.pl">CreateModel.pl</a> and
+<a href="#ReleaseModel.pl">ReleaseModel.pl</a>,
+passing all command line parameters through.
+<h4>
+<a NAME="CreateModel.pl"></a><a href="bin/admin/CreateModel.pl">CreateModel.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl CreateModel.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+-m<b><i>full</i></b>|<b><i>incr</i></b> [-t<b><i>BUILD_LOCATION</i></b>]
+[-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Run the three scripts, <a href="#CreateAdmindir.pl">CreateAdmindir.pl</a>,
+<a href="#BuildPrep.pl">BuildPrep.pl</a>,
+and <a href="#RunDismb.pl">RunDismb.pl</a>, passing all command line parameters
+through.
+<h4>
+<a NAME="CreateAdmindir.pl"></a><a href="bin/admin/CreateAdmindir.pl">CreateAdmindir.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl CreateAdmindir.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+-m<b><i>full</i></b>|<b><i>incr</i></b> [-t<b><i>BUILD_LOCATION</i></b>]
+[-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Assemble $ADMINDIR from -v and -t options and create an ADMINDIR template
+in that location.
+<h4>
+<a NAME="BuildPrep.pl"></a><a href="bin/admin/BuildPrep.pl">BuildPrep.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl BuildPrep.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+-m<b><i>full</i></b>|<b><i>incr</i></b> [-t<b><i>BUILD_LOCATION</i></b>]
+[-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Assemble $ADMINDIR from -v and -t options and run the scripts in <tt>$ADMINDIR/config</tt>
+that prepare the template for model building. Those commands are, in order
+of operation: <a href="template/ModelTemplate/config/GetBuildLog.pl">GetBuildLog.pl</a>,
+<a href="template/ModelTemplate/config/FilterBuildLog.pl">FilterBuildLog.pl</a>,
+and <a href="template/ModelTemplate/config/SetupLinkUnits.pl">SetupLinkUnits.pl</a>
+<h4>
+<a NAME="RunDismb.pl"></a><a href="bin/admin/RunDismb.pl">RunDismb.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl RunDismb.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+-m<b><i>full</i></b>|<b><i>incr</i></b> [-t<b><i>BUILD_LOCATION</i></b>]
+[-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Assemble $ADMINDIR from -v and -t options and run "dismb" and then
+<a href="#GetBuildErrors.pl">GetBuildErrors.pl</a>,
+passing all command line parameters through.
+<h4>
+<a NAME="GetBuildErrors.pl"></a><a href="bin/admin/GetBuildErrors.pl">GetBuildErrors.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl GetBuildErrors.pl</tt>
+<br>Filter the dismb model build log, <tt>$ADMINDIR/log/${USER}_dismb.log</tt>,
+for errors and put them into the file <tt>$ADMINDIR/log/${USER}_dismb.err</tt>
+<h4>
+<a NAME="ReleaseModel.pl"></a><a href="bin/admin/ReleaseModel.pl">ReleaseModel.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl ReleaseModel.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>
+-m<b><i>full</i></b>|<b><i>incr</i></b> [-t<b><i>BUILD_LOCATION</i></b>]
+[-b<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Check to make sure that the model hass successfully completed building
+and then put it in the publish directory <tt>$DISIM/model/$MODELNAME</tt>
+and release it by creating the file <tt>$ADMINDIR/tmp/Release</tt>
+<h4>
+<a NAME="ServerAdmin.pl"></a><a href="bin/admin/ServerAdmin.pl">ServerAdmin.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl ServerAdmin.pl -m<b><i>start</i></b>|<b><i>stop</i></b>|<b><i>check</i></b>|<b><i>fix</i></b>
+[-v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b>]</tt>
+<br>Perform the specified operation to the specified model. The <b><i>start</i></b>
+operation requires a version to be specified on the command line, whereas
+<b><i>stop</i></b>,
+<b><i>check</i></b>
+and <b><i>fix</i></b> will allow the version specification to be omitted
+and will perform the operation on all currently served models.
+<h4>
+<a NAME="RunSimplify.pl"></a><a href="bin/admin/RunSimplify.pl">RunSimplify.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl RunSimplify.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b></tt>
+<br>Run simplify for ALL parsable files and put resulting analysis into
+the file: <tt>$privateModelRoot/${VERSION}_Simplify.log</tt>.
+<h4>
+<a NAME="RunQAR.pl"></a><a href="bin/admin/RunQAR.pl">RunQAR.pl</a></h4>
+<b><i>syntax</i></b>: <tt>perl RunQAR.pl -v<b><i>MODELNAME</i></b>/<b><i>VERSION</i></b></tt>
+<br>Run the QAR for all files in the model and save session to private
+group area.
+
+<h1>
+
+<hr WIDTH="100%"><a NAME="Chapter6"></a>Chapter 6: Client Utilities</h1>
+
+<ol>
+<li>
+<a href="#Chapter6Part1">Starting DIScover.</a></li>
+
+<li>
+<a href="#Chapter6Part2">Clients.</a></li>
+</ol>
+
+<h2>
+<a NAME="Chapter6Part1">Starting DIScover</h2>
+Use $DISIM/bin/StartBrowser.sh or $DISIM/bin/StartBrowser.bat to
+start the DIScover browser.
+It will present the user with a choice of the models that are based
+on the DISIM installation. The DIScover browser uses a locally stored
+model, rather than a service.
+
+<h2>
+<a NAME="Chapter6Part2">Clients</h2>
+DeveloperXpress (a.k.a. Dislite) and Dish2 are designed to readily
+connect to any <a href="#Chapter4">model server</a> that's running on the network.
+No additional utility is needed.
+<br>&nbsp;
+
+<h1>
+
+<hr WIDTH="100%"><a NAME="AppendixA"></a>Appendix A: Diagrams</h1>
+
+<h2>
+<a NAME="DISIMStructureDiagram"></a>Diagram A: Directory Structure of DISIM</h2>
+<img SRC="Images/DISIM.jpg" NOSAVE height=367 width=652>
+<h2>
+
+<hr WIDTH="100%"><a NAME="ADMINDIRStructureDiagram"></a>Diagram B: Directory
+ADMINDIR</h2>
+<img SRC="Images/ADMINDIR.jpg" NOSAVE height=404 width=600>
+<br>
+<hr WIDTH="100%">
+<h2>
+<a NAME="ModelBuildProcessDiagram"></a>Diagram C: Model Build Process Call
+Tree</h2>
+<img SRC="Images/BuildProcess.jpg" NOSAVE height=385 width=640>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

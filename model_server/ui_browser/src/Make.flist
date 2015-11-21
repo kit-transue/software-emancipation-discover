@@ -1,0 +1,18 @@
+
+CPROOTS=\
+    baseBrowser.h \
+    browserRTL.h \
+    browserShell.h \
+    browser_callbacks \
+    browser_callbacks1 \
+    browser_import \
+    closure \
+    extract-dialog.h \
+    extract-subsystems \
+    fileLanguageDlg.h \
+    openFromBrowser.h \
+    projectBrowser.h \
+    projectBrowser1.h \
+    projectQuery \
+    SetsUI
+

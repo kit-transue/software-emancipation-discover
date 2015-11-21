@@ -1,0 +1,88 @@
+#!/bin/sh
+#boris
+
+set -a
+
+t_exec=""
+
+if [ "$1" = "help" ]; then
+	echo ""
+	echo "         ptest_smoke [exec_file]"
+	echo ""
+	echo "ptest_smoke run SMOKE test on predefined PSETHOME area,"
+        echo "analyse results and return 0 if all scripts succeeded,"
+        echo "return 1 on failure."
+	echo ""
+	echo "Runs executable PSETHOME/bin/aset or exec_file if specified"
+	echo ""
+	exit 0
+fi
+
+if [ "$1" != "" ] ; then
+    	t_exec="$1"
+	if [ ! -x "$t_exec" ] ; then
+		echo "ptest_smoke: wrong executable $1"
+		exit 1
+	fi
+fi
+
+if [ ! -d "$PSETHOME" ] ; then
+	echo "ptest_smoke: no such PSETHOME directory $PSETHOME"
+	exit 1
+fi
+
+if [ "$smoke" = "" ]; then
+  smoke="/usr/tmp/for_smoke"
+elif [ ! -d $smoke ]; then
+  echo "Output directory [$smoke] does not exist."
+fi
+curtst="$smoke/current_test"
+outdir="$smoke/outdir"
+
+if [ -d "$curtst" ] ; then
+	\rm -rf $smoke/old_current_test
+	mv $curtst $smoke/old_current_test
+fi
+
+if [ -d "$outdir" ] ; then
+	\rm -rf $smoke/old_outdir
+	mv $outdir $smoke/old_outdir
+fi
+
+mkdir -p $curtst $outdir
+
+if [ $? = 0 ] ; then
+	PSETTEST=$curtst
+	echo "set PSETTEST to $PSETTEST"
+        echo "set OUTDIR   to $outdir"      
+else
+	echo "Failed to create TEST directories"
+	exit 1
+fi
+
+to_run="PTEST_MASTER_LOCATION/smoke/test_ParaTutor/tutor_c4_94_2_10.ccc"
+
+if [ "$t_exec" = "" ] ; then
+	echo "Running $to_run" 
+#	ptest_run -outdir $outdir -file $to_run
+	pwd
+	./ptest_run -outdir $outdir -group S
+else
+	echo "Runnung -exec $t_exec $to_run"
+#	ptest_run -exec $t_exec -outdir $outdir -file $to_run
+	./ptest_run -exec $t_exec -outdir $outdir -group S
+fi
+
+if [ $? = 0 ] ; then
+	./ptest_failed $outdir
+	if [ $? = 0 ] ; then 
+		echo "SMOKE test succeeded"
+		exit 0
+	else
+		echo "SMOKE test failed"
+		exit 1
+	fi
+else
+	echo "SMOKE test failed"
+	exit 1
+fi

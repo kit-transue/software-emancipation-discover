@@ -1,0 +1,32 @@
+#ifndef _HOPCROFT_STC
+#define _HOPCROFT_STC
+
+
+/******************************************************************************/
+/*									      */
+/* Bestimmung der ARTIKULATIONSPUNKTE eines Graphen ( nach Hopcroft )         */
+/*									      */
+/*									      */
+/* Autor		Martin Schmidt, Martin-Luther-Str. 1, 7630 Lahr       */
+/*			Tel.: 07821 / 41748				      */
+/*									      */
+/* Letzte Aenderung     07.01.88					      */
+/*									      */
+/*									      */
+/******************************************************************************/
+
+
+typedef
+struct ARTI_HELP		/* Zur Auswertung von biconnected Komponenten */
+{
+  int 	(*DFS)[];			/* Tiefennummern                      */
+  int   (*LOW)[];                       /* LOW-Funktionswert                  */
+  int   (*AP)[];			/* Artikulationspunkt ? ja=1 sonst 0  */
+
+} ARTI_HELP;
+
+
+/* end of HOPCROFT.STC */
+
+
+#endif

@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>MLOWP - Mixing Logical Operators Without Parentheses</b></p>
+
+<p>An expression containing multiple logical operators together
+should be parenthesized properly.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; boolean a, b, c;<br>
+&nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; if ( <font color='red'> a || b && c </font>)  { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return;<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Use parenthesis to clarify complex logical expression to reader.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; boolean a, b, c;<br>
+&nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; if ( <font color='blue'> a || (b && c) </font>)  { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return;<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

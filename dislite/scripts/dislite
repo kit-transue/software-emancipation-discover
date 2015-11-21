@@ -1,0 +1,190 @@
+#!/bin/sh
+
+
+Error ()
+{
+	echo "$*" 1>&2
+}
+
+
+if [ -z "$DISPLAY" ]; then
+	Error "Error: Can't open display		"
+	exit
+fi
+
+
+#remove the last slash from psethome
+PSETHOME=`echo $PSETHOME | sed 's#/$##'`
+export PSETHOME;
+
+
+# This is file with program's settings. Actually it saves the last loaded model.
+DislitePrefs="${HOME}/dislite/dislite.prefs"
+
+
+# This is file name of 'cmdish', which helps us to communicate with 'cmdriver'.
+CmDish="${PSETHOME}/bin/cmdish"
+
+
+# Set environment variables for loading dynamic libraries.
+if [ -n "${LD_LIBRARY_PATH}" ] ; then
+        LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PSETHOME}/lib"
+else
+        LD_LIBRARY_PATH="${PSETHOME}/lib"
+fi
+export LD_LIBRARY_PATH
+
+if [ -n "${LD_LIBRARYN32_PATH}" ] ; then
+        LD_LIBRARYN32_PATH="${LD_LIBRARYN32_PATH}:${PSETHOME}/lib"
+else
+        LD_LIBRARYN32_PATH="${PSETHOME}/lib"
+fi
+export LD_LIBRARYN32_PATH
+
+if [ -n "${SHLIB_PATH}" ] ; then
+        SHLIB_PATH="${SHLIB_PATH}:${PSETHOME}/lib"
+else
+        SHLIB_PATH="${PSETHOME}/lib"
+fi
+export SHLIB_PATH
+
+
+# M.b. service was specified in command line.
+while [ ! -z "$1" ]; do
+  case "$1" in
+    -service) 
+	if [ -z "$2" ]; then
+		if [ -f "$DislitePrefs" ]; then
+			rm $DislitePrefs
+		fi
+		break
+	fi
+	shift
+
+    	if [ ! -z "$DIS_CONNECTION" ]; then
+	    if [ "$DIS_CONNECTION" = "http" ]; then
+		DIS_SERVICE=$1
+		export DIS_SERVICE
+		break
+	    fi
+	fi
+    
+	m_name=`echo $1 | sed 's/.*@\(.*\)/\1/'`
+	for host in `$PSETHOME/bin/dish2 -all`
+	do
+		host_id=`echo $host | sed 's/^{\([0-9\.]*\)}/\1/' | grep '[0-9][0-9\.]*' | grep -v '[{}]'`
+		if [ ! -z "$host_id" ]; then
+			for model in `$PSETHOME/bin/dish2 -test $host_id`
+			do
+				if [ "$m_name" = "$model" ];then
+					DIS_SERVICE="$host_id@$model"
+					export DIS_SERVICE
+					break
+				fi
+			done
+		fi
+	if [ ! -z "$DIS_SERVICE" ];then
+		break
+	fi
+	done;;
+    -*)  
+	Error "Usage: dislite [-service service] [file1 ...]"
+	exit;;
+    *) file=$*; break;;
+  esac
+  shift
+done
+
+
+if [ ! -d "$HOME/dislite" ]; then
+	mkdir $HOME/dislite
+fi
+
+if [ -z "$DIS_INSTALL" ]; then
+	DIS_INSTALL="$PSETHOME/lib/dislite"
+	export DIS_INSTALL
+fi
+
+if [ -z "$DIS_WISH" ]; then
+	DIS_WISH="$PSETHOME/bin/wish"
+	export DIS_WISH
+fi
+
+if [ -z "$TCL_LIBRARY" ]; then
+	TCL_LIBRARY="$PSETHOME/lib/tcl8.3"
+	export TCL_LIBRARY
+fi
+
+if [ -z "$TK_LIBRARY" ]; then
+	TK_LIBRARY="$PSETHOME/lib/tk8.3"	
+	export TK_LIBRARY
+fi
+
+
+# Register itself in 'cmdriver'. If no running 'cmdriver', it will start.
+$CmDish -query register
+
+
+# If service was not specified -> try to find it in the settings.
+if [ -z "$DIS_SERVICE" ];  then
+	if [ -f "$DislitePrefs" ]; then
+		set -- `wc -w $DislitePrefs`
+		if [ "$1" != "1" ]; then
+			rm $DislitePrefs
+		else
+			# Check that this service is still running.
+			m_name=`cat $DislitePrefs | sed 's/.*@\(.*\)/\1/'`
+			m_host=`cat $DislitePrefs | sed 's/\(.*\)@.*/\1/'`
+			m_running=0
+			for model in `$PSETHOME/bin/dish2 -test $m_host`
+			do
+				if [ "$m_name" = "$model" ];then
+					m_running=1
+					break
+				fi
+			done
+			if [ "$m_running" = "0" ]; then
+				rm $DislitePrefs
+			fi
+		fi
+	fi
+	if [ -f "$DislitePrefs" ]; then
+		DIS_SERVICE=`cat $DislitePrefs`	
+		export DIS_SERVICE
+	else
+		DIS_LITESTARTUP=1
+		export DIS_LITESTARTUP
+		$DIS_WISH -f $DIS_INSTALL/ServiceChooser.tcl
+		unset DIS_LITESTARTUP
+		if [ -f "$DislitePrefs" ]; then
+			DIS_SERVICE=`cat $DislitePrefs`	
+			export DIS_SERVICE
+		fi
+	fi	
+fi
+
+
+# If service is specified -> start DeveloperXPress.
+if [ -n "$DIS_SERVICE" ]; then
+	RESULT=`"${DIS_WISH}" -f "${DIS_INSTALL}"/dis_client.tcl "${DIS_SERVICE}"`
+	while [ "${RESULT}" != "" ]
+	do
+	        TMPRESULT=`echo $RESULT | sed 's/^DeveloperXPress_Restart*//'`
+		if [ "${RESULT}" != "${TMPRESULT}" ]; then
+			RESULT=
+			if [ -f "$DislitePrefs" ]; then
+				DIS_SERVICE=`cat $DislitePrefs`
+				if [ ! -z "${DIS_SERVICE}" ]; then
+					RESULT=`"${DIS_WISH}" -f "${DIS_INSTALL}"/dis_client.tcl "${DIS_SERVICE}"`
+				fi
+			fi
+		else
+			RESULT=
+		fi
+	done
+fi
+
+
+# Unregister itself in 'cmdriver'. It may lead to stoping 'cmdriver'.
+$CmDish -query unregister
+

@@ -1,0 +1,32 @@
+
+TARGETS =
+ 	create.o
+        boilerplate.o
+
+VPATH =
+	/paraset/src/paraset/DIS_create/src
+
+CCINCLUDES =
+	/paraset/src/paraset/communications/include
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/interface/include
+	/paraset/src/paraset/ui/include
+	/paraset/src/paraset/project/include
+	/paraset/src/paraset/ste/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/paraset/rtl/include
+	/paraset/src/paraset/xref/include
+	/paraset/src/paraset/nihcl/include
+	/paraset/src/paraset/dd/include
+	/paraset/src/paraset/ldr/include
+	/paraset/src/paraset/driver/include
+	/paraset/src/paraset/style/include
+	/paraset/src/paraset/view/include
+	/paraset/src/paraset/search/include
+	/paraset/src/paraset/smt/include
+	/paraset/src/paraset/to_cpp/include
+	/paraset/src/paraset/gra/include
+	/paraset/src/paraset/subsystem/include
+	/paraset/src/paraset/gt/include
+	${GALAXYHOME}/include

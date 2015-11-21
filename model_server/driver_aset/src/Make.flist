@@ -1,0 +1,33 @@
+CROOTS=\
+    c_main \
+    dialog_set_current_window \
+    ui \
+
+
+CPROOTS=\
+    Notifier.h \
+    OperPoint.h \
+    RTListServer \
+    autolog.h \
+    cleanup \
+    clipboard.h \
+    deepCopier.h \
+    dialog \
+    dialog.h \
+    dialog_scroll \
+    driver.h \
+    home_proj_selector \
+    LayerServer \
+    main \
+    msgSet.h \
+    objRef.h \
+    propSet.h \
+    reference.h \
+    regularTimer.h \
+    scrapbook.h \
+    selList.h \
+    set_homeproj \
+    spd_get_selection_array \
+    view_clean \
+    set_env \
+    dis_setfont

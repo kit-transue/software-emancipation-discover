@@ -1,0 +1,33 @@
+TARGETS =
+    	aset_graph.h.o
+    	aset_node.h.o
+    	constr_topsort.o
+    	edge.o
+    	interface.o
+    	matrix.o
+    	node.o
+    	set_constraints.o
+    	sugilevel.o
+    	sugitopsort.o
+    	treelayout.o
+
+VPATH =
+	/paraset/src/paraset/edge/src
+
+CCINCLUDES =
+	/paraset/src/paraset/ui/include
+	/paraset/src/paraset/view/include
+	/paraset/src/paraset/edge/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/paraset/ldr/include
+	/paraset/src/paraset/nihcl/include
+	/paraset/src/paraset/dd/include
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/gra/include
+	/paraset/src/paraset/graGala/include
+	/paraset/src/paraset/gedge/include
+	/paraset/src/paraset/driver/include
+	/paraset/src/paraset/xref/include
+	/paraset/src/paraset/ste/include
+	/paraset/src/paraset/style/include

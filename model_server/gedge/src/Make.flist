@@ -1,0 +1,38 @@
+CROOTS=\
+    addcross \
+    adtugraph \
+    hopcroft \
+    planar \
+
+
+CPROOTS=\
+    _copyedge \
+    _copygraph \
+    _defaults \
+    adttree \
+    bico \
+    constr_3D \
+    constr_box \
+    constr_desc \
+    constr_finetuning \
+    constr_layout \
+    constr_manager \
+    constr_net \
+    constr_node \
+    constr_order \
+    constr_queue \
+    constr_stab \
+    defaults \
+    dummy \
+    graph \
+    intersect \
+    isi \
+    planarlayout \
+    queue \
+    set \
+    slist \
+    stnum \
+    sugilayout \
+    write \
+
+

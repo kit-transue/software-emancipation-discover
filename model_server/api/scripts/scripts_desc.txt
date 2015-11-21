@@ -1,0 +1,23 @@
+SCRIPT NAME		FUNCTIONALITY
+
+grep.dis		List all the instances in the lines where the regular expression 
+			occurs. Results stored in  a group named "instances_group". The 
+			lines which do not match instances are listed on standard output.
+
+scope.dis		Brings SCOPE menu up. Make queries of Units, SLLs, DLLS, and EXEs.
+			Hide and Show top level projects. 
+
+instance_info.dis	Gives the filename and the line number at which the instance occurs.
+			Instances are taken either from user selection or from group.
+
+load_test_queries.dis	Brings up Tests menu, functionality needed for TESTS/sw
+			(located in /paraset/src/tests/cli).
+
+acct.dis		print Model summary for account information.
+
+smgr.dis		For internal set manager (sets functionality).
+
+discover.dis		For FILTER, QUERY, CATEGORY, ACTION, PROJECT menus.
+
+modified_report.dis	Report on modified entities.
+

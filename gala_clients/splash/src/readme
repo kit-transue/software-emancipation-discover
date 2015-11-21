@@ -1,0 +1,69 @@
+This is the demonstration program used in the Drawing, Colors, and Images
+seminar at the 1994 Galaxy Developer's Conference. It demonstrates the use,
+advantages, and disadvantages of the four types of highlighting/complementing
+that Galaxy provides.
+
+Requires Galaxy/C++ version 2.0 or better.
+
+In order to build invert, just type in "make". invert uses the environ file
+from $GALAXYHOME/samples, so if make complains that it can't include the
+environ file, just copy the one out of $GALAXYHOME/samples.
+
+When you run invert, you'll be presented with a dialog with a striped
+background and a menubar. By clicking and dragging with the left mouse button,
+you can drag "rubber rectangles" across the background. The default is for the
+rectangles to be filled, and for the drawing to use vdrawFUNC_COMPLEMENT if it
+is available (otherwise vdrawFUNC_HILITE is used). 
+
+There are four menus in invert:
+
+File menu:
+   general program control
+   
+   Quit: quit the invert program and return to the OS or shell
+
+Method menu:
+   controls what drawing function is used
+   (see the refman entry for vdraw::SetFunction)
+
+   vdrawFUNC_XOR: xor the background with the current color
+   vdrawFUNC_INVERT: use the 1's complement of the background
+   vdrawFUNC_HILITE: use the hilite color
+   vdrawFUNC_COMPLEMENT: use the complement color
+
+Background menu:
+   controls the background of the dialog
+
+   Solid: have a solid white background
+   Striped: have a multicolored striped background
+
+Foreground menu:
+   controls how the rubber rect is drawn
+
+   Filled: draw a filled rectangle
+   Outline: just draw the outline 
+            (like the rectangle drawn when rubberbanding in vre)
+
+Hilights of invert:
+
+If vdrawFUNC_COMPLEMENT is available, invert sets up a table of
+color/complement pairs and passes that table to vwindow::ComplementColors. This
+table contains the following entries:
+
+Color            Complement
+-----            ----------
+Red              Cyan
+Green            Magenta
+Blue             Yellow
+White            Black
+
+The idea behind vwindow::ComplementColors is to always get a known color when
+doing quick drawing/undrawing style actions - situations when you would
+ordinarily use vdrawFUNC_XOR. The background of invert is white with red,
+green, and blue stripes - when you rubberband, the forground drawn is black
+with cyan, magenta, and yellow stripes. Notice that if you use any other
+drawing mode (from the Method menu) you won't get a black foreground with CMY
+stripes - in fact, you can't guarantee what you'll get. With
+vdrawFUNC_COMPLEMENT and vdraw::SetComplement alone, you can complement one
+color with another - if you set up a table first using
+vwindow::ComplementColors, you can get a multipair complement like above.

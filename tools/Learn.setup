@@ -1,0 +1,33 @@
+#!/bin/csh -f 
+#
+# version /main/8
+#
+ 
+setenv OS "`$PSETHOME/bin/DISos`"
+ 
+# Allow customized DISLearnHome
+if ( ! $?DISLearnHome ) then
+   setenv DISLearnHome $HOME/DISCOVER
+   if ( ! -d $DISLearnHome ) mkdir -p $DISLearnHome
+   if ( $status != 0 ) then
+	echo " Discover could not create $DISLearnHome"
+	echo " Exiting"
+	exit 1
+   endif
+else 
+ ls $HOME/DISCOVER/Learn  |& grep not >& /dev/null
+ if ( $status == 1 ) then
+	echo " Saving previous $HOME/DISCOVER/Learn in $HOME/DISCOVER/Learn.prev"
+	mv  $HOME/DISCOVER/Learn $HOME/DISCOVER/Learn.prev
+  endif
+  echo " Creating symbolic link from  $DISLearnHome/Learn to  $HOME/DISCOVER/Learn"
+   ln -s $DISLearnHome/Learn $HOME/DISCOVER/Learn
+endif
+ 
+# support codebaseDir until we clean it up
+setenv ADMINDIR $DISLearnHome/Learn/AdminDir
+ 
+if ( ! -d $ADMINDIR ) then
+    $PSETHOME/bin/Learn.install
+endif
+

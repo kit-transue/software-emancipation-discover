@@ -1,0 +1,60 @@
+##########
+#
+# .login - C-Shell login script.
+#	This shell is only run when logging into the system.
+#
+##### History
+#
+# 10/26/95 tlw	Created.
+#
+##########
+
+
+### 1. Load in global login stuff.
+set Login_File=/view/$MY_VIEW/paraset/tools/SET.login
+if (-e $Login_File) then
+   source $Login_File
+else
+   source /ParaSET/tools/SET.login
+endif
+
+
+
+### 2. Local preferences.
+
+# Set this to insure this file is only called once.
+setenv DOT_LOGIN 1
+
+
+### 3. Start a ClearCase view if this is a remote login.
+if ($SHELL_TYPE == "REMOTE_LOGIN") then ### Need to set the view.
+   if (-e $Login_File) then	### View exists.
+      exec cleartool setview $MY_VIEW
+   endif
+endif
+
+
+### 4. Either exit or start up the windowing system.
+if ($SHELL_TYPE != "CONSOLE_LOGIN") then ### Not logging into a terminal.
+   exit		### leave user at regular C shell prompt
+endif
+
+
+echo ""
+echo ""
+
+unset mychoice
+echo -n "Starting OpenWindows (type Control-C to interrupt)"
+sleep 3
+if ( ${?OPENWINHOME} == 0 ) setenv OPENWINHOME /usr/openwin
+$OPENWINHOME/bin/openwin
+clear		# get rid of annoying cursor rectangle
+echo -n "Automatically logging out (type Control-C to interrupt)"
+sleep 3
+logout		# logout after leaving windows system
+
+
+
+
+
+##########     end of .login     ##########

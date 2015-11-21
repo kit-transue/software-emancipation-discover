@@ -1,0 +1,34 @@
+TARGETS =
+	symParser.yacc.o
+	symParser.lex.o
+    	gra_galaInterface.o
+    	gra_galaSymbol.o
+    	gra_galaWorld.o
+
+VPATH =
+	/paraset/src/paraset/graGala/src
+
+CCINCLUDES =
+	/paraset/src/paraset/view/include
+	/paraset/src/paraset/graGala/include
+	/paraset/src/paraset/gala/include
+	/paraset/src/paraset/xref/include
+	/paraset/src/paraset/gra/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/paraset/dd/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/nihcl/include
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/ldr/include
+	/paraset/src/paraset/ui/include
+	/paraset/src/paraset/driver/include
+	/paraset/src/paraset/style/include
+	/paraset/src/paraset/ste/include
+	/paraset/src/paraset/smt/include
+	/paraset/src/paraset/to_cpp/include
+	/paraset/src/paraset/subsystem/include
+	/paraset/src/paraset/project/include
+	/paraset/src/paraset/dagraph/include
+	/paraset/src/paraset/rtl/include
+	/paraset/src/tcl7.6/generic
+	${GALAXYHOME}/include

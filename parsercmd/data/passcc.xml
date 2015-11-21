@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- This parser flags filter preserves exactly what it's given.
+     It specifies the C language.
+     It is useful if the "build log" or compiler flags table is rigged
+     with the command line that aset_CCcc needs.
+ -->
+<cmdline unrecognized="no_message">
+<compilername>DIScover C</compilername>
+C
+  <translate unrecognized="1"/>
+</cmdline>

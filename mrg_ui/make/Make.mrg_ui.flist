@@ -1,0 +1,15 @@
+
+CXXROOTS=\
+    mtkargs \
+    mtkchangeitem \
+    difffile \
+    diffmanager \
+    mtkdiffmanager \
+    framework \
+    mtkframework \
+    mtkmain \
+    memman \
+    servercomm \
+    mtktextbuffer 
+
+LEXROOTS=

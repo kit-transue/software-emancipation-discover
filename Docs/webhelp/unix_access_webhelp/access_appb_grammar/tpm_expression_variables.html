@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>TPM Expression Variables</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 5.3px 48.0px; font: 13.0px Courier}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p7 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 12.0px Symbol}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 11.0px Verdana}
+    span.s4 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>TPM Expression Variables</b></p>
+<p class="p2"><b>&lt;<i>tpm term</i>&gt; </b><span class="s1">Æ</span><span class="s2"><b>   </b></span></p>
+<p class="p3">&lt;<i>string expression</i>&gt; |<br>
+&lt;<i>boolean expression</i>&gt; |<br>
+&lt;<i>unquoted string</i>&gt; |<br>
+&lt;<i>quoted string</i>&gt; |<br>
+&lt;<i>variable reference</i>&gt; |<br>
+&lt;<i>variable assignment</i>&gt;</p>
+<p class="p2"><b>&lt;<i>directional operator</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">-&gt; |<br>
+&lt;- |<br>
+, |<br>
+--</p>
+<p class="p2"><b>&lt;<i>repeat expression</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3"><span class="s3"><b>r</b></span> &lt;<i>subtree</i>&gt; &lt;<i>tree</i>&gt; |<br>
+<span class="s3"><b>repeat</b></span> &lt;<i>subtree</i>&gt; &lt;<i>tree</i>&gt; |<br>
+&lt;<i>integer</i>&gt; &lt;<i>subtree</i>&gt; &lt;<i>tree</i>&gt; |<br>
+&lt;<i>integer</i>&gt; <span class="s3"><b>..</b></span> &lt;<i>subtree</i>&gt; |<br>
+&lt;<i>integer</i>&gt; <span class="s3"><b>!</b></span> &lt;<i>subtree</i>&gt;</p>
+<p class="p2"><b>&lt;<i>subtree</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>directional operator</i>&gt; |<br>
+<span class="s3"><b>(</b></span> &lt;<i>tree</i>&gt; <span class="s3"><b>)</b></span></p>
+<p class="p2"><b>&lt;<i>variable reference</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p4"><span class="s3"><b>$</b></span>&lt;<i>identifier</i>&gt;</p>
+<p class="p2"><b>&lt;<i>identifier</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>letter</i>&gt; { &lt;letter or digit&gt; }</p>
+<p class="p2"><b>&lt;<i>letter or digit</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>letter</i>&gt; | &lt;<i>digit</i>&gt;</p>
+<p class="p2"><b>&lt;<i>letter</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">a | b | ... | z |<br>
+A | B | ... | Z</p>
+<p class="p2"><b>&lt;<i>digit</i>&gt;</b></p>
+<p class="p3">0 | 1 | ... | 9</p>
+<p class="p2"><b>&lt;<i>variable assignment</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>identifier</i>&gt; <span class="s3"><b>:</b></span></p>
+<p class="p2"><b>&lt;<i>string expression</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3"><span class="s3"><b>s .</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>unquoted string</i>&gt; |<br>
+&lt;<i>access C-function attribute expression</i>&gt; |<br>
+&lt;<i>trinary operator</i>&gt;</p>
+<p class="p2"><b>&lt;<i>trinary operator</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>expression</i>&gt; <span class="s3"><b>?</b></span> &lt;<i>expression</i>&gt; <span class="s3"><b>:</b></span> &lt;<i>expression</i>&gt;</p>
+<p class="p2"><b>&lt;<i>unquoted string</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>letter</i>&gt; { &lt;<i>letter or digit</i>&gt; }</p>
+<p class="p2"><b>&lt;<i>integer</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>digit</i>&gt; | &lt;<i>digit</i>&gt; &lt;<i>integer</i>&gt;</p>
+<p class="p2"><b>&lt;<i>boolean expression</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>expression</i>&gt; <span class="s3"><b>==</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>!=</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&lt;=</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&gt;=</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&lt;</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&gt;</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&amp;&amp;</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>||</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&lt;&lt;</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>&gt;&gt;</b></span> &lt;<i>expression</i>&gt; |<br>
+<span class="s3"><b>!</b></span> &lt;<i>expression</i>&gt; |<br>
+<span class="s3"><b>[</b></span> &lt;<i>access command</i>&gt; <span class="s3"><b>]</b></span> |<br>
+<span class="s3"><b>(</b></span> &lt;<i>tree</i>&gt; <span class="s3"><b>)</b></span> |<br>
+<span class="s3"><b>find</b></span> <span class="s3"><b>(</b></span> &lt;<i>tree</i>&gt; <span class="s3"><b>)</b></span> |<br>
+<span class="s3"><b>search</b></span> <span class="s3"><b>(</b></span> &lt;<i>tree</i>&gt; <span class="s3"><b>)</b></span> |<br>
+<span class="s3"><b>find1</b></span> <span class="s3"><b>(</b></span> &lt;<i>tree</i>&gt; <span class="s3"><b>)</b></span> |<br>
+<span class="s3"><b>search1</b></span> <span class="s3"><b>(</b></span> &lt;<i>tree</i>&gt; <span class="s3"><b>)</b></span> |<br>
+<span class="s3"><b>{</b></span> &lt;<i>optional access command</i>&gt; <span class="s3"><b>}</b></span> |<br>
+<span class="s3"><b>.</b></span> |<br>
+<span class="s3"><b>nil</b></span></p>
+<p class="p2"><b>&lt;expression&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>integer expression</i>&gt; |<br>
+&lt;<i>boolean expression</i>&gt; |<br>
+&lt;<i>string expression</i>&gt; |<br>
+&lt;<i>quoted string</i>&gt; |<br>
+&lt;<i>integer</i>&gt;</p>
+<p class="p2"><b>&lt;integer expression&gt; </b><span class="s1">Æ</span></p>
+<p class="p3"><span class="s3"><b>+</b></span> &lt;<i>expression</i>&gt; |<br>
+<span class="s3"><b>-</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>*</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>/</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>+</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>-</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>expression</i>&gt; <span class="s3"><b>%</b></span> &lt;<i>expression</i>&gt; |<br>
+&lt;<i>array reference</i>&gt;</p>
+<p class="p2"><b>&lt;<i>array reference</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3">&lt;<i>string expression</i>&gt; <span class="s3"><b>[</b></span> &lt;<i>expression</i>&gt; <span class="s3"><b>]</b></span> |<br>
+&lt;<i>string expression</i>&gt; <span class="s3"><b>[</b></span> &lt;<i>expression</i>&gt; <span class="s3"><b>,</b></span> &lt;<i>expression</i>&gt; <span class="s3"><b>]</b></span></p>
+<p class="p2"><b>&lt;<i>quoted string</i>&gt; </b><span class="s1">Æ</span></p>
+<p class="p3"><span class="s3"><b>"</b></span>Any characters<span class="s3"><b>"</b></span></p>
+<p class="p2"><b>&lt;<i>optional Access command</i>&gt; </b><span class="s1">Æ</span><span class="s2"><b>   </b></span></p>
+<p class="p3">{ &lt;<i>access command</i>&gt; }</p>
+<p class="p2"><b>&lt;Access command&gt; </b><span class="s1">Æ</span></p>
+<p class="p5">Any valid Access command.</p>
+<p class="p2"><b>&lt;Access C-function attribute expression&gt; </b><span class="s1">Æ</span></p>
+<p class="p5">Any Access C-function attribute expression, such as <span class="s4">regexp</span> or <span class="s4">match.</span></p>
+<p class="p6"> </p>
+<p class="p7"> </p>
+</body>
+</html>

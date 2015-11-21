@@ -1,0 +1,192 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+From:  Dave Angel
+Date:   April 22, 1994,  revised 7/6/94
+Subject:  overnight -batch runs
+
+To run the overnight scripts, you need access to
+   /job1 and /grid, both on power.  Normally, you
+   simply run on power, but if you run elsewhere, you'll
+   need to mount both.
+
+All the overnight scripts, pdfs, and such are located in
+  /job1/quality/psetxref/scripts
+
+All the log files are created in 
+  /job1/quality/psetxref/logs
+
+The pmods and psets are either done in-place in
+    $SYSBASE
+or they are built in
+   /grid/quality/pmod/new/paraset
+
+If they are built in-place, obviously the script needs
+to be run as builder.  The ones built on /grid must be
+run as davea.
+
+
+Before running a script, one must set PSETHOME.  Typically,
+this is set to  /grid/paraset.quality/sun4-O.  The reason we
+do not run directly is so that a new install doesn't mess up
+the -batch run.
+
+There are two scripts to copy an install to that location.
+As 'davea'  use
+    /job1/quality/psetxref/scripts/newinstall.sh
+    /job1/quality/psetxref/scripts/newinstallnew.sh
+to get a copy of either install, or install.new.   
+
+Occasionally, one wants to run a special executable for a
+particular run.  This can either be done by specifying the
+executable in the second script argument, or by simply copying
+the desired executable into 
+    /grid/paraset.quality/sun4-O/bin
+
+In the davea .cshrc there is an alias defined,
+     overnight
+which sets PSETHOME as specified above, and defines
+   PSET_ARENA show
+The latter causes the log file to have extra timing information.
+
+There are two main scripts that are run overnight.  As builder,
+one can run
+  /job1/quality/psetxref/scripts/incremental.sh
+which will build any missing or outdated psets, and restore
+any which are more recent than the pmods.
+
+As davea, one can run
+   /job1/quality/psetxref/scripts/xrefsub.sh
+which by default deletes all the pmods and psets in
+   /grid/quality/pmod/new/paraset
+and rebuilds them from scratch.  This script takes from one to three
+arguments, though:
+  1)  xx-yy     (required) date code.  It's actually an arbitrary string, but
+        we use the date so things are easier to find.
+  2)  executable name (or . for placeholder)
+  3)  delete  (any other string here says do not delete)
+
+As the script runs, it displays the exact names of all log files and such.
+When it completes, the summary report is sent to the printer, as well as
+remaining available in the logs directory.
+
+When the script completes, it generates a printed report.  That report is
+short enough to be visually scanned, as follows:
+
+At the begining, it gives all file information, so you know exactly which
+pdf was used, which log files match the report, and so on.  Then it has one
+line for each directory of the system, indicating what time it began
+working on that directory.  These times may be used to get gross performance
+differences from earlier reports.  After two passes through all the directories,
+it checks for parse errors, diagnostics, splices, and other warnings.  If there
+are some in any of the categories, it only displays the first 50 or so.  So the
+detail report file needs to be examined if there are more than a few.
+
+Next, it outputs the raw statistics for each of the forty-odd pmods it has
+built.  Then it runs the old -p logic, to get the error checking done there.
+This step is actually redundant with the -checkpmod it does later, but there
+it is.
+
+Next, it runs -checkpmod on each pmod, and shows the validation line for each.
+
+Now, it searches each of the source directory, looking to match the C and C++
+source file counts with the .pset counts for each.  Any missing psets show up
+here.  It does *not* check for a .pset with a 'needs reparse' flag on.
+
+For unparsed files, it is normal to have some header files show up, since we
+have quite a few files considered "dead" by ParaSET.  These files are not
+included by any of the source files in this directory tree.
+
+The final step in validating the overnight run is to start an interactive
+paraset with an appropriate pdf, and see whether the number of symbols of
+each kind is reasonable, and not changed excessively from an earlier run.
+I usually use a pair of pdfs for this, one being the same one used to
+create the pmods, and the other being dummy.pdf, in the same directory.
+Start:
+    paraset -P /job1/quality/psetxref/scripts/newsysbuild.pdf.normal
+          -P /job1/quality/psetxref/scripts/dummy.pdf -x /dummy
+
+Go to SCAN mode, and click each item in column 1, in succession.
+
+---------------------------------
+
+Once a set of pmods seems to be good, you can copy them into the system
+area as follows:
+
+As builder, run
+   /job1/quality/psetxref/scripts/release_pmods.sh
+
+To copy the psets, which should never be needed, use
+   /job1/quality/psetxref/scripts/release_psets.sh
+
+In both cases, it deletes the old ones as it copies.  It would be much
+better if they get updated with the incremental.sh  script, instead.
+
+------------------------------------------------------
+Special notes to Trung:
+To get timing information (much longer log file), set the PSET_ARENA
+environment variable to  showtime,  rather than  show.
+
+for the time being, we have two .pdfs that we are testing with for the
+LSI timing project (bug 6955).  These two pdfs are called
+      newsysbuild.pdf.normal
+      newsysbuild.pdf.manytop
+These differ only in that the latter has 42 (or so) top level projects,
+rather than the normal one project for all the system area of paraset.
+One must edit the xrefsub.sh  script in two places to switch pdfs.
+Both choices are given, it's just a matter of commenting out the 
+appropriate lines.
+
+The timing information can readily be extracted by using
+   tail -f xrefsub-XXXXXXXXXX.log |fgrep  TIME:
+and printed by using
+   fgrep TIME:  xrefsub-XXXXXXXX.log |lpr -p
+This assumes your current directory is  /job1/quality/psetxref/logs
+
+-------------------------------
+Notes to whoever will be maintaining these in the future:
+
+There are many variations on these scripts in the same directory, as
+well as many pdfs, for various purposes.  Most are probably obsolete
+by now.  Obviously, environment variables could have been used to
+customize the manytop logic, without needing separate pdf files.
+
+When using the -pmoddiff and -pmodcmp switches in -batch to compare
+pset files, the assumption is made that the pset files are simply
+formed from the source file names by appending .pset   For that
+reason, it might be desirable to change both the script and the
+pdf to use names like
+        foo.C.newsys.pset
+
+rather than 
+        foo.C.pset.newsys
+
+Currently, ownership of all the files are assumed to be the same
+person.  The script should maybe be changed to permit different
+people to run it on different nights, without having to login as
+the same user.
+

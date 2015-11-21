@@ -1,0 +1,31 @@
+#
+# File (master)
+#
+
+set m [dis_MenuCreate AppFileMenu "F_ile" "All=S"] 
+  
+
+# dis_MenuAppendSeparator $m
+
+ dis_MenuAppendItem $m FileQuit              	"Ex_it" {
+	  FinishChooser 1
+	}
+
+
+#
+# Help
+#
+
+set m [dis_MenuCreate "HelpMenu" "H_elp" "All=S"]
+
+  dis_MenuAppendItem $m HelpContentsItem	"Table of Contents" {
+	dis_help -contents 100 "DISCOVER_HELP.hlp"
+	}
+
+  dis_MenuAppendSeparator $m
+
+  dis_MenuAppendItem $m HelpAboutDiscover	"About Model Server..." {
+	dis_launch_dialog About
+	}
+
+

@@ -1,0 +1,65 @@
+#!/bin/sh
+# cm_get_src (ClearCase) - Checkout the source file (reserved)
+
+# exit script if we get any errors
+set -e
+
+# Execute beforeget script if it exists
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeget ] ; then
+  $cm_optscripts/cm_beforeget
+fi
+
+# Check if file is writeable it was already checked out probably
+if [ -w $cm_workfile ] ; then
+
+  $PSETCFG/util/remove_file $cm_workfile
+  echo "cleartool uncheck -rm $cm_workfile"
+  set +e
+        cleartool uncheck -rm $cm_workfile 2> /dev/null
+  set -e
+
+else
+
+  set +e
+  checkedout=`cleartool describe $cm_sysfile | head -1 | grep CHECKEDOUT`
+  set -e
+  if [ "$checkedout" != "" ] ; then
+    echo "cleartool uncheck -rm $cm_workfile"
+          cleartool uncheck -rm $cm_workfile
+
+  fi
+
+fi
+
+# Check out the source file
+echo "cleartool checkout -cq -reserved $cm_options $cm_sysfile <${cm_description:=/dev/null}"
+      cleartool checkout -cq -reserved $cm_options $cm_sysfile <${cm_description:=/dev/null}
+
+# Execute afterget script (async) if it exists
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterget ] ; then
+  $cm_optscripts/cm_afterget &
+fi
+
+exit 0
+
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = informational (displayed in configshell)
+		   : stderr = error messages (displayed in config status dialog box)
+
+#### Environment Variables
+# Environment variables setup by DISCOVER for ALL config scripts:
+#	$PSETCFG	  - path to directory containing the config scripts
+#	$cm_optscripts    - Points to the directory of optional scripts
+# Additional environment variables setup for this script by the configurator:
+#	$cm_sysfile	  - path to system (public) copy of file to be processed
+#			    (already processed by the pending filter at this point)
+#	$cm_version	  - name of version to check out (e.g. "1.343" or "/main/1")
+#	$cm_options       - user defined options as configured in Configurator
+#			    preferences dialog box for get
+#       $cm_description   - path pointing to file containing users comments
+
+#### Optional Scripts
+#	cm_beforeget	  - Run before checking out (or copying) the source file
+#	cm_afterget	  - Run in the background if the check out succeeds

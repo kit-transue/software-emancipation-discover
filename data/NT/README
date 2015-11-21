@@ -1,0 +1,99 @@
+DISCOVER for Windows NT
+
+
+Known Issues
+============
+
+As of this release, DISCOVER for Windows NT has the following known
+issues:
+
+  o If DISCOVER suddenly switches back to the ServiceChooser (a
+    pset_server crash), you cannot go back to the Browser by clicking the
+    Start button. Instead, you must exit and restart DISCOVER
+
+  o When applying a rule set to a large Information Model, the DISCOVER main
+    window does not refresh. DISCOVER is operating properly, however, and
+    will refresh the screen upon completion of the application of the rule
+    set
+
+  o When working with groups, you may want to view entities in the Entities
+    column on the Groups page in the browser notebook. You can use the
+    clipboard to paste the entities, as follows:
+
+    1. After applying a rule set to the Information Model, select the entities
+       that appear in the Results column of the Model Browser.
+
+    2. Select Copy from the Edit menu.
+
+    3. Select the Browser notebook, and select the Groups page.
+
+    4. Select an item in the Categories and Operation columns, until one or
+       more items appear in the Entities column.
+
+    5. Select one or more items in the Entities column (this highlights the
+       items, enabling DISCOVER to paste to the correct location)
+
+    6. Select Paste from the Edit menu.
+
+    This interface is being considered for revision in future releases.
+
+  o Applying a rule set that contains a type-matching rule for "short int"
+    does not find entities of the type short int. Use "short" instead of 
+    "short int" when you want to locate entities of this type.
+
+  o If you use the Shift and arrow keys to select entities or instances (for
+    example, in the Elements column in the Model Browser), be careful that you
+    have selected the entities you intended to select. The most recently
+    highlighted item is not actually selected. You can verify this by counting
+    the number of items you have selected, then comparing it to the number
+    that appears in the Filter List button at the bottom of the column. This 
+    issue will be addressed in future releases.
+
+  o When working with .make rule in a project description file (.pdf), the
+    command string that will be passed on to the Windows NT command
+    interpreter is converted to lower case.
+
+  o DISCOVER integration with Visual C++ 5.0 does not contain Information
+    Model for Microsoft Foundation Classes.
+
+  o During your installation, you may see the following message:
+
+    Setup has detected that Visual C++ 4.x or 5.x is not installed 
+    properly for a current user on this computer.
+    Setup will not be able to integrate with Visual C++.
+    Would you like to continue?
+
+    This message occurs for one of two reasons:
+
+    1. Visual C++ is not installed, or is incompletely installed
+    2. Visual C++ is completely and properly installed, but has never
+       been run by the current user
+
+    In the first case, click No in the message dialog box. This exits
+    the Setup installation wizard. You can then confirm that Visual
+    C++ is properly installed. When you have done this, restart Setup
+    and continue with your DISCOVER installation. Please note that to
+    integrate DISCOVER with Visual C++, Visual C++ must already be
+    installed when you begin installing DISCOVER.
+
+    If you do not want to integrate DISCOVER with Visual C++, click
+    Yes in the message dialog box, and continue with the
+    installation. When Setup is nearly finished, it will remind you
+    that it was unable to integrate DISCOVER with Visual C++.
+
+    In the second case (Visual C++ is installed but has not been run
+    by the current user), click No in the message dialog box. This
+    exits the Setup installation wizard. Run Visual C++, and exit it
+    (this identifies Visual C++ with the current user). Restart Setup,
+    and continue with the installation.
+
+    If Visual C++ 4.x and 5.x both exist on your system, DISCOVER will
+    prompt you to select a version. You can integrate DISCOVER with
+    only one version at a time. To integrate with another version, you
+    must uninstall DISCOVER, then select the desired version of Visual
+    C++ when you reinstall DISCOVER.
+
+Note: If DISCOVER terminates unexpectedly, you should remove any
+DISCOVER temporary files or directories from C:\TEMP\ (or your
+designated temporary directory).
+

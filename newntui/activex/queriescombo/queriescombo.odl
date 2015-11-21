@@ -1,0 +1,76 @@
+// QueriesCombo.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (QueriesCombo.tlb) that will become a resource in
+// QueriesCombo.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(6E672C22-1543-11D2-AEED-00A0C9B71DC4), version(1.0),
+  helpstring("QueriesCombo OLE Control module"), control ]
+library QUERIESCOMBOLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CQueriesComboCtrl
+
+	[ uuid(6E672C23-1543-11D2-AEED-00A0C9B71DC4),
+	  helpstring("Dispatch interface for QueriesCombo Control"), hidden ]
+	dispinterface _DQueriesCombo
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CQueriesComboCtrl)
+			[id(1)] IDispatch* DataSource;
+			[id(2)] BSTR Selection;
+			[id(3)] BSTR Categories;
+			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CQueriesComboCtrl)
+			[id(4)] BSTR AccessFromName(BSTR name);
+			[id(5)] void Update();
+			[id(6)] BSTR GetQueriesList();
+			[id(7)] void Clear();
+			[id(8)] BSTR GetSelectedQueries();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CQueriesComboCtrl
+
+	[ uuid(6E672C24-1543-11D2-AEED-00A0C9B71DC4),
+	  helpstring("Event interface for QueriesCombo Control") ]
+	dispinterface _DQueriesComboEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CQueriesComboCtrl)
+			[id(1)] void QueryChanged(BSTR queryList);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CQueriesComboCtrl
+
+	[ uuid(6E672C25-1543-11D2-AEED-00A0C9B71DC4),
+	  helpstring("QueriesCombo Control"), control ]
+	coclass QueriesCombo
+	{
+		[default] dispinterface _DQueriesCombo;
+		[default, source] dispinterface _DQueriesComboEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

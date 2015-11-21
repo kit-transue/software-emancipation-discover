@@ -1,0 +1,76 @@
+// CMIntegrator.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (CMIntegrator.tlb) that will become a resource in
+// CMIntegrator.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(D488E60E-D3FB-423D-A8C0-30C26B11FBF7), version(1.0),
+  helpfile("CMIntegrator.hlp"),
+  helpstring("CMIntegrator ActiveX Control module"),
+  control ]
+library CMINTEGRATORLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CCMIntegratorCtrl
+
+	[ uuid(29FEA4AE-16B9-4A8D-B9BE-BF0B63A9E72B),
+	  helpstring("Dispatch interface for CMIntegrator Control"), hidden ]
+	dispinterface _DCMIntegrator
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CCMIntegratorCtrl)
+			[id(1)] BSTR CMName;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CCMIntegratorCtrl)
+			[id(2)] BSTR GetCMs();
+			[id(3)] BSTR GetCommands();
+			[id(4)] boolean Connect(BSTR szName);
+			[id(5)] boolean IsConnected();
+			[id(6)] boolean IsAvailable();
+			[id(7)] BSTR GetAttributes();
+			[id(8)] BSTR ExecCommand(BSTR szCommand);
+			[id(9)] boolean Reconnect();
+			//}}AFX_ODL_METHOD
+	};
+
+	//  Event dispatch interface for CCMIntegratorCtrl
+
+	[ uuid(0298AAB4-98DF-41CF-92D4-83A503C83711),
+	  helpstring("Event interface for CMIntegrator Control") ]
+	dispinterface _DCMIntegratorEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CCMIntegratorCtrl)
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CCMIntegratorCtrl
+
+	[ uuid(3CA23651-0B2F-4E42-9C35-941DCBC95480),
+	  helpstring("CMIntegrator Control"), control ]
+	coclass CMIntegrator
+	{
+		[default] dispinterface _DCMIntegrator;
+		[default, source] dispinterface _DCMIntegratorEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

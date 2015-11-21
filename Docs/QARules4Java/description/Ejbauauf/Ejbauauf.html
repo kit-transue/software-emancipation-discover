@@ -1,0 +1,64 @@
+<html>
+<body>
+
+<p><b>Always use accessors to update JavaBeans properties.</b></p>
+
+<p>When accessing a JavaBeans property, even internal access must
+be through an accessor.  This is most important when changing
+the value.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.ejbtest;<br>
+<br>
+import javax.ejb.*;<br>
+<br>
+public class AUAUF implements SessionBean{<br>
+&nbsp; public int method (boolean b, int size) {<br>
+&nbsp; &nbsp; <font color='red'> if (b) { _size = size; }</font><br>
+&nbsp; &nbsp; return getSize ();<br>
+&nbsp; }<br>
+&nbsp; public int getSize () { return _size; }<br>
+&nbsp; public void setSize (int size) { _size = size; }<br>
+&nbsp; public void setSessionContext (SessionContext ctx) {}<br>
+&nbsp; public void ejbCreate () {}<br>
+&nbsp; public void ejbActivate () {}<br>
+&nbsp; public void ejbPassivate () {}<br>
+&nbsp; public void ejbRemove () {}<br>
+&nbsp; public int _size;<br>
+}
+</nobr></code></p>
+
+<p><b>Tip:</b>
+Do not access JavaBeans field directly.  Always use accessors.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package com.swemancipation.ejbtest;<br>
+<br>
+import javax.ejb.*;<br>
+<br>
+public class AUAUF implements SessionBean{<br>
+&nbsp; public int method (boolean b, int size) {<br>
+&nbsp; &nbsp; <font color='blue'> if (b) { setSize( size ); }</font><br>
+&nbsp; &nbsp; return getSize ();<br>
+&nbsp; }<br>
+&nbsp; public int getSize () { return _size; }<br>
+&nbsp; public void setSize (int size) { _size = size; }<br>
+&nbsp; public void setSessionContext (SessionContext ctx) {}<br>
+&nbsp; public void ejbCreate () {}<br>
+&nbsp; public void ejbActivate () {}<br>
+&nbsp; public void ejbPassivate () {}<br>
+&nbsp; public void ejbRemove () {}<br>
+&nbsp; public int _size;<br>
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Graig Larman, Rhett Guthrie: "Java 2 Performance and Idiom Guide"<br>
+Prentice Hall PTR, 2000.  pp.280-281</p>
+
+</body>
+</html>

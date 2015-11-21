@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>HP C/ANSI C</compilername>
+reconfigure hpansic                                <!-- default to ANSI C -->
+<translate>
+  <option   name="Ac" noarg="1">hpcc</option>      <!-- specify Classic C -->
+  <option   name="Aa" noarg="1">hpansic</option>   <!-- specify ANSI C -->
+  <option   name="Ae" noarg="1">hpansic</option>   <!-- specify ANSI C -->
+</translate>
+</cmdline>

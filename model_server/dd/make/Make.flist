@@ -1,0 +1,94 @@
+CROOTS=\
+
+CXXROOTS=\
+    copy_member \
+    ddHeader.h \
+    ddIfl.h \
+    dd_check_calls \
+    dd_check_macros \
+    dd_db \
+    dd_get_func_called \
+    dd_get_struct_rel \
+    dd_or_xref_node.h \
+    dd_set_baseclass \
+    dd_smt_util \
+    dd_style \
+    dd_type_string \
+    ddbuild \
+    ddfunc \
+    ddict.h \
+    ioErrorCheck.h \
+    parse_cplusplus_typename \
+    xref.h \
+    xrefMapper.h \
+    xref_dd \
+    xref_util \
+    moved_from_xref \
+    dd_utils \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/api/include \
+-I$(BUILD_SRC_ROOT)/model_server/api/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ast/include \
+-I$(BUILD_SRC_ROOT)/model_server/ast/include \
+-I$(LOCAL_SRC_ROOT)/model_server/dfa/include \
+-I$(BUILD_SRC_ROOT)/model_server/dfa/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_mb/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_mb/include \
+-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ldr/include \
+-I$(BUILD_SRC_ROOT)/model_server/ldr/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/process/include \
+-I$(BUILD_SRC_ROOT)/model_server/process/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/save/include \
+-I$(BUILD_SRC_ROOT)/model_server/save/include \
+-I$(LOCAL_SRC_ROOT)/model_server/search/include \
+-I$(BUILD_SRC_ROOT)/model_server/search/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt_metric/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt_metric/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ste/include \
+-I$(BUILD_SRC_ROOT)/model_server/ste/include \
+-I$(LOCAL_SRC_ROOT)/model_server/style/include \
+-I$(BUILD_SRC_ROOT)/model_server/style/include \
+-I$(LOCAL_SRC_ROOT)/model_server/subsystem/include \
+-I$(BUILD_SRC_ROOT)/model_server/subsystem/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_OODT/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_OODT/include \
+-I$(LOCAL_SRC_ROOT)/model_server/util/include \
+-I$(BUILD_SRC_ROOT)/model_server/util/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/dis_tcl8.3/generic \
+-I$(BUILD_SRC_ROOT)/dis_tcl8.3/generic \
+-I$(LOCAL_SRC_ROOT)/dis_tk8.3/generic \
+-I$(BUILD_SRC_ROOT)/dis_tk8.3/generic \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/gcc/src \
+-I$(BUILD_SRC_ROOT)/gcc/src \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \
+-I$(LOCAL_SRC_ROOT)/xxinterface/include \
+-I$(BUILD_SRC_ROOT)/xxinterface/include \

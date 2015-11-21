@@ -1,0 +1,27 @@
+YLROOTS = \
+	iff_parser
+
+CXXROOTS = \
+	astbodyStruct \
+	astnodeList \
+	astnodeStruct \
+	attributeList \
+	attributeStruct \
+	dirFSet \
+	discover-interface \
+	ifFileCache \
+	locationList \
+	locationStruct \
+	maplineList \
+	maplineStruct \
+	nodeinfoStruct \
+	positionStruct \
+	relationStruct \
+	stringList \
+	symbolStruct \
+	transformationList \
+	transformationStruct \
+	uintList
+
+
+

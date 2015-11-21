@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Memory</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 4.0px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 4.0px 24.0px; font: 11.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 4.0px 24.0px; font: 9.0px 'Times New Roman'}
+    p.p6 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Memory</b></p>
+<p class="p2">You should check that your temporary file space is not allocated to system swap space. You can use the <span class="s1">df</span> command on either:</p>
+<p class="p3">•<span class="s2">   </span>/usr/tmp</p>
+<p class="p3">•<span class="s2">   </span><i>$TMPDIR</i></p>
+<p class="p2">For example:</p>
+<p class="p4">usr% df /usr/etc</p>
+<p class="p5"><span class="s1">Filesystem</span>         <span class="s1">kbytes</span>      <span class="s1">used</span>      <span class="s1">avail</span>      <span class="s1">capacity</span>         <span class="s1">Mounted on<br>
+swap</span>         <span class="s1">163348</span>      <span class="s1">0</span>      <span class="s1">163348</span>      <span class="s1">0%</span>         <span class="s1">/usr/tmp</span></p>
+<p class="p2">If the output lists <span class="s1">swap</span> in the <span class="s1">Filesystem</span> column, then you must change your temporary file space to point somewhere else. Even if you have more than average disk capacity and traditionally have shared your swap and temporary file space, you should not risk this with DIScover.</p>
+<p class="p2">The expression <span class="s1">temp/swap collisions</span> describes problems you experience when DIScover fills temporary file space mounted on a swap partition.</p>
+<p class="p6"><b>Note: </b>You should not use automount disks when specifying the <span class="s1"><i>$TMPDIR</i></span> environment variable for temporary space.</p>
+</body>
+</html>

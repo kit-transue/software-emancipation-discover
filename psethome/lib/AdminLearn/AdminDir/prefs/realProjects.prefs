@@ -1,0 +1,12 @@
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/realProjects.pdf $ADMINDIR/pdf/quickBuildRules.pdf 
+*psetPrefs.pdfFileBuild:		$ADMINDIR/pdf/realProjects.pdf  $ADMINDIR/pdf/quickBuildRules.pdf
+
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src/realProjects/app1/src
+
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED/realProjects
+
+*psetPrefs.projectList:			ProjectFive
+
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileNameFixed:		yes
+*psetPrefs.logFileMonitor:		yes

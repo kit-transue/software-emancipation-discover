@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<tocdata>
+<book name="Welcome to DIScover" url="ciee_user_unix_01_welcome/welcome_to_code_integrity_enterprise_edition.htm#TOC_Welcome_to_Code" >
+  <item name="About This Online Help" url="ciee_user_unix_01_welcome/about_this_online_help.htm#TOC_About_This_Online_Help" />
+  <item name="Related Documentation" url="ciee_user_unix_01_welcome/related_documentation.htm#TOC_Related_Documentation" />
+  <item name="Typographical Conventions" url="ciee_user_unix_01_welcome/typographical_conventions.htm#TOC_Typographical_Conventions" />
+  <item name="Roles" url="ciee_user_unix_01_welcome/roles.htm#TOC_Roles" />
+  <item name="Assumptions" url="ciee_user_unix_01_welcome/assumptions.htm#TOC_Assumptions" />
+  <item name="Getting Help" url="ciee_user_unix_01_welcome/getting_help.htm#TOC_Getting_Help" />
+  <item name="Professional Services" url="ciee_user_unix_01_welcome/professional_services.htm#TOC_Professional_Services" />
+  <item name="Documentation Feedback" url="ciee_user_unix_01_welcome/documentation_feedback.htm#TOC_Documentation_Feedback" />
+  <item name="Where To Go From Here" url="ciee_user_unix_01_welcome/where_to_go_from_here.htm#TOC_Where_To_Go_From_Here" />
+</book>
+<book name="Understanding DIScover" url="ciee_user_unix_02_introduction/understanding_code_integrity.htm#TOC_Understanding_Code" >
+  <book name="DIScover Overview" url="ciee_user_unix_02_introduction/code_integrity_overview.htm#TOC_Code_Integrity_Overview" >
+    <item name="Features and Benefits" url="ciee_user_unix_02_introduction/features_and_benefits.htm#TOC_Features_and_Benefits" />
+  </book>
+  <book name="Core Concepts" url="ciee_user_unix_02_introduction/core_concepts.htm#TOC_Core_Concepts" >
+    <item name="Repository" url="ciee_user_unix_02_introduction/repository.htm#TOC_Repository" />
+    <item name="Information Model" url="ciee_user_unix_02_introduction/information_model.htm#TOC_Information_Model" />
+    <item name="Project" url="ciee_user_unix_02_introduction/project.htm#TOC_Project" />
+    <item name="Model Server" url="ciee_user_unix_02_introduction/model_server.htm#TOC_Model_Server" />
+    <item name="Build Server" url="ciee_user_unix_02_introduction/build_server.htm#TOC_Build_Server" />
+    <item name="Entities and Instances" url="ciee_user_unix_02_introduction/entities_and_instances.htm#TOC_Entities_and_Instances" />
+    <item name="Queries" url="ciee_user_unix_02_introduction/queries.htm#TOC_Queries" />
+  </book>
+  <book name="DIScover Components" url="ciee_user_unix_02_introduction/code_integrity_components.htm#TOC_Code_Integrity_Components" >
+    <item name="Model Browser" url="ciee_user_unix_02_introduction/model_browser.htm#TOC_Model_Browser" />
+    <item name="Developer Xpress" url="ciee_user_unix_02_introduction/developer_xpress.htm#TOC_Developer_Xpress" />
+    <item name="Access" url="ciee_user_unix_02_introduction/access.htm#TOC_Access" />
+  </book>
+  <item name="DIScover in the Enterprise Environment" url="ciee_user_unix_02_introduction/code_integrity_in_the_enterprise_environment.htm#TOC_Code_Integrity_in_the" />
+</book>
+<book name="Getting Started With DIScover" url="ciee_user_unix_03_starting/getting_started_with_code_integrity.htm#TOC_Getting_Started_With" >
+  <item name="Uninstalling DIScover" url="ciee_user_unix_03_starting/uninstalling_code_integrity.htm#TOC_Uninstalling_Code" />
+  <item name="Your Model Environment" url="ciee_user_unix_03_starting/your_model_environment.htm#TOC_Your_Model_Environment" />
+  <item name="Before Starting a Session" url="ciee_user_unix_03_starting/before_starting_a_session.htm#TOC_Before_Starting_a_Session" />
+  <item name="Starting the Model Browser" url="ciee_user_unix_03_starting/starting_the_model_browser.htm#TOC_Starting_the_Model" />
+  <item name="Choosing a Configuration Management System" url="ciee_user_unix_03_starting/choosing_a_configuration_management_system.htm#TOC_Choosing_a_Configuration" />
+  <item name="Choosing an IDE" url="ciee_user_unix_03_starting/choosing_an_ide.htm#TOC_Choosing_an_IDE" />
+  <item name="Setting Up the Integrity Manager Integration" url="ciee_user_unix_03_starting/setting_up_the_integrity_manager_integration.htm#TOC_Setting_Up_the_Integrity" />
+  <item name="Closing a DIScover Session" url="ciee_user_unix_03_starting/closing_a_code_integrity_session.htm#TOC_Closing_a_Code_Integrity" />
+</book>
+<book name="The Model Browser Interface" url="ciee_user_unix_04_interfaces/the_model_browser_interface.htm#TOC_The_Model_Browser" >
+  <book name="The Model Browser" url="ciee_user_unix_04_interfaces/the_model_browser.htm#TOC_The_Model_Browser1" >
+    <item name="Icons and Graphics" url="ciee_user_unix_04_interfaces/icons_and_graphics.htm#TOC_Icons_and_Graphics" />
+    <book name="Browse and Scan Shortcuts" url="ciee_user_unix_04_interfaces/browse_and_scan_shortcuts.htm#TOC_Browse_and_Scan_Shortcuts" >
+      <item name="Up" url="ciee_user_unix_04_interfaces/up.htm#TOC_Up" />
+      <item name="Group" url="ciee_user_unix_04_interfaces/group.htm#TOC_Group" />
+      <item name="Reset" url="ciee_user_unix_04_interfaces/reset.htm#TOC_Reset" />
+      <item name="Closure" url="ciee_user_unix_04_interfaces/closure.htm#TOC_Closure" />
+    </book>
+    <book name="Main Menu" url="ciee_user_unix_04_interfaces/main_menu.htm#TOC_Main_Menu" >
+      <item name="File" url="ciee_user_unix_04_interfaces/file.htm#TOC_File" />
+    </book>
+  </book>
+  <item name="The Viewer" url="ciee_user_unix_04_interfaces/the_viewer.htm#TOC_The_Viewer" />
+  <item name="The Minibrowser" url="ciee_user_unix_04_interfaces/the_minibrowser.htm#TOC_The_Minibrowser" />
+  <book name="Browse and Scan Modes" url="ciee_user_unix_04_interfaces/browse_and_scan_modes.htm#TOC_Browse_and_Scan_Modes" >
+    <item name="Browse Mode" url="ciee_user_unix_04_interfaces/browse_mode.htm#TOC_Browse_Mode" />
+    <book name="Scan Mode" url="ciee_user_unix_04_interfaces/scan_mode.htm#TOC_Scan_Mode" >
+      <item name="Categories" url="ciee_user_unix_04_interfaces/categories.htm#TOC_Categories" />
+      <item name="Elements" url="ciee_user_unix_04_interfaces/elements.htm#TOC_Elements" />
+      <item name="Ask" url="ciee_user_unix_04_interfaces/ask.htm#TOC_Ask" />
+      <item name="Results" url="ciee_user_unix_04_interfaces/results.htm#TOC_Results" />
+    </book>
+  </book>
+  <book name="Viewing Entities and Instances" url="ciee_user_unix_04_interfaces/viewing_entities_and_instances.htm#TOC_Viewing_Entities_and" >
+    <item name="Entities" url="ciee_user_unix_04_interfaces/entities.htm#TOC_Entities" />
+    <item name="Instances" url="ciee_user_unix_04_interfaces/instances.htm#TOC_Instances" />
+  </book>
+</book>
+<book name="Querying an Information Model" url="ciee_user_unix_05_querying/querying_an_information_model.htm#TOC_Querying_an_Information" >
+  <book name="Querying Your Source Code" url="ciee_user_unix_05_querying/querying_your_source_code.htm#TOC_Querying_Your_Source_Code" >
+    <item name="Notation" url="ciee_user_unix_05_querying/notation.htm#TOC_Notation" />
+    <item name="Nested Structure Notation" url="ciee_user_unix_05_querying/nested_structure_notation.htm#TOC_Nested_Structure_Notation" />
+  </book>
+  <item name="Working With the Viewer" url="ciee_user_unix_05_querying/working_with_the_viewer.htm#TOC_Working_With_the_Viewer" />
+  <book name="Working With the Minibrowser" url="ciee_user_unix_05_querying/working_with_the_minibrowser.htm#TOC_Working_With_the" >
+    <item name="Instance Lists" url="ciee_user_unix_05_querying/instance_lists.htm#TOC_Instance_Lists" />
+    <item name="Viewing Instance Sources" url="ciee_user_unix_05_querying/viewing_instance_sources.htm#TOC_Viewing_Instance_Sources" />
+    <item name="Nested Structure Queries" url="ciee_user_unix_05_querying/nested_structure_queries.htm#TOC_Nested_Structure_Queries" />
+  </book>
+  <book name="Filtering Lists" url="ciee_user_unix_05_querying/filtering_lists.htm#TOC_Filtering_Lists" >
+    <item name="Basic Filtering" url="ciee_user_unix_05_querying/basic_filtering.htm#TOC_Basic_Filtering" />
+    <item name="Advanced Filtering" url="ciee_user_unix_05_querying/advanced_filtering.htm#TOC_Advanced_Filtering" />
+    <item name="Multiple Filter Characteristics" url="ciee_user_unix_05_querying/multiple_filter_characteristics.htm#TOC_Multiple_Filter" />
+    <item name="Adjusting the Output of a Filtered List" url="ciee_user_unix_05_querying/adjusting_the_output_of_a_filtered_list.htm#TOC_Adjusting_the_Output_of" />
+  </book>
+  <book name="Working With Groups" url="ciee_user_unix_05_querying/working_with_groups.htm#TOC_Working_With_Groups" >
+    <item name="Creating a Group" url="ciee_user_unix_05_querying/creating_a_group.htm#TOC_Creating_a_Group" />
+    <item name="Saving a Group" url="ciee_user_unix_05_querying/saving_a_group.htm#TOC_Saving_a_Group" />
+    <item name="Renaming a Group" url="ciee_user_unix_05_querying/renaming_a_group.htm#TOC_Renaming_a_Group" />
+    <item name="Deleting a Group" url="ciee_user_unix_05_querying/deleting_a_group.htm#TOC_Deleting_a_Group" />
+    <item name="Adding Entities to a Group" url="ciee_user_unix_05_querying/adding_entities_to_a_group.htm#TOC_Adding_Entities_to_a" />
+    <item name="Removing Entities From a Group" url="ciee_user_unix_05_querying/removing_entities_from_a_group.htm#TOC_Removing_Entities_From_a" />
+    <item name="Copying Entities From One Group to Another" url="ciee_user_unix_05_querying/copying_entities_from_one_group_to_another.htm#TOC_Copying_Entities_From" />
+    <item name="Viewing Group Contents" url="ciee_user_unix_05_querying/viewing_group_contents.htm#TOC_Viewing_Group_Contents" />
+    <item name="Exporting Group Contents" url="ciee_user_unix_05_querying/exporting_group_contents.htm#TOC_Exporting_Group_Contents" />
+    <item name="Refreshing the Active Groups List" url="ciee_user_unix_05_querying/refreshing_the_active_groups_list.htm#TOC_Refreshing_the_Active" />
+    <item name="Exiting the Group Manager" url="ciee_user_unix_05_querying/exiting_the_group_manager.htm#TOC_Exiting_the_Group_Manager" />
+    <item name="Group Operations" url="ciee_user_unix_05_querying/group_operations.htm#TOC_Group_Operations" />
+    <item name="Sample Group Operations" url="ciee_user_unix_05_querying/sample_group_operations.htm#TOC_Sample_Group_Operations" />
+  </book>
+</book>
+<book name="Working With Graphical Views" url="ciee_user_unix_06_views/working_with_graphical_views.htm#TOC_Working_With_Graphical" >
+  <book name="Graphical Views" url="ciee_user_unix_06_views/graphical_views.htm#TOC_Graphical_Views" >
+    <book name="View" url="ciee_user_unix_06_views/view.htm#TOC_View" >
+      <item name="Text" url="ciee_user_unix_06_views/text.htm#TOC_Text" />
+    </book>
+  </book>
+  <item name="Tree Diagram" url="ciee_user_unix_06_views/tree_diagram.htm#TOC_Tree_Diagram" />
+  <item name="Inheritance View" url="ciee_user_unix_06_views/inheritance_view.htm#TOC_Inheritance_View" />
+  <item name="Outline View" url="ciee_user_unix_06_views/outline_view.htm#TOC_Outline_View" />
+  <item name="Entity Relation Diagram" url="ciee_user_unix_06_views/entity_relation_diagram.htm#TOC_Entity_Relation_Diagram" />
+  <item name="Data Chart" url="ciee_user_unix_06_views/data_chart.htm#TOC_Data_Chart" />
+  <item name="Flow Chart" url="ciee_user_unix_06_views/flow_chart.htm#TOC_Flow_Chart" />
+  <item name="Call Graph" url="ciee_user_unix_06_views/call_graph.htm#TOC_Call_Graph" />
+  <book name="Graphing" url="ciee_user_unix_06_views/graphing.htm#TOC_Graphing" >
+    <item name="Creating Graphs" url="ciee_user_unix_06_views/creating_graphs.htm#TOC_Creating_Graphs" />
+    <item name="Function Path Mapping" url="ciee_user_unix_06_views/function_path_mapping.htm#TOC_Function_Path_Mapping" />
+    <item name="Graph Output" url="ciee_user_unix_06_views/graph_output.htm#TOC_Graph_Output" />
+    <item name="Example of Graphing" url="ciee_user_unix_06_views/example_of_graphing.htm#TOC_Example_of_Graphing" />
+  </book>
+</book>
+<book name="Working With Source Code" url="ciee_user_unix_07_working_with_source/working_with_source_code.htm#TOC_Working_With_Source_Code" >
+  <book name="Working With IDEs" url="ciee_user_unix_07_working_with_source/working_with_ides.htm#TOC_Working_With_IDEs" >
+    <item name="Emacs" url="ciee_user_unix_07_working_with_source/emacs.htm#TOC_Emacs" />
+    <item name="vi" url="ciee_user_unix_07_working_with_source/vi.htm#TOC_vi" />
+  </book>
+  <book name="Working With Configuration Management Systems" url="ciee_user_unix_07_working_with_source/working_with_configuration_management_systems.htm#TOC_Working_With" >
+    <item name="Using Source Integrity" url="ciee_user_unix_07_working_with_source/using_source_integrity.htm#TOC_Using_Source_Integrity" />
+    <item name="Using Rational ClearCase" url="ciee_user_unix_07_working_with_source/using_rational_clearcase.htm#TOC_Using_Rational_ClearCase" />
+    <item name="Using RCS" url="ciee_user_unix_07_working_with_source/using_rcs.htm#TOC_Using_RCS" />
+  </book>
+</book>
+<book name="Impact Analysis" url="ciee_user_unix_08_impact/impact_analysis.htm#TOC_Impact_Analysis" >
+  <item name="Why Use Impact Analysis?" url="ciee_user_unix_08_impact/why_use_impact_analysis_.htm#TOC_Why_Use_Impact_Analysis" />
+  <item name="Performing an Impact Analysis" url="ciee_user_unix_08_impact/performing_an_impact_analysis.htm#TOC_Performing_an_Impact" />
+  <book name="Impact Analysis Options" url="ciee_user_unix_08_impact/impact_analysis_options.htm#TOC_Impact_Analysis_Options" >
+    <item name="C/C++ Language Entities" url="ciee_user_unix_08_impact/c_c++_language_entities.htm#TOC_C_C_Language_Entities" />
+    <item name="Java Language Entities" url="ciee_user_unix_08_impact/java_language_entities.htm#TOC_Java_Language_Entities" />
+  </book>
+  <book name="The Impact Analysis Report" url="ciee_user_unix_08_impact/the_impact_analysis_report.htm#TOC_The_Impact_Analysis" >
+    <item name="Generating an Impact Analysis Report" url="ciee_user_unix_08_impact/generating_an_impact_analysis_report.htm#TOC_Generating_an_Impact" />
+  </book>
+  <item name="Attaching Impact Analysis Reports to Integrity Manager Issues" url="ciee_user_unix_08_impact/attaching_impact_analysis_reports_to_integrity_manager_issues.htm#TOC_Attaching_Impact" />
+</book>
+<book name="Caliper" url="ciee_user_unix_09_caliper/caliper.htm#TOC_Caliper" >
+  <book name="What Is Caliper?" url="ciee_user_unix_09_caliper/what_is_caliper_.htm#TOC_What_Is_Caliper" >
+    <item name="Quality Rule Queries" url="ciee_user_unix_09_caliper/quality_rule_queries.htm#TOC_Quality_Rule_Queries" />
+    <item name="Browser and Viewer Integration" url="ciee_user_unix_09_caliper/browser_and_viewer_integration.htm#TOC_Browser_and_Viewer" />
+    <item name="Enterprise Quality Management" url="ciee_user_unix_09_caliper/enterprise_quality_management.htm#TOC_Enterprise_Quality" />
+  </book>
+  <book name="Performing a Quality Analysis" url="ciee_user_unix_09_caliper/performing_a_quality_analysis.htm#TOC_Performing_a_Quality" >
+    <item name="Error Output" url="ciee_user_unix_09_caliper/error_output.htm#TOC_Error_Output" />
+  </book>
+  <book name="Examining Quality Hits" url="ciee_user_unix_09_caliper/examining_quality_hits.htm#TOC_Examining_Quality_Hits" >
+    <item name="Viewing Results" url="ciee_user_unix_09_caliper/viewing_results.htm#TOC_Viewing_Results" />
+    <item name="Setting the Status Attribute" url="ciee_user_unix_09_caliper/setting_the_status_attribute.htm#TOC_Setting_the_Status" />
+  </book>
+  <book name="Caliper Sessions" url="ciee_user_unix_09_caliper/caliper_sessions.htm#TOC_Caliper_Sessions" >
+    <item name="Starting a New Caliper Session" url="ciee_user_unix_09_caliper/starting_a_new_caliper_session.htm#TOC_Starting_a_New_Caliper" />
+    <item name="Saving a Session" url="ciee_user_unix_09_caliper/saving_a_session.htm#TOC_Saving_a_Session" />
+    <item name="Opening a Saved Session" url="ciee_user_unix_09_caliper/opening_a_saved_session.htm#TOC_Opening_a_Saved_Session" />
+    <item name="Updating a Saved Session" url="ciee_user_unix_09_caliper/updating_a_saved_session.htm#TOC_Updating_a_Saved_Session" />
+    <item name="Removing a Session" url="ciee_user_unix_09_caliper/removing_a_session.htm#TOC_Removing_a_Session" />
+    <item name="Enabling and Disabling Items" url="ciee_user_unix_09_caliper/enabling_and_disabling_items.htm#TOC_Enabling_and_Disabling" />
+    <item name="Editing Threshold Queries" url="ciee_user_unix_09_caliper/editing_threshold_queries.htm#TOC_Editing_Threshold_Queries" />
+    <item name="Weights" url="ciee_user_unix_09_caliper/weights.htm#TOC_Weights" />
+  </book>
+  <book name="Quality Scores" url="ciee_user_unix_09_caliper/quality_scores.htm#TOC_Quality_Scores" >
+    <item name="Query Scores" url="ciee_user_unix_09_caliper/query_scores.htm#TOC_Query_Scores" />
+    <item name="Filter Set Scores" url="ciee_user_unix_09_caliper/filter_set_scores.htm#TOC_Filter_Set_Scores" />
+    <item name="Total Quality Score" url="ciee_user_unix_09_caliper/total_quality_score.htm#TOC_Total_Quality_Score" />
+  </book>
+  <book name="Quality Assessment Reports" url="ciee_user_unix_09_caliper/quality_assessment_reports.htm#TOC_Quality_Assessment" >
+    <item name="Generating a Quality Assessment Report" url="ciee_user_unix_09_caliper/generating_a_quality_assessment_report.htm#TOC_Generating_a_Quality" />
+  </book>
+  <item name="Attaching Quality Assessment Reports to Integrity Manager Issues" url="ciee_user_unix_09_caliper/attaching_quality_assessment_reports_to_integrity_manager_issues.htm#TOC_Attaching_Quality" />
+</book>
+<book name="Metrics" url="ciee_user_unix_10_metrics/metrics.htm#TOC_Metrics" >
+  <item name="Available Metrics" url="ciee_user_unix_10_metrics/available_metrics.htm#TOC_Available_Metrics" />
+  <item name="Displaying Metrics" url="ciee_user_unix_10_metrics/displaying_metrics.htm#TOC_Displaying_Metrics" />
+  <item name="Creating a Constant Query" url="ciee_user_unix_10_metrics/creating_a_constant_query.htm#TOC_Creating_a_Constant_Query" />
+</book>
+<book name="Dormant" url="ciee_user_unix_11_dormant/dormant.htm#TOC_Dormant" >
+  <item name="Overview of Dormant" url="ciee_user_unix_11_dormant/overview_of_dormant.htm#TOC_Overview_of_Dormant" />
+  <book name="Selecting a Root Entity" url="ciee_user_unix_11_dormant/selecting_a_root_entity.htm#TOC_Selecting_a_Root_Entity" >
+    <item name="Project Scope" url="ciee_user_unix_11_dormant/project_scope.htm#TOC_Project_Scope" />
+    <item name="Entity Reference Level" url="ciee_user_unix_11_dormant/entity_reference_level.htm#TOC_Entity_Reference_Level" />
+  </book>
+  <item name="Performing a Dormant Analysis" url="ciee_user_unix_11_dormant/performing_a_dormant_analysis.htm#TOC_Performing_a_Dormant" />
+</book>
+<book name="Simplify.h" url="ciee_user_unix_12_simplify/simplify.h.htm#TOC_Simplify_h" >
+  <item name="Simplifying a Source Files Header Files" url="ciee_user_unix_12_simplify/simplifying_a_source_file_s_header_files.htm#TOC_Simplifying_a_Source" />
+  <item name="A Simplify Exercise" url="ciee_user_unix_12_simplify/a_simplify_exercise.htm#TOC_A_Simplify_Exercise" />
+</book>
+<book name="Developer Xpress" url="ciee_user_unix_appa_devxpress/developer_xpress1.htm#TOC_Developer_Xpress1" >
+  <item name="Starting Developer Xpress" url="ciee_user_unix_appa_devxpress/starting_developer_xpress.htm#TOC_Starting_Developer_Xpress" />
+  <book name="Configuring Developer Xpress" url="ciee_user_unix_appa_devxpress/configuring_developer_xpress.htm#TOC_Configuring_Developer" >
+    <item name="Choosing a Model Server" url="ciee_user_unix_appa_devxpress/choosing_a_model_server.htm#TOC_Choosing_a_Model_Server" />
+    <item name="Choosing a Configuration Management System" url="ciee_user_unix_appa_devxpress/choosing_a_configuration_management_system1.htm#TOC_Choosing_a_Configuration1" />
+    <item name="Choosing a Source Mode" url="ciee_user_unix_appa_devxpress/choosing_a_source_mode.htm#TOC_Choosing_a_Source_Mode" />
+    <item name="Choosing an IDE" url="ciee_user_unix_appa_devxpress/choosing_an_ide1.htm#TOC_Choosing_an_IDE1" />
+    <item name="Emacs" url="ciee_user_unix_appa_devxpress/emacs1.htm#TOC_Emacs1" />
+    <item name="gVim" url="ciee_user_unix_appa_devxpress/gvim.htm#TOC_gVim" />
+    <item name="Borland JBuilder" url="ciee_user_unix_appa_devxpress/borland_jbuilder.htm#TOC_Borland_JBuilder" />
+  </book>
+  <book name="The Developer Xpress Interface" url="ciee_user_unix_appa_devxpress/the_developer_xpress_interface.htm#TOC_The_Developer_Xpress" >
+    <item name="Select Options" url="ciee_user_unix_appa_devxpress/select_options.htm#TOC_Select_Options" />
+  </book>
+  <book name="Basic Functions" url="ciee_user_unix_appa_devxpress/basic_functions.htm#TOC_Basic_Functions" >
+    <item name="Finding Items" url="ciee_user_unix_appa_devxpress/finding_items.htm#TOC_Finding_Items" />
+    <item name="Searching a Project Hierarchy" url="ciee_user_unix_appa_devxpress/searching_a_project_hierarchy.htm#TOC_Searching_a_Project" />
+    <item name="Filtering Entity Subsets" url="ciee_user_unix_appa_devxpress/filtering_entity_subsets.htm#TOC_Filtering_Entity_Subsets" />
+    <item name="Exiting Developer Xpress" url="ciee_user_unix_appa_devxpress/exiting_developer_xpress.htm#TOC_Exiting_Developer_Xpress" />
+  </book>
+  <book name="Navigating Your Source Code" url="ciee_user_unix_appa_devxpress/navigating_your_source_code.htm#TOC_Navigating_Your_Source" >
+    <item name="Using the Runtime List" url="ciee_user_unix_appa_devxpress/using_the_runtime_list.htm#TOC_Using_the_Runtime_List" />
+    <book name="Querying Entities In Your Source Code" url="ciee_user_unix_appa_devxpress/querying_entities_in_your_source_code.htm#TOC_Querying_Entities_In" >
+      <item name="Predefined Queries" url="ciee_user_unix_appa_devxpress/predefined_queries.htm#TOC_Predefined_Queries" />
+      <item name="Access Queries" url="ciee_user_unix_appa_devxpress/access_queries.htm#TOC_Access_Queries" />
+    </book>
+    <item name="Enabling Icons" url="ciee_user_unix_appa_devxpress/enabling_icons.htm#TOC_Enabling_Icons" />
+    <book name="Groups" url="ciee_user_unix_appa_devxpress/groups.htm#TOC_Groups" >
+      <item name="Working With a Group" url="ciee_user_unix_appa_devxpress/working_with_a_group.htm#TOC_Working_With_a_Group" />
+      <item name="Working With Multiple Groups" url="ciee_user_unix_appa_devxpress/working_with_multiple_groups.htm#TOC_Working_With_Multiple" />
+    </book>
+  </book>
+  <book name="Using Configuration Management Systems" url="ciee_user_unix_appa_devxpress/using_configuration_management_systems.htm#TOC_Using_Configuration" >
+    <item name="Source Integrity Specific Commands" url="ciee_user_unix_appa_devxpress/source_integrity_specific_commands.htm#TOC_Source_Integrity" />
+    <item name="Rational ClearCase Specific Commands" url="ciee_user_unix_appa_devxpress/rational_clearcase_specific_commands.htm#TOC_Rational_ClearCase" />
+  </book>
+  <item name="Using Submission Check" url="ciee_user_unix_appa_devxpress/using_submission_check.htm#TOC_Using_Submission_Check" />
+  <book name="Customizing Developer Xpress" url="ciee_user_unix_appa_devxpress/customizing_developer_xpress.htm#TOC_Customizing_Developer" >
+    <item name="Editing an Application File" url="ciee_user_unix_appa_devxpress/editing_an_application_file.htm#TOC_Editing_an_Application" />
+    <item name="Customizing the Menu Bar" url="ciee_user_unix_appa_devxpress/customizing_the_menu_bar.htm#TOC_Customizing_the_Menu_Bar" />
+  </book>
+  <item name="Troubleshooting" url="ciee_user_unix_appa_devxpress/troubleshooting.htm#TOC_Troubleshooting" />
+</book>
+
+</tocdata>

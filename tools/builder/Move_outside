@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# /paraset/tools/builder/Move_outside
+#
+# A trigger for clearcase /paraset vob.  It can be attached to an
+# element (file for example).  It is called after the element
+# is checked in.  If the element is a file, it will be copied to
+# a common repository.  If the file needs to exist elsewhere a
+# symbolic link should be pointed at this common repository location.
+#
+
+EXPORTDIR=/ParaSET/tools/cc_exports
+FN=`basename $CLEARCASE_PN`
+EXPORTFILE=$EXPORTDIR/$FN
+
+if [ "$CLEARCASE_ELTYPE" = "directory" ] ; then
+  echo "$0: Trigger is only to be applied to file elements."
+  exit 1
+fi
+
+if [ -d $EXPORTFILE ] ; then
+  echo "$0: $EXPORTFILE already exists as a directory"
+  exit 1
+fi
+
+
+if [ -f $EXPORTFILE ] || [ -h $EXPORTFILE ] ; then
+  if rm -f $EXPORTFILE  ; then
+    :
+  else
+    echo "$0: Unable to remove old copy of  $EXPORTFILE."
+    exit 1
+  fi
+fi
+
+
+cp -p $CLEARCASE_PN $EXPORTFILE
+
+

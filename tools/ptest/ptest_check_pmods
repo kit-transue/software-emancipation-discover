@@ -1,0 +1,46 @@
+#!/bin/sh
+
+pdf_file=$PSETTEST/test.pdf
+prefs=$PSETTEST/test.prefs
+if [ -f $prefs ]; then 
+  prefs="-prefs $prefs"
+else
+  prefs=""
+fi
+sysPrefs="-sysPrefs ${PROJ_ROOT}/job1/prefs/asetTest.prefs.$Arch"
+aset=$1
+home_proj=$2
+
+dump=`echo $home_proj | sed 's!/!_!g'`.dump
+
+if [ "$ptest_batch_dump_dir" != ""  -a -d "$ptest_batch_dump_dir" ]; then
+dump=$ptest_batch_dump_dir/$dump
+echo "$0: build dump $dump"
+discover -batch -exec $aset -pdf $pdf_file -update $home_proj $prefs $sysPrefs
+discover -batch -exec $aset -pdf $pdf_file -home $home_proj $prefs $sysPrefs -source ${PROJ_ROOT}/tools/ptest/ptest_dd_print.dis 1> __dump
+if [ -f $dump ]; then
+ mv $dump $dump.save
+fi
+
+sed 's#/[^ ]*/#//#g' __dump  | sort > $dump
+exit 0
+fi
+
+discover -batch -exec $aset -pdf $pdf_file -update $home_proj $prefs $sysPrefs
+discover -batch -exec $aset -pdf $pdf_file -home $home_proj $prefs $sysPrefs -source ${PROJ_ROOT}/tools/ptest/ptest_dd_print.dis 1> $dump.new1
+sed 's#/[^ ]*/#//#g' $dump.new1 | grep -v "first call to vfork" | grep -v "Coercing vfork" | sort > $dump.new
+diff $dump $dump.new > $dump.diff
+
+if [ $? -ne 0 ]; then
+  echo "catastrophe: diff $dump $dump.new "
+
+  if [ -f $dump.diff ]; then
+     echo ""
+     cat $dump.diff
+     echo ""
+  fi
+  exit 1
+else
+  echo "$dump=$dump.new"
+  rm $dump.new
+fi

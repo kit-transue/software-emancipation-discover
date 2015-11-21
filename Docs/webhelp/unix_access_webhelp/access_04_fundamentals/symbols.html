@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Symbols</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Symbols</b></p>
+<p class="p2"><i>Symbols</i> are the primary keys to the elements in the DIScover model; they are the handle to objects that make up the macro structure of programs: files, functions, macros, typedefs, and so on. In practical terms, symbols are those things that show up in the <b>Categories</b> column of the Browser: files, functions, classes, and so on. A given symbol may appear in multiple places in the model: a function has a definition, may have multiple declarations, and may be called or otherwise referenced in numerous places in the code. All these occurrences are references to the same symbol. Symbols represent logical things—they may be most closely associated with a particular piece of source (their definition, for example), but they are not created by the source code.</p>
+<p class="p2">For elements with non-local scope (macros, functions, global variables, and so on), DIScover creates separate symbols for objects with the same name. For instance, your model may have two functions named <span class="s1">main</span>. Each instance of <span class="s1">main</span> is given its own symbol and shows up separately in the Browser, in the <b>Elements</b> column.</p>
+<p class="p2">Elements with local scope are consolidated as much as possible without losing type information: all string literals, <span class="s1">%s\n</span>, are assigned to the same symbol. For local variables, variables with the same name and type are assembled into the same symbol: there is one symbol for <span class="s1">int i</span>, another for <span class="s1">float i</span>, a third for <span class="s1">long i</span>, and so on, no matter how many occurrences of <span class="s1">int i</span>, for example, actually exist in the source.</p>
+<p class="p3"><b>Note: </b>Symbols and their relations to the rest of the model are indexed in <span class="s2">pmods</span>. This improves the efficiency of queries involving symbols when they are run against an entire model.</p>
+</body>
+</html>

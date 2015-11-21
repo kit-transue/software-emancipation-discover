@@ -1,0 +1,10 @@
+CPROOTS= \
+	gtShell \
+	gtForm \
+	gtPushButton \
+	gtTopLevelShell \
+	gtManager \
+	gtPrimitive \
+	gtNoParent
+
+CPP_INCLUDES= \

@@ -1,0 +1,963 @@
+env: PSETHOME= C:/DISCOVER
+env: ADMINDIR= C:/DISCOVER/prebuilt/learn
+env: DISMBDIR= C:/DISCOVER/mb
+env: TMPDIR= C:/DOCUME~1/tatiana/LOCALS~1/Temp
+env: DISBUILD_TMPDIR= C:/DISCOVER/prebuilt/learn/tmp/disbuild
+env: PLATFORM= 
+env: DISCOVER releaseID= Not found
+Specified command line options:
+      -prefs 	C:\DISCOVER\prebuilt\learn\prefs\admin.prefs
+Missing preference file H://.psetPrefs
+Missing preference file C:/DISCOVER/prebuilt/learn/prefs/build.prefs
+Preference file path:
+     C:\DISCOVER\prebuilt\learn\prefs\admin.prefs
+     C:/DISCOVER/lib/psetPrefs.default
+     C:/DISCOVER/mb/dismb_default.prefs
+
+Writing build info
+Incremental Model build
+Work prefs: C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs
+Permanent log: C:/DISCOVER/prebuilt/learn\log/Apr08-16_59_14.log
+PDF environment variables:
+      Pref: sharedSrcRoot 	C:/DISCOVER/prebuilt/learn\source\shared 	
+      Pref: sharedModelRoot 	C:/DISCOVER/prebuilt/learn\model\shared 	
+      Pref: privateSrcRoot 	C:/DISCOVER/prebuilt/learn\source\private 	
+      Pref: privateModelRoot 	C:/DISCOVER/prebuilt/learn\model\private 	
+disMB passes: cache analysis parse update finalize
+
+                     =====  disMB init end Apr08-2002 16:59:14=====
+
+
+                     =====  disMB start Apr08-2002 16:59:14 =====
+
+
+                     =====  CACHE start Apr08-2002 16:59:14 =====
+
+Start cache MERLE2K:1 ; log C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_cache/MERLE2K_1.log
+
+                     ===== MERLE2K:1 local cache start Apr08-2002 16:59:14 =====
+
+
+MERLE2K:1 Running: model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -save_proj
+DISCOVER Version:        7.4
+Built on:                Apr 04 2002 18:13
+disbuild: tmpdir: C:/DISCOVER/prebuilt/learn/tmp/disbuild/
+disbuild MSG: ===== cache start =====
+Project SAVE: saving ALL projects.
+Saving ROOT /xip_shared
+done
+Saving ROOT /ttt_shared
+done
+Saving ROOT /sysinclude
+done
+RULE proj /__ruleShared - 
+no rules
+
+logfile: C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_cache/MERLE2K_1.log
+
+
+===== Cache Summary =====
+    3 ROOTs	 ROOTS.pmod.lst
+    3 PMODs	 PMODS.pmod.lst
+warning: NO mapped files.
+=========================
+MERLE2K:1 SUCCEEDED model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -save_proj
+
+                     ===== MERLE2K:1 local cache end Apr08-2002 16:59:15 =====
+
+
+                     =====  CACHE end Apr08-2002 16:59:15 =====
+
+
+                     =====  ANALYSIS start Apr08-2002 16:59:15 =====
+
+Start analysis MERLE2K:1 ; log C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_analysis/MERLE2K_1.log
+
+                     ===== MERLE2K:1 local analysis start Apr08-2002 16:59:15 =====
+
+
+MERLE2K:1 Running: model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -analysis
+DISCOVER Version:        7.4
+Built on:                Apr 04 2002 18:13
+disbuild: tmpdir: C:/DISCOVER/prebuilt/learn/tmp/disbuild/
+disbuild MSG: ===== analysis start (global) =====
+Started project /xip_shared
+Completed project /xip_shared.
+Added all 17 files.
+Started project /ttt_shared
+Completed project /ttt_shared.
+Added all 50 files.
+Started project /sysinclude
+Completed project /sysinclude.
+Added all 58 files.
+Preparing build info for 3 pmod projects:
+MBflagsReuse set to 'no'. Recalculate compiler flags.
+Project /xip_shared
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared canvas.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude canvas.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared color.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude color.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared fonts.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude fonts.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared image_win.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude image_win.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared init.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude init.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared pipeline.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude pipeline.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared stage.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude stage.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//xip_defs.bat shared xip.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude xip.obj
+
+Found compiler: cl
+Project /ttt_shared
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared application.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude application.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared board.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude board.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared color.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude color.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared display.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude display.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared displayapp.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude displayapp.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared displayboard.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude displayboard.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared displaybutton.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude displaybutton.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared displaycontrol.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude displaycontrol.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared displaysquare.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude displaysquare.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared displaystatus.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude displaystatus.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared game.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude game.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared gameboard.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude gameboard.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared history.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude history.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared humanplayer.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude humanplayer.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared location.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude location.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared main.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude main.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared move.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude move.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared mycomputerplayer.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude mycomputerplayer.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared player.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude player.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared square.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude square.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared tictactoegame.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude tictactoegame.obj
+
+Found compiler: cl
+Make action from pdf:
+/c:/discover/prebuilt/learn//prefs//ttt_defs.bat shared tictactoemove.obj
+Make output:
+cl -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude tictactoemove.obj
+
+Found compiler: cl
+Project /sysinclude
+Collected flags for 30 files: 0 old, 30 new
+Backing up old flags file C:/DISCOVER/prebuilt/learn/config/reuse.flg.bak
+Install new flags file C:/DISCOVER/prebuilt/learn/config/reuse.flg
+        1 file(s) copied.
+
+logfile: C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_analysis/MERLE2K_1.log
+
+
+=========== Analysis Summary ===========
+all PDF  modules:    125    all.pmod.lst
+outdated modules:    125    all.pmod.nif
+source files:         30
+parse  files:         30    all.pmod.prs
+header files:         92
+other  files:          3
+mapped files:          0
+to build modules:    125    all.pmod.nif
+========================================
+disbuild MSG: ===== analysis end (global) =====
+c:\docume~1\tatiana\locals~1\temp\mbtmp_analysis__merle2k_1.3048\discover-04-08.1\SharedMem03032 - Access is denied.
+MERLE2K:1 SUCCEEDED model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -analysis
+
+                     ===== MERLE2K:1 local analysis end Apr08-2002 16:59:16 =====
+
+
+                     =====  ANALYSIS end Apr08-2002 16:59:16 =====
+
+
+                     =====  PARSE start Apr08-2002 16:59:16 =====
+
+Start parse MERLE2K:1 ; log C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_parse/MERLE2K_1.log
+
+                     ===== MERLE2K:1 local parse start Apr08-2002 16:59:16 =====
+
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/canvas.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/canvas.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 45 all files, 0 up to date, 45 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/canvas.c.pset.iff.ext -lp_service  -message_group 
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Xresource.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xresource.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/ConstrainP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/constrainp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/IntrinsicP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/intrinsicp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Constraint.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/constraint.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/stdtypes.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/stdtypes.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/xip/include/image_win.h  c:/discover/prebuilt/learn/model/shared/pset/xip/include/image_win.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Mrm/MrmDecls.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/mrm/mrmdecls.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Core.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/core.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Mrm/MrmAppl.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/mrm/mrmappl.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/xip/include/stage.h  c:/discover/prebuilt/learn/model/shared/pset/xip/include/stage.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Vendor.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/vendor.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Xlib.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xlib.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/Xm.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/xm.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/xip/include/Dt.h  c:/discover/prebuilt/learn/model/shared/pset/xip/include/dt.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stddef.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stddef.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/ExtObject.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/extobject.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Intrinsic.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/intrinsic.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Shell.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/shell.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/RectObjP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/rectobjp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/StringDefs.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/stringdefs.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stdlib.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stdlib.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Xosdefs.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xosdefs.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Mrm/MrmPublic.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/mrm/mrmpublic.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/VendorP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/vendorp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/XmP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/xmp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/CompositeP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/compositep.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/BaseClassI.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/baseclassi.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/ObjectP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/objectp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/ShellP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/shellp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/xip/include/xip.h  c:/discover/prebuilt/learn/model/shared/pset/xip/include/xip.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/RectObj.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/rectobj.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/VirtKeys.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/virtkeys.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/string.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/string.h.pset.iff
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/canvas.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/canvas.c.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Composite.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/composite.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/xip/include/canvas.h  c:/discover/prebuilt/learn/model/shared/pset/xip/include/canvas.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Xutil.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xutil.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Object.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/object.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/Xfuncproto.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xfuncproto.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/X.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/x.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/X11/CoreP.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/corep.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/types.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/types.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stdio.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stdio.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/VendorE.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/vendore.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/Traversal.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/traversal.h.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/color.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/color.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 40 all files, 39 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/color.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/color.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/color.c.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/fonts.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/fonts.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 40 all files, 39 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/fonts.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/fonts.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/fonts.c.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/image_win.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/image_win.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 43 all files, 42 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/image_win.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/image_win.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/image_win.c.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/init.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/init.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 40 all files, 39 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/init.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/init.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/init.c.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/pipeline.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/pipeline.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 44 all files, 42 up to date, 2 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/pipeline.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/pipeline.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/pipeline.c.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/xip/include/externals.h  c:/discover/prebuilt/learn/model/shared/pset/xip/include/externals.h.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/stage.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/stage.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 43 all files, 42 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/stage.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/stage.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/stage.c.pset.iff
+Parsing C file: 'c:/discover/prebuilt/learn/source/shared/xip/src/xip.c'
+cd "c:/discover/prebuilt/learn/source/shared/xip/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -IC:/DISCOVER/prebuilt/learn/source/shared/xip/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude "c:/discover/prebuilt/learn/source/shared/xip/src/xip.c"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 46 all files, 45 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/xip/src/xip.c.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/xip/src/xip.c  c:/discover/prebuilt/learn/model/shared/pset/xip/src/xip.c.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/application.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/application.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 4 all files, 2 up to date, 2 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/application.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/application.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/application.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/application.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/application.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/board.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/board.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 34 all files, 23 up to date, 11 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/board.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/streambuf.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/streambuf.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/stat.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/stat.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/_G_config.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/_g_config.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/color.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/color.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/square.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/square.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/libio.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/libio.h.pset.iff
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/board.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/board.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/board.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/board.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/iostream.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/iostream.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/location.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/location.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/x11_intrinsic.h  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/x11_intrinsic.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/color.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/color.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 30 all files, 29 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/color.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/color.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/color.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/display.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/display.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 32 all files, 24 up to date, 8 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/display.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/display.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/display.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/RowColumn.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/rowcolumn.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/display.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/display.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/Label.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/label.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stdarg.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stdarg.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/BulletinB.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/bulletinb.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/Frame.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/frame.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/Form.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/form.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/displayapp.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/displayapp.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 52 all files, 41 up to date, 11 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displayapp.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/DrawnB.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/drawnb.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayBoard.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displayboard.h.pset.iff
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/displayapp.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displayapp.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displaySquare.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaysquare.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayControl.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaycontrol.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayApp.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displayapp.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/funcTypes.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/functypes.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayScore.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displayscore.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayStatus.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaystatus.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/PushB.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/pushb.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayButton.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaybutton.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/displayboard.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/displayboard.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 46 all files, 45 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displayboard.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/displayboard.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displayboard.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/displaybutton.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/displaybutton.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 36 all files, 35 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaybutton.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/displaybutton.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaybutton.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/displaycontrol.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/displaycontrol.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 37 all files, 36 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaycontrol.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/displaycontrol.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaycontrol.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/displaysquare.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/displaysquare.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 44 all files, 43 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaysquare.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/displaysquare.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaysquare.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/displaystatus.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/displaystatus.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 33 all files, 32 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaystatus.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/displaystatus.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaystatus.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/game.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/game.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 59 all files, 51 up to date, 8 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/game.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/player.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/player.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/gameBoard.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/gameboard.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/time.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/time.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/move.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/move.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/fcntlcom.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/fcntlcom.h.pset.iff
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/game.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/game.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/fcntl.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/fcntl.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/game.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/game.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/gameboard.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/gameboard.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 38 all files, 37 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/gameboard.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/gameboard.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/gameboard.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/history.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/history.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 10 all files, 8 up to date, 2 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/history.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/history.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/history.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/history.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/history.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/humanplayer.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/humanplayer.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 38 all files, 36 up to date, 2 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/humanplayer.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/humanplayer.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/humanplayer.cpp.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/humanPlayer.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/humanplayer.h.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/location.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/location.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 2 all files, 1 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/location.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/location.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/location.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/main.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/main.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 66 all files, 60 up to date, 6 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/main.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/TicTacToeMove.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/tictactoemove.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/ScrolledW.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/scrolledw.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/myComputerPlayer.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/mycomputerplayer.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/TicTacToeGame.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/tictactoegame.h.pset.iff
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/Xm/MainW.h  c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/mainw.h.pset.iff
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/main.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/main.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/move.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/move.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 6 all files, 5 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/move.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/move.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/move.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/mycomputerplayer.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/mycomputerplayer.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 39 all files, 38 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/mycomputerplayer.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/mycomputerplayer.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/mycomputerplayer.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/player.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/player.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 37 all files, 36 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/player.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/player.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/player.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/square.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/square.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 32 all files, 31 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/square.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/square.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/square.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoegame.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoegame.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 67 all files, 65 up to date, 2 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/tictactoegame.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayTicTacToeGame.H  c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaytictactoegame.h.pset.iff
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoegame.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/tictactoegame.cpp.pset.iff
+Parsing CPP file: 'c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoemove.cpp'
+cd "c:/discover/prebuilt/learn/source/shared/ttt/src"
+aset_CCcc.exe --IF_file "C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048"  --GNU_compatible_AST   --c++ -w -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -IC:/DISCOVER/prebuilt/learn/include -D__cplusplus -IC:/DISCOVER/prebuilt/learn/source/shared/ttt/include -IC:/DISCOVER/prebuilt/learn/source/shared/sysinclude --no_wchar_t_keyword "c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoemove.cpp"
+
+Scanned C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 7 all files, 6 up to date, 1 to extract, 0 foreign
+C:/DISCOVER/bin/ifext.exe C:/DOCUME~1/tatiana/LOCALS~1/Temp/mbtmp_parse__MERLE2K_1.3048/tmpif.3048 $3 -f c:/discover/prebuilt/learn/model/shared/pset/ttt/src/tictactoemove.cpp.pset.iff.ext -lp_service  -message_group 
+extracted: c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoemove.cpp  c:/discover/prebuilt/learn/model/shared/pset/ttt/src/tictactoemove.cpp.pset.iff
+
+                     ===== MERLE2K:1 local parse end Apr08-2002 16:59:49 =====
+
+  ===================== Parse Summary ======================
+    Projects                           Needed  Parsed  Missing
+    /xip_shared                        17      14      3
+    /ttt_shared                        50      47      3
+    /sysinclude                        58      57      1
+    Total IFFs: needed 125, parsed 118, missing 7
+                Total           include         src
+    needed      125             95              30
+    parsed      118             88              30 (forgiven 0)
+    missing     7               7               0
+  ==========================================================
+
+                     =====  PARSE end Apr08-2002 16:59:49 =====
+
+
+                     =====  UPDATE start Apr08-2002 16:59:49 =====
+
+Start update MERLE2K:1 ; log C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_update/MERLE2K_1.log
+
+                     ===== MERLE2K:1 local update start Apr08-2002 16:59:49 =====
+
+
+MERLE2K:1 Running: model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -update /xip_shared
+DISCOVER Version:        7.4
+Built on:                Apr 04 2002 18:13
+tmpdir: C:/DISCOVER/prebuilt/learn/tmp/disbuild/
+===== update start =====
+warning: No IFF c:/discover/prebuilt/learn/source/shared/xip/doc/requirements.doc.pset.iff
+warning: No IFF c:/discover/prebuilt/learn/model/shared/pset/xip/include/extra.h.pset.iff
+warning: No IFF c:/discover/prebuilt/learn/model/shared/pset/xip/include/extra2.h.pset.iff
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/include/canvas.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/include/canvas.h LN: /xip/include/canvas.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/include/canvas.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/include/dt.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/include/dt.h LN: /xip/include/dt.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/include/dt.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/include/externals.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/include/externals.h LN: /xip/include/externals.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/include/externals.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/include/image_win.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/include/image_win.h LN: /xip/include/image_win.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/include/image_win.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/include/stage.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/include/stage.h LN: /xip/include/stage.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/include/stage.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/include/xip.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/include/xip.h LN: /xip/include/xip.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/include/xip.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/canvas.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/canvas.c LN: /xip/src/canvas.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/canvas.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/color.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/color.c LN: /xip/src/color.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/color.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/fonts.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/fonts.c LN: /xip/src/fonts.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/fonts.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/image_win.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/image_win.c LN: /xip/src/image_win.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/image_win.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/init.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/init.c LN: /xip/src/init.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/init.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/pipeline.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/pipeline.c LN: /xip/src/pipeline.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/pipeline.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/stage.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/stage.c LN: /xip/src/stage.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/stage.c'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/xip/src/xip.c.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/xip/src/xip.c LN: /xip/src/xip.c
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/xip/src/xip.c'.
+===== Update Summary project /xip_shared =====
+14 	modules succeeded update
+14 	modules needed update for project /xip_shared
+0 	modules failed update
+=====================================
+===== update end =====
+Pass update exiting.  succeeded for project /xip_shared
+c:\docume~1\tatiana\locals~1\temp\mbtmp_update__merle2k_1.3048\discover-04-08.1\SharedMem12224 - Access is denied.
+MERLE2K:1 SUCCEEDED model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -update /xip_shared
+
+MERLE2K:1 Running: model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -update /ttt_shared
+DISCOVER Version:        7.4
+Built on:                Apr 04 2002 18:13
+tmpdir: C:/DISCOVER/prebuilt/learn/tmp/disbuild/
+===== update start =====
+warning: No IFF c:/discover/prebuilt/learn/source/shared/ttt/doc/requirements.doc.pset.iff
+warning: No IFF c:/discover/prebuilt/learn/source/shared/ttt/doc/specification.doc.pset.iff
+warning: No IFF c:/discover/prebuilt/learn/model/shared/pset/ttt/include/main.h.pset.iff
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/application.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/application.h LN: /ttt/include/application.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/application.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/board.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/board.h LN: /ttt/include/board.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/board.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/color.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/color.h LN: /ttt/include/color.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/color.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/display.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/display.h LN: /ttt/include/display.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/display.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displayapp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displayapp.h LN: /ttt/include/displayapp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayapp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displayboard.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displayboard.h LN: /ttt/include/displayboard.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayboard.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaybutton.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displaybutton.h LN: /ttt/include/displaybutton.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displaybutton.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaycontrol.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displaycontrol.h LN: /ttt/include/displaycontrol.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displaycontrol.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displayscore.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displayscore.h LN: /ttt/include/displayscore.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displayscore.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaysquare.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displaysquare.h LN: /ttt/include/displaysquare.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displaysquare.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaystatus.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displaystatus.h LN: /ttt/include/displaystatus.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displaystatus.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/displaytictactoegame.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/displaytictactoegame.h LN: /ttt/include/displaytictactoegame.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/displaytictactoegame.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/functypes.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/functypes.h LN: /ttt/include/functypes.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/functypes.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/game.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/game.h LN: /ttt/include/game.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/game.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/gameboard.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/gameboard.h LN: /ttt/include/gameboard.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/gameboard.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/history.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/history.h LN: /ttt/include/history.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/history.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/humanplayer.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/humanplayer.h LN: /ttt/include/humanplayer.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/humanplayer.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/location.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/location.h LN: /ttt/include/location.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/location.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/move.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/move.h LN: /ttt/include/move.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/move.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/mycomputerplayer.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/mycomputerplayer.h LN: /ttt/include/mycomputerplayer.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/mycomputerplayer.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/player.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/player.h LN: /ttt/include/player.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/player.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/square.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/square.h LN: /ttt/include/square.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/square.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/tictactoegame.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/tictactoegame.h LN: /ttt/include/tictactoegame.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/tictactoegame.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/tictactoemove.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/tictactoemove.h LN: /ttt/include/tictactoemove.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/tictactoemove.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/include/x11_intrinsic.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/include/x11_intrinsic.h LN: /ttt/include/x11_intrinsic.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/include/x11_intrinsic.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/application.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/application.cpp LN: /ttt/src/application.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/application.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/board.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/board.cpp LN: /ttt/src/board.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/board.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/color.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/color.cpp LN: /ttt/src/color.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/color.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/display.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/display.cpp LN: /ttt/src/display.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/display.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displayapp.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/displayapp.cpp LN: /ttt/src/displayapp.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/displayapp.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displayboard.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/displayboard.cpp LN: /ttt/src/displayboard.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/displayboard.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaybutton.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/displaybutton.cpp LN: /ttt/src/displaybutton.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/displaybutton.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaycontrol.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/displaycontrol.cpp LN: /ttt/src/displaycontrol.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/displaycontrol.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaysquare.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/displaysquare.cpp LN: /ttt/src/displaysquare.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/displaysquare.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/displaystatus.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/displaystatus.cpp LN: /ttt/src/displaystatus.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/displaystatus.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/game.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/game.cpp LN: /ttt/src/game.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/game.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/gameboard.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/gameboard.cpp LN: /ttt/src/gameboard.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/gameboard.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/history.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/history.cpp LN: /ttt/src/history.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/history.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/humanplayer.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/humanplayer.cpp LN: /ttt/src/humanplayer.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/humanplayer.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/location.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/location.cpp LN: /ttt/src/location.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/location.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/main.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/main.cpp LN: /ttt/src/main.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/main.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/move.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/move.cpp LN: /ttt/src/move.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/move.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/mycomputerplayer.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/mycomputerplayer.cpp LN: /ttt/src/mycomputerplayer.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/mycomputerplayer.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/player.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/player.cpp LN: /ttt/src/player.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/player.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/square.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/square.cpp LN: /ttt/src/square.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/square.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/tictactoegame.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoegame.cpp LN: /ttt/src/tictactoegame.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/tictactoegame.cpp'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/ttt/src/tictactoemove.cpp.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/ttt/src/tictactoemove.cpp LN: /ttt/src/tictactoemove.cpp
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/ttt/src/tictactoemove.cpp'.
+===== Update Summary project /ttt_shared =====
+47 	modules succeeded update
+47 	modules needed update for project /ttt_shared
+0 	modules failed update
+=====================================
+===== update end =====
+Pass update exiting.  succeeded for project /ttt_shared
+c:\docume~1\tatiana\locals~1\temp\mbtmp_update__merle2k_1.3048\discover-04-08.2\SharedMem02524 - Access is denied.
+MERLE2K:1 SUCCEEDED model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -update /ttt_shared
+
+MERLE2K:1 Running: model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -update /sysinclude
+DISCOVER Version:        7.4
+Built on:                Apr 04 2002 18:13
+tmpdir: C:/DISCOVER/prebuilt/learn/tmp/disbuild/
+===== update start =====
+warning: No IFF c:/discover/prebuilt/learn/model/shared/pset/sysinclude/va-sparc.h.pset.iff
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/_g_config.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/_g_config.h LN: /sysinclude/_g_config.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/_g_config.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/iostream.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/iostream.h LN: /sysinclude/iostream.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/iostream.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/libio.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/libio.h LN: /sysinclude/libio.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/libio.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/mrm/mrmappl.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/mrm/mrmappl.h LN: /sysinclude/mrm/mrmappl.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/mrm/mrmappl.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/mrm/mrmdecls.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/mrm/mrmdecls.h LN: /sysinclude/mrm/mrmdecls.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/mrm/mrmdecls.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/mrm/mrmpublic.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/mrm/mrmpublic.h LN: /sysinclude/mrm/mrmpublic.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/mrm/mrmpublic.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stdarg.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/stdarg.h LN: /sysinclude/stdarg.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stdarg.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stddef.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/stddef.h LN: /sysinclude/stddef.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stddef.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stdio.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/stdio.h LN: /sysinclude/stdio.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stdio.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/stdlib.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/stdlib.h LN: /sysinclude/stdlib.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/stdlib.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/streambuf.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/streambuf.h LN: /sysinclude/streambuf.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/streambuf.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/string.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/string.h LN: /sysinclude/string.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/string.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/fcntl.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/sys/fcntl.h LN: /sysinclude/sys/fcntl.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/fcntl.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/fcntlcom.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/sys/fcntlcom.h LN: /sysinclude/sys/fcntlcom.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/fcntlcom.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/stat.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/sys/stat.h LN: /sysinclude/sys/stat.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/stat.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/stdtypes.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/sys/stdtypes.h LN: /sysinclude/sys/stdtypes.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/stdtypes.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/sys/types.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/sys/types.h LN: /sysinclude/sys/types.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/sys/types.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/time.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/time.h LN: /sysinclude/time.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/time.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/composite.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/composite.h LN: /sysinclude/x11/composite.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/composite.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/compositep.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/compositep.h LN: /sysinclude/x11/compositep.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/compositep.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/constrainp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/constrainp.h LN: /sysinclude/x11/constrainp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/constrainp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/constraint.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/constraint.h LN: /sysinclude/x11/constraint.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/constraint.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/core.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/core.h LN: /sysinclude/x11/core.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/core.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/corep.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/corep.h LN: /sysinclude/x11/corep.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/corep.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/intrinsic.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/intrinsic.h LN: /sysinclude/x11/intrinsic.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/intrinsic.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/intrinsicp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/intrinsicp.h LN: /sysinclude/x11/intrinsicp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/intrinsicp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/object.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/object.h LN: /sysinclude/x11/object.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/object.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/objectp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/objectp.h LN: /sysinclude/x11/objectp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/objectp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/rectobj.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/rectobj.h LN: /sysinclude/x11/rectobj.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/rectobj.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/rectobjp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/rectobjp.h LN: /sysinclude/x11/rectobjp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/rectobjp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/shell.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/shell.h LN: /sysinclude/x11/shell.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/shell.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/shellp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/shellp.h LN: /sysinclude/x11/shellp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/shellp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/stringdefs.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/stringdefs.h LN: /sysinclude/x11/stringdefs.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/stringdefs.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/vendor.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/vendor.h LN: /sysinclude/x11/vendor.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/vendor.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/vendorp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/vendorp.h LN: /sysinclude/x11/vendorp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/vendorp.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/x.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/x.h LN: /sysinclude/x11/x.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/x.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xfuncproto.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/xfuncproto.h LN: /sysinclude/x11/xfuncproto.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/xfuncproto.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xlib.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/xlib.h LN: /sysinclude/x11/xlib.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/xlib.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xosdefs.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/xosdefs.h LN: /sysinclude/x11/xosdefs.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/xosdefs.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xresource.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/xresource.h LN: /sysinclude/x11/xresource.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/xresource.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/x11/xutil.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/x11/xutil.h LN: /sysinclude/x11/xutil.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/x11/xutil.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/baseclassi.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/baseclassi.h LN: /sysinclude/xm/baseclassi.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/baseclassi.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/bulletinb.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/bulletinb.h LN: /sysinclude/xm/bulletinb.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/bulletinb.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/drawnb.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/drawnb.h LN: /sysinclude/xm/drawnb.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/drawnb.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/extobject.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/extobject.h LN: /sysinclude/xm/extobject.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/extobject.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/form.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/form.h LN: /sysinclude/xm/form.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/form.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/frame.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/frame.h LN: /sysinclude/xm/frame.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/frame.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/label.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/label.h LN: /sysinclude/xm/label.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/label.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/mainw.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/mainw.h LN: /sysinclude/xm/mainw.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/mainw.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/pushb.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/pushb.h LN: /sysinclude/xm/pushb.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/pushb.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/rowcolumn.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/rowcolumn.h LN: /sysinclude/xm/rowcolumn.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/rowcolumn.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/scrolledw.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/scrolledw.h LN: /sysinclude/xm/scrolledw.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/scrolledw.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/traversal.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/traversal.h LN: /sysinclude/xm/traversal.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/traversal.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/vendore.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/vendore.h LN: /sysinclude/xm/vendore.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/vendore.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/virtkeys.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/virtkeys.h LN: /sysinclude/xm/virtkeys.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/virtkeys.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/xm.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/xm.h LN: /sysinclude/xm/xm.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/xm.h'.
+Processing IFF: c:/discover/prebuilt/learn/model/shared/pset/sysinclude/xm/xmp.h.pset.iff FN: /c:/discover/prebuilt/learn/source/shared/sysinclude/xm/xmp.h LN: /sysinclude/xm/xmp.h
+Saved model of 'C:/DISCOVER/prebuilt/learn/source/shared/sysinclude/xm/xmp.h'.
+===== Update Summary project /sysinclude =====
+57 	modules succeeded update
+57 	modules needed update for project /sysinclude
+0 	modules failed update
+=====================================
+===== update end =====
+Pass update exiting.  succeeded for project /sysinclude
+c:\docume~1\tatiana\locals~1\temp\mbtmp_update__merle2k_1.3048\discover-04-08.3\SharedMem09676 - Access is denied.
+MERLE2K:1 SUCCEEDED model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -update /sysinclude
+
+                     ===== MERLE2K:1 local update end Apr08-2002 17:00:01 =====
+
+  ===================== Update Summary =====================
+    Projects                           Needed  Updated
+    /xip_shared                        14      14
+    /ttt_shared                        47      47
+    /sysinclude                        57      57
+    Total: needed 118, Updated 118
+  ==========================================================
+
+                     =====  UPDATE end Apr08-2002 17:00:01 =====
+
+
+                     =====  FINALIZE start Apr08-2002 17:00:01 =====
+
+Start finalize MERLE2K:1 ; log C:/DISCOVER/prebuilt/learn/tmp/disbuild/mblog_finalize/MERLE2K_1.log
+
+                     ===== MERLE2K:1 local finalize start Apr08-2002 17:00:01 =====
+
+
+MERLE2K:1 Running: model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -save_proj
+DISCOVER Version:        7.4
+Built on:                Apr 04 2002 18:13
+Project SAVE: saving ALL projects.
+Saving ROOT /xip_shared
+done
+Saving ROOT /ttt_shared
+done
+Saving ROOT /sysinclude
+done
+MERLE2K:1 SUCCEEDED model_server.exe -batch -pdf C:/DISCOVER/prebuilt/learn\pdf\admin.pdf -prefs C:\\DISCOVER\\prebuilt\\learn\\tmp\\disbuild\\mb.prefs -save_proj
+
+                     ===== MERLE2K:1 local finalize end Apr08-2002 17:00:02 =====
+
+  ===== Finalize Summary =====
+    Total PRJs: needed 3, finalized 3
+  =============================
+
+                     =====  FINALIZE end Apr08-2002 17:00:02 =====
+
+Permanent log: C:/DISCOVER/prebuilt/learn\log/Apr08-16_59_14.log

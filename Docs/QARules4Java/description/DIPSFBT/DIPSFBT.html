@@ -1,0 +1,27 @@
+<html>
+<body>
+
+<p><b>DIPSFBT - Don't Import the Package the Source File Belongs To</b></p>
+
+<p>No classes or interfaces need to be imported from the package that the
+source code file belongs to. Everything in that package is available
+without explicit import statements.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package
+<font color='red'>com.swemancipation.metric</font>;<br>
+import java.awt.*;<br>
+<font color='red'>import com.swemancipation.metric.*; </font><br>
+<br>
+public class DIPSFBT {<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Delete unnecessary import statement.
+</p>
+
+
+</body>
+</html>

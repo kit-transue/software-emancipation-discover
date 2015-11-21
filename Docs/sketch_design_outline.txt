@@ -1,0 +1,70 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+                                                  03/28/94, N. Bhowmik
+
+    
+
+                                   Sketching
+
+
+    Problem Domain:
+
+    I. Graphics Toolkit specific:
+
+        1. Palettes, rubberbanding, customization, positioning and straightening, pull and insert text. Single palette for multiple window etc. 
+
+        2. Clean abstraction of Toolkit dependency such that Toolkit can be replaced with minimal rewriting. 
+
+        3. Provision for extending Toolkit features to allow a customized palette if desired.
+
+    II. Design specific:
+
+        1. View a Sketch as a container object holding certain components, entities or subassembly where, entity - graphical visualization of a pmod entity. component - an arbitrary collection of entities. subassembly - an arbitrary set of components or subassemblies. 
+
+        2. High level abstraction entities, components and subassemblies. 
+
+        a. A component can be 'soft associated' to other elements like docs, other sketches, source code etc.
+
+        b. A component is customizable, but not an entity. 
+
+        c. Each entity has a predefined visual representation which can be customized/changed. 
+
+        d. A component may have predefined visual rep.
+
+        3. Each sketch is an instance of a 'Sketch Application' such that multiple 'Sketches' are allowed to exist for a single pmod. 
+
+    III. Others:
+
+        1. Storage/Retrieval. 
+
+        a. Regeneration as opposed to others like Bitmap storage. 
+
+        b. Advantages/Disadvantages of Regeneration. 
+
+        c. Issues involved in each regeneration - integrity check, use of predefined images. Work involved in each regeneration must be minimized. Consistency and completeness check.

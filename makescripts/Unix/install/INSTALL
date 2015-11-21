@@ -1,0 +1,72 @@
+#!/bin/sh
+
+# INSTALL
+# options: -RECURSE (like cp -r)
+# 	-RENAME (rename destination)
+#	perhaps add -UNIX or -NT for unix/nt-only installation components?
+#	arg(1) ... arg(n-1): source files
+#	arg(n): destination directory (unless -RENAME).  directory will be created.
+# installs arguments into the PSETHOME where INSTALL is called from
+
+# 9.sep.2000 Kit Transue
+
+DESTDIR=`pwd`
+
+recurse_flag=0
+exec_flag=0
+rename_flag=0
+dest=""
+sources=""
+
+#parse commandline:
+while [ $# -gt 0 ]; do
+	case $1 in
+		-EXEC)
+			exec_flag=1
+			;;
+		-RECURSE)
+			recurse_flag=1
+			;;
+		-RENAME)
+			rename_flag=1
+			;;
+		*)
+			sources="$sources $dest"
+			dest=$1
+			;;
+	esac
+	shift
+done
+
+# check arguments:
+
+if [ $rename_flag -ne 0 ] ; then
+	destdir=${DESTDIR}/`dirname ${dest}`
+else
+	destdir=${DESTDIR}/${dest}
+fi
+
+mkdir -p $destdir
+
+if [ ${recurse_flag} -ne 0 ] ; then
+	echo cp -r ${sources} ${DESTDIR}/${dest}
+	cp -r ${sources} ${DESTDIR}/${dest}
+	chmod -R +x ${DESTDIR}/${dest}
+else
+	for x in ${sources} ; do
+		if [ -f $x ] ; then
+			echo cp -f $x ${DESTDIR}/${dest}
+			if [ ${exec_flag} -ne 0 ] ; then
+				chmod -R +x $x
+			fi
+			cp -f $x ${DESTDIR}/${dest}
+		else
+			if [ -d $x ] ; then
+				echo "${x} is a directory; not copying!" 1>&2
+			else
+				echo "error:${x} does not exist!" 1>&2
+				exit 1;
+			fi
+		fi
+	done
+fi

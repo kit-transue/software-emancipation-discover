@@ -1,0 +1,9 @@
+CPROOTS = \
+	parray \
+	argParam \
+	argPrmAssign \
+	cstring \
+	sarray
+
+
+

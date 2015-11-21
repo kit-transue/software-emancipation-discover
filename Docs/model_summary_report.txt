@@ -1,0 +1,90 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Specification for summary report
+27.Aug.96 Kit Transue
+
+Based on conversation with M.B., M.G., and Pero Smrzlic.  Request for
+functionality came from Tom Axbey.
+
+
+Requirements:
+
+A summary report on the status of the software base should be
+generated on demand.  The summary should be sufficiently concise so
+that it would be of interest to a manager--about one page.  The report
+may be generated monthly, weekly, or with each model build.
+
+The following data should be reported:
+* complexity (probably sum of cyclomatic complexity for system)
+* statistics (LOC, ELOC, number of entities of each type)
+* compliance to Year 2000
+* portability
+* ANSI conformance
+* structure information
+
+Format of the output should be comma separated values, suitable for
+import into "desktop productivity" software (Word, Excel).
+
+
+Implementation:
+
+Complexity and statistics information are already built into the model;
+the only work is to summarize these data.
+
+Y2K compliance has yet to be defined: once this is implemented in the
+DISCOVER model, summary data may be generated.
+
+Portability has not been completely defined.  Items that should be
+tracked include system calls: split along those defined in man2, man3,
+or beyond; how many places these functions are called from.  An
+alternative definition of "system function" could be a function that
+is called from within the system but is not defined anywhere ("foreign
+function").  This definition has the advantage that it is
+self-contained and context independent.  Whatever definition is used,
+the data should be readily available using CLI scripts.  Other data
+such as casts, comparison of different sized data structures, unions,
+etc., need to be added to the model and are probably not feasible to
+implement immediately.
+
+The only model for ANSI conformance we have are the number of
+errors/warnings generated during the model build.  The conformance
+report could presumably be extracted from the build log.
+
+Structure information may take the form of existing subsystem
+validation reports, or may summarize project information (assuming
+that projects track the structure in a meaningful way).
+
+
+The discussion suggested that a consistent mechanism for accessing the
+model should be used wherever possible: much of these data should be
+available using CLI; while Report/SW provides some mechanisms for
+reporting, it may in the long term be replaced with CLI itself, and
+perhaps should be avoided if possible.  Finally, while the report may
+not be customized by the end users, we may want to make it possible
+for SET field engineers to customize the report--further supporting
+the use of CLI.

@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Running Autoflag Scripts</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    span.s1 {font: 11.0px 'Courier New'}
+    span.s2 {font: 12.0px Courier}
+    span.s3 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Running Autoflag Scripts</b></p>
+<p class="p2">The autoflag scripts are a pair of shell scripts that can run your native compiler to determine its behavior. They are a utility that you can run to determine what flags are needed for your installation. The scripts are located in <span class="s1">&lt;CodeIntegrityInstalldir&gt;/lib/autoflag</span>. Their usage is <span class="s1">figure_cpp_flags.sh</span><span class="s2"> </span><span class="s3">aCC -c,</span> where <span class="s3">aCC</span> is your compiler and <span class="s2"><i>-</i></span><span class="s3">c</span> is the command you would use to compile, but not link, a single source file. You may also use other options that alter the compiler’s behavior (for example, ANSI flags, treats warnings-as-errors, use some kind of compatibility mode, and so on).</p>
+<p class="p2">For complete details of the compatibility options of the parser, see the<i> DIScover Installation and Administration Guide</i>.</p>
+<p class="p2">The scripts run each set of files in <span class="s3">positive_tests</span> and <span class="s3">negative_tests</span> through the compiler to determine if the compiler accepts or rejects the sample. When the script finishes, it prints a list of compiler flags that can be used to make the DIScover compiler emulate the host’s compiler and flags. These flags should go into the XML configuration file, as described earlier. The sample programs also aid in understanding what the flags might do.</p>
+</body>
+</html>

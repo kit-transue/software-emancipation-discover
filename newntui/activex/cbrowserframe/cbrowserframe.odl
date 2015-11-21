@@ -1,0 +1,86 @@
+// CBrowserFrame.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (CBrowserFrame.tlb) that will become a resource in
+// CBrowserFrame.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(1DE4F491-201B-11D2-AEF3-00A0C9B71DC4), version(1.0),
+  helpstring("CBrowserFrame OLE Control module"), control ]
+library CBROWSERFRAMELib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CCBrowserFrameCtrl
+
+	[ uuid(1DE4F492-201B-11D2-AEF3-00A0C9B71DC4),
+	  helpstring("Dispatch interface for CBrowserFrame Control"), hidden ]
+	dispinterface _DCBrowserFrame
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CCBrowserFrameCtrl)
+	        [id(1)]   BSTR Arguments;
+	        [id(2)]   BSTR ResultsFromCategory;
+	        [id(3)]   BSTR ResultsFromQuery;
+	        [id(4)]   BSTR ResultsFromGroup;
+	        [id(5)]   BSTR SelectionFromQuery;
+	        [id(6)]   BSTR SelectionFromCategory;
+	        [id(7)]   BSTR SelectionFromGroup;
+	        [id(8)]   BSTR Projects;
+	        [id(9)]   short Mode;
+	        [id(10)]  IDispatch* DataSource;
+	        [id(11)]  BSTR SelectedCategories;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CCBrowserFrameCtrl)
+	        [id(12)]  void Update(void);
+	        [id(13)]  void SetSet(BSTR name);
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CCBrowserFrameCtrl
+
+	[ uuid(1DE4F493-201B-11D2-AEF3-00A0C9B71DC4),
+	  helpstring("Event interface for CBrowserFrame Control") ]
+	dispinterface _DCBrowserFrameEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CCBrowserFrameCtrl)
+	        [id(1)] void ModeChanged(short newMode);
+	        [id(2)] void CategoryChanged(BSTR categoriesList);
+	        [id(3)] void QueryChanged(BSTR queriesList);
+	        [id(4)] void SelectionChanged(BSTR varName);
+            [id(5)] void GroupChanged(BSTR groupsList);
+            [id(6)] void ElementDoubleclicked(BSTR parms);
+            [id(7)] void SubsystemsNeedUpdate();
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CCBrowserFrameCtrl
+
+	[ uuid(1DE4F494-201B-11D2-AEF3-00A0C9B71DC4),
+	  helpstring("CBrowserFrame Control"), control ]
+	coclass CBrowserFrame
+	{
+		[default] dispinterface _DCBrowserFrame;
+		[default, source] dispinterface _DCBrowserFrameEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

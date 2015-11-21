@@ -1,0 +1,55 @@
+CROOTS= \
+    c_gen_be \
+    cil_alloc \
+    cil_to_str \
+    cil_util \
+    class_file \
+    cmd_line \
+    const_fp \
+    const_int \
+    debug \
+    decls \
+    driver \
+    error \
+    expr \
+    fe_init \
+    fe_main \
+    fe_util \
+    fe_wrapup \
+    folding \
+    gen_cil \
+    hash \
+    host_envir \
+    inflate \
+    is_unicode \
+    jfe \
+    jil_alloc \
+    jil_file \
+    jil_util \
+    lexical \
+    mem_manage \
+    parse \
+    parse_expr \
+    parse_stmt \
+    parse_util \
+    statements \
+    util \
+    SET_IF \
+    SET_IF_fmt \
+    SET_checksum \
+    SET_dump_il \
+    SET_list \
+    SET_strings
+
+CXXROOTS= \
+    SET_jfe_msg \
+    SET_main
+
+CPP_INCLUDES=\
+-I$(LOCAL_SRC_ROOT)/md5/include \
+-I$(BUILD_SRC_ROOT)/md5/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \
+-I$(LOCAL_SRC_ROOT)/xxinterface/include \
+-I$(BUILD_SRC_ROOT)/xxinterface/include \
+

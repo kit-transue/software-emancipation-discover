@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Editor Integration Mechanisms</title>
+  <meta name="Author" content="Unknown">
+  <meta name="LastAuthor" content="jnapoli">
+  <meta name="Company" content="SET">
+  <meta name="CreationTime" content="2002-01-29T16:11:00Z">
+  <meta name="ModificationTime" content="2002-01-29T20:39:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Times New Roman'}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 18.0px; font: 12.0px 'Times New Roman'}
+    p.p6 {margin: 0.0px 0.0px 0.0px 81.0px; text-indent: -18.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 81.0px; text-indent: -18.0px; font: 12.0px 'Times New Roman'}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Times New Roman'}
+    span.s1 {font: 12.0px Helvetica}
+    span.s2 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Editor Integration: Communication between the Client and Server</b></p>
+<p class="p2"><br></p>
+<p class="p3">The following is a description of how Source Analysis should interface with editors:</p>
+<p class="p2"><br></p>
+<p class="p3">We will refer to entities involved in these terms:</p>
+<p class="p3">model application : the process that runs the user interface, and communicates with the editor</p>
+<p class="p3">editor : the process responsible for to interpreting model application requests and operating on them.<span class="Apple-converted-space">  </span>The editor is also responsible for communicating user events.<span class="Apple-converted-space">  </span>There may be a separate process, an editor driver, that communicates between the model application and the editor, acting as a messenger for both entities.</p>
+<p class="p2"><br></p>
+<p class="p3">The model application side</p>
+<p class="p3">In order for the model application to utilize an editor, it requires a service or application to connect to via TCP/IP.<span class="Apple-converted-space">  </span>The model application does not care if it is talking to an editor, or an intermediary editor driver; all it knows is that it is connecting to an editor “entity” and passing and receiving messages to and from it.</p>
+<p class="p2"><br></p>
+<p class="p3">Data can be sent to the model application without having to synchronize read/write communications between it and the editor.<span class="Apple-converted-space">  </span>The editor may be multithreaded, however, synchronization within itself is its own responsibility and should not interfere with communicating with the model application.</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s1">The editor side</span></p>
+<p class="p3">Communication between the editor and the model application must conform to the EditorInterface abstract class.<span class="Apple-converted-space">  </span>Whether this functionality is implemented directly in the editor or whether a driver is used as an intermediary is irrelevant; an editor “entity” must be able to establish a connection to the model application, interpret incoming messages, and properly transmit outgoing messages.</p>
+<p class="p2"><br></p>
+<p class="p3">Because TCP/IP is used to communicate, in addition to the location of an executable to invoke to initialize the editor, a servicename must be listed in the preferences so that the model application knows how to contact it.<span class="Apple-converted-space">  </span>Within CIEI, applications which communicate via TCP/IP register themselves as services with nameserv.<span class="Apple-converted-space">  </span>nameserv is used as a table to look up, list, or register a desired service.<span class="Apple-converted-space">  </span>The editor or editor driver will have to register itself with nameserv.<span class="Apple-converted-space">  </span>For more information on nameserv, please see below.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>nameserv (see NameservCommunication.doc)</b></p>
+<p class="p3">Most communication between applications is done via TCP/IP sockets.<span class="Apple-converted-space">  </span>“nameserv” is a network application, sitting on port 28948, which some applications within Source Analysis use to find each other.</p>
+<p class="p2"><br></p>
+<p class="p3">nameserv is responsible for managing different types of services.<span class="Apple-converted-space">  </span>Services are typically registered as “CLASS:name port”.<span class="Apple-converted-space">  </span>Editor drivers provide the “Editor” class service.<span class="Apple-converted-space">  </span>The name can be descriptive of the type of editor; the model application uses the name for IPC purposes; we only discuss the use of nameserv as it pertains to editor integration.<span class="Apple-converted-space">  </span>For example, on host “foobar”, for user “jsmith”, the vim editor would be registered with nameserv as “foobar:jsmith:Editor:VIM”.</p>
+<p class="p2"><br></p>
+<p class="p3">A library for communicating with the nameserver is provided within the editorInterface class.<span class="Apple-converted-space">  </span>Editor drivers may use the “registerNameservInterface” function to establish a connection to nameserv.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Application Flow</b></p>
+<p class="p3">The basic flow for the model application is:</p>
+<p class="p3">The model application starts up</p>
+<p class="p3">When an editor action is required</p>
+<p class="p5">If there is no editor driver currently connected, the model application looks in the preferences to determine what executable to invoke</p>
+<p class="p3">The model application looks up the name of the service to connect to and its corresponding executable</p>
+<p class="p3">The model application contacts nameserver to determine if editor is available</p>
+<p class="p3">If the editor is NOT available, the model application executes it</p>
+<p class="p3">The model application polls nameserver a finite number of times waiting for the editor’s service to become available</p>
+<p class="p3">The model application connects to the port provided by nameserver and sends the “register” command</p>
+<p class="p3">The model application begins sending its commands to the editor/driver</p>
+<p class="p6"><br></p>
+<p class="p3"><span class="s2"><b>editor/driver to model application commands</b></span></p>
+<p class="p3">These are the commands, representing editor events, sent from the editor (via the editor driver) to the model application.<span class="Apple-converted-space">  </span>We do not care how the editor driver receives them (although an example is provided), as it is the responsibility of the editor driver to properly communicate them to the model application.<span class="Apple-converted-space">  </span>The editor driver does this by connecting to the model application and sends information in the same manner the model application sends to it.<span class="Apple-converted-space">  </span>Numbers are sent as 4-byte integers.<span class="Apple-converted-space">  </span>Commands are sent as ASCII text, but are preceded by a number (4-byte integer) containing the byte length of the string to follow.<span class="Apple-converted-space">  </span>Parameters are separated with a “\t”, filenames are fully qualified and use “/” as a directory separator.</p>
+<p class="p2"><br></p>
+<p class="p3">click</p>
+<p class="p3">Description:<span class="Apple-converted-space">  </span>When a user control-click’s on a selection in the editor, this will cause the model application to look up the given symbol and display, in the editor, the information associated with the symbol.</p>
+<p class="p2"><br></p>
+<p class="p7">open</p>
+<p class="p3">Description:<span class="Apple-converted-space">  </span>This event is generated by selecting any area in the editor, and selecting the “Activate” command.<span class="Apple-converted-space">  </span>This brings the model application primary browser window to the forefront.</p>
+<p class="p2"><br></p>
+<p class="p3">query</p>
+<p class="p3">Description:<span class="Apple-converted-space">    </span>The string “query” is sent to the model application with the arguments of filename, cursor offset, line number, and column when the user makes this request in the editor.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3">definition</p>
+<p class="p7">Description:<span class="Apple-converted-space">  </span>This event is generated when the user selects an area of source and asks for the definition of the selected entity.<span class="Apple-converted-space">  </span>The string “inst_def” with arguments of filename, cursor offset, line number and column are passed to the model application.</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><b>Model application to editor/driver commands</b></span></p>
+<p class="p3">These are the commands that are sent from the "main user application", that are received and interpreted by the editor clients. <span class="Apple-converted-space">  </span>Numbers are sent as 4-byte integers.<span class="Apple-converted-space">  </span>Commands are sent as ASCII text and parameters are separated with a “\t”, however the first thing that is sent over a socket is a number (a 4-byte integer) containing the byte length of the following data.<span class="Apple-converted-space">  </span>Filenames are fully qualified and use “/” as a directory separator.</p>
+<p class="p2"><br></p>
+<p class="p3">unregister</p>
+<p class="p3">Description: Sent when the model application wants to break connection with editor.<span class="Apple-converted-space">  </span>EditorDriver should maintain a list of connected model applications, and when the count of model applications reaches 0, the EditorDriver should exit.<span class="Apple-converted-space">  </span>The EditorDriver should contact the nameserv to unregister the service.</p>
+<p class="p7">Reply: “done”</p>
+<p class="p2"><br></p>
+<p class="p3">register</p>
+<p class="p3">Description: Sent by the model application the first time it connects to an EditorDriver.</p>
+<p class="p3">Reply: “done”</p>
+<p class="p2"><br></p>
+<p class="p3">open &lt;filename&gt; &lt;line number&gt;</p>
+<p class="p3">Description: The EditorDriver should open &lt;filename&gt; and place the cursor on line &lt;line number&gt; in the editor.</p>
+<p class="p3">Reply: “done”</p>
+<p class="p2"><br></p>
+<p class="p3">mark &lt;filename&gt; &lt;line&gt; &lt;column&gt; &lt;selection length&gt;</p>
+<p class="p3">Description: EditorDriver should highlight the selection in the editor.</p>
+<p class="p3">Reply: “done”</p>
+<p class="p2"><br></p>
+<p class="p3">info &lt;message&gt;</p>
+<p class="p3">Description: EditorDriver should display &lt;message&gt; in the editor’s status bar or tool output window.<span class="Apple-converted-space"> </span></p>
+<p class="p3">Reply: “done”</p>
+<p class="p2"><br></p>
+<p class="p3">freeze</p>
+<p class="p3">Description: EditorDriver should update its references to the editor’s current file, current line, and current line offset.<span class="Apple-converted-space">  </span>“freeze” is always be called by the model application immediately before “file”, “line”, or “lineoffset”.</p>
+<p class="p3">Reply: “done”</p>
+<p class="p2"><br></p>
+<p class="p3">file</p>
+<p class="p3">Description: EditorDriver should return the file obtained from the call to freeze.</p>
+<p class="p3">Reply: &lt;filename&gt;</p>
+<p class="p2"><br></p>
+<p class="p3">line</p>
+<p class="p3">Description: EditorDriver should return the line number obtained from the call to freeze.</p>
+<p class="p3">Reply: &lt;line number&gt;</p>
+<p class="p2"><br></p>
+<p class="p3">lineoffset</p>
+<p class="p3">Description: EditorDriver should return the column number obtained from the call to freeze.</p>
+<p class="p3">Reply: &lt;column number&gt;<br>
+</p>
+<p class="p3">close_driver</p>
+<p class="p3">Description: EditorDriver should shut down itself and the editor completely.<span class="Apple-converted-space">  </span>This is currently NOT a message used in the Source Analysis Standard application, but it is supported on the editor client end.</p>
+<p class="p3">Reply: “driver closed”</p>
+<p class="p2"><br></p>
+<p class="p3">private_line_to_model_line &lt;local filename&gt; &lt;base filename&gt; &lt;line number&gt; **</p>
+<p class="p3">Description: EditorDriver should perform mrg_diff on two files; takes the line number we’re working on in the editor, and translates that line to the one in the model – used to determine the corresponding model line to the private line.</p>
+<p class="p3">Reply: &lt;line number&gt; (-1 if error)</p>
+<p class="p2"><br></p>
+<p class="p3">model_line_to_private_line &lt;local filename&gt; &lt;base filename&gt; &lt;line number&gt; **</p>
+<p class="p3">Description: EditorDriver should perform mrg_diff on two files; determines which private line a model line corresponds to so that we can view it in the editor.</p>
+<p class="p3">Reply: &lt;line number&gt; (-1 if error)</p>
+<p class="p2"><br></p>
+<p class="p8">** To support this function, mrg_diff and mrg_update most likely have to be utilized.<span class="Apple-converted-space">  </span>mrg_diff is called to create a diff file from two files, and mrg_update is to analyze the diff file, and determine, using the “-mapL_to_L” flag, line translation between two different files.</p>
+<p class="p2"><br></p>
+<p class="p3">Unsupported:</p>
+<p class="p3">All not implemented.<span class="Apple-converted-space">  </span>When read by the editor client, returns “not implemented” string.<span class="Apple-converted-space">  </span>These seem to be defunct from the days of DisAddin integration, and I don’t believe they’re needed anymore.<span class="Apple-converted-space">  </span>One compelling reason to use them is because a mere offset is easier to use than a line, and column number; however, because the model/private line translation has to occur anyway, these functions seem unuseful.<span class="Apple-converted-space">  </span>The Java UI for Souce Analysis Standard is not aware of these commands.</p>
+<p class="p2"><br></p>
+<p class="p3">"openoffset"</p>
+<p class="p3">"markoffset"</p>
+<p class="p3">"offset”</p>
+</body>
+</html>

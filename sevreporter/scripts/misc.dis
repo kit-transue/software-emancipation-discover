@@ -1,0 +1,178 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+#
+# This function will take a typedef and return
+# the symbol representing the base type.
+# For example "typedef char *foo;" this will return "char*"
+# It keeps chaining backwards until there are no more typedefs
+#
+
+proc get_base_type_of { x } {
+    set retval [nil_set]
+    catch {
+	set element [data symbol $x]
+	set retval  $element
+	while { [typedef $element] == 1 } {
+	    set element [data symbol [type $element]]
+	    set retval $element
+	}
+    }
+    return $retval
+}
+
+proc get_type_chain_of { x } {
+    set retval [nil_set]
+    catch {
+	set element [data symbol $x]
+	set retval  $element
+	while { [typedef $element] == 1 } {
+	    set element [data symbol [type $element]]
+	    sappend $retval $element
+	}
+    }
+    return $retval
+}
+
+proc are_same_types { x y } { 
+    set retval 0
+    catch {
+	set xb [get_base_type_of $x]
+	set yb [get_base_type_of $y]
+        set xn [ name $xb ]
+        set yn [ name $yb ]
+	if { "$xn" != "" && "$yn" != "" && [string compare [name $xb] [name $yb]] == 0 } {
+	    set retval 1
+	}
+    }
+    return $retval
+}
+
+proc get_head_of_type { x } {
+    set retval [nil_set]
+    catch {
+	regsub -all {[\*\&\]+} [name $x] {} retval
+    } 
+    return $retval
+}
+ 
+proc avg { nums } {
+    set acc 0
+    foreach x $nums {
+	set acc [expr $acc +$x]
+    }
+    set top [expr 0.0 +$acc]
+    set bot [expr [llength $nums] + 0.0]
+    return [expr $bot ? $top / $bot : -1]
+}
+
+proc max { nums } {
+    set retval [lindex $nums 0]
+    foreach x $nums {
+	if { $retval < $x } {
+	    set retval $x
+	}
+    }
+    return $retval
+}
+
+proc min { nums } {
+    set retval [lindex $nums 0]
+    foreach x $nums {
+	if { $retval > $x } {
+	    set retval $x
+	}
+    }
+    return $retval
+}
+
+proc stddev { nums } {
+    if { [llength $nums] < 2 } {
+	return -1
+    }
+    set aver [avg $nums]
+    set acc 0.0
+    foreach x $nums {
+	set acc [expr pow([expr $x - $aver],2) + $acc]
+    }
+    set denom [expr [llength $nums] - 1.0]
+    set acc [expr $denom ? $acc / $denom : -1]
+    return [expr sqrt($acc)]
+}
+
+proc all_stats { nums } {
+    set x [list]
+    lappend x [min $nums]
+    lappend x [max $nums]
+    lappend x [avg $nums]
+    lappend x [stddev $nums]
+    return $x
+}
+
+proc sev_check_conversion {src trg args} {
+    set result [nil_set]
+    catch {
+	set scope [set_copy -warn $args]
+	set conv [tree find -ignore convert_expr $scope]
+	set head_type_trg [get_head_of_type [get_base_type_of [type $trg]]]
+	set head_type_src [get_head_of_type [get_base_type_of [type $src]]]
+	set suspect [nil_set]
+	foreach x $conv {
+	    if { [are_same_types $head_type_trg [get_head_of_type [get_base_type_of [type $x]]]] } {
+		print $x
+		sappend $suspect $x
+	    }
+	}
+	foreach element $suspect {
+	    set rhs [tree navigate -ignore {r(->) global_id} $element]
+	    if {[size $rhs] == 0} {
+		set rhs [tree navigate -ignore {r(->) local_id} $element]
+	    }
+	    set check [nil_set]
+	    foreach x $rhs {
+		if { [are_same_types $head_type_src [get_head_of_type [get_base_type_of [type $x]]]] } {
+		    sappend $check $x
+		}
+	    }
+	    if { [size $check] != 0 } {
+		sappend $result $check
+	    } else {
+		set data [dfa_assign 0 in none field $rhs]
+		set check [nil_set]
+		foreach x $data {
+		    if { [are_same_types $head_type_src [get_head_of_type [get_base_type_of [type $x]]]] } {
+			sappend $suspect $x
+		    }
+		}
+		if { [size $check] != 0 } {
+		    sappend $result $element
+		}
+	    }
+	}
+    }
+    return [set_unique $result]
+}

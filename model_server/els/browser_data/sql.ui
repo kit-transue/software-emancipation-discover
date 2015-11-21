@@ -1,0 +1,265 @@
+# sql.ui
+
+# [SHOW] - show
+# [HIDE] - hide
+# [SHOW pref_name] - show if preference undefinded or set to false, hide otherwise
+#
+# format "Query Name"<ws>"Pref Name"
+# Pref Name is a name of preference. If specified and boolean value of this preference is true,
+# this query will be skipped 
+
+"Files" [SHOW] ["%s%s ==> %s" kind name fname]
+	"Where Referenced"
+	"Files Where Included"
+	"Uses"
+	"Uses Tables"
+	"Uses Packages"	
+    	"Uses Cursors"	
+	"Uses Externrefs"  
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+	"Defines"
+	"Defines Tables"		
+	"Defines Packages"          
+	"Defines Cursors"		
+	"Defines Functions"
+	"Defines Variables"
+	"Defines Structures"
+	"Defines Data Members"
+	"Defines Typedefs"
+	"Show Include Files"
+	"Show Instances"
+	"Show Modified Entities"
+	"Declares"
+[END]
+
+"Packages" [SHOW]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Tables"
+	"Uses Packages"	
+    	"Uses Cursors"	
+	"Uses Externrefs"  
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Data Members"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+[END]
+
+"Tables" [SHOW]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses Columns/Fields"
+[END]
+
+"Cursors" [SHOW]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Tables"
+	"Uses Columns/Fields"
+[END]
+
+"Functions" [SHOW] ["%s %s %s%s %s ==> %s" kind type cname arguments attributes lname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Tables"
+	"Uses Packages"	
+    	"Uses Cursors"	
+	"Uses Externrefs"  
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Defined As"
+	"Show Decl Usage"
+	"Show Instances"
+	"Show Overrides"
+	"Declared In"
+[END]
+
+"Externrefs" [SHOW] ["%s %s" kind name]
+	"Where Referenced"
+	"Where Used"
+	"Show Instances"
+[END]
+
+"Variables" [SHOW]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Tables"
+	"Uses Columns/Fields"
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Defined As"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+[END]
+
+"Structures" [SHOW] ["record %s ==> %s" name lname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Cursors"
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Nested"
+	"Show Nested Typedefs"
+	"Show Containing"
+	"Show Member Data"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+	"Declares"
+[END]
+
+"Typedefs" [SHOW]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Cursors"
+	"Uses Structures"
+	"Uses Typedefs"
+	"Show Containing"
+	"Show Defined As"
+	"Show Instances"
+	"Declared In"
+[END]
+
+"String Literals" [SHOW] ["%s %s" kind name]
+	"Where Referenced"
+	"Where Used"
+	"Show Instances"
+[END]
+
+"Numeric Literals" [SHOW] ["%s %s" kind name]
+	"Where Referenced"
+	"Where Used"
+	"Show Instances"
+[END]
+
+"Local Variables" [SHOW] ["%s %s" kind name]
+	"Where Referenced"
+	"Show Instances"
+	"Show Declarations"
+[END]
+
+"Projects" [HIDE] ["%s %s ==> %s" kind name fname]
+	"Uses"
+	"Uses Tables"
+	"Uses Packages"	
+    	"Uses Cursors"	
+	"Uses Externrefs"  
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+	"Defines"
+	"Defines Tables"
+	"Defines Packages"	
+    	"Defines Cursors"	
+	"Defines Files"
+	"Defines Functions"
+	"Defines Variables"
+	"Defines Structures"
+	"Defines Data Members"
+	"Defines Typedefs"
+	"Show Instances"
+	"Declares"
+[END]
+
+"Fields" [HIDE] ["%s %s %s %s ==> %s" kind type name attributes lname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Is Part Of"
+	"Uses"
+	"Uses Tables"
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Defined As"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+[END]
+
+"Instances" [HIDE]
+	"Where Defined"
+[END]
+
+"Scopes" [HIDE] ["%s %s" kind name]
+	"Uses"
+	"Uses Tables"
+	"Uses Packages"	
+    	"Uses Cursors"	
+	"Uses Externrefs"
+	"Uses Functions"
+	"Uses Variables"
+	"Uses Structures"
+	"Uses Data Members"
+	"Uses Typedefs"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+	"Defines"
+	"Defines Tables"
+	"Defines Packages"	
+    	"Defines Cursors" 
+	"Defines Functions"
+	"Defines Variables"
+	"Defines Structures"
+	"Defines Data Members"
+	"Defines Typedefs"
+	"Show Instances"
+	"Declares"
+[END]
+
+"Semtype" [HIDE] ["%s %s" kind name]
+	"Where Referenced"
+	"Where Used"
+[END]
+

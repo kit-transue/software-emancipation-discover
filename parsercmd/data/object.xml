@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- Configuration for object files (not handled by Discover). -->
+<cmdline nameintro="/" unrecognized="no_message">
+<compilername>ignorable object file</compilername>
+OBJECT
+</cmdline>

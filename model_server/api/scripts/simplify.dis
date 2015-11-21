@@ -1,0 +1,309 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc dis_simplify args {
+
+    set num_args [llength $args]
+    if { $num_args < 1} {
+ 	return "dis_simplify: file name is missing"
+    }
+
+    set ln [lindex $args [expr $num_args-1]]
+    set options [lrange $args 0 [expr $num_args-2]]
+
+    set lang [language $ln]
+    if { ($lang != "C") && ($lang != "CPP") } {
+	if {[string compare $lang "ELS"] == 0} {
+	    set lang [els language [fname $ln]]
+	}
+	return "cannot simplify $lang files"
+    }
+
+    set fn [fname $ln]
+   
+    set cpp_parms  [parms_cpp  $ln]
+    set cpp_parms [els_curlybraces2doublequotes $cpp_parms]
+
+    set comp_parms [parms_comp $ln]
+    set comp_parms [els_curlybraces2doublequotes $comp_parms]
+
+    set all_parms "$comp_parms $cpp_parms"
+    set lang [language $ln]
+    if { $lang == "C" } {
+	set all_parms " --c $all_parms"
+    } elseif { $lang == "CPP" } {
+	set all_parms " --c++ $all_parms"
+    }
+ 
+    set path_base [els_get_relative_path_base $all_parms]
+    set dir ""
+    if {$path_base != ""} {
+        set dir $path_base
+    } else {
+        set dir [els_cd $fn]
+    }
+
+    set iff [els_tmpname $fn]
+
+    set code [catch { > $iff "" } msg]
+    if $code {
+	return "cannot create $iff: $msg"
+    }
+
+    set CCcc aset_CCcc 
+    set simp simplify 
+    
+    puts stdout "\nParsing $lang file: \'$fn\'..."
+        
+    # Change working directory:
+    set dir [ ospath $dir ]
+    puts_verbose "cd $dir"
+    set cwd [ pwd ]
+    catch { cd $dir }
+
+    #run aset_CCcc
+    set cmd "$CCcc --IF_file \"$iff\" --GNU_compatible_AST $all_parms \{$fn\} 2> \"$iff.err\""
+    set status [exec_cmd $cmd]
+    
+    # Restore working directory:
+    catch { cd $cwd }
+
+    if { $status > 2 } {
+	return "$CCcc failed, exit status $status \nCannot simplify files with parsing errors."
+    }
+    puts stdout "Done\n";
+
+    puts stdout "\nSimplifying...";
+    
+    # Change working directory:
+    puts_verbose "cd $dir"
+    catch { cd $dir }
+
+    #run simplify
+    set cmd "$simp $options $cpp_parms \"$iff\""
+    set status [exec_cmd "$cmd"]
+
+    # Restore working directory:
+    catch { cd $cwd }
+
+    if $status {
+	return "$simp failed, exit status $status"
+    }
+
+
+    puts stdout "Done\n";
+    return "OK"
+}
+
+proc dis_interactive_simplify { logical_names } {
+    global env
+
+    set filtered_names ""
+    foreach ln $logical_names {
+	set lang [language $ln]
+	if { ($lang == "C") || ($lang == "CPP") } {
+	    lappend filtered_names $ln
+	} else {
+	    set bad_lang $lang
+            if {[string compare $bad_lang "ELS"] == 0} {
+                set bad_lang [els language [fname $ln]]
+            }
+        }
+    }
+    if { [llength $filtered_names] == 0 } {
+	msg error_sev "Simplify can only simplify C or C++ files"
+	return "cannot simplify $bad_lang files"
+    }
+    set data_file_name [tempnam]
+    > $data_file_name {
+	puts ""
+    }
+    set CC_command_file [tempnam]
+    set CCcc aset_CCcc
+    set simp simplify 
+    set iff  [els_tmpname "xyz"]
+    puts_verbose "temp data: $data_file_name"
+    > $data_file_name {
+	puts $CCcc
+	puts $CC_command_file
+	puts $simp
+	puts $iff
+	
+	foreach ln $filtered_names {
+	    set fn [fname $ln]
+	    puts $fn
+	    set cpp_parms  [parms_cpp  $ln]
+            set cpp_parms [els_curlybraces2doublequotes $cpp_parms]
+	    set comp_parms [parms_comp $ln]
+            set comp_parms [els_curlybraces2doublequotes $comp_parms]
+	    set all_params "$comp_parms $cpp_parms"
+            puts [els_get_relative_path_base $all_params]
+
+	    set lang [language $ln]
+	    if { $lang == "C" } {
+        	set all_params " --c $all_params"
+	    } elseif { $lang == "CPP" } {
+	        set all_params " --c++ $all_params"
+	    } 
+	    # The following loop will enclose each argument which contains space inside '"'
+	    # It escapes all other double-quotes, with \.
+	    foreach p $all_params {
+                set add_quotes 0
+		regsub -all \" $p \\\\& ep
+                if { [ regexp {[\(\)]} $ep ] } {
+                  set add_quotes 1
+                }
+		if { [string first " " $ep] != -1 } {
+                  set add_quotes 1
+                }
+                if { $add_quotes == 1 } {
+		   puts -nonewline \"$ep\"
+		} else {
+		   puts -nonewline $ep
+		}
+		puts -nonewline " "
+	    }
+	    puts ""
+	}
+    }
+    set jre_errfile [tempnam]
+    set res [exec $env(PSETHOME)/bin/dis_jre Simplify.SimplifyStart $data_file_name 2>$jre_errfile]
+    puts_verbose "Result: $res"
+    file delete $jre_errfile
+    file delete $CC_command_file
+    file delete $data_file_name
+    if {[llength $filtered_names] < [llength $logical_names]} {
+        return "cannot simplify $bad_lang files";
+    }
+    return "OK";
+}
+
+#  Retrieve information from 'simplify.exe'
+#  It returns inclusion tree in form of sequence lines:
+#       0@6@0@3@C:\User\Project\Foo.h
+#       0@7@0@4@D:\Compiler\Include\stdio.h
+#       0@8@0@5@C:\User\Project\SimpleMain.h
+#       1@-1@1@6@C:\User\Project\OurFunc.h
+#       -1
+#
+proc dis_query_simplify args {
+
+    # Check number of arguments
+    set num_args [llength $args]
+    if {$num_args < 1} {
+        return "Error! dis_query_simplify: file name is missing!"
+    }
+
+    # Get logical file name and options for 'simplify.exe'
+    set ln [lindex $args [expr $num_args-1]]
+    set options [lrange $args 0 [expr $num_args-2]]
+
+    # Get physical file name
+    set fn [fname $ln]
+
+    # Get parameters which  were used for parsing (compiling) file
+    if {[catch {parms_cpp $ln} cpp_parms]} {
+        return "Error! dis_query_simplify: cannot get cpp_parms!"
+    }
+    set cpp_parms [els_curlybraces2doublequotes $cpp_parms]
+
+    if {[catch {parms_comp $ln} comp_parms]} {
+        return "Error! dis_query_simplify: cannot get comp_parms!"
+    }
+
+    set comp_parms [els_curlybraces2doublequotes $comp_parms]
+
+    set all_parms "$comp_parms $cpp_parms"
+
+    # Get proper working directory
+    set path_base [els_get_relative_path_base $all_parms]
+    set dir ""
+    if {$path_base != ""} {
+        set dir $path_base
+    } else {
+        set dir [els_cd $fn]
+    }
+
+    # Get temporary IFF file name
+    set iff [els_tmpname $fn]
+
+    # Try to put something to IFF file
+    set code [catch { > $iff "" } msg]
+    if $code {
+        return "Error! dis_query_simplify: cannot create $iff: $msg"
+    }
+
+    # What external programs we will run
+    set CCcc aset_CCcc 
+    set simp simplify
+    
+    puts stdout "\nParsing file: \'$fn\'..."
+        
+    # Change working directory:
+    set dir [ospath $dir]
+
+    puts_verbose "cd $dir"
+    set cwd [pwd]
+    catch {cd $dir}
+
+    # Run parser 'aset_CCcc.exe'
+    set cmd "$CCcc --IF_file \"$iff\" --GNU_compatible_AST $all_parms \"$fn\" 2>\"$iff.err\""
+    puts stdout $cmd
+
+    set status [system $cmd]
+    
+    # Restore working directory:
+    catch {cd $cwd}
+
+    if $status {
+        return "Error! dis_query_simplify: $CCcc failed, exit status $status\nCannot simplify files with parsing errors."
+    }
+    puts stdout "Done\n";
+
+    puts stdout "\nSimplifying...";
+    
+    # Change working directory:
+    puts_verbose "cd $dir"
+    catch {cd $dir}
+
+    # Prepare temporary input file and put "0" to it. It is neccessary as standard input for 'simplify.exe'.
+    set tmpinput [els_tmpinputname]
+    set f [open $tmpinput w]
+    puts $f "0"
+    close $f
+
+    # Run 'simplify.exe' and retrieve its standard output.
+    set cmd "$simp -query $options $cpp_parms \"$iff\" <\"$tmpinput\""
+    set res [els_exec $cmd]
+
+    # Restore working directory:
+    catch { cd $cwd }
+
+    return $res
+}
+
+# END OF FILE

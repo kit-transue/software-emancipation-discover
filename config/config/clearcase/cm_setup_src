@@ -1,0 +1,70 @@
+#!/bin/sh
+# cm_setup_src (ClearCase) - Call pending filter and prep directory
+
+# exit script if we get any errors
+set -e
+
+# Get our command line options
+workingdir=$1
+workingfile=$2
+systemdir=$3
+systemfile=$4
+
+set +e
+# Find the version of the file selected by the view
+viewversion=`cleartool describe $systemdir/$systemfile | head -1 | \
+	$PSETCFG/util/atria_revisions`
+set -e
+
+echo "$systemdir/$systemfile"
+
+
+if [ "$viewversion" = "" ]; then
+  # This is not a clearcase element
+  echo ""
+  # exit status 99 means that the file is not an element in ClearCase
+  # cm_create will be called before cm_put_src is called
+  exit 99
+fi
+
+if [ "$cm_sys_proj" != "" ] ; then
+  branch=`echo $cm_sys_proj | sed -e '/@@/!d' -e 's/^.*@@\(.*\)/\/main\/\1/'`
+  if [ "$branch" = "" ] ; then
+    branch="/main"
+  fi
+else
+  # Extract the branch from the viewversion
+  branch=`dirname $viewversion`
+fi
+
+
+# Find the version of the latest version on the branch
+latestversion=`cleartool describe $systemdir/$systemfile@@$branch/LATEST \
+	| head -1 | $PSETCFG/util/atria_revisions`
+
+# Report the ver extended filename of the latest version to the configurator
+echo "$systemdir/$systemfile@@$latestversion" >&1
+
+exit 0
+
+
+#### Parameters    : $1 = working (private) directory
+		   : $2 = working (private) filename
+		   : $3 = system (public) directory
+		   : $4 = system (public) filename
+#### Return values : 0 = success, 99 = not a ClearCase element, !{0,99} = failure
+#### Output	   : stdout = first line is used by the configurator to set
+		              the value of cm_sysfile for the next script
+			      the second line sets cm_revision_file
+		   : stderr = ignored
+
+#### Environment Variables
+# Environment variables setup by DISCOVER for ALL config scripts:
+#	$PSETCFG	  - path to directory containing the config scripts
+#	$cm_uselinks	  - set to "Y" if the user has set Create Soft Links in the
+#			    Configurator preferences dialog box (not used for ClearCase)
+#	$cm_optscripts    - Points to the directory of optional scripts
+
+#### Optional Scripts
+#	cm_pendfilt	  - Filter to transform source and pset filenames before ci/co
+

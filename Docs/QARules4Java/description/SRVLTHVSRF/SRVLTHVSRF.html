@@ -1,0 +1,64 @@
+<html>
+<body>
+
+<p><b>Servlet API - </b><b>HttpSession variables should be released when finished</b><b>.</b></p>
+
+<p>HttpSession objects live inside the application server's servlet engine until:
+<ul>
+<li>
+  The application explicitly and programmatically releases it using the API,&nbsp;
+  <i>javax.servlet.http.HttpSession.invalidate ()</i></li>
+<li>
+  application server destroys the allocated HttpSession object when it
+  expires (by default, after 1800 seconds or 30 minutes). Application server
+  can only maintain a certain number of HttpSessions in memory, when this
+  limit is reached, application server serializes and swaps the
+  allocated HttpSession objects to disk. In a high volume system, the cost of
+  serializing many abandoned HttpSessions can be quite high.</li></ul></p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+import javax.servlet.*;<br>
+import javax.servlet.http.*;<br>
+<br>
+public class DemoHttpSessionRelease {<br>
+<font color='red'> 
+&nbsp; public void incorrectOper (HttpServletRequest request) {<br>
+&nbsp; &nbsp; HttpSession mySession = request.getSession (false);<br>
+&nbsp; &nbsp; String id = mySession.getId ();<br>
+&nbsp; &nbsp; System.out.println ("HttpSession id = " +id);<br>
+&nbsp; }<br>
+</font>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Call <i>javax.servlet.http.HttpSession.invalidate ()</i> when finished.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+import javax.servlet.*;<br>
+import javax.servlet.http.*;<br>
+<br>
+public class BetterDemoHttpSessionRelease {<br>
+<font color='blue'> 
+&nbsp; public void correctOper (HttpServletRequest request) {<br>
+&nbsp; &nbsp; HttpSession mySession = request.getSession (false);<br>
+&nbsp; &nbsp; // do something...<br>
+&nbsp; &nbsp; if (mySession != null) {<br>
+&nbsp; &nbsp; &nbsp; mySession.invalidate ();<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+</font>    
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

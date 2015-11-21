@@ -1,0 +1,32 @@
+#!/bin/sh
+echo rm -f $cm_workfile
+rm -f $cm_workfile
+exit 0
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeput ] ; then
+  $cm_optscripts/cm_beforeput
+  if [ $? -ne 0 ] ; then 
+      echo "%% put fail" >&2
+      exit 1
+  fi
+fi
+
+echo "ci -q  $cm_options $cm_workfile $cm_revision_file < ${cm_description:=/dev/null}"
+ci -q  $cm_options $cm_workfile $cm_revision_file < ${cm_description:=/dev/null}
+
+if [ $? -eq 0 ] ; then 
+
+# Check out in pending area
+
+  echo "co -q $cm_options $cm_sysfile $cm_revision_file 2> /dev/null"
+  co -q $cm_options $cm_sysfile $cm_revision_file 2> /dev/null
+
+  if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterput ] ; then
+    $cm_optscripts/cm_afterput &
+  fi
+
+  exit 0
+
+fi
+
+exit 1

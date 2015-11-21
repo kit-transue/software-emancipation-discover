@@ -1,0 +1,34 @@
+<html>
+<body>
+
+<p><b>LAPAPMF - List All Public And Package Members First</b></p>
+
+<p>Enforces standard to improve readability. Methods/data
+in your class should be ordered properly.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class LAPAPMF {<br>
+&nbsp; &nbsp; <font color='red'>private int attr;</font><br>
+&nbsp; &nbsp; public void oper () {}<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Place public and package members first, before protected and private ones.
+<br><i>Note: this rule is rather disputable. On the other hand, grouping members
+by functionality rather than by scope can also make understanding the code easier.</i>
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class LAPAPMF {<br>
+&nbsp; &nbsp; public void oper () {}<br>
+&nbsp; &nbsp; <font color='blue'>private int attr;</font><br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

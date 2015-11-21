@@ -1,0 +1,1206 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./ReleaseNotes_files/filelist.xml">
+<link rel=Edit-Time-Data href="./ReleaseNotes_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>MKS Engineer\Code Integrity </title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>tatiana</o:Author>
+  <o:LastAuthor>mpouliot</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>6</o:TotalTime>
+  <o:LastPrinted>2001-10-08T18:16:00Z</o:LastPrinted>
+  <o:Created>2001-10-08T19:29:00Z</o:Created>
+  <o:LastSaved>2001-10-08T19:29:00Z</o:LastSaved>
+  <o:Pages>4</o:Pages>
+  <o:Words>1084</o:Words>
+  <o:Characters>6183</o:Characters>
+  <o:Company>Software Emancipation Technology</o:Company>
+  <o:Lines>51</o:Lines>
+  <o:Paragraphs>12</o:Paragraphs>
+  <o:CharactersWithSpaces>7593</o:CharactersWithSpaces>
+  <o:Version>9.4402</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:Compatibility>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+   <w:LayoutTableRowsApart/>
+  </w:Compatibility>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:Times-Bold;
+	panose-1:0 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:auto;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Times-Roman;
+	panose-1:0 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:auto;
+	mso-font-signature:3 0 0 0 1 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	mso-font-kerning:0pt;
+	mso-bidi-font-weight:normal;}
+h2
+	{mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-font-weight:normal;}
+h3
+	{mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	font-weight:normal;}
+h4
+	{mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:right;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:8.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	color:black;
+	layout-grid-mode:line;
+	mso-bidi-font-weight:normal;}
+h5
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.25in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:5;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	font-weight:normal;
+	mso-bidi-font-weight:bold;}
+h6
+	{mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:6;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-font-weight:normal;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+strong
+	{mso-bidi-font-weight:normal;}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.H3, li.H3, div.H3
+	{mso-style-name:H3;
+	mso-style-next:Normal;
+	margin-top:5.0pt;
+	margin-right:0in;
+	margin-bottom:5.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	layout-grid-mode:line;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.Blockquote, li.Blockquote, div.Blockquote
+	{mso-style-name:Blockquote;
+	margin-top:5.0pt;
+	margin-right:.25in;
+	margin-bottom:5.0pt;
+	margin-left:.25in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	layout-grid-mode:line;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 76.5pt 1.0in;
+	mso-header-margin:1.0in;
+	mso-footer-margin:1.0in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:-2;
+	mso-list-type:simple;
+	mso-list-template-ids:-1;}
+@list l0:level1
+	{mso-level-start-at:0;
+	mso-level-text:*;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:0in;
+	text-indent:0in;}
+@list l1
+	{mso-list-id:2;
+	mso-list-template-ids:0;}
+@list l1:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-start-at:0;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:0in;
+	text-indent:0in;}
+@list l2
+	{mso-list-id:3;
+	mso-list-template-ids:0;}
+@list l2:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level2
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level3
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level5
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level6
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level8
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level9
+	{mso-level-start-at:0;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:0in;
+	text-indent:0in;}
+@list l3
+	{mso-list-id:921061212;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l4
+	{mso-list-id:1190291300;
+	mso-list-type:simple;
+	mso-list-template-ids:1359395892;}
+@list l4:level1
+	{mso-level-start-at:0;
+	mso-level-number-format:bullet;
+	mso-level-text:\F06E;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l5
+	{mso-list-id:1240364455;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:1390493802;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:1414400153;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:1492257013;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l8:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l9
+	{mso-list-id:1640304389;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l9:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l10
+	{mso-list-id:1643995043;
+	mso-list-type:simple;
+	mso-list-template-ids:67698703;}
+@list l10:level1
+	{mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l0:level1 lfo3
+	{mso-level-number-format:bullet;
+	mso-level-numbering:continue;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:.25in;
+	mso-level-legacy-space:0in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="2050"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal align=center style='text-align:center'><strong><span
+style='font-size:18.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;mso-bidi-font-family:
+"Times New Roman"'>Source Analysis Release Notes</span></strong><span
+style='font-size:18.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;mso-bidi-font-family:
+"Times New Roman"'><br>
+</span><span style='font-size:14.0pt;mso-bidi-font-size:10.0pt;font-family:
+Arial;mso-bidi-font-family:"Times New Roman"'>Version 3.0</span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-family:Arial;mso-bidi-font-family:"Times New Roman"'>October 2001</span></p>
+
+<p class=H3 style='margin-top:0in;margin-right:-.1in;margin-bottom:0in;
+margin-left:0in;margin-bottom:.0001pt;text-indent:.2in'><strong><span
+style='font-family:Arial;mso-bidi-font-family:"Times New Roman";layout-grid-mode:
+both;font-weight:normal'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></strong></p>
+
+<p class=H3 style='margin-top:0in;margin-right:-.1in;margin-bottom:0in;
+margin-left:0in;margin-bottom:.0001pt'><strong><span style='font-family:Arial;
+mso-bidi-font-family:"Times New Roman";layout-grid-mode:both;font-weight:normal'>Contents<o:p></o:p></span></strong></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt'>DIScover 3.0</p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt'>Hardware and Software Requirements</p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt'>Customer Support</p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt'>Errata</p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt'><i>The Discover 3.0
+release contains new and improved editions of products formerly identified by
+the name CodeRover. <o:p></o:p></i></p>
+
+<p class=Blockquote style='margin-top:0in;margin-right:-.1in;margin-bottom:
+0in;margin-left:0in;margin-bottom:.0001pt;text-indent:.5in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=Blockquote style='margin-left:0in'><!--[if gte vml 1]><v:line id="_x0000_s1026"
+ style='position:absolute;z-index:1' from="0,1.8pt" to="468pt,1.85pt"
+ o:allowincell="f" strokecolor="#d4d4d4" strokeweight="1.75pt">
+ <v:shadow on="t" origin=",32385f" offset="0,-1pt"/>
+</v:line><![endif]--><![if !vml]><span style='mso-ignore:vglayout;position:
+relative;z-index:0'><span style='position:absolute;left:-3px;top:-2px;
+width:631px;height:8px'><img width=631 height=8
+src="./ReleaseNotes_files/image001.gif" v:shapes="_x0000_s1026"></span></span><![endif]><strong><span
+style='font-size:14.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;mso-bidi-font-family:
+"Times New Roman"'>Discover 3.0</span></strong><strong><span
+style='font-family:Arial;mso-bidi-font-family:"Times New Roman"'><o:p></o:p></span></strong></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Discover 3.0, </b>is the latest version of the Source Analysis product
+family. </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>New features in MKS Engineer Integrity 7.3 include:</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='margin-left:-.05in;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0in 5.4pt 0in 5.4pt'>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  background:#B3B3B3;padding:0in 5.4pt 0in 5.4pt'>
+  <h3><span style='mso-bidi-font-family:Arial;mso-bidi-font-weight:bold'>Feature<o:p></o:p></span></h3>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;background:#B3B3B3;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <h5>Provides</h5>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>C/C++/Java parser improvements</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>30% improvement in build time on small models and up to
+  60% on larger models</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><span style='font-size:9.0pt;mso-bidi-font-size:10.0pt;
+  font-family:Arial;mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+  <p class=MsoNormal><span style='font-size:9.0pt;mso-bidi-font-size:10.0pt;
+  font-family:Arial;mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+  <p class=MsoNormal><span style='font-size:9.0pt;mso-bidi-font-size:10.0pt;
+  font-family:Arial;mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+  <h1><span style='font-size:11.0pt;mso-bidi-font-size:10.0pt'>Impact analysis</span><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></h1>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Additional tools for understanding the impact of change to
+  software</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Method for developers to review the points of concern
+  related to a given change</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New reporting capabilities</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Documentation explaining the different ways the impact of
+  a change is tracked</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Change Phase I, GUI, wizards, etc.</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Graphical assistant for creating Tree Pattern Matching
+  expressions</span></p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Smart listing of available attributes</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Text selection-to-expression conversion</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New <i>Apply</i> feature for testing new expressions</span>
+  </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New Save and restore capabilities for expressions</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Assistance in node marking for transformation</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Licensing (use license key manager</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt;font-family:Arial;mso-bidi-font-family:"Times New Roman"'>)</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Choice of named-user licensing, concurrent (floating)
+  license, or site license options to best suit your needs.</span></p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved ease of deployment</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Minimal contact requirements for product evaluation </span></p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Facilitated volume distribution</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Context sensitive help facility</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Easily accessed information on the task at hand, without
+  having to read the entire manual</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Model build Project Editor</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved ease of evaluation and use</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Complete Java code compatibility</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New ability to modify imported flags</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New capabilities for the manual configuration of small to
+  midsize projects</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h6>Basic SIS support </h6>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>(c-i, c-o, re-sync)</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Convenience of source check in and check out </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <h6>ClearMake support<span style='font-size:9.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></h6>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved integration into ClearCase environment for
+  building models</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=192 valign=top style='width:2.0in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Bundled demo model in distribution</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Sample for quickly trying out the product without having
+  to use your own code</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>A means for firewall users to easily evaluate the product</span>
+  </p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1029" style='position:absolute;
+ z-index:4' from="0,7.1pt" to="468pt,7.15pt" o:allowincell="f" strokecolor="#d4d4d4"
+ strokeweight="1.75pt">
+ <v:shadow on="t" origin=",32385f" offset="0,-1pt"/>
+</v:line><![endif]--><![if !vml]><span style='mso-ignore:vglayout;position:
+relative;z-index:1;left:-3px;top:5px;width:631px;height:14px'><img width=631
+height=9 src="./ReleaseNotes_files/image002.gif" v:shapes="_x0000_s1029"></span><![endif]><strong><span
+style='font-size:14.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;mso-bidi-font-family:
+"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></strong></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoNormal><strong><span style='font-size:14.0pt;mso-bidi-font-size:
+10.0pt;font-family:Arial;mso-bidi-font-family:"Times New Roman"'>Discover 3.0</span></strong><strong><span style='font-family:Arial;mso-bidi-font-family:
+"Times New Roman"'><o:p></o:p></span></strong></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Discover
+3.0</b> is the latest version of the MKS Source Analysis product family. </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>New features in Discover 3.0 include:</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0in 5.4pt 0in 5.4pt'>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  background:#B3B3B3;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><span style='font-size:14.0pt;mso-bidi-font-size:10.0pt;
+  font-family:Arial;mso-bidi-font-family:"Times New Roman";mso-bidi-font-weight:
+  bold'>Feature<o:p></o:p></span></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;background:#B3B3B3;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.25in'><span style='font-size:14.0pt;
+  mso-bidi-font-size:10.0pt;font-family:Arial;mso-bidi-font-family:"Times New Roman";
+  mso-bidi-font-weight:bold'>Provides<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>C/C++/Java parser improvements</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>30% improvement in build time on small models and up to
+  60% on larger models</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <h6>Trends<span style='font-size:9.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></h6>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Ability to track changes in various metrics over time</span>
+  </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Ability to agn processes with SEI CMM</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New graphing mechanism</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>New export capabilities to html and Microsoft Excel</span>
+  </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved documentation and new context sensitive help</span>
+  </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Licensing (use license key manager</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt;font-family:Arial;mso-bidi-font-family:"Times New Roman"'>)</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Choice of named-user licensing, concurrent (floating)
+  license, or site license options to best suit your needs. </span></p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved ease of deployment</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Minimal contact requirements for product evaluation </span></p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Facilitated volume distribution</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Context sensitive help facility</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Easily accessed information on the task at hand, without
+  having to read the entire manual</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Model build Project Editor</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved ease of evaluation and use</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Opens up the product to all Java code</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Modify imported flags</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Small to midsize projects may now be configured by hand</span>
+  </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h2><span style='font-size:11.0pt;mso-bidi-font-size:10.0pt'>Java quality
+  filters</span></h2>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Initial Java-specific offering </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Basic SIS support <o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>(c-i, c-o, re-sync)</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Provides the convenience of source check in and check out </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <h6>ClearMake support<span style='font-size:9.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></h6>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Improved integration into ClearCase environment for
+  building models</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Bundling demo model in distribution</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Sample model for quick and easy product evaluation,
+  without having to use your own code</span> </p>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>A means for firewall users to easily evaluate the product</span>
+  </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=187 valign=top style='width:1.95in;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:11.0pt;mso-bidi-font-size:10.0pt;font-family:Arial;
+  mso-bidi-font-family:"Times New Roman"'>Caliper driver re-implementation</span></b><b
+  style='mso-bidi-font-weight:normal'><span style='font-size:9.0pt;mso-bidi-font-size:
+  10.0pt'><o:p></o:p></span></b></p>
+  </td>
+  <td width=451 valign=top style='width:4.7in;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+  style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span></span><![endif]><span style='font-family:Arial;mso-bidi-font-family:
+  "Times New Roman"'>Significantly improved performance for QAR and Trends
+  products</span> </p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1030" style='position:absolute;
+ z-index:5' from="0,7.2pt" to="468pt,7.25pt" o:allowincell="f" strokecolor="#d4d4d4"
+ strokeweight="1.75pt">
+ <v:shadow on="t" origin=",32385f" offset="0,-1pt"/>
+</v:line><![endif]--><![if !vml]><span style='mso-ignore:vglayout;position:
+relative;z-index:2;left:-3px;top:6px;width:631px;height:14px'><img width=631
+height=8 src="./ReleaseNotes_files/image003.gif" v:shapes="_x0000_s1030"></span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=H3 style='margin:0in;margin-bottom:.0001pt'><strong><span
+style='font-family:Arial;mso-bidi-font-family:"Times New Roman";layout-grid-mode:
+both;font-weight:normal'>Hardware and Software Requirements<o:p></o:p></span></strong></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><span style='font-family:Times-Roman;color:black;layout-grid-mode:
+line'>Source Analysis works on the following platforms:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l3 level1 lfo4;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>Windows NT<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l3 level1 lfo4;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>Windows 2000<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-family:Times-Roman;color:black;layout-grid-mode:
+line'>This version of Source Analysis has the following minimum system
+requirements:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l5 level1 lfo5;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>Pentium 200 with 128 megs of memory<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l5 level1 lfo5;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>Microsoft Visual C++, version 5.x, 6.x, or 7.x<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-family:Times-Roman;color:black;layout-grid-mode:
+line'>Editor support:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l6 level1 lfo6;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>Microsoft Visual C++<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l6 level1 lfo6;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>Emacs<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l6 level1 lfo6;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>VIM<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l6 level1 lfo6;
+tab-stops:list .25in'><![if !supportLists]><span style='font-family:Symbol;
+color:black;layout-grid-mode:line'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span style='font-family:Times-Roman;color:black;
+layout-grid-mode:line'>JBuilder 3.5, 4.0, 5.0<o:p></o:p></span></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1027" style='position:absolute;
+ z-index:2' from="0,0" to="468pt,.05pt" o:allowincell="f" strokecolor="#d4d4d4"
+ strokeweight="1.75pt">
+ <v:shadow on="t" origin=",32385f" offset="0,-1pt"/>
+</v:line><![endif]--><![if !vml]><span style='mso-ignore:vglayout;position:
+relative;z-index:3'><span style='position:absolute;left:-3px;top:-4px;
+width:631px;height:8px'><img width=631 height=8
+src="./ReleaseNotes_files/image004.gif" v:shapes="_x0000_s1027"></span></span><![endif]><strong><span
+style='font-weight:normal'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></strong></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+
+<HR WIDTH="60%" ALIGN="LEFT">
+<p class=H3 style='margin:0in;margin-bottom:.0001pt'><strong><span
+style='layout-grid-mode:both;font-weight:normal'>Errata<o:p></o:p></span></strong></p>
+<P>
+<TABLE BORDER="1" WIDTH="100%">
+<TR><TD><B>Page 10:</B> Code Integrity Guide and Engineer Integrity User Guide</TD><TD>Reference to integration with Integrity Manager should refer to integration with "Source Integrity"</TD></TR>
+</TABLE>
+</P>
+</body>
+
+</html>

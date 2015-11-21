@@ -1,0 +1,2195 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+##############################################################################
+
+#
+# Assignment in conditional:
+#
+
+proc lang:ass_cond { src args } {
+
+  set conds [ nil_set ]
+
+  set stmts [ tree find -ignore { if_stmt || while_stmt || do_while_stmt } "$src" ]
+  sappend $conds [ tree navigate -ignore ->. $stmts ]
+
+  set stmts [ tree find -ignore for_stmt "$src" ]
+  sappend $conds [ tree navigate -ignore ->,. $stmts ]
+
+  set assigns [ tree find -ignore assign_expr $conds ]
+  set assigns [ tree filter -ignore \
+    { ->,. (r(->) !convert_expr x:) setcur($x) !call_expr } $assigns ]
+  set assigns [ tree filter -ignore \
+    { <- (r(<-) !convert_expr x:) setcur($x) !ast_lexpr } $assigns ]
+
+  qdiag $assigns "Assignment appears within branch condition"
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $assigns ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# No op as the body of an iteration statement (for, while, do) or
+# selection statment (if):
+#
+
+proc _lang_empty_body { src pattern } {
+
+  set nops [ nil_set ]
+
+  set stmts [ tree find -ignore { if_stmt || while_stmt || do_while_stmt } "$src" ]
+  sappend $nops [ tree filter -ignore "->, $pattern" $stmts ]
+
+  set stmts [ tree navigate -ignore { ->,, !if_stmt } [ tree filter if_stmt $stmts ] ]
+  sappend $nops [ tree filter -ignore "$pattern" $stmts ]
+
+  set stmts [ tree find -ignore { for_stmt } "$src" ]
+  sappend $nops [ tree filter -ignore "->,,, $pattern" $stmts ]
+
+  qdiag $nops "Empty statement body should be enclosed in braces if intentional"
+
+  set res [ tree navigate { r(<-) ast_offset != 0 } $nops ]
+  return $res
+
+}
+
+proc lang:empty_body { src args } {
+
+  return [ _lang_empty_body "$src" {(nil || (!exit_stmt !return_stmt !goto_stmt !ast_block -> nil))} ]
+
+}
+
+# Not enabled by default:
+
+proc lang:empty_body_with_blocks { src args } {
+
+  return [ _lang_empty_body "$src" {(nil || (!exit_stmt !return_stmt !goto_stmt -> nil))} ]
+
+}
+
+##############################################################################
+
+#
+# Use of goto:
+#
+
+proc lang:goto { src args } {
+
+  set res [ tree find -ignore goto_stmt "$src" ]
+
+  qdiag $res "Use of `goto' statement"
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Use of break, continue:
+#
+
+proc lang:break_cont { src args } {
+
+  set res [ nil_set ]
+
+  set loops [ tree find -ignore { for_stmt || while_stmt || do_while_stmt } "$src" ]
+  set exits [ tree find -ignore exit_stmt $loops ]
+  foreach exit $exits {
+    set block [ tree navigate -ignore \
+      { r(<-) for_stmt || while_stmt || do_while_stmt || switch_clause } $exit ]
+    set code [ ast_code -ignore $block ]
+    if { $code != "switch_clause" } {
+      sappend $res $exit
+    }
+  }
+
+  qdiag $res "Use of `break' or `continue' statement"
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Loop stopping condition that is unconditional (i.e.: derived wholly
+# from constant expressions):
+#
+
+proc lang:const_cond { src args } {
+
+  set conds [ nil_set ]
+
+  set stmts [ tree find -ignore for_stmt "$src" ]
+  sappend $conds [ tree navigate -ignore ->,. $stmts ]
+
+  set stmts [ tree find -ignore while_stmt||do_while_stmt||if_stmt||cond_expr "$src" ]
+  sappend $conds [ tree navigate -ignore ->. $stmts ]
+
+  set conds [ tree filter -ignore { x: [ expression_is_constant $x ] } $conds ]
+  set assert [ filter {regexp("[aA][sS][sS][eE][rR][tT]",ast_text)} $conds ]
+
+  set res [ set_subtract $conds $assert ]
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Questionable comparison of unsigned:
+#
+
+proc lang:uns_cmp { src args } {
+
+  set res [ nil_set ]
+
+  set types {{unsigned} {unsigned short} {unsigned int} {unsigned long}}
+
+  set exprs [ tree find ast_lexpr "$src" ]
+
+  foreach expr $exprs {
+    set lhs [ tree navigate -ignore -> $expr ]
+    set rhs [ tree navigate -ignore , $lhs ]
+    set lhtype [ realtype $lhs ]
+    set rhtype [ realtype $rhs ]
+
+    set lhname [ name -ignore [ tree navigate -ignore { r(->) !convert_expr } $lhs ] ]
+    set rhname [ name -ignore [ tree navigate -ignore { r(->) !convert_expr } $rhs ] ]
+
+    set code [ ast_code $expr ]
+
+    if { ($rhname == "0" && ($code == "lt_expr" || $code == "ge_expr") && \
+          [ lsearch -exact $types $lhtype ] != -1) ||                     \
+         ($lhname == "0" && ($code == "le_expr" || $code == "gt_expr") && \
+          [ lsearch -exact $types $rhtype ] != -1) } {
+      sappend $res $expr
+    }
+  }
+
+  qdiag $res "Questionable comparison of unsigned integer with the constant zero"
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Ignoring the return value of a function:
+#
+
+proc _lang_is_void_cast { node } {
+  return [ regexp {^ *\( *void *\)} [ ast_text $node ] ]
+}
+
+proc _lang_is_foreign_fun { name } {
+  set def [ where defined $name ]
+  if { [ size $def ] <= 0 } {
+    return 1
+  } else {
+    return 0
+  }
+}
+ 
+proc lang:discard_ret { src args } {
+ 
+  set calls [ tree find -ignore { call_expr                             \
+              (!operator || (regexp("new",name))) (!constructor)        \
+              s.type!="void" <- (expr_stmt || (nw_expr <- expr_stmt))   \
+              expr: ! [ _lang_is_void_cast $expr ] } "$src" ]
+ 
+  set int_calls [ nil_set ]
+ 
+  foreach call $calls {
+    set fun_name [ name -ignore $call ]
+    if { ! [ _lang_is_foreign_fun $fun_name ] } {
+      sappend $int_calls $call
+      qdiag $call "The return value of function `$fun_name' is ignored"
+    }
+  }
+ 
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $int_calls ]
+  return $res
+ 
+}
+ 
+proc lang:discard_ret_external { src args } {
+ 
+  set calls [ tree find -ignore { call_expr                             \
+              (!operator || (regexp("new",name))) (!constructor)        \
+              s.type!="void" <- (expr_stmt || (nw_expr <- expr_stmt))   \
+              expr: ! [ _lang_is_void_cast $expr ] } "$src" ]
+ 
+  set ext_calls [ nil_set ]
+ 
+  foreach call $calls {
+    set fun_name [ name -ignore $call ]
+    if { [ _lang_is_foreign_fun $fun_name ] } {
+      sappend $ext_calls $call
+      qdiag $call "The return value of function `$fun_name' is ignored"
+    }
+  }
+ 
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $ext_calls ]
+  return $res
+ 
+}
+ 
+##############################################################################
+
+#
+# Defaultless switch:
+#
+
+proc _lang_get_switch_clauses { switch } {
+
+  set res [ nil_set ]
+
+  set switch_etag [ etag $switch ]
+  set clauses [ tree find switch_clause $switch ]
+  foreach clause $clauses {
+    set context [ tree navigate -ignore { r(<-) case_stmt } $clause ]
+    if { ([ size $context ] > 0) && ([ etag $context ] == $switch_etag) } {
+      set check [ tree navigate { -- case_stmt -> (, nil) } $clause ]
+      if { [ size $check ] <= 0 } {
+        sappend $res $clause
+      }
+    }
+  }
+
+  if { [ size $res ] <= 0 } {
+    set check [ tree navigate { -> (, nil) } $switch ]
+    if { [ size $check ] > 0 } {
+      set clause [ tree navigate { , switch_clause } $switch ]
+      if { [ size $clause ] > 0 } {
+        set res $clause
+      }
+    }
+  }
+
+  return $res
+
+}
+
+proc lang:sw_default { src } {
+
+  set res [ nil_set ]
+
+  set switches [ tree find -ignore case_stmt $src ]
+  foreach switch $switches {
+    set clauses [ _lang_get_switch_clauses $switch ]
+    set found_cases [ tree navigate -ignore { -> case_values } $clauses ]
+    set defaults [ tree find -ignore case_default $found_cases ]
+#workarond due bug in model.
+    if { [ string match -nocase "java" [language $src] ] } {	
+        set non_default_cases [ size [ tree find -ignore {.case_values->.case_label} $clauses ] ]
+        set all_cases [ size $clauses ]
+        if { $all_cases != $non_default_cases } {
+           sappend $defaults $found_cases
+        }
+    }
+#workarond due bug in model.
+    if { [ size $defaults ] == 0 } {
+      sappend $res $switch
+      qdiag $res "Defaultless switch statement"
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Fall-through case:
+#
+
+proc lang:sw_fall { src args } {
+
+  set res [ nil_set ]
+
+  set switches [ tree find -ignore case_stmt "$src" ]
+  foreach switch $switches {
+    set switch_etag [ etag $switch ]
+    set clauses [ _lang_get_switch_clauses $switch ]
+    foreach clause $clauses {
+      set hasbreak 0
+      set stmt [ tree navigate -ignore { -> r(,) !case_values } $clause ]
+      set stmts [ nil_set ]
+      while { [ size $stmt ] > 0 } {
+        sappend $stmts $stmt
+        set stmt [ tree navigate -ignore { , r(,) !case_values } $stmt ]
+      }
+      if { [ size $stmts ] > 0 } {
+        set breaks [ tree find -ignore exit_stmt $stmts ]
+        foreach break $breaks {
+          set context [ tree navigate -ignore \
+            { r(<-) while_stmt || do_while_stmt || case_stmt || for_stmt } $break ]
+          if { ([ size $context ] > 0) && ([ etag $context ] == $switch_etag) } {
+            set hasbreak 1
+            break
+          }
+        }
+      }
+      if { $hasbreak == 0 } {
+        set exits [ tree find -ignore { return_stmt || goto_stmt } $stmts ]
+        if { [ size $exits ] > 0 } {
+          set hasbreak 1
+        }
+      }
+      if { $hasbreak == 0 } {
+        # labels are arranged in ascending numerical order;
+        # need to calculate offsets:
+        set label [ tree navigate -ignore { -> case_values -> case_label } $clause ]
+        set last [ nil_set ]
+        set max -1
+        while { [ size $label ] > 0 } {
+          set pos [ getsrcindex $label ]
+          if { $pos >= $max } {
+            set last $label
+            set max $pos
+          }
+          set label [ tree navigate -ignore { , case_label } $label ]
+        }
+        if { [ size $last ] > 0 } {
+          sappend $res $last
+          qdiag $last "Control flows past end of case"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Dangling else-if:
+#
+
+proc lang:dang_ei { src args } {
+
+  set stmts [ tree find -ignore \
+    { if_stmt (-- -- -- nil) (<- if_stmt) (->,, nil) } "$src" ]
+  qdiag $stmts "Dangling else-if"
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $stmts ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Local variable declared but not used:
+#
+
+proc lang:unused_local { src args } {
+
+  set res [ nil_set ]
+
+  set funs [ tree find -ignore { function_def !generated } "$src" ]
+  foreach fun $funs {
+    set funname [ name -ignore $fun ]
+    set fundecl [ tree navigate -ignore { function_def -> r(,) function_decl } $fun ]
+    set argdecls [ tree find -ignore parm_decl $fundecl ]
+    set args [ tree navigate -ignore { -> r(,) local_id } $argdecls ]
+    set block [ tree navigate -ignore { r(,) ast_block } $fundecl ]
+    set localdecls [ tree find -ignore var_decl $block ]
+    set locals [ tree navigate -ignore { -> local_id } $localdecls ]
+
+    set vars [ nil_set ]
+    sappend $vars $args
+    sappend $vars $locals
+    set vars [ set_unique $vars ]
+
+    foreach var $vars {
+      set cname [ cname -ignore $var ]
+      if { (($cname != "<unnamed>") && (!([ member $fun ] && ($cname == "this")))) } {
+        set refs [ tree find -ignore "local_id $var" $fun ]
+        if { [ size $refs ] <= 1 } {
+          sappend $res $var
+          qdiag $var "Variable `[ name -ignore $var ]' in function `$funname' is\
+            declared but never used"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res  
+
+}
+
+##############################################################################
+
+#
+# Static global variable declared but not used:
+#
+
+proc lang:unused_static { src args } {
+
+  set res [ nil_set ]
+
+  set statics [ filter { static && !member } [ defines -var "$src" ] ]
+  foreach static $statics {
+    set inst [ instances $static ]
+    if { [ size $inst ] <= 1 } {
+      sappend $res $static
+      qdiag $static "Static global variable `[ name -ignore $static ]' is\
+        declared but never used"
+    }
+  }
+
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Nested function declaration:
+#
+
+proc lang:nest_fun_decl { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set funs [ tree find -ignore function_def "$src" ]
+  foreach fun $funs {
+    set fun_name [ name -ignore $fun ]
+    set block [ tree navigate -ignore { -> r(,) ast_block } $fun ]
+    if { [ size $block ] > 0 } {
+      set decls [ tree find -ignore { ast_decl (!var_decl || global_id) \
+        (!label_decl) (!parm_decl) } $block ]
+      foreach decl $decls {
+        set context [ tree navigate -ignore \
+          { <- r(<-) ((ast_decl (!var_decl || global_id) (!label_decl)) || function_def) } $decl ]
+        if { ([ size $context ] > 0) && ([ function_def $context ] == "1") } {
+          sappend $res $decl
+          if { [ type_decl $decl ] } {
+            set entity "type"
+          } else {
+            set entity "external symbol"
+          }
+          qdiag $decl "Declaration of $entity `[ name -ignore $decl ]'\
+            inside of function `$fun_name'"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Uninitialized global or static variable:
+#
+
+proc lang:init_glob { src args } {
+
+  set res [ nil_set ]
+
+  set decls [ nil_set ]
+
+  sappend $decls [ tree find -ignore { var_decl !static ->, nil } [ defines -var "$src" ] ]
+  sappend $decls [ tree find -ignore { var_decl static ->, nil } "$src" ]
+
+  set decls [ tree filter { ! (r(<-) type_decl) } $decls ]
+
+  foreach decl $decls {
+    set sym [ data symbol $decl ]
+    if { [ typeinfo $sym info ] != "" } {
+      set type $info(fulltype)
+      if { ([ size $type ] > 0) && (! [ class $type ]) && (! [ struct $type ]) } {
+        sappend $res $decl
+        qdiag $decl "Uninitialized persistent variable `[ name -ignore $sym ]'"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Cast results in a loss of precision:
+#
+
+proc lang:conv_num_narrow { src args } {
+
+  set res [ nil_set ]
+
+  set types {char short int long float double {long double}}
+
+  itercon "$src" info {
+    if { $info(from,level) == 0 && $info(to,level) == 0 } {
+      set x $info(from,basename)
+      set y $info(to,basename)
+      regsub {^unsigned *} $x {} x
+      regsub {^unsigned *} $y {} y
+      set expr $info(expr)
+      set xi [ lsearch -exact $types $x ]
+      if { $xi >= 0 } {
+        set yi [ lsearch -exact $types $y ]
+        if { $yi >= 0 && $xi > $yi } {
+          if { (! [ expression_is_constant $expr ]) && \
+               (! [ expression_is_boolean $expr ]) } {
+            sappend $res $expr
+            qdiag $expr "Conversion from `$info(from,name)' to `$info(to,name)'\
+              results in a loss of precision."
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Cast between pointers to integral types that narrows underlying
+# precision:
+#
+
+proc lang:conv_intptr_narrow { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set types {char short int long}
+
+  itercon "$src" info {
+    set flev $info(from,level)
+    set tlev $info(to,level)
+    if { $flev > 0 && $tlev > 0 && $flev == $tlev } {
+      regsub {^unsigned *} $info(from,basename) {} x
+      regsub {^unsigned *} $info(to,basename) {} y
+      set expr $info(expr)
+      set xi [ lsearch -exact $types $x ]
+      if { $xi >= 0 } {
+        set yi [ lsearch -exact $types $y ]
+        if { $yi >= 0 && $xi > $yi } {
+          sappend $res $expr
+          qdiag $expr "Pointer conversion from `$info(from,name)' to\
+            `$info(to,name)' narrows the underlying precision"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res  
+
+ }
+}
+
+##############################################################################
+
+#
+# Cast between pointers to integral types that widens underlying
+# precision:
+#
+
+proc lang:conv_intptr_widen { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set types {char short int long}
+
+  itercon "$src" info {
+    set flev $info(from,level)
+    set tlev $info(to,level)
+    if { $flev > 0 && $tlev > 0 && $flev == $tlev } {
+      regsub {^unsigned *} $info(from,basename) {} x
+      regsub {^unsigned *} $info(to,basename) {} y
+      set expr $info(expr)
+      set xi [ lsearch -exact $types $x ]
+      if { $xi >= 0 } {
+        set yi [ lsearch -exact $types $y ]
+        if { $yi >= 0 && $xi < $yi } {
+          sappend $res $expr
+          qdiag $expr "Pointer conversion from `$info(from,name)' to\
+            `$info(to,name)' widens the underlying precision"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Conversion between pointers to incompatible numerical types:
+#
+
+proc lang:conv_numptr_compat { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  # items from different sublists shouldn't be mixed:
+  set types {{char short int long} float double {long double}}
+  set len [ llength $types ]
+
+  itercon "$src" info {
+    set flev $info(from,level)
+    set tlev $info(to,level)
+    if { $flev > 0 && $tlev > 0 && $flev == $tlev } {
+      regsub {^unsigned *} $info(from,basename) {} fbase
+      regsub {^unsigned *} $info(to,basename) {} tbase
+      foreach item [ list {fbase findex} {tbase tindex} ] {
+        set basevar [ lindex $item 0 ]
+        set indexvar [ lindex $item 1 ]
+        set $indexvar -1
+        for { set i 0 } { $i < $len } { incr i } {
+          set sublist [ lindex $types $i ]
+          set index [ eval lsearch -exact \$sublist \$$basevar ]
+          if { $index >= 0 } {
+            set $indexvar $i
+            break
+          }
+        }
+      }
+      if { $findex >= 0 && $tindex >= 0 && $findex != $tindex } {
+        set expr $info(expr)
+        if { ! [ expression_is_constant $expr ] } {
+          sappend $res $expr
+          qdiag $expr "Pointer conversion from `$info(from,name)' to\
+            `$info(to,name)' mixes numerical types with incompatible\
+            internal representations"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Conversion that takes away const:
+#
+
+proc lang:conv_const { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+    if { ($info(from,const)) && (! $info(to,const)) && \
+         (($info(from,level) > 0) || \
+          (([ size $info(from,base) ] > 0 ) && ([ struct $info(from,base) ]))) } {
+      set expr $info(expr)
+      if { ! [ expression_is_boolean $expr ] } {
+        sappend $res $expr
+        qdiag $expr "Conversion from `$info(from,name)' to `$info(to,name)'\
+          loses `const' qualifier"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Conversion that takes away volatile:
+#
+
+proc lang:conv_vol { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+    if { ($info(from,volatile)) && (! $info(to,volatile)) } {
+      set expr $info(expr)
+      if { ! [ expression_is_boolean $expr ] } {
+        sappend $res $expr
+        qdiag $expr "Conversion from `$info(from,name)' to `$info(to,name)'\
+          loses `volatile' qualifier"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Conversion between signed and unsigned:
+#
+
+proc lang:conv_uns { src args } {
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+    if { $info(from,level) == $info(to,level) } {
+      set fbase $info(from,basename)
+      set tbase $info(to,basename)
+      if { $fbase != "void" && $tbase != "void" } {
+        set funs [ regexp {^unsigned *} $fbase ]
+        set tuns [ regexp {^unsigned *} $tbase ]
+        set expr $info(expr)
+        set hit 0
+        set from "`$info(from,name)'"
+        set to "`$info(to,name)'"
+        if { $funs && (! $tuns) } {
+          set to "signed type $to"
+          set hit 1
+        } elseif { $tuns && (! $funs) } {
+          set from "signed type $from"
+          set to "`$info(to,name)'"
+          set hit 1
+        }
+        if { $hit } {
+          if { (! [ expression_is_constant $expr ]) && \
+               (! [ expression_is_boolean $expr ]) } {
+            sappend $res $expr
+            qdiag $expr "Conversion from $from to $to"
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Conversion between pointer and non-pointer:
+#
+
+proc lang:conv_ptr_nonptr { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+    set skip 0
+    set fromlev $info(from,level)
+    set tolev $info(to,level)
+    if { ($fromlev > 0) && ($tolev == 0) } {
+      set ptr from
+      set obj to
+    } elseif { ($fromlev == 0) && ($tolev > 0) } {
+      set ptr to
+      set obj from
+    } else {
+      set skip 1
+    }
+
+    if { ! $skip } {
+      set expr $info(expr)
+      set objbase $info($obj,base)
+      if { ! (([ size $objbase ] <= 0) || ([ struct $objbase ])) } {
+        if { (! [ expression_is_constant $expr ]) && \
+             (! [ expression_is_boolean $expr ]) } {
+          sappend $res $expr
+          # diagnostic:
+          if { $ptr == "from" } {
+            set from "pointer type"
+            set to "non-pointer type"
+          } else {
+            set from "non-pointer type"
+            set to "pointer type"
+          }
+          qdiag $expr "Conversion from $from `$info(from,name)' to\
+            $to `$info(to,name)'"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Conversion between pointers of unequal depth:
+#
+
+proc lang:conv_ptr_depth { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+    set fromlev $info(from,level)
+    set tolev $info(to,level)
+    if { $fromlev > 0 && $tolev > 0 && $fromlev != $tolev && \
+         $info(from,basename) != "void" && $info(to,basename) != "void" } {
+      set expr $info(expr)
+      sappend $res $expr
+      qdiag $expr "Conversion from pointer type `$info(from,name)' to\
+        pointer type of unequal depth `$info(to,name)'"
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Conversion between pointers to unrelated types:
+#
+
+proc lang:conv_ptr_rel { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+    set flev $info(from,level)
+    set tlev $info(to,level)
+    if { ($flev > 0) && ($tlev > 0) && ($flev == $tlev) && \
+         ($info(from,basename) != "void") && ($info(to,basename) != "void") } {
+      set fbase $info(from,base)
+      set tbase $info(to,base)
+      set ftag $info(from,basetag)
+      set ttag $info(to,basetag)
+      if { [ class_relationship $fbase $tbase $ftag $ttag ] == "none" } {
+        set expr $info(expr)
+        sappend $res $expr
+        qdiag $expr "Conversion from `$info(from,name)' to unrelated type\
+          `$info(to,name)'"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Target of a side-effect is used more than once:
+#
+
+proc lang:side_effect_usage { src args } {
+
+  set res [ nil_set ]
+
+  set ops [ tree find -ignore { postdecrement_expr || \
+    postincrement_expr || preincrement_expr || predecrement_expr } "$src" ]
+
+  set vars [ tree navigate -ignore { -> (s.variable || s.local) } $ops ]
+
+  foreach var $vars {
+    set name [ name -ignore $var ]
+    set kind [ kind -ignore $var ]
+    set branch [ tree navigate -ignore { r(<-) (<- (ast_stmt || while_stmt || \
+      do_while_stmt || for_stmt || compound_expr || cond_expr || truth_andif_expr || \
+      truth_orif_expr || ast_decl)) } $var ]
+    if { ([ size $branch ] > 0) && ($name != "") && ($kind != "") } {
+      set uses [ tree find -ignore "ast_id name==\"$name\" kind==\"$kind\" \
+        (s.variable || s.local)" $branch ]
+      if { [ size $uses ] > 1 } {
+        sappend $res $var
+        qdiag $var "Variable `$name' is modified via a side-effect and used\
+          again in the same expression"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Using sizeof in a pointer arithmetic calculation is suspicious:
+#
+
+proc lang:arith_sizeof { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set exprs [ tree find -ignore \
+    { plus_expr || plus_assign_expr || minus_expr || \
+    minus_assign_expr || array_ref } "$src" ]
+
+  foreach expr $exprs {
+    set left [ tree navigate -ignore -> $expr ]
+    set right [ tree navigate -ignore , $left ]
+    if { ([ size $left ] > 0) && ([ size $right ] > 0) } {
+      set text [ ast_text $right ]
+      if { [ regexp {(^|[^a-zA-Z0-9])sizeof( |\()} $text ] } {
+        if { [ typeinfo $left info ] != "" } {
+          if { ($info(level) > 0) && (!($info(basename) == "char") && $info(level) == 1) && \
+               ($info(basename) != "void") } {
+            sappend $res $expr
+            qdiag $expr "Using type size in pointer arithmetic calculation"
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Functions with variable-length argument lists are not safe:
+#
+
+proc lang:def_vararg { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set funs [ defines -fun "$src" ]
+  foreach fun $funs {
+    set args [ args $fun ]
+    if { [ string match {*...*} $args ] } {
+      sappend $res $fun
+      qdiag $fun "Function `[ name -ignore $fun ]' takes a variable number of\
+        arguments"
+    }
+  }
+
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Non-virtual destructor:
+#
+
+proc lang:nv_dtor { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set classes [ defines -classes "$src" ]
+
+  foreach class $classes {
+    set sub [ get_sub_classes $class ]
+    set super [ get_super_classes $class ]
+    if { ([ size $sub ] > 0) || ([ size $super ] > 0) } {
+      set functions [ uses -functions $class ]
+      set dtors [ filter {cname[0]=='~'} $functions ]
+      set nonvirt [ filter !virtual $dtors ]
+      if { [ size $nonvirt ] > 0 } {
+        set decls [ get_declarations $nonvirt ]
+        if { [ size $decls ] > 0 } { set el [ set_copy $decls 1 ] } else { set el $class }
+        sappend $res $el
+        qdiag $el "Destructor for class `[ name -ignore $class ]' is not virtual"
+      }
+    }
+  }
+
+  # no offset filter on symbols
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Class hierarchy downcast:
+#
+
+proc lang:downcast { src args } {
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+
+    if { ($info(from,level) == $info(to,level)) || \
+         (($info(from,reference) == 1) && \
+          ($info(to,level) == [ expr $info(from,level) + 1 ])) } {
+
+      set x $info(from,base)
+      set y $info(to,base)
+      set xtag $info(from,basetag)
+      set ytag $info(to,basetag)
+
+      if { [ class_relationship $x $y $xtag $ytag ] == "parent" } {
+        sappend $res $info(expr)
+        qdiag $info(expr) "Conversion from `$info(from,name)' to `$info(to,name)' is a downcast"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Class hierarchy sidecast:
+#
+
+proc lang:sidecast { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  itercon "$src" info {
+
+    if { ($info(from,level) == $info(to,level)) || \
+         (($info(from,reference) == 1) && \
+          ($info(to,level) == [ expr $info(from,level) + 1 ])) } {
+
+      set x $info(from,base)
+      set y $info(to,base)
+      set xtag $info(from,basetag)
+      set ytag $info(to,basetag)
+
+      if { [ class_relationship $x $y $xtag $ytag share ] == "cousin" } {
+        set expr $info(expr)
+        sappend $res $expr
+        set share [ set_copy $share 1 ]
+        qdiag $expr "Conversion from `$info(from,name)' to `$info(to,name)'\
+          is a sidecast (both share at least the root class `[ name -ignore $share ]')"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Assignment operator doesn't return a reference to an object
+# of the same type:
+#
+
+proc lang:ass_op_ret { src args } {
+
+  set res [ nil_set ]
+
+  set classes [ defines -class "$src" ]
+  foreach class $classes {
+    set classname [ name -ignore $class ]
+    set members [ get_member_functions $class ]
+    set decls [ tree find -ignore function_decl $class ]
+    set ops [ tree filter -ignore { operator && cname=="operator=" } $decls ]
+    foreach op $ops {
+      set sym [ data symbol $op ]
+      if { [ size [ set_intersect $members $sym ] ] > 0 } {
+        if { [ typeinfo $sym info ] != "" } {
+          if { ($info(level) != "0") || ($info(reference) != "1") || \
+               ($info(basename) != $classname) } {
+            sappend $res $op
+            qdiag $op "Assignment operator `[ name -ignore $op ]' returns `$info(name)'\
+              instead of a reference to `$classname'"
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Assignment operator does not check for self-assignment:
+#
+
+proc lang:ass_op_self { src args } {
+
+  set res [ nil_set ]
+
+  set ops [ filter { operator && cname=="operator=" } [ defines -fun "$src" ] ]
+  foreach op $ops {
+    set do_check 0
+    if { [ numargs $op ] == "1" } {
+      set empty_block [ tree navigate -ignore { -> r(,) ast_block (-> nil) } $op ]
+      if { [ size $empty_block ] <= 0 } {
+        set name [ name -ignore $op ]
+        if { [ regsub {(.*)::operator=\(.*} $name {\1} classname ] } {
+          set do_check 1
+        }
+      }
+    }
+    if { $do_check } {
+      set decl [ tree navigate -ignore { ->, function_decl ->,, parm_decl } $op ]
+      if { [ size $decl ] <= 0 } { break }
+      if { ([ typeinfo $decl info ] != "") && ($info(level) == 0) && \
+           ($info(basename) == $classname) } {
+        set cname_param [ cname $decl ]
+        if { $cname_param != "" } {
+          set ok 0
+          set exprs [ tree find -ignore { eq_expr || ne_expr } $op ]
+          foreach expr $exprs {
+            set left [ tree navigate -ignore -> $expr ]
+            set right [ tree navigate -ignore , $left ]
+
+            set this [ tree find -ignore {cname=="this"} $left ]
+            if { [ size $this ] > 0 } {
+              set that [ tree find -ignore "cname==\"$cname_param\"" $right ]
+              if { [ size $that ] > 0 } {
+                set ok 1
+                break
+              }
+            }
+
+            set this [ tree find -ignore {cname=="this"} $right ]
+            if { [ size $this ] > 0 } {
+              set that [ tree find -ignore "cname==\"$cname_param\"" $left ]
+              if { [ size $that ] > 0 } {
+                set ok 1
+                break
+              }
+            }
+          }
+          if { ! $ok } {
+            sappend $res $op
+            qdiag $op "Assignment operator `$name' does not check for self-assignment"
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Parameter of assignment operator/copy constructor is
+# not a const reference:
+#
+
+proc lang:const_ref_param { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set classes [ defines -class "$src" ]
+  foreach class $classes {
+    set members [ get_member_functions $class ]
+    set decls [ tree find -ignore function_decl $class ]
+    set funs [ tree filter -ignore \
+      { (constructor || (operator && cname=="operator=")) s.numargs==1 } $decls ]
+    foreach fun $funs {
+      set sym [ data symbol $fun ]
+      if { [ size [ set_intersect $members $sym ] ] > 0 } {
+        set param [ tree navigate -ignore { ->, parm_decl } $fun ]
+        if { [ cname -ignore $param ] == "this" } {
+          set param [ tree navigate -ignore { , parm_decl } $param ]
+        }
+        if { ([ size $param ] > 0) && ([ typeinfo $param info ] != "") } {
+          set base $info(base)
+          if { [ size $base ] > 0 } {
+            if { (($info(reference) != "1") || ($info(const) != "1")) && ($info(level) == "0") } {
+              set kind [ kind -ignore $info(base) ]
+              if { ($kind == "class") || ($kind == "struct") || ($kind == "union") } {
+                sappend $res $fun
+                # diagnostic:
+                if { [ operator $sym ] } {
+                  set context "assignment operator"
+                } elseif { [ constructor $sym ] } {
+                  set context "copy constructor"
+                } else {
+                  set context "member function"
+                }
+                qdiag $param "Parameter of $context `[ name -ignore $sym ]' has type\
+                  `$info(name)' instead of const reference to `$info(basename)'"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Initializer list makes false assumption about order of
+# initialization:
+#
+
+proc lang:init_order { src args } {
+
+  set res [ nil_set ]
+
+  set ctors [ tree find -ignore { function_decl constructor , ctor_init } "$src" ]
+
+  foreach ctor $ctors {
+
+    set ok 0
+
+    if { [ regsub {::[^:]*\(.*} [ name $ctor ] {} classname ] } {
+      set class [ sev_cache_name_to_sym $classname ]
+      if { [ size $class ] == 1 } {
+        set init [ tree navigate -ignore { , r(,) ctor_init } $ctor ]
+        set members [ get_member_data $class ]
+        set deffile [ where defined $ctor ]
+        set declfile [ where defined $class ]
+        if { [ size $declfile ] > 0 } {
+          set was_loaded [ is_loaded $declfile ]
+          set ok 1
+        }
+      }
+    }
+
+    while { $ok && [ size $init ] > 0 } {
+      set ids [ tree find -ignore { global_id field !(<- component_ref <- addr_expr) } \
+        [ tree find -ignore dynamic_init $init ] ]
+      set syms [ data symbol $ids ]
+      if { [ size [ set_intersect $members $syms ] ] > 0 } {
+        set node [ tree navigate -ignore { -> global_id } $init ]
+        set target [ data symbol $node ]
+        set target_decl [ data node [ get_declarations $target ] ]
+        set p1 0 ; set x 0 ; tree find { field_decl {incr x} -> $target_decl {set p1 $x}} $class
+        if { [ size $target_decl ] == 1 && $p1 > 0 } {
+          foreach id $ids {
+            set sym [ data symbol $id ]
+            if { [ size [ set_intersect $members $sym ] ] > 0 } {
+              set decl [ data node [ get_declarations $sym ] ]
+              set p2 0 ; set x 0 ; tree find { field_decl {incr x} -> $decl {set p2 $x}} $class
+              if { ([ size $decl ] == 1) && ($p2 > 0) && ($p2 > $p1) } {
+                sappend $res $node
+                qdiag $node "In initializer list of constructor `[ name -ignore $ctor ]', member\
+                  variable `[ name -ignore $target ]' is being initialized with uninitialized member\
+                  variable `[ name -ignore $sym ]'"
+              }
+            }
+          }
+        }
+      }
+      set init [ tree navigate { , r(,) ctor_init } $init ]
+      if { (! $was_loaded) && [ set_intersect $deffile $declfile ] == 0 } {
+        catch { src_unload $declfile }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Call to virtual funtion in ctors/dtors:
+#
+
+proc lang:virt_call { src args } {
+
+  set res [ nil_set ]
+
+  set tors [ tree find -ignore { function_def (constructor || destructor) } "$src" ]
+  foreach tor $tors {
+    set name [ name -ignore $tor ]
+    set virts [ tree find -ignore { call_expr virtual } $tor ]
+    foreach virt $virts {
+      set obj [ tree navigate -ignore ->, $virt ]
+      if { [ size $obj ] > 0 } {
+        if { [ cname $obj ] == "this" } {
+          sappend $res $virt
+          # diagnostic:
+          if { [ constructor $tor ] } {
+            set context "constructor `$name'"
+          } elseif { [ destructor $tor ] } {
+            set context "destructor `$name'"
+          } else {
+            set context "`$name'"
+          }
+          qdiag $virt "Virtual function call in $context"
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+
+##############################################################################
+
+#
+# Function which returns an object by value instead of by reference:
+#
+
+proc lang:ret_by_val { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set funs [ defines -fun "$src" ]
+  foreach fun $funs {
+    if { ([ typeinfo $fun info ] != "") && \
+         ($info(level) == 0) && ($info(reference) == 0) } {
+      set sym $info(base)
+      if { ([ size $sym ] > 0) && ([ class $sym ] || [ struct $sym ]) } {
+        sappend $res $fun
+        qdiag $fun "Function `[ name -ignore $fun ]' returns an object of type\
+          `$info(name)' by value"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+ }
+}
+
+##############################################################################
+
+#
+# Function argument which take an object by value instead of by reference:
+#
+
+proc lang:pass_by_val { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set params [ tree find { parm_decl <- function_decl <- function_def } "$src" ]
+  foreach param $params {
+    if { ([ typeinfo $param info ] != "") && \
+         ($info(level) == 0) && ($info(reference) == 0) } {
+      set sym $info(base)
+      if { ([ size $sym ] > 0) && ([ class $sym ] || [ struct $sym ]) } {
+        sappend $res $param
+        # diagnostic:
+        set fun [ data symbol [ tree navigate <-<- $param ] ]
+        set index 0; tree navigate { r(--) {incr index} global_id } $param
+        set index [ expr $index - 1 ]
+        qdiag $param "Parameter $index of function `[ name -ignore $fun ]' takes\
+          an object of type `$info(name)' by value"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Expression creates a temporary object:
+#
+
+proc lang:temp_obj { src args } {
+
+  set temps [ tree find -ignore { dynamic_init !(<- (nw_expr || dl_expr || ctor_init)) } "$src" ]
+
+  # diagnostic:
+  foreach temp $temps {
+    set msg "Expression creates a temporary object"
+    set sub [ tree navigate -ignore -> $temp ]
+    set type [ type -ignore $sub ]
+    if { $type != "" } { append msg " of type `$type'" }
+    qdiag $temp $msg
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $temps ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Inheritance from multiple non-abstract base classes:
+#
+
+proc lang:mi_concrete { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set classes [ defines -classes "$src" ]
+  foreach class $classes {
+    set nabc [ nil_set ]
+    set supers [ get_super_classes $class ]
+    foreach super $supers {
+      set concrete 0
+      set methods [ get_member_functions $super ]
+      if { [ size $methods ] > 0 } {
+        set impures [ filter !purevirt $methods ]
+        if { [ size $impures ] > 0 } {
+          set concrete 1
+        }
+      } elseif { [ size [ get_member_data $super ] ] > 0 } {
+        set concrete 1
+      }
+      if { $concrete } {
+        sappend $nabc $super
+        if { [ size $nabc ] >= 2 } {
+          sappend $res $class
+          set base1 [ name -ignore [ set_copy $nabc 1 ] ]
+          set base2 [ name -ignore [ set_copy $nabc 2 ] ]
+          qdiag $class "Class `[ name -ignore $class ]' inherits from multiple\
+            concrete base classes (the first two are `$base1' and `$base2')"
+          break
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Exporting a pointer to the local stack.
+#
+
+proc lang:stackret { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ stack_violations "$src" ]
+
+  # diagnostic:
+  foreach fun $res {
+    qdiag $fun "Function `[ name -ignore $fun ]' exports a pointer to\
+      the local stack"
+  }
+
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Data that is allocated but not freed.
+#
+
+proc lang:memleak { src args } {
+
+  set res [ alloc_violations 0 none "$src" ]
+
+  qdiag $res "Potential memory leak"
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+
+#
+# [OPTIONAL] Data that is freed multiple times:
+#
+
+proc lang:multifree { src args } {
+
+  set res [ alloc_violations 0 many "$src" ]
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+##############################################################################
+# Find function calls in non-ANSI C code whose arguments dont match
+# the target function's actual parameter list (either in number or
+# in type). The actual signature of the function in question is
+# determined by DISCOVER's model linking mechanism.
+
+proc lang:fun_mismatch { src args } {
+
+	set res [ nil_set ]
+
+	# Get all the files from the input:
+	set src [ set_unique [ set_union [ defines -module "$src" ] \
+		[ filter module "$src" ] ] ]
+	set src [ filter {language=="C"} "$src" ]
+
+	# Loop through the function calls:
+	set calls [ tree find -ignore call_expr "$src" ]
+	foreach call $calls {
+		set fun [ data symbol $call ]
+		if { [ size $fun ] != 1 } { continue }
+		if { [ size [ where defined $fun ] ] != 1 } { continue }
+		set formal [ args $fun ]
+		regsub {^\(([^\)]*)\)$} $formal {\1} params
+		set params [ split $params , ]
+		set actual ""
+		set mismatch 0
+		set count 0
+		set node [ tree navigate -ignore { ->,. } $call ]
+
+		#if the function called is a function pointer then skip it
+                if { [ llength $params ] == 0 } {
+     		   set typ [ type $fun ]
+		   if { [ regexp {[\(\)]} $typ ] } {
+			continue;
+		   }
+		}
+
+                #if there are no arguments and formal list is a "void" then do not match
+                if { ([ size $node ] == 0) && ([ size $params ] == 1) } {
+                   if { [ string match {(void)} $formal ] } { 
+		     continue;
+                   }
+		}
+
+		# Loop through each argument and compare its type to
+		# the corresonding type string in the formal list
+		# returned by 'args':
+		while { [ size $node ] == 1 } {
+		    set type [ type $node ]
+
+                    #Ignore if the argument is a numerical constant	
+		    set val [ apply {global_id constant} $node ]
+		    if { $val != 1 } {
+			set righttype [ lindex $params $count ]
+			# If the apparent type conflicts with what we think
+			# the formal parameter is, do the expensive realtype
+			# call to confirm that the anomaly is not simply the
+			# result of the type being obscured by a typedef.
+			# (Note, in the event that the real type is a pointer
+			# to a function, we cannot compare the types.)
+			if { ($type != $righttype) && (! [ regexp {[\(\)]} $righttype ]) } {
+				set apparent $type
+				set type [ realtype $node ]
+
+			        #Do not compare if the argument type is "void*".
+				if { ![string match {void*} $type] && $type != $righttype } {
+					set mismatch 1
+				}
+				if { $type == "" } { set type $apparent }
+			}
+		    }
+			lappend actual $type
+			set node [ tree navigate -ignore , $node ]
+			incr count
+		}
+		if { $count != [ llength $params ] } { set mismatch 1 }
+		if { $mismatch } {
+			# Record a diagnostic message:
+			set funname "[lname $fun]:[name $fun]${formal}"
+			set actual "([join $actual ,])"
+			qdiag $call "Function signature mismatch -- using actual parameters\
+				`$actual' in call to function `$funname'"
+			sappend $res $call
+		}
+	}
+
+	set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+	return $res
+
+}
+
+
+##############################################################################
+# Locate entities in a given project or set of files that have identical
+# names except for casing (e.g.: a struct named `someStruct' and another
+# named `SomeSTRUCT'). If a case clash is found, all of the entities that
+# share the case-insensitive name are appended to the result set. Note,
+# name scope does not affect the behavior of this query -- any entity
+# may clash with any other entity in the input set. Also, entities with
+# fully identical names are not considered to clash with one another.
+
+proc lang:entity_case_clash { src args } {
+
+	set res [ nil_set ]
+
+	# First get the entities (only of major kinds) defined
+	# in the source set and group them by case-insensitive
+	# name:
+
+	array set map {}
+	set all [ defines -file -function -var -class -struct \
+		-union -enum -typedef -template "$src" ]
+	set sz [ size $all ]
+
+	for { set i 1 } { $i <= $sz } { incr i } {
+		set el [ set_copy $all $i ]
+		if { [ size $el ] <= 0 } { continue }
+		set name [ name $el ]
+		set upper [ string toupper $name ]
+		lappend map($upper) [ list $name $i ]
+	}
+
+	# For each set of entities with the same uppercase
+	# name, see if there is more than one casing:
+
+	foreach key [ array names map ] {
+		if { [ llength $map($key) ] <= 1 } { continue }
+		catch { unset nm }
+		array set nm {}
+		set clones [ nil_set ]
+		foreach pair $map($key) {
+			set name [ lindex $pair 0 ]
+			set index [ lindex $pair 1 ]
+			set el [ set_copy $all $index ]
+			set nm($name) ""
+			sappend $clones $el
+		}
+		if { [ array size nm ] > 1 } {
+			sappend $res $clones
+		}
+	}
+
+	qdiag $res "There are other entities with the same name but different case"
+	return $res
+}
+
+##############################################################################
+#
+# Iteration and conditional statements without enclosing braces
+#
+
+proc lang:without_braces { src args } {
+
+  set no_braces [ nil_set ]
+  set pattern  { !(nil || (!exit_stmt !return_stmt !goto_stmt !ast_block -> nil)) !ast_block }
+
+  # get "if", "for", "while" and "do-while" staments
+  set stmts [ tree find -ignore { if_stmt || while_stmt || do_while_stmt || for_stmt } "$src" ] 
+
+  set if_stmts [ tree filter -ignore if_stmt $stmts ]
+  sappend $no_braces [ tree filter -ignore " ->, $pattern" $if_stmts ] 
+
+  # get the "else" statements have do not have braces
+  set if_stmts [ tree navigate -ignore { ->,, } $if_stmts ]
+  # remove else ifs
+  set if_stmts [ tree filter !if_stmt $if_stmts ]
+  sappend $no_braces [ tree filter -ignore $pattern $if_stmts ]
+
+  # filter out for_stmts and apply pattern, this is done to group all the for_atmts together, same will be done to "while_stmts" and "do_while_stmts"
+  sappend $no_braces [ tree filter -ignore "->,,, $pattern" [ tree filter -ignore for_stmt $stmts ] ]
+
+  sappend $no_braces [ tree filter -ignore "->, $pattern" [ tree filter -ignore while_stmt $stmts ] ]
+
+  sappend $no_braces [ tree filter -ignore "->, $pattern" [ tree filter -ignore do_while_stmt $stmts ] ]
+
+  qdiag $no_braces "Iteration or selection statement without enclosing braces"
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $no_braces ]
+  return $res
+}
+
+
+#############################################################################
+
+#
+# Operand of modulus or div operator (%, /) is signed. (If operand
+# value is negative, the sign of the result is implementation-defined.)
+#
+# [G3.1.1 p6]
+#
+
+proc lang:divmod_signed { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set exprs [ tree find -ignore { trunc_mod_expr || trunc_mod_assign_expr || \
+    trunc_div_expr || trunc_div_assign_expr } "$src" ]
+  # rdiv_expr || rdiv_assign_expr
+  foreach expr $exprs {
+    set lhs [ tree navigate ->. $expr ]
+    set rhs [ tree navigate ,. $lhs ]
+    if { [ size $lhs ] > 0 && [ size $rhs ] > 0 && \
+         [ typeinfo $lhs lt ] != "" && [ typeinfo $rhs rt ] != "" && \
+         $lt(level) == 0 && $rt(level) == 0 && \
+         (![ expression_is_constant $lhs ]) && (![ expression_is_constant $rhs ]) } {
+      set lbn $lt(basename)
+      set rbn $rt(basename)
+      if { ! [ regexp {^unsigned *} $lbn ] } { set luns 0 } else { set luns 1 }
+      if { ! [ regexp {^unsigned *} $rbn ] } { set runs 0 } else { set runs 1 }
+      if { [ trunc_mod_expr $expr ] || [ trunc_mod_assign_expr $expr ] } {
+        set op modulus
+      } else {
+        set op division
+      }
+      set flag 1
+      if { (! $luns) && (! $runs) } {
+        qdiag $expr "Left and right operands of $op operator have\
+          signed types `$lbn' and `$rbn'"
+      } elseif { (! $luns) } {
+        qdiag $expr "Left operand of $op operator has signed type `$lbn'"
+      } elseif { (! $runs) } {
+        qdiag $expr "Right operand of $op operator has signed type `$rbn'"
+      } else {
+        set flag 0
+      }
+      if { $flag } {
+        sappend $res $expr
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+#############################################################################
+
+#
+# Avoid malloc and free in C++ code.
+#
+# [G1.1.1 p8]
+#
+
+proc lang:nomalloc { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set src [ set_unique [ set_union [ defines -module "$src" ] [ filter module "$src" ] ] ]
+  set files [ filter { language=="CPP" } "$src" ]
+  set res [ tree find -ignore { call_expr \
+    (name=="malloc" || name=="calloc" || name=="realloc" || name=="free") } $files ]
+  foreach call $res {
+    set name [ name -ignore $call ]
+    qdiag $call "Call to C allocation function `$name' found in C++ file"
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+#############################################################################
+
+#
+# Don't use exceptions.
+#
+# [G1.2.4 p9]
+#
+
+proc lang:noexcept { src args } {
+
+  set src [ set_unique [ set_union [ defines -module "$src" ] [ filter module "$src" ] ] ]
+  set src [ filter {language=="CPP"||language=="java"} "$src" ]
+  set res [ tree find -ignore { try_block||catch||throw_expr} "$src" ]
+  qdiag $res "Use of exceptions (try, catch, throw) found."
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+
+#############################################################################
+
+#
+# Avoid multiple inheritance.
+#
+# [G1.2.5 p9]
+#
+# lang:mi_concrete    # inheritance from multiple concrete base classes
+#
+
+proc lang:nomi { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set classes [ filter {met_FANIN>1 && language=="CPP"} [ defines -class "$src" ] ]
+  foreach class $classes {
+    qdiag $class "Class `[ name -ignore $class ]' inherits from multiple base\
+      classes"
+  }
+
+  return $classes
+
+ }
+}
+
+#############################################################################
+
+#
+# Use class instead of struct.
+#
+# [G1.2.6 p9]
+#
+
+proc lang:nostruct { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set classes [ defines -class "$src" ]
+  foreach class $classes {
+    if { [ language $class ] == "CPP" } {
+      set node [ data node $class ]
+      if { ([ size $node ] > 0) && \
+           ([ regexp {^struct[ \t\r\n]} [ ast_text $node ] ]) } {
+        sappend $res $node
+        qdiag $node "Struct `[ name -ignore $class ]' defined in C++ file\
+          -- use of `class' is preferred over `struct'"
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+#############################################################################
+
+#
+# Use virtual functions instead of unions.
+#
+# [G1.2.6 p9]
+#
+
+proc lang:nounion { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set unions [ defines -union "$src" ]
+  foreach union $unions {
+    if { [ language $union ] == "CPP" } {
+      sappend $res $union
+      qdiag $union "Union `[ name -ignore $union ]' defined in C++ file --\
+        use of inheritance and virtual functions is preferred over unions"
+    }
+  }
+
+  return $res
+
+ }
+}
+
+#############################################################################
+
+#
+# Explicitly use the virtual keyword when declaring derived
+# virtual functions. (Note: This will incorrectly report
+# functions declared through macros.)
+#
+# [G4.1.6 p11]
+#
+
+proc lang:explicit_virtual { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set src [ set_unique [ set_union [ defines -module "$src" ] [ filter module "$src" ] ] ]
+  set src [ filter {language=="CPP"} "$src" ]
+
+  set res [ nil_set ]
+
+  set decls [ tree find -ignore { function_decl member virtual \
+    (r(<-) type_decl class)} "$src" ]
+  foreach decl $decls {
+    set spec [ tree navigate -ignore { -- ast_declspec } $decl ]
+    if { [ size $spec ] > 0 } {
+      set text [ ast_text $spec ]
+      if { ! [ regexp {(^|[ \t\r\b])virtual([ \t\r\n]|$)} $text ] } {
+        set member [ data symbol $decl ]
+        if { [ size $member ] > 0 } {
+          set class [ data symbol [ tree navigate -ignore \
+            { r(<-) type_decl class } $decl ] ]
+          if { [ size $class ] > 0 } {
+            set friends [ get_friends $class ]
+            if { [ size [ set_intersect $member $friends ] ] <= 0 } {
+              sappend $res $decl
+              qdiag $decl "Virtual function `[ name -ignore $decl ]' is not declared\
+                explicitly with the `virtual' keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+#############################################################################
+
+#
+# Avoid friends.
+#
+# [G4.1.6 p11]
+#
+
+proc lang:nofriend { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ nil_set ]
+
+  set classes [ defines -class "$src" ]
+  foreach class $classes {
+    set friends [ get_friends $class ]
+    set n [ size $friends ]
+    if { $n > 0 } {
+      sappend $res $class
+      qdiag $class "Class `[ name -ignore $class ]' declares $n\
+        friend(s) -- use of `friend' is discouraged"
+    }
+  }
+
+  return $res
+
+ }
+}
+
+#############################################################################
+
+#
+# Avoid nested classes.
+#
+# [G4.2.2 p13]
+#
+
+proc lang:nonest { src args } {
+
+  set nested [ tree find -ignore { type_decl class (ast_offset != 0) \
+    <- (r(<-) type_decl class) } "$src" ]
+  foreach el $nested {
+    qdiag $el "Definition of class `[ name -ignore $el ]' is nested within\
+      another class"
+  }
+
+  return $nested
+
+}
+
+#############################################################################
+
+#
+# Avoid templates.
+#
+# [G4.2.2 p13]
+#
+
+proc lang:notemplate { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set templs [ defines -template "$src" ]
+  foreach templ $templs {
+    qdiag $templ "Template `[ name -ignore $templ ]' defined -- use of\
+      templates is discouraged"
+  }
+
+  return $templs
+
+ }
+}
+
+#############################################################################
+
+#  Name: multiple_macros
+#  Desc: This function will find all macros with more than one definition
+#        in the same model.  This function will ignore case.  Which means,
+#        MacRo = MACRO = macro
+#  Created: 6/25/01
+
+proc lang:multiple_macros { args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $args] ] } {	
+
+        set all_macros [ sort [ defines -macro $args ] ]
+        set multiple_macro_list [ nil_set ]
+
+        set prev_macro ""
+        set next_macro ""
+        set index 0
+        foreach defined_macro $all_macros {
+                if { $index == 0 } {
+                        set prev_macro [ set_copy $defined_macro ]
+                        set next_macro [ set_copy $defined_macro ]
+                }
+                if { $index > 0 } {
+                        set next_macro [ set_copy $defined_macro ]
+                        if { [ string tolower [ cname $prev_macro ] ] == [ string tolower [ cname $next_macro ] ] } {
+                                sappend $multiple_macro_list $prev_macro
+                                sappend $multiple_macro_list $next_macro
+                        }
+                        set prev_macro [ set_copy $defined_macro ]
+                }
+                incr index
+         
+        }
+
+        set multiple_macro_list [ set_unique $multiple_macro_list ]
+
+	qdiag $multiple_macro_list "There are other macros with the same name or different case"
+        return $multiple_macro_list
+
+    }
+}
+
+#############################################################################

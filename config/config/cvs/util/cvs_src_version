@@ -1,0 +1,12 @@
+#!/bin/sh -f
+
+dn=`dirname $cm_workfile`
+bn=`basename $cm_workfile`
+
+cm_sysfile=$cm_workfile
+export cm_sysfile
+cr=`$PSETCFG/util/cvs_find_root`
+
+if [ "$cr" != "-" ] ; then
+    grep $bn $dn/CVS/Entries | echo `sed "s%/[^/]*/\([^/]*\)/.*%\1%"`
+fi

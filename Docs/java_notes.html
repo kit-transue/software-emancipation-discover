@@ -1,0 +1,1173 @@
+<head>
+<title>DISCOVER Java Implementation Notes</title>
+</head>
+<body bgcolor="white">
+<h1 align="center">Implementation Notes</h1>
+<hr>
+<h3 align="center">SET Extensions to Jfe</h3>
+<p>
+<ul>
+<li>The AST IF is sent to the string buffer. The rest of the IF is sent to
+the output buffer immediately.  
+The trial buffer is used for temporary stuff.
+<li>file organization
+<br><table border><tr><td>SET_IF
+               <td>dump_SET_IF
+        <tr><td>SET_IF_fmt
+            <td>Functions to format various kinds of lines and parts of
+            lines in the IF file, using the output_buf declared in SET_strings.
+        <tr><td>SET_dump_il
+            <td>dump_il and supporting functions that dump <em>everything</em> that
+            Jfe saves up regarding the compilation unit.
+        <tr><td>SET_strings
+            <td>string buffers and the basic functions to use them
+     </table>
+<br>The SET_IF_fmt and SET_strings modules are language-independent, and 
+are intended to be shared by CCcc and jfe.
+<li>Mike Miller implemented <code>--IF_file</code> and <code>--ind</code>.
+<li>The <code>leaf</code> member of the <code>ast_node</code> structure
+indicates how the node is to be displayed syntatically, either with
+an astbody that is a quoted "name", or with a (possibly empty) list of AST tree nodes.
+<li>The AST is kept in an array because it must be saved somewhere,
+because memory is the best place, and because
+this array is a convenient and somewhat
+compact way to store it.
+<li>Array types are handled differently from other symbols.
+The SYM node is emitted from <code>assign_symid</code> rather than 
+from traversal of the scopes, because array types are not exactly declared
+and this way we are confident that they will be emitted.
+<li><code>Assign_symid</code> handles reference types specially,
+because these have both an <code>a_type</code> node and an <code>a_type_reference</code>
+node.
+We put the same symid number into both nodes because the distinction
+does not occur in the IF.
+<li>Package names such as <code>a.b.c</code> do not lead to
+as many declarations in the IL as you might expect.
+You get a chain of qualifiers, and you can match these up with
+declarations by following the parent_scope chain.
+But sometimes the parent_scope chain doesn't go as far as the
+first qualifier.
+<pre>
+	    if (comp->qualifier && !scope) {
+		/* Name reference components have higher resolution
+		 * than package scopes, i.e., "a.b.c" will have three
+		 * name reference components but only one layer of
+		 * scope nesting if "a.b.c" is a package name; we
+		 * have to synthesize the source location from the
+		 * first component to the current one.
+		 */
+		name_reference_source_range(comp, &extended_loc);
+		loc = &extended_loc;
+		comp = NULL;
+	    }
+</pre>
+Mike Miller discussed this with EDG folk, and their understanding is that a
+package name can have periods in it.
+<li>Jfe resolves a declaration which contains multiple declarations into
+symbol objects which have little indication of their commonality.
+Yet this positioning information is all we have to go on, to
+recreate the <code>list_decl</code> which IF needs.
+When we process a symbol object, we therefore look for successive
+symbol objects that share a start location, in order to create
+the entire declaration in the IF.
+During this process, the <code>processed</code> bit is set in 
+the symbol object, so symbols do not get handled more than once
+(once from an earlier sibling in the declaration, and once in the
+normal processing of all symbols).
+<li>Change to IF, 1998-07-30, in a using AST, instead of a used_entity
+operator, the operands should be the kind-based names, i.e. class or interface.
+<li>SMT records of 3 kinds:
+    <ul><li>Names are emitted from the scope->references list when walking scopes,
+            and also when processing declarations either from a declaration statement
+            or from a declaration in the scope.
+        <li>Keywords are saved up during lexing, associated with a compilation unit.
+        <li>Literals are emitted during the walk of the expression.
+    </ul>
+    Note that true, false, and null are emitted as literals, not as keywords.
+<li>The AST syntax for case/switch is:
+<pre>
+   case_stmt
+     Expression
+     ast_block
+       Switch_Clause ...
+
+   Switch_Clause ::=
+     switch_clause
+       case_values
+         case_label [symid] pos { "&lt;val&gt;" }...
+       Statement ...
+</pre>
+<li>Investigated use of implicit <code>this</code>.
+
+Here's what I found to be consistent with what's generated for C++:
+<table border>
+<tr><td><th>SYM lines<th>AST
+<tr><th>declarations<td>In the declaration of a non-static method, there is an
+additional symbol (i.e. SYM line) for the implicit <code>this</code> parameter,
+but it is not involved in the <code>argument</code> relation with its function.
+      <td>In the AST for the declaration of a non-static method in C++, there is
+          a compiler-generated <code>parm_decl</code> subtree for the
+          implicit <code>this</code> parameter.
+          It's not appropriate in Java, which does not use a symbol to represent
+          <code>this</code>.
+<tr><th>calls<td><td>In the AST for the call of a non-static method, there is
+always an argument supplied for the <code>this</code> parameter.
+When not explicit, the C++ IF uses a <code>this</code> symbol, and
+Java IF uses a <code>this</code> operator.
+</table>
+The only discrepancies are with the AST for declarations, and also maybe a need for <code>:cg</code> on
+the implicit <code>this</code> parameter in a method call.
+<li>The <code>current_named_block_symid</code> is used just for relations such as "call"
+in which some property of an expression needs to be related to a containing named
+entity. 
+It used to be <code>current_method_symid</code> but needed to be generalized for
+initialization blocks of named classes.
+<li>I specified originally that the null literal would translate into an AST operator in the IF,
+but Mike implemented it as a constant and this makes sense.
+I'm eliminating the operator, and keeping the constant.
+FWIW, note that Sun's clarification of the Java Spec 1.0 says that null is a compile-time constant.
+
+<li>For .class file support, 
+    <ul>
+    <li>Process classes that are defined in .class files.
+    <li>Don't generate any SMT nodes or AST nodes in association with these
+        classes (other than the SMT file node for the file containing
+        the .class).
+    <li>The following functions need to be callable either for source files
+        or for .class files:
+        <ul>
+        <li><code>walk_compilation_unit</code>
+        <li><code>walk_reference_type</code>
+        <li><code>walk_declaration</code>
+        <li><code>walk_method</code>
+        <li><code>walk_variable</code>
+        <li><code>walk_label</code>
+        </ul>
+    <li>Except for <code>walk_compilation_unit</code>, these
+        can all be tailored for both purposes by checking for the presence
+        of applicable source locations and parse info structures.
+    <li>Now that being foreign or not does not depend simply on whether
+        the containing compilation unit is a source file on the command line,
+        I replaced direct references to
+        <code>a_compilation_unit::specified_on_command_line</code>
+        with a function, <code>is_being_emitted</code>.
+    <li>Correspondingly, I changed <code>declaration_is_foreign</code>
+        to the inverse, <code>declaration_is_native</code>.
+        I tweaked this function and <code>is_being_emitted</code> for testing
+        purposes, which will work out fine assuming they're always modified
+        in step with one another.
+    <li>At the same time, I removed <code>current_context_symid</code> in
+        favor of <code>context_of</code>.
+    </ul>
+<li><p>In adding support for <code>.class</code> files and archives, I planned
+to have the main loop go through and dump everything for each file and
+archive.  That way, each dump would be complete.
+I recognized that some classes would be dumped more than once, and
+at first was blind to the problems with this while seeing a seeming
+necessity for it.
+A class could be specified multiple times on the command line. 
+</p>
+<p>
+Then I realized that even if you specify the class multiple times, the
+jfe is going to resolve them to just one.
+This makes some things hard. If you put an archive on the command line
+then some classes will probably be loaded via CLASSPATH prior to
+their being processed as part of the archive.  The thing we can't live without is
+that if they are in the zip, and if the zip is at the head of the CLASSPATH,
+then all of the classes in the zip must be emitted.
+</p>
+<p>
+Since each class will be emitted only once, emission will be driven by
+the compilation unit list.  There's no need to use the file list. 
+All that's needed is to be able to identify which classes are to be
+emitted and what file name is associated with each.
+</p>
+<p>In fact, this is already a problem, because you might have two
+<class>.java</class> files on the command line, and if they reference one another
+then the SYM for the second class is going to be emitted within the scope
+of the SMT file of the first.  So each symbol is going to need to get
+the compilation unit, and the compilation unit is going to need a file name.
+</p>
+<p>Mike Miller's idea is that SYM records be put out when you get around
+to the file that they belong with.  If there are multiple files on
+the command line then it's going to go through the IF Extractor anyway,
+so in that case the SYM records can be out of sequence. 
+The problem with this is efficiency.  Currently there's a simple test in 
+symid_of for whether it's time to output the symbol and assign the symid.
+Once these 2 aspects are separated, the test is more complex. 
+A symbol with an assigned id still might need its SYM record output, and that
+could be a relatively costly test.  
+</p>
+<p>For getting the record output, how about this:  <br>
+<ul>
+<li>We have the set of file names from the command line.
+<li>Each symbol, when first referenced, gets a pointer in its SET_info to
+the file name in which it needs to be defined.
+<li>There is a current file name pointer.
+<li>In <code>symid_of</code> we first test for symid, and if present we
+then test for the file where a definition is needed, against the current file.
+If the latter match, then we handle emitting the SYM line.
+<li>The file where a definition is needed can be NULLed out once the SYM line
+is emitted.
+<li>In the "normal" case where there is but one file on the command line,
+the SYM line will be emitted right away and the <code>symid_of</code> test
+will never encounter the new case.
+</ul>
+</p>
+<p>This requires that each compilation unit to be emitted be associated with a command line
+file name.  That's a no-brainer for .java files. 
+For the others, we track them when added in class_file.c, using a new member of
+a_compilation_unit.
+</p>
+<p>Here are the data structures involved, and the fields
+relevant to the structure of what's being processed.
+<table border>
+<tr><td>reference type<td>cmd_line_file: command line file<br>parse_info->compilation_unit: compilation unit
+<tr><td>compilation unit<td>addendum->file: command line file<br>class_file.reference_type
+<tr><td>command line file<td>virtual: boolean
+</table>
+These seem to have unnecessary pointers, but note that parse_info is only present for reference types that arise from .java (source) files. Also, the compilation unit's reference type is
+only present when the compilation unit is a non-source file reference type.  So we can split the above table into two:
+<table border>
+<tr><th colspan = "2">reference type is from a source (.java) file
+<tr><td>reference type<td>cmd_line_file: NULL<br>parse_info->compilation_unit: compilation unit
+<tr><td>compilation unit<td>addendum->file: command line file
+<tr><td>command line file<td>virtual: FALSE
+</table>
+<table border>
+<tr><th colspan="2">reference type is from a .class file
+<tr><td>reference type<td>cmd_line_file: command line file
+<tr><td>compilation unit<td>addendum->file: command line file<br>class_file.reference_type
+<tr><td>command line file<td>virtual: TRUE
+</table>
+</p>
+<li><p>Compared to the C++ front end, a lot more compiler-generated methods are defined in Java.
+This derives directly from the respective front ends' ILs. 
+It relates to the C++ language feature, that a <em>declaration</em> is
+always generated, but a <em>definition</em> is generated only on demand.
+Beyond that, the IL for C++ has a 'trivial' flag which causes
+the definition to be suppressed for IF generation purposes.
+</p>
+<p>Mike Miller said that the treatment of compiler-generated methods has
+been somewhat controversial, but that DFA requires their definitions, at
+least when non-trivial.
+</p>
+<li><p>
+Implementing "complain" 1999-03-01, I ran into a couple of gray-area cases. <br>
+When emitting AST for expressions, the Java front end had been checking for
+a compiler-generated constructor call, and it would just skip emitting the
+AST.  In general, blatantly omitting an expression can cause the AST not to be
+well-formed.  So I put in a parameter to walk_statement which indicates
+whether it's being called from a place where omitting the statement is
+permissible. The test for omission takes place now in walk_statement rather
+than walk_expression.
+</p>
+<p>A more problematic case arises when the explicit constructor call is
+erroneous, and an error expression gets substituted for the explicit
+constructor call.  In this case the expression is not marked compiler-generated,
+yet the location might not include an end-position. 
+Hence, there's no way to corroborate the inference that it's a good idea
+to omit the expression statement.
+</p>
+<p>The Java front end used to just omit the above-described expressions, and
+omit end-positions without any checks for appropriateness. Now it will
+omit these things only in specific cases, and will complain when unable
+to emit the expected form of AST or location.
+</p>
+</ul>
+</p>
+
+
+<hr>
+<h3 align="center">Java Support in DISCOVER</h3>
+<p>
+<ul>
+<li>MG did the following. He added a pdf file.
+<pre>
+proj : $PWD <-> /proj {
+  *.java
+  *.[cCh]
+  sub : sub <-> /DISCOVER-Subsystems { *.sub ext/*.*}
+}
+__rule : $PWD <-> / {
+  . : /**/(*).c/%/.make => "echo cc -I. (1).c"
+  . : /**/(*).C/%/.make => "echo CC -I. (1).C"
+  . : /**/(*).java/%/.make => ""
+}
+</pre>
+He added prefs.
+<pre>
+*psetPrefs.ELS.List: java
+*psetPrefs.ELS.java.Suffix: .java
+*psetPrefs.ELS.java.Flags:
+</pre>
+He checked out /paraset/src/paraset/api/scripts/els.dis, modifying it
+with
+<pre>
+proc dis_parse_java { flags iff fn } {
+
+  set cmd "/users/sturner/Java/work/jfe $flags --IF_file $iff $fn 2>$iff.err"
+  set ret [exec_cmd "$cmd"]
+  if $ret {
+	puts_verbose "errorbrowser_report_errors $iff.err"
+	errorbrowser_report_errors $iff.err
+  }
+
+  return $ret;
+}
+</pre>
+and did 
+<pre>
+setenv DISCOVER_SCRIPTS $sp/api/scripts
+setenv DISCOVER_VERBOSE 1
+</pre>
+Then he ran DISCOVER.  The batch version didn't work, he said because of a
+problem Alex Z introduced.
+Then he did it the GUI way, and it complained about no java.ui config file, 
+but it still worked when he selected a .java file and did an update.
+It gave a bunch of nifty error messages.
+
+<li>At one point I thought I had a gross integration problem.
+Turned out to be a constallation of unfamiliar things.
+  <ul><li>DISCOVER was complaining about undefined symbols with a numeric
+          value way above anything that should have been in the IF.
+          Turned out <code>ifext</code> was moving the symbol number range.
+      <li>DISCOVER was reporting child process abnormal exit, which I took
+          to be a crash, but it turned out that this was a normal report for
+          the case in which jfe found an error in the source and reported it.
+      <li>These complaints were due to one or two bugs generating SYM lines.
+      <li>Complaints of undefined symbol [0] were due to the <code>error</code>
+          operator in the AST not having a type symbol id.
+      <li>The batch build hung because of a bug causing jfe to hang.
+  </ul>
+
+<li>What won't work in the application areas:
+    <ul><li>Partition due to assumptions about the structure of the 
+        source including header files (see AZ &amp; MG).
+        MG says, "The function of Partition is to change the physical
+        organization of the code to match its logical organization.
+        In Java all code is required to be in a class, so it already
+        is logically partitioned."
+    <li>Simplify includes is N/A.
+    <li>The forward engineering features of ER diagrams and of inheritance hierarchies,
+        in which you have the capability of rearranging things, won't work at all.
+        (on the authority of Mike Miller who wrote them)
+    </ul>
+
+<li>entity_of_scope, ruminations on the call from smt_ifl.C to ddict.h.C
+<table bordered>
+<tr><td>entity<td>scope
+<tr><td>target<td>source
+<tr><td>scoped_entity<td>structure
+<tr><td>member<td>parent
+</table>
+
+<li>I spoke with MG after changing the name "Variables" to "Class Variables" for Java.
+He says that this will become too cluttered in mixed-language projects, and that
+the thing which forms the list of entities should recognize when more than one
+entity name has the same command (in browser.dat) and merge them.
+
+<li>I discussed with MG making DISCOVER sensitive to ELS language in displaying attributes.
+I had identified the following areas of concern:
+   <ul>
+   <li>xref/src/xrefSymbol.h.C print_sym arranges attributes for display.
+   <li>interface/src/reporter.h.C print_attribute does the same.
+   <li>xref/src/xrefSymbol.h.C *override* reference the VIRT_ATT to figure out
+       whether an override is taking place.
+   </ul>
+MG said print_sym is only for debugging and is not a concern.  Second, print_attribute
+is in an obscure part of DISCOVER and can be deferred until such time as 
+a customer may find it a problem.  Third, to handle the override by turning
+on VIRT_ATT for <em>all</em> Java methods, in the parser.
+We decided it should be turned on even for final methods, thinking of
+final methods that are overriding methods in base classes in that they
+have a virtual table entry. 
+Now that I think of it maybe we do not need it for final methods that are not overriding.
+
+<li>I discussed with MG the need to change various points in the code for language
+independence.  When I pointed out print_sym in xref/src/xrefSymbol.h.C, he said
+that's an internal thing, for debugging etc.
+
+<li>When I learned of <code>set_locator_from_expr</code> from Steve Adamczyk on 
+1998-10-09, I thought I would call that for every expression.
+Then (1) a peek at the implementation made me doubt it would fix the bug, and
+(2) I wondered why Mike Miller implemented the location stuff the way he did
+for expressions, since he had a function with exactly the same purpose as
+<code>set_locator_from_expr</code> but he didn't call it for walk_expr.
+Maybe it was an efficiency concern.  Anyway, I took the conservative approach
+and only changed the ek_call case, eliminating our own <code>expr_source_range</code>
+in favor of the equivalent EDG function.
+
+<li>I encounter minor model problems when building the JDK 1.1.6 model, at the
+file InetAddress.java. This occurs in the function getAllByName. 
+This function both returns an array type and has a throws specification,
+and the array type declarator comes <em>after</em> the function declarator.
+If either the array type or the throw spec is removed, the symptoms go away.
+In the IF, the ast_declspec overlaps the function_decl, because the ast_declspec
+includes the return type, and the return type is specified as a combination of
+the type declarator and the trailing [].  This overlap is hard for the
+builder to handle and leads to the "minor problems". 
+But once the model is built, you get good results when clicking on the
+function identifier, and when performing an "Open Definition" operation, etc.
+Alex H. tried a few things and said, "You couldn't do better even
+without 'minor problems'."  He seemed to imply that it's fine to leave
+this alone.
+
+<li>DFA doesn't work with Java, in part because the same IL is used with different
+semantics. 
+The IL was intended to stay close to the source code, and the same source code
+has different semantics, so we're a bit stuck.
+Should DFA depend on the language of the operators?
+I forget what MG's attitude was, but we're talking about a fundamental difference
+in meaning.  If <code>%</code> means remainder in one language and fraction in another,
+you wouldn't use the same operator for both.  I've got some attempts written
+down at <code>C:\Scott\Java\dfa.txt</code>
+
+<li><strong>improving package "definition":</strong>
+<p>
+Double-clicking on a package name in the browser activates the "Where Referenced"
+query.  This provides too much.  We really only want the files where it is
+specified as the containing package.
+There is no relation in the model currently which would provide that feature
+with reasonable directness.
+</p>
+<p>
+What if, in a small model of a Java applet, you double-click on "Java.awt.applet"?
+There are no files in the project which define that name. 
+It's comparable to a double-click on a name which is declared but not
+defined in a project. I tried that, and it pops up a dialog box saying
+"could not find definition of ...".
+</p>
+<p>A concomitant change to the browser display is in order. 
+Currently the command "uses -packages" is used to form the display, when the
+user chooses "Packages" from the category list.
+This causes packages to be shown which are not defined in the files of the model.
+The notion of file as partial definer of a package should be used to form the
+list of packages.
+This would also work in SQL, where packages are defined in 1 or 2 files.
+If an SQL package is defined in 2 files, then one is the package specification
+and the other the package body.  Currently the SQL parser treats the spec as the 
+package definition, which controls the "open definition" command, but
+double-clicking on a package name displays the referencing files of
+a package, for the sake of common implementation with Java.
+</p>
+<p>MG suggests that if I add a relation for this, it should use
+the existing relations for subsystems, pub_mbr_of_grp and grp_has_pub_mbr.
+Notes: db_def.C is the relations that are preserved.
+groupHdr.C defines these.
+removed_from_xref.C says something about links.
+</p>
+<p>While improving packages, the SQL packages are also relevant.
+When Java packages were first added, the implementation of packages in browser.dat
+changed the behavior of PL/SQL packages. 
+They originally were set up with the point of definition in the spec,
+and the body was not considered a package definition. 
+The behavior of the browser was consistent with this.
+With the introduction of Java, the behavior was changed.
+Now (1999-02) it's been changed back for SQL, or at least that's the intent.
+Here are my white board notes relating to testing SQL:
+<pre>
+     oxen   /users/mkamin/src/plsql/tests/plsql
+                                                  demo.pdf
+                                                       prefs
+   SQL  Packages context (public or private)        /test_src/   .sps
+        defined in spec       \                     /esql_src/   .spb
+                   or implem  /   separate files
+                                  or same file
+</pre>
+</p>
+</ul>
+</p>
+
+
+
+<hr>
+<h3 align="center">Topics</h3>
+<h4>Compilation Units</h4>
+<p>All of the IF is dumped at the end of jfe's processing.
+This keeps the output in a simple, coherent order
+whereas jfe pushes and pops the current compilation unit during
+parsing.
+Any processing, such as keywords, that occurs during parsing/lexing
+should be hung off of the node for the current compilation unit,
+so that it can be output later, after all of the compilation units
+are finished.
+</p>
+
+<h4>SYM lines and symids</h4>
+<p>The criteria for SYM lines and ids make things tricky at times.
+<ul><li>required for every reference
+    <li>done differently for symbols defined in this compilation unit
+    <li>SYM line must precede any reference to symbol.
+</ul>
+Originally, Mike Miller had SYM lines for types and a few other kinds
+of symbols emitted automatically from <code>assign_symid</code>
+while others reliably mentioned prior to use were emitted directly.
+It was necessary to coordinate different emitting places, because
+some symbols were directly emitted upon reference, while others
+were directly emitted upon definition. 
+Also, bugs sometimes occurred in which a directly emitted symbol
+was referenced before it was emitted, and so ended up being emitted
+twice.
+Also, the same function to emit a SYM record was called from <code>assign_symid</code>
+and called <code>assign_symid</code>.
+This also led to symbols being emitted twice.</p>
+
+<p>Currently it's believed to be under control.
+Except for special symbols for which <code>assign_symid</code> doesn't apply,
+<em>all</em> symbols have their SYM records emitted from <code>assign_symid</code>.
+The places which used to emit a SYM line directly now just call <code>assign_symid</code>
+(usually through its cohort, <code>symid_of</code>). 
+The function <code>declaration_is_foreign</code> coordinates which
+form of SYM line is output. 
+The function <code>write_sym_for_entity</code> actually writes the SYM for all
+<code>a_declaration</code>s.
+It is not called from anywhere but <code>assign_symid</code> because it assumes that an id number has been assigned.
+</p>
+
+<p>A vestigial function, <code>auto_sym_upon_assign_symid</code>, remains but is
+not believed to be serving a useful purpose. (It used to help coordinate so that 
+the places that emit symbols directly would do so precisely when <code>assign_symid</code>
+did not.)
+Now all it does is preserve the old order of SYM line emission. Removing it
+could cause more or fewer symbols (that are otherwise unreferenced) to be
+emitted, depending on whether the sites of SYM line emission were
+preserved or eliminated.</p>
+
+<p>The initial implementation of this idea led to a nasty bug in which the 
+names of things came out wrong, because the first version of the code assumed
+that each declaration was emitted during processing of its containing scope.
+I started to fix this by making <code>decorate_name_and_finish</code> smart about
+the scope it was decorating for, but then I realized that it's in a
+shared utility file, so it's not good to make it smart about Java-specific stuff.
+Now it's the caller which is smart, only calling <code>decorate_name_and_finish</code>
+when the name is local to a block or a method.
+The idea is that such names will always have their SYMs emitted from
+immediately within the block where they are declared.
+Here's hoping.
+</p>
+
+<h4>SYM Lines for Anonymous Classes</h4>
+<p>In handling anonymous classes, the major choice is whether to
+invent a symbol name for these classes. The secondary, related
+question is whether the names that are declared within the anonymous
+class body are qualified by the class denotation, or are decorated with
+the class scope.
+<table border>
+<tr><th>qualified<td><code>First.foo{3}.bar</code>
+<tr><th>decorated<td><code>bar @ First.foo{3}</code>
+</table>
+One concern is that if a class has no SYM record, then it may prevent
+certain relations from being represented.
+Here are the relevant relations:
+<pre>
+    REL [class] "call" [] 
+    REL [class] "catch" [] 
+    REL [class] "context" [] package
+    REL [class] "context" [] private
+    REL [class] "context" [] protected
+    REL [class] "context" [] public
+    REL [class] "subclass" [] 
+    REL [class] "throw" [] actual
+</pre>
+These relations present valuable information on the
+anonymous class. 
+This was somewhat unexpected -- theory told me that the anonymous
+class was an expression rather than a name, so that information on
+that class should not rely on the class having a name. Let's examine more deeply.
+<table border>
+<tr><td><code>[class] "call" []</code><td>This is the "exception which proves the rule". Use of
+a name in the "call" relation loses information.
+If an anonymous class calls function f, then we could say that its containing function
+calls function f, losing a little more information. 
+Note that the fact that the containing function does not call f directly is irrelevant,
+since the "call" relation really means "references", i.e. if a pointer to f is passed
+as a parameter, then we treat that as a call.
+<tr><td><code>[class]&nbsp;"catch" []</code><td>similar to "call"
+<tr><td><code>[class]&nbsp"context"&nbsp[]&nbsppwhatever</code>
+    <td>Some of the information here is redundant. The fact that the name in a scope is represented in IF in another way, and more generally represented, by the name itself which is qualified or decorated. In other words,
+IF doesn't have SYM lines for all scopes because it doesn't really need them, and
+this lack of need applies right here.
+        <br>Beyond that, this relation also conveys the protection of the symbol.
+            The significance of protection in an anonymous class is an obscurity which
+            is not worth considering.
+<tr><td><code>[class]&nbsp"subclass"&nbsp[]</code><td>The most demanding case.
+    Unlike the "call" relation, you can't
+    use a function name in place of the class name, and expect it to make sense.
+    There are two kinds of things you can do with this information.
+    You can ask, "Where is this class subclassed?" in which case you would like
+    to be led to the anonymous class.
+    Or you can look at the inheritance hierarchy, in which case either way of handling
+    this relation could lead to confusion. If the relation is in the IF then
+    the anonymous class has a name which will show up in the graphical view
+    and be confusing because it's synthesized.  If the relation is not in the IF then
+    the user might conclude that the class is never subclassed. You can't win.
+<tr><td><code>[class] "throw" []</code><td>similar to "call"
+</table>
+</p>
+<p>I missed a different kind of relation on the first pass.
+Most AST expressions have a type symbol, and inside the body of an anonymous
+class, the type of <code>this</code> is the anonymous class.
+This is a difference between OOP and the abstract types which I like to think
+about, in which the abstract type named by the class name hides the information
+everywhere, and the type of <code>this</code> is a concrete structured type.
+Consequently, if we take the tack that there is no symbol for the anonymous
+<em>class</em> we still need a symbol for the underlying structure type of <code>this</code>.
+</p>
+<h4>Scopes and Names</h4>
+<p>The new scope numbering scheme should call SET_push_main_block for those
+scopes which are named.
+Currently there's a question whether an anonymous class constitutes a
+named scope.
+Note that class and function scopes should both have SET_push_main_block called for
+them, because nested scopes should begin the count with '1'.
+However, names in a class scope are qualified with the class name and '.',
+whereas names in a function scope are decorated with '@' and the function name.
+</p>
+<p>Generally, a declaration in the Java front end is found on the declaration list
+of a scope, and that's the scope which is in its declaration record.
+However, we find top-level names in the compilation unit's declaration list,
+while their scope seems to be the package scope.
+</p>
+<h4>Attributes</h4>
+<p>
+This is the table I used when implementing attributes. In the end
+I did not implement them this way, i.e. synchronized and native ended
+up being <em>new</em> attribute codes.
+<table border>
+<tr><th>code<br>exists<th><th>class/<br>method/<br>field<th>existing<br>code<th>expert<br>mode
+<tr><td>+<td>final<td>CMF<td>CNST<td>lower right<td rowspan=2>falls out
+<tr><td>+<td>abstract<td>CM<td>PVIR<td>upper &amp; lower left
+<tr><td>X<td>transient<td>F?<td>POINTER<td><td>
+<tr><td>~<td>synchronized<td>M<td>VOLT<td>upper right<td>implement GUI
+<tr><td>X<td>native<td>M<td>INLINE<td><td>ask Alex H.
+</table>
+</p>
+
+<h4>Proxies for Object Files</h4>
+<p>Pero proposed that .class, and archive files be accessed only via proxies.
+I thought of using a different language and parser for these, but he had in
+mind an extension to the Java parser.  I still thought this is wrong.
+I don't see a way to merge this concept with the Java language, and
+if I were a customer I wouldn't wish to modify .java files for this purpose.
+</p>
+<p>I considered whether the proxies should name physical files, or logical
+packages. The latter sounds neat, but it's not feasible because
+there's no notion of a complete Java package, i.e. a list of everything
+contained therein.  The search is controlled by CLASSPATH which can be
+changed or can have its contents changed dynamically.
+So it would number one be a big job and number two would be going at cross
+purposes to the way Java works.  We really want to continue to reference
+physical files.
+</p>
+<p><em>But:</em> the locations of .class files always were a bit problematic.
+It <em>might</em> make sense to specify classes in a proxy file with
+the import syntax!  For example,
+<pre>
+      import java.lang.awt.*;
+      import "C:\JDK1.1.6\lib\classes.zip";
+</pre>
+</p>
+<p>The file extension suffix needs to say something about java,
+because these proxy files are to be parsed by the java parser.
+For example, ".proxy" would be unacceptable because it
+preempts a language-independent idea.
+How about ".jproxy"?
+</p>
+
+<p><em>&lt;later&gt;</em> I've gone back on my decision to use jfe parsing primitives, since
+my parser would be too different from theirs to mesh well.  The main
+motivation to use theirs was to be able to resolve import declarations,
+and I'm really unsure of how to do that.</p>
+
+<p>Rolling my own, a proxy file on the command line will simply expand 
+to use the same mechanism as is used for other files on the
+command line, except that some global state will indicate that
+the file is being processed by virtue of its inclusion in a 
+proxy file, and that definition locations should be within
+the proxy file.</p>
+
+<p>It can call proc_file_from_command_line, but better it can just call
+load_class_file_by_name or load_archive_by_name directly for those
+files with the correct suffix.  SET_proxy.h can declare
+<pre>
+    set_cmd_line_file_name
+    get_cmd_line_file_name
+</pre>
+to manage the command line file name for use in class_file.c.
+</p>
+
+<p>That was working pretty well, with each compilation unit that's
+reached by proxy having the proxy as its cup-&gt;addendum-&gt;file.
+But now we need to process the proxy file as a compilation unit in
+itself, so as to produce a little AST, and possibly a SYM file symbol.
+<em>Issues:</em>
+<ul>
+<li>file symbols are currently keyed to the command line, 
+and automatically output, via the a_file_list_entry symbols.
+Perhaps we could create some of these that are not on the chain.
+<li>IF is generated for compilation units, but the AST for the
+proxy file is not associated with a particular compilation unit
+because proxy files are not compilation units.
+</ul>
+<em>Concepts:</em>
+<ul>
+<li>A <strong>compilation unit</strong> is a chunk of file for analysis
+according to its kind. Now includes proxy files.
+<li>A <strong>command line file</strong> is a file that's on the command line.
+It is also the SMT file within which names are defined.
+<li>A <strong>locating file</strong> is the immediately containing .java, .class,
+or archive file, indicated in a proxy file.
+</ul>
+
+
+</p>
+
+<p><em>later still:&nbsp;&nbsp;</em>
+Pero says, "I figured you would load and look in the file, to find what
+to display on the status line."
+He mentioned the following aspects which I was not aware of:
+<ul>
+<li>that Alex Harlap already brought up the question of loading
+at the meeting, and that it was considered OK
+<li>that the proxied files cannot appear in the model as files/modules,
+because in that case DISCOVER will start to do nasty things with them
+<li>that if they are to be in the model then who knows what their kind
+could be -- DD_PERSON?
+</ul>
+Alex H. suggested the declares relation between proxied files and the 
+entities defined therein.
+</p>
+
+<p>
+<table><tr><td>Alex Harlap:<td>symbol -> correct line in proxy file (SMT)
+       <tr><td valign="top">priority 0: <td>symbol -> original file symbol<br>
+                               lname &amp; fname<br>
+                               If defining point of SYM is in (*)<br>
+                               proxy file then follow proxy. (?)<br>
+                               <em>only</em> for java.ui (if the defining point becomes visible beyond
+                                         there, then risk recurs)
+</table>
+</p>
+
+<p>In a discussion with Pero, we decided we wanted to promote a user
+methodology of proxying one file per proxy file, with a naming convention
+such as "classes.zip.jproxy" which would make it very usable.
+<br>
+This should obviate a requirement that the browser operate as if
+the proxy file were not there, and the object files were in the
+model directly.
+The appearance that the proxy file is not there is difficult
+to provide in practice.  We started with the status line, but
+there's "Where Defined" etc. etc. queries.
+</p>
+
+<h5>Broad Perspective</h5>
+<p>From a broad perspective, I've been thinking that both MG's and Pero's approaches
+are hacks/kludges, and that the only way that's good in the long run is
+to attack the problem directly by allowing object files to be modules,
+and by always checking appropriateness when a view or application is
+opened on a file.</p>
+<p>What is a module? Is read-only an attribute? Undermining the viewpoint
+that I had been taking is the new thought that read-only (as implemented using
+"virtual" is not a module attribute.  What really makes sense is to check the
+language of the module before starting the view or application.
+MG I think described this as a filter, and that's the right approach.
+</p>
+<p>One possibly small impediment to this is that for Java archives the 
+ELS language is the same as for Java source files.  So I've been setting it
+up such that knowing the ELS language is not sufficient in the case of Java.
+</p>
+
+<table border>
+<tr><td rowspan="7"><strong>Support .class &amp; archive files.</atrong>
+    <td>Say those files aren't critical sources.
+<tr><td>Fix to not open "virtual" files.
+<tr><td>Refuse to parse files which can be opened with "write" access.
+<tr><td rowspan="2"><strong>Use proxy files.</strong><td>Promote mnemonic proxy file names<br>
+                                                        containing just 1 object file.
+<tr><td>Fudge display to look right.<td>Fudge "Where Defined".
+<tr><td>Use wrong name.<td>Use wrong name everywhere,<br>even in pdf.
+<tr><td>Build that part of the model,<br>and then detach from world.
+</table>
+
+<h5>Another Idea</h5>
+<p>MG suggested:
+<blockquote>Use <code>is_batch</code> and if not, don't restore an object file.
+   <br>save/src/db_restore.C db_restore(char *, char *)
+</blockquote>
+</p>
+
+<p>My idea: Empty AST, then don't restore.  This of course would be implemented earlier in the
+pipeline. It's just a wild idea, which probably wouldn't work because I ended up
+having to create a little AST for the sake of some model stuff.
+</p>
+
+<p>Something else: I no longer understand this, which was with the above on the white board.
+<br>xref.h.C needs updates to 
+<blockquote>compare src
+<br>extract src
+<br>fn.</blockquote>
+</p>
+
+<h4>Partition Functions</h4>
+What to check &amp; fix:
+<ul>
+<li>Move a simple class from one file to another.
+<li>Attempt to move a method definition.
+<li>Attempt to move a field declaration.
+<li>...???
+</ul>
+
+<h4>Using DISCOVER with Java</h4>
+<p>Here are the things I ran into 1998 Dec 14-15 when checking out
+DISCOVER on NT, focusing on Java.  This may be useful when teaching Java
+in the future, or just when using DISCOVER on NT.
+<ul>
+<li>Create default .prefs file in the Model Administrator, by using the
+"New" and "Save As" menu items.
+<li>Add java to the ELS.list preference.
+<li>Set up CLASSPATH or the ELS.java.flags preference with --classpath.
+<li>Go back into the Model Administrator, and
+ <ul>
+ <li>Set ADMINDIR.
+ <li>Set the pdf.
+ <li>Set the source and model roots.
+ <li>Set the project.
+ <li>Build the model.
+ </ul>
+<li>In the DISCOVER client,
+ <ul>
+ <li>Set the pdf.
+ <li>Set the project.
+ <li>Start.
+ </ul>
+</ul>
+</p>
+
+<h4><code>specified_on_command_line</code></h4>
+<p>
+Compilation units are created in the following ways:
+<table border>
+<tr><td>cuk_generated<td>array reference type<td><td>
+<tr><td>cuk_source_file<td>.java file<td>specified on the command line<td>found while searching for class definition
+<tr><td>cuk_class_file<td>.class file<td>specified on the command line<td>loaded by searching or by name
+<tr><td>cuk_archive_file<td>.zip or .jar file<td>specified on the command line<td>
+<tr><td>cuk_proxy_file<td>.proxy file<td>specified on the command line
+<tr><td>cuk_jil_file<td>EDG .jil file<td>?<td>?
+</table>
+For JIL files, cuk_jil_file, these are allocated but not put
+onto the compilation unit list.
+</p>
+<p>Prior to the 1999-01-18 EDG release, specified_on_command_line meant just that.
+Afterwards, specified_on_command_line was expanded also to include
+files which were found in an archive by name.
+.class files and .jil files are now marked <code>specified_on_command_line</code>
+if they are loaded by name, even if not specified on the command line.
+Loading by name for .class files occurs for
+ <ul>
+ <li>files named in proxy files
+ <li>files loaded as a consequence of load_archive_by_name, which in turn occurs
+     only when an archive is specified on the command line
+ </ul>
+</p>
+<p>
+SET code used <code>specified_on_command_line</code> as follows:
+<ul>
+<li>in SET_IF.c, for source and proxy files to tell whether they're being emitted
+<li>in error.c, to check whether to put the error into the current_compilation_unit
+<li>in host_envir.c, when composing signoff message, to determine whether this is
+    a 1-file compilation
+<li>in jfe.c, to mark .class, .zip, .jar, and .jproxy files when specified
+     on the command line
+</ul>
+</p>
+<h5><code>specified_on_command_line</code> Issues</h5>
+<p>
+<ul>
+<li>What's the relationship between SET*.c's use of the command line list vs. the
+compilation unit list?  Aside for the obvious, the command line list 
+and the files specified thereon are used only to track the SMT file lines
+of the generated IF file.
+<li>In error.c, I changed it to call is_being_emitted rather than just
+    process errors based on whether it's a source file specified on the command line.
+<li>I revised the signoff message condition, because it assumed that 
+<code>specified_on_command_line</code> would be cleared on any compilation unit
+which followed the one which actually appeared on the command line.
+<li><code>is_stub_file</code> was used to tell whether a compilation unit
+was added by virtue of being on the command line.
+In fe_util.c where it does name resolution, I think the filtering out
+of .class files that were marked is_stub_file was probably an error.
+I'm changing this to not make that check.
+<br>It also looks bad for handling of .class files on the command line.
+For these, it evidently writes a stub AST rather than process the 
+reference type for its members.  I'll try to fix this, as well.
+<br>I eliminated <code>is_stub_file</code>.
+</ul>
+</p>
+
+<h5>Stubs Revealed!</h5>
+<p>
+I was on the wrong track.  It turns out that .class files are deliberately
+added to the compilation unit list twice.  They are present there in the
+usual sense for semantic processing, and they are added for SET purposes
+as stub files.  Stub entries on the compilation list are there solely to
+trigger the AST stub generation.  It's virtually irrelevant whether they
+are associated with .class, .jar, .zip or whatever comes along hereafter.
+</p>
+
+<h4>Developer XPress</h4>
+<p>
+Here are the considerations when setting up the menus for Java
+in Developer XPress.  
+I didn't believe that implementing more query commands was warranted,
+given that a bunch of Java-specific and Developer XPress-specific commands
+already were there.
+Why should there be a need
+for commands which would be used only for the combination of Java
+and Developer XPress?
+</p>
+<p>Some of the commands which were there for C++ classes
+didn't seem all that relevant to Java. In Java, there's a firmer
+distinction between interface and implementation, given by
+class versus interface, than in C++.  So the artifical category of
+a leaf is less relevant than the explicit category of class/interface.
+Note that Java has explicit leaf classes as well (using final) but
+that's more of an efficiency tweak.</p>
+<p>
+So I took all of the commands which came out of a simple
+adaptation from the C++ class menu, with some name changes.
+Then I tried to make sense of the commands in terms of 
+truly relevant concepts.  Here were the concepts I enumerated:
+<pre>
+  direct vs. transitive
+
+                                        subject           result
+  where implemented         derived/sub interface(/class) class
+  implements                base/super  class             interface(/class)
+  where interface extended  derived/sub interface(/class) interface(/class)
+  extends interface         base/super  interface(/class) interface(/class)
+  inherited by              derived/sub class             class
+  inherits from             base/super  class             class
+</pre>
+Then I categorized the tentative menu commands according to the above concepts.
+Classes:
+<pre>
++	"Implements" -1 get_super_implements               implements                direct
++	"Extends" -1 get_super_extends                     inherits from             direct
++	"Where Extended" -1 get_sub_classes                where interface extended  direct
++	"Extends/Implements" -1 get_super_classes          extends interface         direct
++       "Extends/Implements Bases" -1 leaf_super
++       "Where Extended to Leaf"   -1 leaf_sub             where implemented    transitive
++       "Extends/Implements All" -1  closure_super         extends/implements   transitive
++       "All Where Extended"   -1  closure_sub             where extended       transitive
+</pre>
+Interfaces:
+<pre>
++	"Where Implemented" -1 get_sub_implementers        where implemented    direct
++	"Where Interface Extended" -1 get_sub_extenders    where extended       direct
++	"Where Interface Extended" -1 get_sub_classes      where extended       direct
++	"Extends Interfaces" -1 get_super_classes          extends              direct
++       "Extends Base Interfaces" -1 leaf_super            
++       "Leaves Where Extended/Implemented"   -1 leaf_sub  where implemented    transitive
++       "Extends All Interfaces" -1  closure_super         extends              transitive
++       "All Where Extended/Implemented"   -1  closure_sub where extended(/implemented) transitive
+</pre>
+That left these issues to clean up:
+Classes:
+<ol>
+<li>resolve Extends vs. Extends/Implements.  "Extends" is get_super_extends which
+   will find only extended classes, not implemented interfaces.  This would make
+   more sense to Java developers, particularly in the context of just 'direct' relations.
+   It's really the other concept; keep both.
+<li>remove Extends/Implements Bases
+<li>Where Extended to Leaf is a concept match, not an implementation match. Remove?
+</ol>
+Interfaces:
+<ol>
+<li>Leaves Where Extended/Implemented is a concept match, not an implementation match. Remove?
+<li>remove Extends Base Interfaces
+<li>Where Interface Extended: name can be changed!
+<li>Except that "Where Extended" remains a problem.  My concept is that
+a class which implements an interface is permitted to extend the interface.
+So you would want "Where Extended/Implemented".
+</ol>
+</p>
+
+<h4>EDG Action Requests</h4>
+<p>
+<table border>
+<tr><th>title<th>description<th>file<th>date sent<th>status
+<tr><td>compressed JAR files<td><td><td><td>Supported in 1998-09-10 release.
+<tr><td>invalid override
+    <td>Jfe reports "invalid override ... the methods have different
+        return types" when a .class file is involved.  Turned up
+        when building the JDK 1.1.6 model.
+    <td>~/Java/bug1<br>F:/bug1
+    <td>1998-09-08 1300
+    <td>fixed 1998-09-10
+<tr><td>access in constructor call
+    <td>Jfe reports "the current instance cannot be accessed
+        in the arguments of an explicit constructor call"
+        when the complaint does not apply due to the constructor
+        call being in a nested class of the class whose instance
+        is being passed.
+    <td>~/Java/bug3/N.java
+    <td>1998-09-08 1434
+    <td>fixed 1998-09-10
+<tr><td>crash
+    <td>In working out an example for the following bug,
+        jfe crashed. 
+    <td>~/Java/bug4
+    <td>1998-09-08 1811
+    <td>fixed 1998-09-10
+<tr><td>"class does not define method"
+    <td>In building a model of JDK 1.1.6, aset_jfe was
+        compiling the Window class when it reported that the
+        Frame class needed to abstract because it did not
+        define certain methods that were in an 
+        interface it inherited from. Turns out these methods
+        were defined in Window (a base class of Frame) and in
+        another base class.  The diagnosic occurs only with
+        Frame and the interface in .class form.
+    <td>~/Java/bug6<br>F:/bug6
+    <td>1998-09-09 1050
+    <td>said to be fixed 09-10, but then crashed in example, in Window.java, in Object.java,
+        and one other file; patch received 09-11
+        which prevented crashing but which left one bug described below
+<tr><td>ByteToCharConverter throws nothing to catch
+    <td>In building a model of the JDK 1.1.6, aset_jfe reported
+        two errors in String.java. It said "This catch is unreachable.
+        The try block does not throw any exception that it can catch."
+        The only operation in the try block involves the classes
+        ByteToCharConverter or CharToByteConverter, and upon inspecting
+        the file ByteToCharConverter.class, no mention of 
+        CharConversionException was found.
+    <td>~/Java/bug7<br>F:/bug7
+    <td>1998-09-09 1500
+    <td>fixed 1998-09-10
+<tr><td>return type of "clone" compiling Object.java
+    <td>In building a model of the JDK 1.1.6, aset_jfe reported
+        10 errors in Object.java.  Each one complained that the return
+        type of the clone method for an array type did not match the return
+        type of java.lang.Object.clone.  This bug turned up upon implementing
+        the 1998-09-11 patch.
+    <td>~/Java/bug8
+    <td>1998-09-11 1600
+    <td>fixed 1998-09-23
+<tr><td>location of call expression
+    <td>A call expression's object is an array accessing expression.
+        The location of the call includes the [] operator of the
+        accessing expression, but not the entire expression.
+        (This goes right into the IF and causes "minor model problems".)
+    <td>~/Java/eg/bug1/Container.java
+    <td>1998-10-08 1058
+    <td>Reply received 1998-10-09.  The behavior was intentional.
+        There's a function set_locator_from_expr which provides the
+        desired location.
+<tr><td>hiding incompatibility with javac
+    <td>A function has a parameter, and uses an anonymous class with
+        a method having the same parameter name.  
+        Sun's javac 1.1.6 permits this, but jfe
+        reports an error.  IMO jfe accords with the Java language spec.
+    <td>F:/bug8
+    <td>1998-10-19 1628
+    <td>their version is fixed 1998-10-28
+<tr><td>accessibility bug in javac
+    <td>A function invokes a method in another package which returns a
+        type which has package access.  The function invokes a public
+        method of that type.  Sun's javac 1.1.6 permits this, but jfe
+        reports an error.  IMO jfe accords with the Java language spec.
+    <td>F:/public/swing/abug
+    <td>1998-10-20 1630
+    <td>their version is fixed 1998-10-28
+        <br>EDG will fix in --jdk mode.
+<tr><td>.class &amp; .zip on command line
+    <td>I need to invoke jfe with a .class, .zip, or .jar file on the command line.
+        Jfe would load all of the designated/contained class files.
+        We need the ability to  traverse an archive, not just to search it.
+    <td>
+    <td>1998-10-23 1119
+    <td>willing to do it 1998-10-26
+        <br>1998-10-27 said will do by beginning of 1998-11-02 week
+        <br>done in 1998-11-03 release
+<tr><td><code>decl_in_comma_list</code>
+    <td><code>decl_in_comma_list</code> is not sufficient to tell
+        where the comma list begins and ends. Need a small modification,
+        so that we don't have to rely on position information.
+    <td>
+    <td>1998-10-27 1028
+    <td>fixed in 1998-11-03 release
+<tr><td>type-qualified 'super' constructor call
+    <td>A type-qualified 'super' constructor call
+        is accepted by javac, but not by jfe.
+    <td>~sturner/Java/Mb.java
+    <td>1998-11-03 1005
+    <td>J. Spicer's 1998-11-03 1448 email says, <q>
+        <p>There are 6 files that compile with javac that don't compile with jfe.
+        These all boil down to two cases.  The first is the one you reported
+        with the qualifier for super.  The second, is a case where the enlosing
+        class is also the super class, and a name that is both inherited and
+        visible in the enclosing class is used without a qualifier.</p>
+
+        <p>We can add support for these two cases in --jdk mode if you'd like.</p></q>
+        I replied 1998-11-17 that we would like that.  Fixed in 1999-01-18 release.
+<tr><td>jfe, compilation error
+    <td>An error occurs while building jfe,
+        in compiling jil_alloc.c.
+    <td>
+    <td>1998-11-10 1048
+    <td>fixed in patch 1998-11-10
+<tr><td>jfe problem loading .class file
+    <td>When .class file is on command line, assertion failure in fe_util.c's resolve_class_file_name.
+    <td>
+    <td>1998-11-10 1605
+    <td>fixed in patch 1998-11-10
+<tr><td>jfe, fe_util.c, conv_utf8_to_unicode
+    <td>In conv_utf8_to_unicode, the dispatch in case cs_first is inaccurate.  Got an assertion check when processing the classes.zip file from JDK 1.1.
+    <td>
+    <td>1998-11-10 1654
+    <td>fixed in patch 1998-11-10
+<tr><td>jfe, class_file.c, open_class_file bug
+    <td>If the command line has a non-existent .class file, then jfe crashes.
+    <td>
+    <td>1998-11-11 1455
+    <td>fixed in patch 1998-11-11
+<tr><td>info in loaded .class files
+    <td>If First$1.class is on the command line then it gets
+            catastrophic error: class file "First$1.class" is corrupted.
+    <td>
+    <td>1998-11-11 1620
+    <td>fixed in release 1998-11-12
+<tr><td>Re: info in loaded .class files
+    <td>If First.class is on the command line (with or without First$1.class) then it gives the message
+   error: file "./First$1.class" does not contain class "First.1".
+    <td>
+    <td>1998-11-12 1727
+    <td>fixed in patch 1998-11-15
+<tr><td>Java parser crash, bug 16150
+    <td>The Java front end gets a segmentation violation.
+    <td>
+    <td>1998-11-19 1757
+    <td>fixed in patches 1998-11-19 and 20
+<tr><td>Re: info in loaded .class files
+    <td>The same symptom recurs when processing classes.zip on the command line. 
+    error: file "java/util/PropertyResourceBundle$1.class" 
+          does not contain class
+          "java.util.PropertyResourceBundle.1".
+    <td>
+    <td>1998-11-24 1220
+    <td>fixed in patch 1998-11-24
+<tr><td>jfe bug
+    <td>Jfe produces a spurious error and recurses until the limit is reached.
+    <td>
+    <td>1999-01-04 1213
+    <td>fixed in release 1999-01-18
+<tr><td>inner anonymous class
+    <td>inner anonymous class causes crash, difficult to fathom IL
+    <td>
+    <td>1999-06-02 1200
+    <td>patch supplied and question answered 1999-06-03
+</table>
+</p>
+</body>

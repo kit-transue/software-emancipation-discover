@@ -1,0 +1,68 @@
+InclusiveBtn
+strncpy_2 {Find strncpy with the third argument being 2} {call_expr->"strncpy",,, "2" }
+strncat_2 {Find strncat with the third argument being 2} {call_expr->"strncat",,, "2" }
+memccpy_2 {Find memccpy with the fourth argument being 2} {call_expr->"memccpy",,,, "4" }
+memcpy_2 {Find memcpy with the third argument being 2} {call_expr->"memcpy",,, "2" }
+memmove_2 {Find memmove with the third argument being 2} {call_expr->"memmove",,, "2" }
+strncpy_3 {Find strncpy with the third argument being 3} {call_expr->"strncpy",,, "3" }
+strncat_3 {Find strncat with the third argument being 3} {call_expr->"strncat",,, "3" }
+memccpy_3 {Find memccpy with the fourth argument being 3} {call_expr->"memccpy",,,, "4" }
+memcpy_3 {Find memcpy with the third argument being 3} {call_expr->"memcpy",,, "3" }
+memmove_3 {Find memmove with the third argument being 3} {call_expr->"memmove",,, "3" }
+strncpy_4 {Find strncpy with the third argument being 4} {call_expr->"strncpy",,, "4" }
+strncat_4 {Find strncat with the third argument being 4} {call_expr->"strncat",,, "4" }
+memccpy_4 {Find memccpy with the fourth argument being 4} {call_expr->"memccpy",,,, "4" }
+memcpy_4 {Find memcpy with the third argument being 4} {call_expr->"memcpy",,, "4" }
+memmove_4 {Find memmove with the third argument being 4} {call_expr->"memmove",,, "4" }
+strncpy_5 {Find strncpy with the third argument being 5} {call_expr->"strncpy",,, "5" }
+strncat_5 {Find strncat with the third argument being 5} {call_expr->"strncat",,, "5" }
+memccpy_5 {Find memccpy with the fourth argument being 5} {call_expr->"memccpy",,,, "5" }
+memcpy_5 {Find memcpy with the third argument being 5} {call_expr->"memcpy",,, "5" }
+memmove_5 {Find memmove with the third argument being 5} {call_expr->"memmove",,, "5" }
+strncpy_6 {Find strncpy with the third argument being 6} {call_expr->"strncpy",,, "6" }
+strncat_6 {Find strncat with the third argument being 6} {call_expr->"strncat",,, "6" }
+memccpy_6 {Find memccpy with the fourth argument being 6} {call_expr->"memccpy",,,, "6" }
+memcpy_6 {Find memcpy with the third argument being 6} {call_expr->"memcpy",,, "6" }
+memmove_6 {Find memmove with the third argument being 6} {call_expr->"memmove",,, "6" }
+strncpy_7 {Find strncpy with the third argument being 7} {call_expr->"strncpy",,, "7" }
+strncat_7 {Find strncat with the third argument being 7} {call_expr->"strncat",,, "7" }
+memccpy_7 {Find memccpy with the fourth argument being 7} {call_expr->"memccpy",,,, "7" }
+memcpy_7 {Find memcpy with the third argument being 7} {call_expr->"memcpy",,, "7" }
+memmove_7 {Find memmove with the third argument being 7} {call_expr->"memmove",,, "7" }
+strncpy_00_2 {Find strncpy with the second argument being 00 and the third one being 2} {call_expr-> "strncpy",,"00", "2" }
+strncat_00_2 {Find strncat with the second argument being 00 and the third one being 2} {call_expr-> "strncat",,"00", "2" }
+strncpy_00_3 {Find strncpy with the second argument being 00 and the third one being 3} {call_expr-> "strncpy",,"00", "3" }
+strncat_00_3 {Find strncat with the second argument being 00 and the third one being 3} {call_expr-> "strncat",,"00", "3" }
+strcpy_00 {Find strcpy with the second argument being 00} {call_expr-> "strcpy",,"00" }
+strcat_00 {Find strcat with the second argument being 00} {call_expr-> "strcat",,"00" }
+memset_00 {Find memset with the second argument being 0 and the third one being 2} {call_expr-> "memset",,"0", "2" }
+strncpy_01_3 {Find strncpy with the second argument being 01 and the third one being 2} {call_expr-> "strncpy",,"01", "2" }
+strncat_01_2 {Find strncat with the second argument being 01 and the third one being 2} {call_expr-> "strncat",,"01", "2" }
+strncpy_01_3 {Find strncpy with the second argument being 01 and the third one being 3} {call_expr-> "strncpy",,"01", "3" }
+strncat_01_3 {Find strncat with the second argument being 01 and the third one being 3} {call_expr-> "strncat",,"01", "3" }
+strcpy_01 {Find strcpy with the second argument being 01} {call_expr-> "strcpy",,"01" }
+strcat_01 {Find strcat with the second argument being 01} {call_expr-> "strcat",,"01" }
+strncpy_99_2 {Find strncpy with the second argument being 99 and the third one being 2} {call_expr-> "strncpy",,"99", "2" }
+strncat_99_2 {Find strncat with the second argument being 99 and the third one being 2} {call_expr-> "strncat",,"99", "2" }
+strncpy_99_3 {Find strncpy with the second argument being 99 and the third one being 3} {call_expr-> "strncpy",,"99", "3" }
+strncat_99_3 {Find strncat with the second argument being 99 and the third one being 3} {call_expr-> "strncat",,"99", "3" }
+strcpy_99 {Find strcpy with the second argument being 99} {call_expr-> "strcpy",,"99" }
+strcat_99 {Find strcat with the second argument being 99} {call_expr-> "strcat",,"99" }
+memset_99 {Find memset with the second argument being 9 and the third one being 2} {call_expr-> "memset",,"9", "2" }
+strncpy_000000_6 {Find strncpy with the second argument being 000000 and the third one being 6} {call_expr-> "strncpy",,"000000", "6" }
+strncat_000000_6 {Find strncat with the second argument being 000000 and the third one being 6} {call_expr-> "strncat",,"000000", "6" }
+strncpy_000000_7 {Find strncpy with the second argument being 000000 and the third one being 7} {call_expr-> "strncpy",,"000000", "7" }
+strncat_000000_7 {Find strncat with the second argument being 000000 and the third one being 7} {call_expr-> "strncat",,"000000", "7" }
+strcpy_000000 {Find strcpy with the second argument being 000000} {call_expr-> "strcpy",,"000000" }
+strcat_000000 {Find strcat with the second argument being 000000} {call_expr-> "strcat",,"000000" }
+memset_000000 {Find memset with the second argument being 0 and the third one being 6} {call_expr-> "memset",,"0", "6" }
+Assign_9 {Find assignment of literal 1 and 9} {(expr_stmt->(assign_expr->,"1",)), (expr_stmt->( assign_expr->,"9")) }
+plus_1900 {Check for 1900* added after the plus sign} {plus_expr->, match("1900*") }
+minus_1900 {Check for 1900* substracted after the minus sign} {minus_expr->, match("1900*") }
+mod_100 {modulo 100*} {trunc_mod_expr->, match("100*") }
+div_100 {Division by 100*} {trunc_div_expr->, match("100*") }
+sprintf_02d_1 {Find strncpy with the second argument being %02d} {call_expr-> "sprintf",,"%02d",}
+sprintf_02d_2 {Find strncpy with the second argument being %06d} {call_expr-> "sprintf",,"%06d",}
+sprintf_02d_3 {Find strncpy with the second argument being %08d} {call_expr-> "sprintf",,"%08d",}
+sprintf_02d_4 {Find strncpy with the second argument being %02d/%02d%02d} {call_expr-> "sprintf",,"%02d/%02d/%02d",}
+rw_asString {RW asString call without argument} {nw_expr-> "asString", , "120",( call_expr->) }

@@ -1,0 +1,6 @@
+#!/bin/sh
+rcs -l $cm_revision_file 2> /dev/null ; 
+
+if [ $? -ne 0 ] ; then
+   rcs -l $cm_revision_file
+fi

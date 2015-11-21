@@ -1,0 +1,14 @@
+<!-- This is a test of some real-world examples
+     of slightly tricky inline text.  No particular input.
+     Should produce (on one line):
+	-D__attribute__()= -D__null=((void*)0)
+	-Dinline=\"\" "-D__WCHAR_TYPE__=long int"
+	--preinclude "%PSETHOME%/include/dis_nt.h"
+  -->
+<cmdline>
+-D"__attribute__()="
+-D"__null=((void*)0)"
+-Dinline=\"\"
+"-D__WCHAR_TYPE__=long int"
+--preinclude "%%PSETHOME%%/include/dis_nt.h"
+</cmdline>

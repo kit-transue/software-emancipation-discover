@@ -1,0 +1,73 @@
+// Impact.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (Impact.tlb) that will become a resource in
+// Impact.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(820BA4D8-CAF4-40F8-8BD5-B9B59DD13A5C), version(1.0),
+  helpfile("Impact.hlp"),
+  helpstring("Impact ActiveX Control module"),
+  control ]
+library IMPACTLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CImpactCtrl
+
+	[ uuid(BC2BD6A2-420B-4721-9EED-D5AD9CFFD885),
+	  helpstring("Dispatch interface for Impact Control"), hidden ]
+	dispinterface _DImpact
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CImpactCtrl)
+			[id(1)] IDispatch* DataSource;
+			[id(2)] IDispatch* EditorCtrl;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CImpactCtrl)
+			[id(3)] boolean Update();
+			[id(4)] boolean SaveReportTo(BSTR szFileName);
+			[id(5)] boolean IsReportView();
+			[id(6)] BSTR GetReportName();
+			//}}AFX_ODL_METHOD
+	};
+
+	//  Event dispatch interface for CImpactCtrl
+
+	[ uuid(D12F7A11-0987-43FD-8A8B-FB2A6BC178CD),
+	  helpstring("Event interface for Impact Control") ]
+	dispinterface _DImpactEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CImpactCtrl)
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CImpactCtrl
+
+	[ uuid(2047B32D-6D1B-4538-9AF5-41F7B8D0BDBE),
+	  helpstring("Impact Control"), control ]
+	coclass Impact
+	{
+		[default] dispinterface _DImpact;
+		[default, source] dispinterface _DImpactEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

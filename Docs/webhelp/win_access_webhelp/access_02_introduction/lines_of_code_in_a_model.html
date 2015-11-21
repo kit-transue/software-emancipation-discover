@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Lines of Code in a Model</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 2.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 12.0px 'Courier New'}
+    span.s4 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Lines of Code in a Model</b></p>
+<p class="p2">Open an Access prompt. If you are running a model server, do either of the following:</p>
+<p class="p3"><span class="s1">•</span><span class="s2">   </span><span class="s1">Use </span>dish2 -hosts<span class="s1">, </span>dish2 -list <i>host</i><span class="s1">, and </span>dish2 <i>service</i> -connect <i>host</i><span class="s1"> to get an Access prompt.</span></p>
+<p class="p4">•<span class="s2">   </span>See the following book on platform-specific ways of connecting to a model server.</p>
+<p class="p2">Once at the Access prompt (a <span class="s3">%</span> sign), type:</p>
+<p class="p3">roots</p>
+<p class="p2">You should see output similar to the following; it will include a list of the top-level projects in your model:</p>
+<p class="p5">1 (proj) /extract_private</p>
+<p class="p5">2 (proj) /xip_private</p>
+<p class="p5">3 (proj) /ttt_private</p>
+<p class="p5">4 (proj) /package_private</p>
+<p class="p5">5 (proj) /xcalentool_private</p>
+<p class="p5">6 (proj) /extract_shared</p>
+<p class="p5">7 (proj) /xip_shared</p>
+<p class="p5">8 (proj) /ttt_shared</p>
+<p class="p5">9 (proj) /package_shared</p>
+<p class="p5">10 (proj) /xcalentool_shared</p>
+<p class="p5">11 (proj) /sysinclude</p>
+<p class="p2">Check to see how many files are in this model. Type:</p>
+<p class="p5">size [defines -files /]</p>
+<p class="p5">311</p>
+<p class="p2">The Access prompt is provided by a Tcl interpreter; you can enter any Tcl command:</p>
+<p class="p5">for {set i 0} {$i &lt; 10} {incr i} {puts $i}</p>
+<p class="p5">1</p>
+<p class="p5">2</p>
+<p class="p5">...</p>
+<p class="p5">foreach x {2 5 10 3} {puts $x}</p>
+<p class="p5">2</p>
+<p class="p5">5</p>
+<p class="p5">10</p>
+<p class="p5">3</p>
+<p class="p2">Now that you have established your bearings, it is time to do something useful. Enter the following five lines (three commands) at the interpreter prompt:</p>
+<p class="p5">set total_loc 0</p>
+<p class="p5">foreach x [defines -files /] {</p>
+<p class="p5"><span class="s2">   </span>incr total_loc [apply met_LOC $x]</p>
+<p class="p5">}</p>
+<p class="p5">puts $total_loc</p>
+<p class="p5">76450</p>
+<p class="p2">This example introduces a couple of features of Access. The <span class="s4">set</span>, <span class="s3">puts</span>, and <span class="s3">incr</span> commands are all standard Tcl. Considering the rest in turn:</p>
+<p class="p5">defines -files /</p>
+<p class="p2">The <span class="s3">defines</span> query is analogous to the root level queries in the Browser. It takes an optional first argument (in this case, <span class="s3">-files</span>) that filters the result based on type (other options include <span class="s3">-functions</span>, <span class="s3">-variables</span>, <span class="s3">-macros</span>, and so on). Subsequent arguments to defines make up a “scope”— the domain the query is applied to. The domain must be a file or project; in this case, it is the root scope (or everything).</p>
+<p class="p5">foreach</p>
+<p class="p2">The result of the <span class="s3">defines</span> function is a special DIScover “set” that efficiently handles large numbers of objects. Tcl’s <span class="s3">foreach</span> command has been overloaded to Access this special DIScover set. In practice, it behaves as you would expect Tcl’s <span class="s3">foreach</span> to behave: it iterates through each of the members of the set, setting the variable <span class="s3">x</span> to a handle for each of the members in turn.</p>
+<p class="p5">apply met_LOC</p>
+<p class="p2">Access provides a facility (<span class="s3">apply</span>) for accessing attributes of Information Model symbols. These may be attributes like metrics (in this case, lines of code, but could be <span class="s3">met_CC</span> (cyclomatic complexity), <span class="s3">met_RETURNS</span> (number of return statements), or others), or can describe the entity’s defining file, arguments, and so on.</p>
+</body>
+</html>

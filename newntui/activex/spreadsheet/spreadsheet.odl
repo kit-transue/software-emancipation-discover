@@ -1,0 +1,93 @@
+// Spreadsheet.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (Spreadsheet.tlb) that will become a resource in
+// Spreadsheet.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(FC470414-2BF8-11D2-AF03-00A0C9B71DC4), version(1.0),
+  helpfile("Spreadsheet.hlp"),
+  helpstring("Spreadsheet ActiveX Control module"),
+  control ]
+library SPREADSHEETLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CSpreadsheetCtrl
+
+	[ uuid(FC470415-2BF8-11D2-AF03-00A0C9B71DC4),
+	  helpstring("Dispatch interface for Spreadsheet Control"), hidden ]
+	dispinterface _DSpreadsheet
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CSpreadsheetCtrl)
+			[id(1)] long Rows;
+			[id(2)] long Cols;
+			[id(3)] long FixedRows;
+			[id(4)] long FixedCols;
+			[id(5)] short UserSelection;
+			[id(6)] long CurrentRow;
+			[id(7)] long CurrentColumn;
+			[id(8)] boolean EnableDraw;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CSpreadsheetCtrl)
+			[id(13), propget] short CellType(long row, long col);
+			[id(13), propput] void CellType(long row, long col, short nNewValue);
+			[id(14), propget] BSTR CellText(long row, long col);
+			[id(14), propput] void CellText(long row, long col, BSTR lpszNewValue);
+			[id(9)] void AddMenuItem(long row, long col, BSTR text);
+			[id(15), propget] boolean CellCheck(long row, long col);
+			[id(15), propput] void CellCheck(long row, long col, boolean bNewValue);
+			[id(10)] void AddRow(long after);
+			[id(11)] void RemoveRow(long row);
+			[id(16), propget] long ColWidth(long col);
+			[id(16), propput] void ColWidth(long col, long nNewValue);
+			[id(12)] void Clear();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CSpreadsheetCtrl
+
+	[ uuid(FC470416-2BF8-11D2-AF03-00A0C9B71DC4),
+	  helpstring("Event interface for Spreadsheet Control") ]
+	dispinterface _DSpreadsheetEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CSpreadsheetCtrl)
+			[id(1)] void BoolChanged(long row, long col, BSTR val);
+			[id(2)] void StringChanged(long row, long col, BSTR val);
+			[id(3)] void SetChanged(long row, long col, BSTR val);
+			[id(4)] void TextDoubleclicked(long row, long col, BSTR text);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CSpreadsheetCtrl
+
+	[ uuid(FC470417-2BF8-11D2-AF03-00A0C9B71DC4),
+	  helpstring("Spreadsheet Control"), control ]
+	coclass Spreadsheet
+	{
+		[default] dispinterface _DSpreadsheet;
+		[default, source] dispinterface _DSpreadsheetEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

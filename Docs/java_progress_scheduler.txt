@@ -1,0 +1,309 @@
+<html>
+<head>
+<title>Scheduler User's Guide</title>
+</head>
+<body>
+Schedule Manager Users Guide:
+
+Table of Contents:
+
+I.  Using the Client
+  A.	Getting Started
+  B.	Logging In
+  C.	Editing a Cell
+  D.	Creating a new Cell
+  E.	Moving a cell
+  F.	Deleting a Cell
+  G.	Getting at the Raw File
+  H.	Runing Outside of Netscape
+
+II.  Using the Server
+  A.	Installing
+  B.	Running
+  C.	Creating a New File
+  D.	Modifying an Existing File
+  E.	Dealing with Multiple Files
+  F.    Setting up the HTML code
+
+
+III.  Frequently Asked Questions
+  A.    Netscape runs fine, but doesn't load the applet
+  B.	I want to get a copy of the raw data
+  C.    Data doesn't enter the applet
+  D.	Netscape won't load the page
+
+
+
+------------------------------------------------------------
+
+I.  Using the Client
+
+
+A.  Getting Started
+
+This applet is designed to run as part of the Intranet.  A user
+simply needs to go to the correct location in Netscape, where they
+will find a java applet that they can use to edit and modify the 
+daily progress report.
+
+First, start Netscape.  If you are on a unix machine, simply type
+"netscape" at the shell.  If you are on an NT box, double click
+on the Netscape icon (you may have to install Netscape on your 
+machine first.  There is a setup executable at \\phish\netscape).
+
+Once Netscape comes up, there is a "Location" field.  Type in the
+address of the desired page (this is currently 
+"http://groucho/daily.html").
+
+The Java Applet should then load.  It is a scrolling text field 
+with a series of buttons at the bottom.
+
+
+B.  Logging In
+
+When the applet first comes up, you will see a message box 
+prompting you for your username.  This is so that the server can
+keep track of when the last time you downloaded the file in order
+to warn you that the contents are changed.  It is also used to lock
+a cell so that other people cannot alter it while you are editing
+it.  
+
+After you have logged in, The file will load into the editor.  This
+should not take more than a couple of seconds.  You can reload the
+file at any time by clicking the "reload" button.  Currently there
+are four columns: Action, Due, Status, and Assignee.  If there is
+more text than can be displayed, the text will be clipped.
+
+
+C.  Editing a Cell
+
+In order to edit a cell, select the cell and click "Edit."  This 
+will lock the cell so that no one can make alterations while you
+are in the middle of making a change.
+
+A dialog box will appear with fields for each of the elements, with
+the current values filled in.  After you have made your changes,
+click "OK."  This will update the server with the new values, and
+cause the page to reload.  Click "Cancel" to display the dialog box
+without saving any changes.
+
+If the page has been altered since the last time you have
+downloaded the page, you will get a warning and the page will 
+reload.  You will need to click Edit again, since the contents of
+your cell may have changed.
+
+If someone has locked your cell because they are editing it, you
+will get a warning message telling you who has it, and asking you
+if you want to steal it from them.  In general, stealing is only
+for cases where netscape crashes while someone is in the middle of
+an edit, and they never unlocked the cell.  However, if someone
+does steal your lock while you are in the middle of editing, when
+you try to save your changes, you will be given a warning message.
+
+
+D.  Creating a New Cell
+
+Click on the "Create" button.  A dialog box will come up, similar
+to the one for editing a cell.  When you click okay, a new cell
+will be created with your values at the end of the document.
+
+
+E.  Moving a Cell
+
+Click on the "Move" button.  A dialog box with the current row
+number of the cell will appear.  Type in the new row number that 
+you would like the cell to have, and click okay.
+
+
+F.  Delete a cell
+
+Click on the "Delete" button.  You will be prompted to make sure
+that you really want to do this, and a click on "OK" will delete
+the cell.
+
+
+G.  Getting at the Raw File
+
+If you would like to see the raw file, go to the location:
+	http://groucho/daily_progress.4.1
+
+The file will load in as raw text, at which point you can save it
+to your local machine.
+
+On the current page, there is actually a link to the raw data.
+
+Once you have the file, you can load it into Excel or Word or any other
+program that converts data in a tab-delimited format into a table.
+
+
+H.  Running outside of Netscape
+
+If you have java installed (currently only for NT and sun5), the
+applet can be run as a stand-alone application.  Go to the location
+of the Applet .class files (TBD), and run:
+	
+	java SpreadsheetApplet <hostname> <port> <file>
+
+Currently, hostname is groucho, port is 4000, and file is 
+daily_progress.4.1
+
+
+
+
+------------------------------------------------------------
+
+II.  Using the Server
+
+
+A.  Installing
+
+In order to interact with Netscape, the Server must be running on
+the same machine as the web server.  JDK must be installed on this
+machine.  
+
+Somewhere on the machine, the .class files associated with the
+Server must be stored.  The data files that are being viewed by
+the clients will also need to be on this machine, probably in the
+same directory, but not necessarily.
+
+
+B.  Running
+
+Go to the directory where the .class files live, and type:
+
+	java Server <portnum>
+
+Currently, we are using port 4000.  
+
+When a client connects, it will request a specific file.  If the
+file has already been loaded up by the applet, it will output the
+cached data.  If it hasn't, it will load up the file.  When the
+client makes a change, the cache is written out to the file.
+
+For WWW purposes, a web surver must be running.  Currently, the Personal
+Web Server, which is part of the ChameleonNFS package is being used.
+
+Each time the server is rebooted, the java Server and the web server *must*
+be restarted for any effect.
+
+C.  Creating a New File
+
+Before a file can be used, it must consist of two lines: a line of
+weights and a line of column headings.
+
+The weights specify how much of the line should be taken up by each
+column.
+
+All cells must be separated by tabs.  This is how the Server and
+Client distinguish between columns, as well as allowing 
+applications such as Microsoft Word and Excel to load up the file.
+
+If some initial data is going to be included, it must contain
+values for all cells.  If a cell is intentionally supposed to be
+blank, use an underscore ("_") in its place.  The program uses 
+these as place holder, and they will show up as blank spaces in
+the program.
+
+Here is a sample five column file:
+
+10	20	10	5	10
+Name	Address	Phone #	Age	Spouse
+Alex	25 Nowhere St.	555-1212	23	Joan
+Beth	1 Beacon St.	123-4567	28	Bob
+Jim	2 Sutton Place. Apt 3	567-8901	30	_
+
+D.  Modifying an Existing File
+
+A file cannot be changed by hand while the Server is running.  It
+will continue to export its cached data and overwrite the file the
+next time a change is made by a client.  Even if this were not the
+case, it would confuse cases where a user has a lock and then the
+file is changed.  To modify the file, close the server down, make
+the changes, and then bring it back up.
+
+
+E.  Dealing with Multiple Files
+
+The Server can handle an arbitrary number of files.  If you have a
+new file that you would like to use, simply put the file where the
+server will be able to see it, and then the first time someone
+tries to access the file, it will be loaded up.
+
+
+F.  Setting up the HTML code
+ 
+The applet has three options that can be specified -- "host", which
+is used to specify where the server lives, "port", which is the
+port to connect to, and "file", which is the file to be accessed.
+ 
+Note:  Due to Netscape security restrictions, any attempt to set
+host to anything other than the web server will cause an access
+violation.
+ 
+Here is some sample code:
+ 
+<html>
+<head>
+    </title>DISCOVER</title>
+</head>
+<body>
+<h1><center>Daily Progress Report</center></h1><p>
+<h2><center>DISCOVER 4.1</center></h2><p>
+<center>
+<applet Code="SpreadsheetApplet.class"
+        width=680
+        height=500>
+<PARAM NAME="port" VALUE="4000">
+<PARAM NAME="file" VALUE="daily_progress.4.1">
+You need a java-enhanced browser to run this applet
+</applet>
+</center>
+</body>
+</html>
+
+
+------------------------------------------------------------
+
+III.  Frequently Asked Questions
+
+
+A.  Netscape runs fine, but doesn't load the applet
+
+There are two problems.  If you get the message:
+
+"You need a java-enhanced browser to run this applet"
+
+then you have Java shut off in Netscape.  Go to "Security 
+Preferences" under "Options", and then switch to the "Languages"
+notebook page.  Make sure Netscape is on.
+
+
+If Netscape complains that it cannot find a file in the CLASSPATH
+variable, then you probably are not including the system .login 
+file.  In either your .login or your .cshrc, you should add the
+line:
+
+	source /ParaSET/tools/aset.login
+
+
+
+B.  I wnat to get a copy of the raw data
+
+In your browser, you can open up the raw page, if the data files
+are included as part of the web server files (this is the current
+setup).  Go to the page with the name of the file.  Ex:
+
+	http://groucho/daily_progress.4.1
+
+
+C.  I start up the applet and enter the username, but nothing loads in
+
+The Java Server may not be running.  Make sure that it is started on the web
+server machine.
+
+
+D.  I go to the correct location, but Netscape just sits there; the page never
+loads
+
+The Web Server may not be running.  Make sure that it is up.
+</body>

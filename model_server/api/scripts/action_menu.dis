@@ -1,0 +1,132 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+source_dis require.dis
+catch {require attview.dis}
+
+proc load_src { sel } {
+    set xxx [ filter {mod && match("*.dis")} $sel]
+    if { [size $xxx ] > 0 } {
+	foreach el $xxx {
+	    source [name $el]
+	}
+    } else {
+	set el [prompt -title "Load .dis Script" "Enter filename:"]
+	if { "$el" != "" } {
+	    source $el
+	}
+    }
+}
+
+proc print_cmd { sel } {
+    set file [prompt -title "Print to File" "Print to file:"]
+    if { "$file" != "" } {
+	> $file {print $sel}
+    }
+}
+
+proc access_command { } {
+    return [eval [prompt -title "Access Command" "Enter command:" ]]
+}
+
+proc capture_list_intern { sel } {
+    set tag [prompt -title "Capture Group" "Name of group:"]
+    if {$tag == ""} {
+	return ""
+    }
+    
+    if [ group exists $tag ] {
+	group set $tag $sel
+    } else { 
+	group tmp $tag $sel
+	add_item "Access.Action" "Retrieve Group $tag" "group get $tag" -none
+    }
+    update_tmp_group_name
+    return $tag
+}
+
+proc capture_list { sel } {
+    set tag [capture_list_intern $sel]
+    if { $tag != "" } {
+	return $sel	
+    } else {
+	return ""
+    }	
+}
+
+proc mini_capture_list { sel } {
+    set tag [capture_list_intern $sel]
+    if { $tag != "" } {
+	set_mini -title $tag $sel	
+    }	
+}
+
+proc grep_refs { sel } {
+    if {[size $sel] != 1} {
+	return "Exactly one symbol must be selected"
+    } else {
+	set x [apply fname [where referenced $sel]]
+	set y [cname $sel]
+       	emacs_command "(grep \"grep -n -w \\\"$y\\\" $x /dev/null\")"
+	return "grep $y ..."
+    }
+}
+
+proc filenames { sel } {
+    set x [filter project $sel]
+    set y [defines -modules $x]
+    set z [filter !project $sel]
+    return [apply fname $y $z]
+}
+
+proc grep_files { sel } {
+    set x [filenames $sel]
+    set y [prompt -title "Grep for Regexp" "Enter regexp:"]
+    if { "$y" != "" } {
+	emacs_command "(grep \"grep -n $y $x\")"
+    }
+}
+
+add_menu Access.Action
+add_item Access.Action "Access Command..." access_command -none
+add_item Access.Action "Load .dis Script..." load_src -opt
+add_item Access.Action "Print to File..."  print_cmd -printformat
+add_item Access.Action "Capture Group..." capture_list
+add_item Access.Action "Grep for References..." grep_refs
+add_item Access.Action "Grep for Regexp..." grep_files
+
+#
+# Set up preprocess menu item
+#
+catch {
+	require preprocess.dis
+	if { [get_pref_value DIS_c.Cpp_Logfile] != "" } {
+		add_item Access.Action "Preprocess File" preprocess_item
+	}
+}
+

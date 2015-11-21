@@ -1,0 +1,9 @@
+CXXROOTS=\
+    machdep
+
+CPP_INCLUDES= \
+    -I$(LOCAL_SRC_ROOT)/machine/include \
+    -I$(BUILD_SRC_ROOT)/machine/include \
+    -I$(LOCAL_SRC_ROOT)/gen/include \
+    -I$(BUILD_SRC_ROOT)/gen/include
+    

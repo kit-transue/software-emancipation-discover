@@ -1,0 +1,260 @@
+#!/users/sudha/bin/tclsh
+
+# returns 1 if the script succeeds, 0 if the script fails, looking at the last line of the ouput of script 
+
+proc get_status {out_file} {
+  set fl [open $out_file r]
+  set ret [gets $fl line]
+  set prev_line $line
+  while { $ret >= 0} {
+    set prev_line $line
+    set ret [gets $fl line]
+  }
+  close $fl
+  if { [string first OK $prev_line] >= 0} {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+# returns environment variables and the value its set to 
+
+proc get_env_value {line} {
+  scan $line "%s %s %s" junk var val
+  set ind1 [string first ( $var]
+  set ind2 [string last ) $var]
+  incr ind1
+  if { $ind2 < 0} {
+    set ind2 [string length $var]
+  }
+  incr ind2 -1
+  set ret_val "[string range $var $ind1 $ind2] = $val"
+  return $ret_val
+}
+
+proc validate_env_file { env_file } {
+  global env
+  set e_file [open $env_file r]
+  set ret [gets $e_file line]
+  set ret_val 1
+  while { $ret >= 0 } {
+    scan $line "%s %s %s" junk var jnk
+    set ind1 [string first ( $var]
+    set ind2 [string last ) $var]
+    incr ind1
+    if { $ind2 < 0} {
+      set ind2 [string length $var]
+    }
+    incr ind2 -1
+    set e_var "[string range $var $ind1 $ind2]"
+    set val $env($e_var)
+    if { ![file exists $val] } {
+       puts "\n$val    used in line   $line    of   $env_file   doesnot exist"
+       set ret_val 0
+       break
+    }
+    set ret [gets $e_file line]
+  }
+  close $e_file
+  return $ret_val
+}
+
+#main begin
+
+set env_flag 0
+set email_flag 0
+set file_flag 0
+set env_file ""
+
+set i 0  
+while {$i < $argc} {
+  if { [lindex $argv $i] == "-env"} {
+       incr i
+       set env_file [lindex $argv $i]
+       set env_flag 1
+      } elseif { [lindex $argv $i] == "-email"} {
+       incr i
+       set user_id [lindex $argv $i]
+       set email_flag 1
+      } elseif { [lindex $argv $i] == "-file"} {
+       incr i
+       set file_name [lindex $argv $i]
+       set file_flag 1
+      } elseif { [lindex $argv $i] == "-help"} {
+        set help_file [open /paraset/tools/atest/access_test.hlp r]
+        set ret [gets $help_file line]
+        while { $ret >= 0 } {
+          puts "$line"
+          set ret [gets $help_file line]
+        }
+        close $help_file
+        return 
+     } else {
+       puts "ERROR: unknown option [lindex $argv $i]"
+       puts "USAGE: access_test \[-env env_file\] \[-file script_name\] \[-email user_id\] \[-help\]"
+       return ERROR
+     }
+  incr i
+}
+
+if { $env_flag != 1} {
+  puts "Warning: -env option not given, using default file /job2/test_scripts/learn.env"
+  set env_file /job2/test_scripts/learn.env
+}
+
+puts "env_file: $env_file"
+
+source $env_file
+
+if { ![validate_env_file $env_file] } {
+   return ERROR
+}
+
+if { ![file exists $env(pdf_file)] } {
+   puts "ERROR: pdf_file: $env(pdf_file) file doesnot exist, please give the right file"
+   return ERROR
+}
+
+
+set env(PATH) $env(psethome)/bin:$env(PATH)
+
+
+if { $tcl_platform(platform) == "unix" } {
+  set pmod_srvr_exec $env(psethome)/bin/pmod_server
+} else {
+  set pmod_srvr_exec $env(psethome)/bin/pmod_server.exe
+}
+
+if { ![file exists $pmod_srvr_exec ]} {
+  puts "ERROR: pmod_server doesn't exist in $env(psethome)/bin"
+  return ERROR
+}
+
+set env_dir [file rootname [file tail $env_file]]
+
+set env(RESULTS_DIR) $env(SCRIPT_LIB)/results/$env_dir
+if { [file isdirectory $env(RESULTS_DIR) ] } {
+   if {[file size $env(RESULTS_DIR)] != 0} {
+     puts "\n$env(RESULTS_DIR) not empty"
+     puts "Continuing will cause the directory to be overwritten, do you want to continue (y/n):"
+     gets stdin ans
+     if { !($ans == "y" || $ans == "Y")} {
+       puts "Give directory to which the results should be written"
+       gets stdin res_dir
+       while { ![file isdirectory $res_dir] } {
+         puts "give a valid directory"
+         gets stdin res_dir
+       }
+       set env(RESULTS_DIR) $res_dir
+     } else {
+        set del_files [glob -nocomplain $env(RESULTS_DIR)/*]
+        if {$del_files != ""} {
+          eval file delete -force $del_files
+        }
+     }
+   }
+} else {
+   file mkdir $env(RESULTS_DIR)
+}
+
+set logfl $env(RESULTS_DIR)/access_test.log
+set log_file [open $logfl w]
+
+puts $log_file "RESULTS DIRECTORY: $env(RESULTS_DIR)"
+
+set env(BASE_DIR) $env(SCRIPT_LIB)/baseline/$env_dir
+if { ![file isdirectory $env(BASE_DIR) ] } {
+   puts "\nNo baseline directory: $env(BASE_DIR)"
+   puts "Continuing will cause baseline directory to be created, do you want to continue (y/n):"
+   gets stdin ans
+   if { !($ans == "y" || $ans == "Y")} {
+     close $log_file
+     return
+   }
+   file mkdir $env(BASE_DIR)
+   puts $log_file "BASE DIRECTORY: $env(BASE_DIR) does not exist, creating now"
+} else {
+   puts $log_file "BASE DIRECOTRY: $env(BASE_DIR)   exists"
+} 
+
+
+if { $file_flag } {
+   set Scripts $file_name
+} else {
+   set Scripts [glob $env(SCRIPT_LIB)/*.dis]
+}
+
+set pmod_srvr_exec $env(psethome)/bin/pmod_server
+
+set num_succs 0
+set num_fails 0
+
+puts ""
+foreach script $Scripts {
+  puts -nonewline "**Running $script..."
+  set ind1 [string last / $script]
+  incr ind1
+  set ind2 [string last . $script]
+  incr ind2 -1
+  set output_file $env(RESULTS_DIR)/[string range $script $ind1 $ind2].log 
+  exec $pmod_srvr_exec -pdf $env(pdf_file) -batch -source $script >& $output_file
+  set status [get_status $output_file]
+  if { $status == 1 } {
+     incr num_succs
+     puts $log_file "script:$script...     succeeded"
+     puts "	succeeded"
+  } else {
+     incr num_fails
+     puts $log_file "script:$script...     failed"
+     puts "	failed"
+  }
+}
+close $log_file
+
+#print summary report
+
+set summary_file $env(RESULTS_DIR)/access_test.summary
+set sum_f [open $summary_file w]
+
+puts $sum_f "****************************************************************"
+puts $sum_f "                      Access_test Report                   "
+puts $sum_f "****************************************************************"
+puts $sum_f "Date: [clock format [clock seconds]]"
+if { $tcl_platform(platform) == "unix"} {
+  puts $sum_f "Test run by: $env(USER)"
+} else {
+  puts $sum_f "Test run by: $env(USERNAME)"
+}
+   
+puts $sum_f "Machine: $tcl_platform(os) $tcl_platform(osVersion) $tcl_platform(machine)\n\n"
+puts $sum_f "Environment Varaibles Used"
+
+#print enviroment variables used from $env_file
+set efile [open $env_file r]
+set ret [gets $efile line]
+while { $ret >= 0 } {
+  puts $sum_f "    [get_env_value $line]"
+  set ret [gets $efile line]
+}
+close $efile
+
+puts $sum_f "\npmod_server executable: $pmod_srvr_exec"
+puts $sum_f "\npdf file: $env(pdf_file)\n"
+puts $sum_f "Number of tests applied: [expr $num_succs+$num_fails]"
+puts $sum_f "Number of tests succeeded: $num_succs"
+puts $sum_f "Number of tests failed: $num_fails"
+puts $sum_f "\nLog file: $logfl"
+
+close $sum_f
+
+#send email
+if { $email_flag } {
+ if { [catch {exec ypcat passwd.byuid | grep $user_id }] == 0} {
+   exec cat $summary_file | mail -s "Access Test Summary" $user_id
+ } else {
+   puts "Warning: user_id: $user_id doesn't exist"
+ }
+}
+
+puts "\nsummary file: $summary_file"

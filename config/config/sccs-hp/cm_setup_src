@@ -1,0 +1,54 @@
+#!/bin/sh
+# cm_setup_src (SCCS) - Call pending filter and prep directory
+
+# exit script if we get any errors
+set -e
+
+# Get our command line options
+workingdir=$1
+workingfile=$2
+systemdir=$3
+systemfile=$4
+
+# Apply the pending filter (if any) to transform the system dir
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_pendfilt ] ; then
+  pendingdir=`echo $systemdir | $cm_optscripts/cm_pendfilt`
+  if [ $? != 0 ] ; then
+    echo "error in filter: $cm_optscripts/cm_pendfilt" >&2
+    exit 1
+  fi
+else
+  pendingdir=$systemdir
+fi
+
+# Report the transformed filename back to the configurator via stdout
+echo $pendingdir/$systemfile >&1
+
+if [ "$5" != "delete_src" -a "$cm_uselinks" = "Y" ] ; then
+  if [ ! -d $workingdir/SCCS ] ; then
+
+    sccs="$pendingdir/SCCS"
+
+    if [ -d $sccs ] ; then
+      ln -s $sccs $workingdir/SCCS
+      if [ $? -ne 0 ] ; then
+        echo "error setup: Could not create link: ln -s $sccs $workingdir/SCCS" >&2
+        exit 1
+      fi
+    else
+      echo "error setup: $sccs does not exist" >&2
+      exit 1
+    fi
+  fi
+fi
+
+# Report the path to the SCCS file back to the configurator via stdout
+sccsfile=$pendingdir/SCCS/s.$systemfile
+echo $sccsfile
+
+if [ ! -r $sccsfile ]; then
+  exit 99
+  # exit status 99 means that the pending file does not have an SCCS file
+fi
+
+exit 0

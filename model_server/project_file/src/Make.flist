@@ -1,0 +1,10 @@
+CXXROOTS=\
+    proj_module \
+    proj_module2 \
+    loaded_files \
+    projModule \
+    proj_path \
+    restore \
+    proj_cmd \
+    char_based_merge \
+

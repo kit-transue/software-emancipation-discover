@@ -1,0 +1,11 @@
+proj : $PSETTEST/src <-> /proj {
+  **.[cChH] **.pc **.java
+
+  sub : sub <-> /DISCOVER-Subsystems { *.sub ext/* }
+
+  . : (**).java/%/.make => ""
+  . : (**).c/%/.make => "$PSETTEST/bin/get_flags (1) c"
+  . : (**).C/%/.make => "$PSETTEST/bin/get_flags (1) C"
+  . : (**).pc/%/.make => "$PSETTEST/bin/get_flags (1) pc"
+}
+

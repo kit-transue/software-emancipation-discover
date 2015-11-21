@@ -1,0 +1,322 @@
+// DiscoverMDI.odl : type library source for DiscoverMDI.exe
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (DiscoverMDI.tlb).
+
+[ uuid(64FA0D57-261E-11D2-AEFB-00A0C9B71DC4), version(1.0) ]
+library DiscoverMDI
+{
+	importlib("stdole32.tlb");
+	
+
+	//  Primary dispatch interface for CDiscoverMDIDoc
+	
+	[ uuid(64FA0D58-261E-11D2-AEFB-00A0C9B71DC4) ]
+	dispinterface IDiscoverMDI
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CDiscoverMDIDoc)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CDiscoverMDIDoc)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CDiscoverMDIDoc
+	
+	[ uuid(64FA0D56-261E-11D2-AEFB-00A0C9B71DC4) ]
+	coclass Document
+	{
+		[default] dispinterface IDiscoverMDI;
+	};
+
+
+	//  Primary dispatch interface for CProjectBrowser
+	
+	[ uuid(64FA0D97-261E-11D2-AEFB-00A0C9B71DC4) ]
+	dispinterface IProjectBrowser
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CProjectBrowser)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CProjectBrowser)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CProjectBrowser
+
+	[ uuid(64FA0D99-261E-11D2-AEFB-00A0C9B71DC4) ]
+	coclass ProjectBrowser
+	{
+		[default] dispinterface IProjectBrowser;
+	};
+
+
+	//  Primary dispatch interface for CRightModelBrowser
+	
+	[ uuid(64FA0D9B-261E-11D2-AEFB-00A0C9B71DC4) ]
+	dispinterface IRightModelBrowser
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CRightModelBrowser)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CRightModelBrowser)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CRightModelBrowser
+
+	[ uuid(64FA0D9D-261E-11D2-AEFB-00A0C9B71DC4) ]
+	coclass RightModelBrowser
+	{
+		[default] dispinterface IRightModelBrowser;
+	};
+
+
+
+
+	//  Primary dispatch interface for CLeftModelBrowser
+	
+	[ uuid(C426A823-2631-11D2-AEFB-00A0C9B71DC4) ]
+	dispinterface ILeftModelBrowser
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CLeftModelBrowser)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CLeftModelBrowser)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CLeftModelBrowser
+
+	[ uuid(C426A825-2631-11D2-AEFB-00A0C9B71DC4) ]
+	coclass LeftModelBrowser
+	{
+		[default] dispinterface ILeftModelBrowser;
+	};
+
+
+	//  Primary dispatch interface for CTpmProcessor
+	
+	[ uuid(F44373E1-2D53-11D2-AF05-00A0C9B71DC4) ]
+	dispinterface ITpmProcessor
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTpmProcessor)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTpmProcessor)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CTpmProcessor
+
+	[ uuid(F44373E3-2D53-11D2-AF05-00A0C9B71DC4) ]
+	coclass TpmProcessor
+	{
+		[default] dispinterface ITpmProcessor;
+	};
+
+
+	//  Primary dispatch interface for CTpmChildFrame
+	
+	[ uuid(F44373E4-2D53-11D2-AF05-00A0C9B71DC4) ]
+	dispinterface ITpmChildFrame
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTpmChildFrame)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTpmChildFrame)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CTpmChildFrame
+
+	[ uuid(F44373E6-2D53-11D2-AF05-00A0C9B71DC4) ]
+	coclass TpmChildFrame
+	{
+		[default] dispinterface ITpmChildFrame;
+	};
+
+
+	//  Primary dispatch interface for CTaskFlow
+	
+	[ uuid(77D99631-3132-11D2-AF08-00A0C9B71DC4) ]
+	dispinterface ITaskFlow
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTaskFlow)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTaskFlow)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CTaskFlow
+
+	[ uuid(77D99633-3132-11D2-AF08-00A0C9B71DC4) ]
+	coclass TaskFlow
+	{
+		[default] dispinterface ITaskFlow;
+	};
+
+
+	//  Primary dispatch interface for CAvailableFlowTasks
+	
+	[ uuid(77D99634-3132-11D2-AF08-00A0C9B71DC4) ]
+	dispinterface IAvailableFlowTasks
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CAvailableFlowTasks)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CAvailableFlowTasks)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CAvailableFlowTasks
+
+	[ uuid(77D99636-3132-11D2-AF08-00A0C9B71DC4) ]
+	coclass AvailableFlowTasks
+	{
+		[default] dispinterface IAvailableFlowTasks;
+	};
+
+
+	//  Primary dispatch interface for CXMLFormer
+	
+	[ uuid(39D95C03-4334-11D2-AF19-00A0C9B71DC4) ]
+	dispinterface IXMLFormer
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CXMLFormer)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CXMLFormer)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CXMLFormer
+
+	[ uuid(39D95C05-4334-11D2-AF19-00A0C9B71DC4) ]
+	coclass XMLFormer
+	{
+		[default] dispinterface IXMLFormer;
+	};
+
+
+	//  Primary dispatch interface for CXMLChildFrame
+	
+	[ uuid(39D95C06-4334-11D2-AF19-00A0C9B71DC4) ]
+	dispinterface IXMLChildFrame
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CXMLChildFrame)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CXMLChildFrame)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CXMLChildFrame
+
+	[ uuid(39D95C08-4334-11D2-AF19-00A0C9B71DC4) ]
+	coclass XMLChildFrame
+	{
+		[default] dispinterface IXMLChildFrame;
+	};
+
+	//  Primary dispatch interface for CMiniBrowser
+	
+	[ uuid(220505F2-593F-11D2-AF31-00A0C9B71DC4) ]
+	dispinterface IMiniBrowser
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CMiniBrowser)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CMiniBrowser)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CMiniBrowser
+
+	[ uuid(220505F4-593F-11D2-AF31-00A0C9B71DC4) ]
+	coclass MiniBrowser
+	{
+		[default] dispinterface IMiniBrowser;
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

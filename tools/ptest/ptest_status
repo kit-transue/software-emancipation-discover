@@ -1,0 +1,51 @@
+#!/bin/sh
+
+Usage()
+{
+  echo "Usage: ptest_status [lc|cc|cl|ll] [PTEST_TMPDIR]"
+  exit
+}
+
+failed=""
+succeed="-c"
+
+while [ $# -gt 0 ]
+do
+  case $1 in
+
+    cc)
+      failed="-c"
+      succeed="-c"
+      ;;
+
+    cl)
+      failed="-c"
+      succeed=""
+      ;;
+
+    lc)
+      failed=""
+      succeed="-c"
+      ;;
+
+    ll)
+      failed=""
+      succeed=""
+      ;;
+
+    *)
+      PTEST_TMPDIR=$1
+      if [ ! -d "$PTEST_TMPDIR" ] ; then
+        Usage
+      fi
+      ;;
+
+  esac
+  shift
+done
+
+echo "Tests failed:"
+grep $failed failed $PTEST_TMPDIR/test_outdir/test.log
+echo ""
+echo "Tests succeeded:"
+grep $succeed succeed $PTEST_TMPDIR/test_outdir/test.log

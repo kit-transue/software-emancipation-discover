@@ -1,0 +1,10 @@
+#!/bin/sh
+while read file; do
+  ct_file=${file}@@/main/$1/LATEST
+  if [ -f $ct_file ]
+  then
+    echo $file
+  else
+    echo 
+  fi
+done

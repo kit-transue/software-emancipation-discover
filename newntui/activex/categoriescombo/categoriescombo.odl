@@ -1,0 +1,73 @@
+// CategoriesCombo.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (CategoriesCombo.tlb) that will become a resource in
+// CategoriesCombo.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(2451D669-1203-11D2-AEED-00A0C9B71DC4), version(1.0),
+  helpstring("CategoriesCombo OLE Control module"), control ]
+library CATEGORIESCOMBOLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CCategoriesComboCtrl
+
+	[ uuid(2451D66A-1203-11D2-AEED-00A0C9B71DC4),
+	  helpstring("Dispatch interface for CategoriesCombo Control"), hidden ]
+	dispinterface _DCategoriesCombo
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CCategoriesComboCtrl)
+			[id(1)] IDispatch* DataSource;
+			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CCategoriesComboCtrl)
+			[id(2)] BSTR AccessFromName(BSTR name);
+			[id(3)] BSTR GetCategoriesList();
+			[id(4)] void Update();
+			[id(5)] void Unselect();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CCategoriesComboCtrl
+
+	[ uuid(2451D66B-1203-11D2-AEED-00A0C9B71DC4),
+	  helpstring("Event interface for CategoriesCombo Control") ]
+	dispinterface _DCategoriesComboEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CCategoriesComboCtrl)
+			[id(1)] void CategoryChanged(BSTR categoriesList);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CCategoriesComboCtrl
+
+	[ uuid(2451D66C-1203-11D2-AEED-00A0C9B71DC4),
+	  helpstring("CategoriesCombo Control"), control ]
+	coclass CategoriesCombo
+	{
+		[default] dispinterface _DCategoriesCombo;
+		[default, source] dispinterface _DCategoriesComboEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

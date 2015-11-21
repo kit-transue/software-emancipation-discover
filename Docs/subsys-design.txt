@@ -1,0 +1,239 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+Group/Subsystem Design; Rev. 7: 95-06-26, WMM
+
+    This document assumes the information in Subsystem Requirements for ParaPartition (Rev. 3: 95-04-08) and Subsystem Commands and User Interface (Rev. 1: 95-04-08).
+
+    Classes
+
+        groupHdr
+
+            Description
+
+                The groupHdr class is the app header for groups and subsystems. It is publicly derived from class RTL in order to receive notification of changes to members of the group/subsystem via the xref_notify mechanism. It replaces the subsysHeader (and the currently-unused subsys_header) classes. The base RTL will contain symbols for all members of the group/subsystem, for peer, client, and server groups, and for members of server groups that have been designated as transparently available to clients and peers of this group.
+
+            Members
+
+                Many of the member functions below return a boolean result; it will be true if the requested action was successfully performed, false if there were errors. The errors will already have been reported to the user before the member function returns, so no further error messages should be issued. These member functions assume that the group has already been checked out under source control, if necessary.
+
+                groupHdr(const char*, bool, bool)
+
+                    Invokes the RTL constructor with the value of its argument (the group name), sets the app type, etc. This form of the constructor is invoked when a new group is created; the group is created in the home project. If the second argument is true, the group created will be a subsystem; otherwise, a non-subsystem group will be created. If the third argument is true, the group created will be a scratch group, i.e., the user will not be prompted to save the group when quitting or doing File=>Save All Files.
+
+                groupHdr(const char*, const char*)
+
+                    Invokes the RTL constructor with the value of its first argument (the group name), sets the app type, etc. This form of the constructor is invoked during the process of restoring a group from disk; the second argument is the physical name of the file, allowing the in-memory group to be created in the appropriate project rather than in the home project.
+
+                void insert_obj(objInserter*, objInserter*)
+
+                    Handles propagation to the group (update after xref_notify, drag-and-drop, etc.).
+
+                void remove_obj(objRemover*, objRemover*)
+
+                    Handles removal propagation to the group.
+
+                void notify(int, RelationalPtr, objPropagator*, RelType*)
+
+                    Handles notifications to the group.
+
+                static void groupHdr* db_restore(char*, byte, char*)
+
+                    Called by the db code to restore a group from disk.
+
+                void db_after_restore()
+
+                    Called by the db code after restoring the group from disk to finish the recreation process.
+
+                void add_contents(ddNodePtr)
+
+                    Called by db_after_restore to fill the base RTL and set the app name (Hierarchical::title).
+
+                bool add_members(const symbolArr&, nested_projects_action, added_member_access)
+
+                    Adds as members the entities contained in the symbolArr argument. If any of the members are projects, the action will be controlled by the nested_projects_action argument. This type is a member enumeration with values LOCAL_FILES_ONLY, ALL_NESTED_FILES,MIRROR_HIERARCHY, and IGNORE_PROJECTS. (IGNORE_PROJECTS will cause projects in the selection not to be processed at all, while LOCAL_FILES_ONLY will cause the files (modules) contained directly in any selected projects to be added.) Added members will be public if the third argument is eitherDEFAULT or PUBLIC and private otherwise. (The distinction between DEFAULT and PUBLIC is that DEFAULT will not trigger the transition to automatic access assignment on future access changes, while PUBLIC will.)
+
+                size_t get_members(symbolArr&, bool) const
+
+                    Adds the group's members to the argument symbolArr (does not empty the array first, so members of multiple groups can be accumulated in a single array). The return value is the number of members added to the array (since an entity can be a member of more than one group, the difference in the size of the array before and after the call may be less than the return value, in case some members of the group were already present in the array). If the second argument is true, the resulting array will contain members of other groups that have been made accessible to clients and peers of this group.
+
+                bool validate_members(const symbolArr&, bool) const
+
+                    The return value depends on the value of the second argument. If the second argument is false, returns true IFF all the entities in the argument symbolArr are members of this group. If the second argument is true, returns true IFF all the entities in the argument  symbolArr are either members of this group or have been made accessible to clients and peers of this group.
+
+                size_t remove_members(const symbolArr&)
+
+                    Removes the entities in the argument symbolArr from the members of the group. The return value is the number of members removed (it is not an error for the argument to contain entities that are not members of the group).
+
+                size_t make_members_public(const symbolArr&)
+
+                    Makes the entities in the argument symbolArr which are members of the group public members; if this is the first time members of the group have been designated either public or private, the remaining members are made private. The return value is the number of entities from the argument that are members of the group.
+
+                size_t make_members_private(const symbolArr&)
+
+                    Makes the entities in the argument symbolArr which are members of the group private members. The return value is the number of entities from the argument that are members of the group.
+
+                size_t get_public_members(symbolArr&, bool) const
+
+                    Adds the group's public members (or, if no public/private designation has occurred for this group, all the group's members) to the argument symbolArr (does not empty the array first). If the second argument is true, the visible server members will also be added to the array. The return value is the number of members added to the array.
+
+                size_t get_private_members(symbolArr&) const
+
+                    Adds the group's private members (if any -- if no public/private designation has occurred for this group, all members are assumed to be public) to the argument symbolArr (does not empty the array first). The return value is the number of members added to the array.
+
+                bool make_client(groupHdr*)
+
+                    Establishes the referenced group as a client of this group. Ensures that the tree discipline of the hierarchy is not violated. If it was previously a peer or server, the old relationship is removed.
+
+                bool make_server(groupHdr*)
+
+                    Establishes the referenced group as a server to this group. Ensures that the tree discipline of the hierarchy is not violated. If it was previously a peer or client, the old relationship is removed.
+
+                bool make_peer(groupHdr*)
+
+                    Establishes the referenced group as a peer of this group. Ensures that the tree discipline of the hierarchy is not violated. If it was previously a client or server, the old relationship is removed.
+
+                bool make_unrelated(groupHdr*)
+
+                    Removes peer, client, or server relationships between this group and the referenced group. Restrictions on use of this function with subsystems are TBD.
+
+                size_t get_clients(symbolArr&) const
+
+                    Adds all client groups of this group to the argument symbolArr (does not empty the set first). The return value is the number of groups added to the set.
+
+                size_t get_servers(symbolArr&) const
+
+                    Adds all server groups of this group to the argument symbolArr (does not empty the set first). The return value is the number of groups added to the set.
+
+                size_t get_peers(symbolArr&) const
+
+                    Adds all peer groups of this group to the argument symbolArr (does not empty the set first). The return value is the number of groups added to the set.
+
+                groupHdr* split(const symbolArr&, const genString&)
+
+                    Creates a new group or subsystem (depending on whether this is a group or a subsystem) with the name given in the argument genString, moves the entities in the argument  symbolArr from this group to the newly-created group, and establishes the newly-created group as a client, server, or peer of this group, depending on the relationships between the two groups' members. The return value is a pointer to the newly-created group, or, if there was an error that prevented the operation from completing, the NULL pointer.
+
+                size_t make_server_members_visible(const symbolArr&)
+
+                    For all entities in the argument symbolArr that are members of servers of this group (or  have been made visible through one of this group's servers), this member function makes them accessible to clients and peers of this group; i.e., access to those entities by clients and peers of this group will not be flagged as a violation of modularity. The return value is the number of entities in the argument symbolArr that are so processed.
+
+                size_t make_server_members_invisible(const symbolArr&)
+
+                    For all entities in the argument symbolArr that have been made visible through this group, this member function makes them once again inaccessible to clients and peers of this group (unless otherwise accessible). The return value is the number of entities in the argument  symbolArr that are so processed.
+
+                bool is_subsystem() const
+
+                    Returns true if the group is a subsystem, false otherwise.
+
+                bool convert_to_subsystem()
+
+                    Attempts to convert the group (and all other groups in its hierarchy) to subsystems.
+
+                bool convert_to_group()
+
+                    Converts the subsystem (and all other subsystems in its hierarchy) to groups.
+
+                bool get_wildcards(genString&) const
+
+                    Sets the argument to the set of logical wildcards associated with the group. The return value is false if no wildcards have been associated with the group, true otherwise.
+
+                bool set_wildcards(const genString&)
+
+                    Sets the wildcards associated with the group to the value of the argument.
+
+                bool file_should_be_member(const genString&) const
+
+                    Returns true IFF the logical file name contained in the argument matches the logical wildcards associated with the group but the file is not currently a member of the group.
+
+                bool validate(projNode*, steDocument*) const
+
+                    Checks the current group and its servers agains the validation criteria and records the results of the validation in the STE document referenced in the second argument, including live references to the entities mentioned therein. If the first argument is non-NULL, the group hierarchy is compared against the project hierarchy for file and wildcard divergences. The result value is true if no violations were found, false otherwise.
+
+                bool reduce_to_files()
+
+                    Removes all entity members of the group that are defined in files that are themselves members of the group. The return value is true if no further entity members are left and false otherwise.
+
+                const groupHdr* get_root_group() const
+
+                    Returns the root of the group (i.e., follows links to client groups and returns the group which has no further clients).
+
+                groupHdr* get_root_group()
+
+                    Same as previous, but for non-const groups.
+
+                static bool validate_new_clients_servers(const objArr&, const objArr&)
+
+                    Called before invoking make_client or make_server to verify that the result of the operation will produce a legitimate DAG (i.e., a single root and no cycles). The first argument indicates the groupHdrs that are proposed as clients of the groupHdrs in the second argument. Returns true if the operation is permitted, false if it is disallowed (an explanatory message will already have been displayed).
+
+                static groupHdr* sym_to_groupHdr(symbolPtr)
+
+                    Returns the groupHdrPtr designated by the specified symbolPtr, loading the file if necessary.
+
+        Saved Representation
+
+            The various entities to which the group is related will be represented by reference ddElements, in the app of the group, which are connected to the groupTree by relations of the appropriate types (see below). This approach is modeled on that used by oodt_relations. The data saved in the file will include the wildcards associated with the group and whether it is a group or a subsystem.
+
+        groupTree
+
+            Description
+
+                The groupTree class is the appTree root for groups and subsystems. It is publicly derived from class RTLNode. All members, related groups, and visible members of server groups will be attached by appropriate relations to this object.
+
+            Members
+
+                groupTree(groupHdr*)
+
+                    Replaces the RTLNode created by the RTL constructor with this object.
+
+                static void db_save(app*, appTree*, db_app&, db_buffer&)
+
+                    Called by the db code during the process of storing the group to disk.
+
+                static groupHdr* db_restore(app*, appTree*, db_app&, db_buffer&)
+
+                    Called by the db code during the process of restoring the group from disk.
+
+    Symbols, Attributes, Relations, and Links
+
+        Groups will be implemented using the same reference/definition ddElement scheme used by the current subsystem implementation. This approach will result in xrefSymbols in the pmod with a ddKind of DD_SUBSYSTEM. Subsystems will be distinguished from groups by a symAtt of IS_SUBSYS_ATT.
+
+        The relations described below (with corresponding link types in parentheses) are all established between the ddElements created within the group module. They are all many-to-many with NULL propagation flags. In general, the relations should be regarded as private and the groupHdr member functions should be used to collect related entities; the browser, of course, will rely on the links. The links will be managed by dd_rel_hook, as with the other relation/link correspondences.
+
+        peer1_of_peer2/peer2_of_peer1 (grp_has_peer/grp_is_peer_of)
+
+            These relations/links are completely equivalent and symmetric. To minimize overhead, only one pair of relations/links will exist between peers, so finding the complete set of peers of a given group will require querying on both link types (i.e., if A and B are peer groups, the link from A to B might be either grp_has_peer or grp_is_peer_of).
+
+        server_grp_of_client_grp/client_grp_of_server_grp (grp_has_server/grp_has_client)
+
+        pub_mbr_of_grp/grp_of_pub_mbr (grp_has_pub_mbr/grp_pub_mbr_of)
+
+        pri_mbr_of_grp/grp_of_pri_mbr (grp_has_pri_mbr/grp_pri_mbr_of)
+
+        trans_mbr_of_grp/grp_of_trans_mbr (grp_has_trans_mbr/grp_trans_mbr_of)
+
+            These relations/links will connect referencing groups with members of other groups that have been made accessible.

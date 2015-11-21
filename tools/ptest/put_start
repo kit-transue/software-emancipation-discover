@@ -1,0 +1,171 @@
+#!/bin/sh
+
+# !!!Version controlled edition in ${PROJ_ROOT}/tools/ptest.  Make edits there!!!
+
+script="`basename $0`"
+
+date_string="`date '+%D %H:%M:%S'`"
+
+exit_status="0"
+
+[ -z "$cm_files"   ] &&
+       echo files    > $TMPDIR/requiredfields.$$
+[  "`fgrep N/A $cm_bugno`" -o  "`fgrep bugno $cm_bugno`" -o  ! -s "$cm_bugno"  ] &&
+       echo bugno   >> $TMPDIR/requiredfields.$$
+[  "`grep _empty_ $cm_comment`" -o  "`grep comment $cm_comment`" -o  ! -s "$cm_comment" ] && 
+       echo comment >> $TMPDIR/requiredfields.$$
+
+if [ -f $TMPDIR/requiredfields.$$ ] ; then
+	. /ParaSET/tools/ptest/dynamic_popups < $TMPDIR/requiredfields.$$
+	for f in `cat $TMPDIR/requiredfields.$$`
+	do
+		eval file=\$cm_$f
+		eval value=\$$f
+		echo $value > $file
+	done
+	rm $TMPDIR/requiredfields.$$
+	exit_status=0
+fi
+
+override="no"
+if egrep -is "N/A" "$cm_bugno" ; then
+  override="yes" 
+fi
+
+if [ "$PTEST_LOCAL" = "" ] ; then	# Test directories.	
+  PTEST_LOCAL="$HOME/ptest"
+fi
+if [ "$PTEST_PENDING" = "" ] ; then
+  PTEST_PENDING="/users/ptest/pending"
+fi
+export PTEST_LOCAL PTEST_PENDING
+
+if [ ! -d $PTEST_LOCAL -o ! -w $PTEST_LOCAL ] ; then
+  if [ "$override" = "no" ]; then
+    echo "$script: Error: $PTEST_LOCAL (PTEST_LOCAL) is not a valid writable directory."
+    exit 1
+  fi
+fi
+
+log="$PTEST_LOCAL/.ptest.log.tmp"	# Setup log file.
+tmpfile="$PTEST_LOCAL/.ptest_submit.out.tmp"
+
+me="$USER"				# Setup mailing lists.
+if [ $PUT_START_TEST ]; then
+  maillist_report="$me"
+  maillist_complain="$me"
+else
+  maillist_report="$me mb abover"			
+  maillist_complain="$me mb abover"
+fi
+
+ptest_submit $cm_bugno > $tmpfile  2>&1 ; result="$?"
+cat $tmpfile
+
+echo >> $log ; echo ">>> Begin: `date`" >> $log ; echo >> $log
+
+have_test="yes"
+copied_test="yes"
+if [ "$result" = "1" ] ; then		# Was the test found?
+  have_test="no"
+  copied_test="no"
+elif [ "$result" = "2" ] ; then		# Was the test copied?
+  copied_test="no"    
+fi
+
+mailer="mail"			
+if [ "`uname`" = "HP-UX" ] ; then	# mail on HP is pretty primitive
+  mailer="mailx"
+fi
+
+title()
+{
+  if [ "$copied_test" = "yes" -o "$override" = "yes" ] ; then
+    echo "Subject: DISCOVER Submission"
+  else
+    echo "Subject: DISCOVER Submission [FAILED]"
+  fi
+
+  echo "DISCOVER Submission Report" 
+  echo "==========================" 
+  echo 
+}
+
+header ()
+{
+  echo "User: $me" 
+  echo "Date: $date_string"
+  echo "Host: $HOST" 
+  echo  
+  echo "Bug Number(s): `cat $cm_bugno`" 
+  echo
+  echo "Test Found: $have_test"
+  echo "Test Submitted: $copied_test"
+  echo 
+}
+
+comment ()				# Put a ">" at the beginning of each line of the comment:
+{
+  if [ "$cm_comment" != "" ] ; then
+    if [ "`cat $cm_comment`" != "" ] ; then
+      echo "Comment:"
+      echo 
+      cat $cm_comment | awk '{ printf("%s", "> "); for(i=0; i++<=NF; printf("%s%s", $i, " ")); printf("%s", "\n") }'  
+      echo 
+    fi
+  fi
+}
+
+file_info ()   				# Print file name(s) and list of modified objects.
+{
+  awk '/^\// { printf("File: %s\n\nList of Modified Objects:\n", $0); };\
+	       /@/ {  $1=" "; print $0 };\
+	       /Files aff/ { print $0 };\
+	       /---/ { print "" ; print "" ; }
+	       /#/ { $1=" "; print $0 }' $cm_files
+}
+
+status ()				# If the test was found and copied, the submission is successful.
+{
+  if [ "$copied_test" = "yes" -o "$override" = "yes" ]; then
+     echo "Submission: Succeeded"  
+  else  
+    echo "Submission: Failed (test could not be found or test could not be copied)"
+  fi
+  echo
+}
+
+script_output ()
+{
+  echo "Helper Scripts Output:"
+  echo
+  cat $tmpfile
+  echo  
+}
+
+report ()
+{
+  title ; status ; header ; comment ; file_info ; script_output 
+}
+
+if [ "$copied_test" = "yes" -o "$override" = "yes" ]; then
+  report | tee -a $log | $mailer $maillist_report  
+else
+  report | tee -a $log | $mailer $maillist_report $maillist_complain
+fi
+
+rm $tmpfile
+echo >> $log ; echo ">>> End: `date`" >> $log
+
+user_log="$PTEST_LOCAL/.ptest.log"
+ptest_log="/users/ptest/log/ptest.master.log"
+
+if [ -w "$ptest_log" -a -f "$ptest_log" ] ; then
+  cat $log >> $ptest_log
+fi
+
+cat $log >> $user_log
+rm -f $log
+
+#exit $exit_status
+exit 0

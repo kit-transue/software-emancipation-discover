@@ -1,0 +1,47 @@
+SYSTEM = paraset
+NAME = mixed
+LEX = lex
+YACC = yacc
+MAKEMF = $(TOOL)/makemf
+UXCGEN = $(UIMX)/bin/uxcgen
+MIXLIBINCLUDES = \
+	-I$(BASE)/src/paraset/mixed/include
+
+GCC_INCLUDES = -I$(BASE)/obj/$(ARCH)/gcc/src  -I$(BASE)/obj/$(ARCH)/gcc/src/config  -I$(BASE)/obj/$(ARCH)/gcc/src/cp
+ASETINCLUDES = \
+	$(MIXLIBINCLUDES) \
+	-I$(BASE)/include \
+	$(GCC_INCLUDES)
+CCINCLUDES = \
+	$(ASETINCLUDES)
+
+AFILE = libmix.sl
+RFILE = libmix.o
+GFILE = libgmx.sl
+
+CCC = .....
+CC = .....
+MX = .....
+CCDEFINES = .....
+TARGET_ARCH = .....
+LIBDIR = .....
+DEBUG = .....
+LIBDIR = .....
+MIXLIBFLAGS = .....
+MIXLIBCFLAGS = .....
+MIXLIBCCFLAGS = .....
+
+CCFLAGS = $(DEBUG)  $(CCDEFINES) $(MIXLIBCCFLAGS) $(CCINCLUDES) $(TARGET_ARCH)
+CDEFINES = -DGCC2 -D_NO_PROTO
+CINCLUDES = $(ASETINCLUDES) $(XINCLUDES)
+CFLAGS = $(DEBUG)  $(CDEFINES) $(MIXLIBCFLAGS) $(CINCLUDES) $(TARGET_ARCH)
+ALTCFLAGS =  $(CDEFINES) $(MIXLIBCFLAGS) $(CINCLUDES) $(TARGET_ARCH)
+
+.C.o:	
+	@ echo $(CCC) -c $(CCFLAGS) -o $@  $<
+	@ $(TIME) $(CCC) -c $(CCFLAGS) -o $@  $<
+ 
+.c.o:	
+	@ echo $(CC) -c $(CFLAGS) -o $@ $<
+	@ $(TIME) $(CC) -c $(CFLAGS) -o $@ $<
+ 

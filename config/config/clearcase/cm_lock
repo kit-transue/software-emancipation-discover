@@ -1,0 +1,29 @@
+#!/bin/sh
+# cm_lock (ClearCase) - Change a checkout to reserved
+
+# exit script if we get any errors
+set -e
+
+# Check if file is unlocked
+set +e
+unlockstring=`cleartool describe $cm_workfile | head -1 | grep '(unreserved)$' 2>/dev/null`
+set -e
+
+# Lock if unlocked
+if [ "$unlockstring" != "" ]; then
+   echo "cleartool reserve -nc $cm_options $cm_workfile"
+         cleartool reserve -nc $cm_options $cm_workfile
+fi
+
+exit 0
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = informational (displayed in configshell)
+		   : stderr = error messages (displayed in config status dialog box)
+
+#### Environment Variables
+# Environment variables setup for this script by the configurator:
+#	$cm_workfile	  - path to local (private) copy of file to be processed
+#	$cm_options       - user defined options as configured in Configurator
+#			    preferences dialog box for lock

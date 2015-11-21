@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>CVMBF - Constant Variables Must Be Final</b></p>
+
+<p>Local variables that never get their values changed must 
+be declared <code>final</code>
+  . By explicitly declaring them in such a
+way, a reader of the source code get some information of
+how the variable is supposed to be used.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void func () {<br>
+&nbsp; &nbsp; int var1 = 10;<br>
+&nbsp; &nbsp; <font color='red'>int var2 = 20; </font><br>
+&nbsp; &nbsp; var1 = var2;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(attr1); <br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b> Make all variables 
+which are never changed <code>final</code>
+       .
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void func () {<br>
+&nbsp; &nbsp; int var1 = 10;<br>
+&nbsp; &nbsp; <font color='blue'>final int var2 = 20; </font><br>
+&nbsp; &nbsp; var1 = var2;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(attr1); <br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<html>
+<body>
+
+<p><b>UAAO - Use Abbreviated Assignment Operator</b></p>
+
+<p>Use the abbreviated assignment operator in order to
+write programs more rapidly. Also some compilers run
+faster when you do so.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; int i = 0;<br>
+&nbsp; &nbsp; <font color='red'>i = i + 20; </font><br>
+&nbsp; &nbsp; <font color='red'>i = 30 * i; </font><br>
+}
+</code></p></nobr>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; int i = 0;<br>
+&nbsp; &nbsp; <font color='blue'>i += 20; </font><br>
+&nbsp; &nbsp; <font color='blue'>i *= 30; </font><br>
+}
+</code></p></nobr>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+Nightly Backup Procedures
+Feb 28, 1994 - revised 3/16/94
+
+
+Backups are run every weeknight.  The backups are rotated through
+a weekly schedule with a separate set of tapes for each night
+Monday through Thursday.  Fridays are rotated on a monthly basis
+with a set of four tapes.  The last Friday of each month is rotated
+on a yearly basis.  There is a pre-printed schedule for the Friday
+backups which lists which tape set to use, it is kept on top of the
+backup tape drives.
+
+The scripts to run nightly backups live in the directory
+
+	/users/admin/back
+
+The nightly backup script is b.nightly.  That script in turn calls
+b.ParaSET and b.users which backup the drives /ParaSET and /users.
+
+	b.ParaSET	backs up  /ParaSET	on /dev/st0
+	b.users		backs up  /users	on /dev/st1
+
+The machine for backups is named hellcat and sits directly to the
+right-hand side of pragma in the server room.  It has two 8mm tape
+drives attached to it. The Dynatek HSB8500 is /dev/st0 and the
+Falcon 8200 is /dev/st1.  Note that the actual processing of the
+backup script is to be done on pragma, using the tapes as remote
+devices.
+
+The backup tapes are kept in the top left drawer of the desk along
+the back wall in the server room.
+
+=================================
+
+To perform nightly backups:
+
+1) Check the output from the last backup:  If it succeeded, the
+    tapes will be ejected.  But to be sure, you must read the
+    mail message from the cron job.
+
+	> rlogin pragma -l root
+	# mail
+
+    Look for output from the backup cron job. Verify that it ran
+    successfully. Verify that both /ParaSET and /users were backed up.
+    Make sure date is current (today) and that the tapes have 
+    yesterday's "day" on them.  Each log should end "DUMP IS DONE".
+
+
+2) Rotate the tapes
+
+    Remove the previous tapes from the tape drives. You might have to
+    eject the tape if there was an error.  If the backup was
+    successful, mark the date of that backup on the provided label on
+    the case for that tape.
+
+	Note: Put the date of the last full day's worth of data
+	      that is backed up on the tape. For example: Monday's
+	      backups are run early on Tuesday morning, they should
+	      get Monday's date, not Tuesday's.
+
+    Friday tape sets should be given to Kim to be kept off-site. Initial
+    the Friday backup schedule after dating the tapes and giving them to
+    Kim.  On days other than Fridays, put the pair of tapes back into the
+    tape drawer.
+
+    On Monday through Thursday, use the weekly tape set for that day.
+    On Fridays, consult the log sheet to determine which Friday tape set
+    to use.  Put the next set of tapes in, inserting the tape fully, till
+    the door closes.   Put "ParaSET" tape into /dev/st0, and "users" into
+    /dev/st1.  The drives are also labeled "Paraset" and "Users", but
+    when in doubt, trust the drive number.
+
+3) Submit the backup job
+
+	> rlogin progam -l root
+	# at -cm midnight /users/admin/back/b.nightly
+	# atq
+
+    Look at the output from 'atq' to verify that the job was submitted.
+
+=================================
+
+That's all!
+-jef
+
+
+$Log: BackupProcedures.doc  $
+Revision 1.1 1994/03/16 16:57:21EST davea 
+made from unix file
+# Revision 1.2  1994/03/16  21:57:18  davea
+# /usr/tmp/aaaa03476
+#

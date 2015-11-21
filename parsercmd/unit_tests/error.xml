@@ -1,0 +1,24 @@
+<!-- Test of:
+	XML syntax error
+-->
+<cmdline nameintro="-">
+ <translate unrecognized="0">
+  <option name="one" noarg="1">one</option
+ </translate>
+two
+ <translate>
+  <option name="three" noarg="1">three</option
+ </translate>
+four
+ <translate unrecognized="1">
+  <option name="five" noarg="1">five</option
+ </translate>
+six
+ <translate unrecognized="0">
+  <option name="seven" noarg="1">seven</option
+ </translate>
+eight
+ <translate>
+  <option name="nine" noarg="1">nine</option
+ </translate>
+</cmdline>

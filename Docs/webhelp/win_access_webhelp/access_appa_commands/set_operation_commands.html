@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Set Operation Commands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p5 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    span.s1 {font: 12.0px 'Courier New'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 113.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 263.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 113.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 263.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Set Operation Commands</b></p>
+<p class="p2">Set operation commands manipulate Access sets, sending their output to the current set (<span class="s1">$CurSet</span>).</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td1">
+        <p class="p3"><b>Set Operation Command</b></p>
+      </td>
+      <td rowspan="2" valign="middle" class="td2">
+        <p class="p3"><b>Description and Syntax</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">attribute</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Define an attribute.</p>
+        <p class="p5">attribute enum <i>attribute_name</i> "value..." [enum | info | int | print | set | string]</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">nil_set</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Makes a null (empty) set.</p>
+        <p class="p5">nil_set</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">sappend</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Appends the specified entities or instances to the specified set.</p>
+        <p class="p5">sappend <i>set_name new_entities</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">set_add</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Adds the contents of two sets without removing duplicates; the result becomes the current set.</p>
+        <p class="p5">set_add <i>set_name_1</i> <i>set_name_2</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">set_copy</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Creates a “deep copy” of the contents of the specified set to the current set</p>
+        <p class="p5">set_copy <i>set_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">set_intersect</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the elements common to two sets; the result becomes the current set. Duplicates are removed.</p>
+        <p class="p5">set_intersect <i>set_name_1</i> <i>set_name_2</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">set_subtract</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">For two sets, A and B, removes the elements of A that are also in B; the remaining elements of A become the current set. Duplicates are removed.</p>
+        <p class="p5">set_subtract <i>set_name_A</i> <i>set_name_B</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">set_union</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Combines the contents of two sets, removing all duplicates; the result becomes the current set.</p>
+        <p class="p5">set_union <i>set_name_1</i> <i>set_name_2</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">set_unique</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">For two sets, A and B, returns the elements of each set that are not in the other set.</p>
+        <p class="p5">set_unique <i>set_name_1</i> <i>set_name_2</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<p class="p7"><br></p>
+</body>
+</html>

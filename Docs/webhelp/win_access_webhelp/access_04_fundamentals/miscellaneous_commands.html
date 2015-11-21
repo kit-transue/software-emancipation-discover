@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Miscellaneous Commands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 4.0px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Miscellaneous Commands</b></p>
+<p class="p2"><b>Describe Access-command</b></p>
+<p class="p3">describe Access-command</p>
+<p class="p4">Available from Access sessions within an interactive environment (as one started in the Browser), this command prints a short description and usage for the command <span class="s1"><b>Access-command.</b></span> This lightweight form of online help can be useful during interactive sessions:</p>
+<p class="p3">describe where<br>
+ast code: where</p>
+<p class="p5">returns</p>
+<p class="p6">codeintegrity command: where<br>
+Collective command for "where" queries<br>
+where [ declared | defined | included | referenced | used ] entity_name ...</p>
+<p class="p2"><b>Info Commands</b></p>
+<p class="p3">info commands [glob-pattern]</p>
+<p class="p4">This command is not a true Access command, but the Tcl <span class="s1"><b>info</b></span> commands includes the list of Access commands added to the interpreter. If a pattern is specified, the result is filtered for commands that match the pattern. It is useful in conjunction with <span class="s1"><b>describe</b></span>.</p>
+<p class="p2"><b>Info Attributes</b></p>
+<p class="p3">info attributes [glob-pattern]</p>
+<p class="p4">This command returns the complete list of Access attributes. (Access adds the “<span class="s1">attributes</span>” selector to the Tcl <span class="s1"><b>info</b></span> command.) If <span class="s1">glob-pattern</span> is specified, return only those attributes that match <span class="s2">glob-pattern</span>.</p>
+<p class="p2"><b>&gt; Filename</b></p>
+<p class="p3">&gt; filename command</p>
+<p class="p4">This command redirects the output of <span class="s1">command</span> to <span class="s1">filename</span>. The contents of <span class="s1">filename</span> are overwritten. This command should only be used to capture output from the <span class="s1"><b>print</b></span> command (or tree print), which does not return the string it prints; in other cases more traditional forms of output work equally well.</p>
+<p class="p2"><b>&gt;&gt; Filename</b></p>
+<p class="p3">&gt;&gt; filename command</p>
+<p class="p4">This command is similar to <span class="s1">&gt;</span>, but appends its output to <span class="s1">filename</span>.</p>
+</body>
+</html>

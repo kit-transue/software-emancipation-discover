@@ -1,0 +1,41 @@
+#!/bin/sh
+
+nm=ptest_play
+
+if [ "$1" = "" ] ; then
+  dir=$PWD
+elif [ $1 -gt 100 ] ; then
+ dir=$HOME/tests/bugs/bug$1
+elif [ -d $1 ] ; then
+ dir=$1
+else
+ echo "$nm: $1 is neither bug-number nor directory"
+ exit 1
+fi
+
+if [ "$2" != "" ] ; then
+  if [ -x $2 ] ; then
+     exec="-exec $2"
+  elif [ -x $meg/aset ] ; then
+     exec="-exec $meg/aset"
+  else
+     echo "$nm: cannot select executable aset"
+     exit 1
+  fi
+fi
+
+if [ -d $dir ] ; then
+  cd $dir
+  dir=`pwd`
+
+  ls *.ccc 2> /dev/null
+  if [ $? -ne 0 ] ; then
+    echo "$nm: no scripts in $dir to execute"
+  else
+    echo "ptest_run $dir $exec $3 $4 $5 $6"
+          ptest_run $dir $exec $3 $4 $5 $6
+  fi
+else
+  echo "$nm: $dir does not exist"
+fi
+ 

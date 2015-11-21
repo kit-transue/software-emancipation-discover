@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Troubleshooting</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 12.0px Helvetica}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Troubleshooting</b></p>
+<p class="p2">If the CM integration seems to be failing, for example, if <b>CM &gt; List Checked Out</b><span class="s1"> </span>gives no results even though some files are checked out, or if <b>CM &gt; Check Out</b><span class="s1"> </span>does not check out a file, the cause is most likely a problem in the setting of Transform.</p>
+<p class="p3"><b>Note: </b>The transformation of file names is just a simple text substitution, so it is sensitive to case, including the case of drive letters on Windows.Make sure you also use forward slashes in your paths.</p>
+<p class="p2">If files fail to parse during the check operation and are listed in the <b>Unparsed</b> files pane, the problem is that no flags were available to parse them. There are two possible causes for this. One is that the files are new files that were not present during the model build; this version of Submission Check does not support new files. The other is that the files are header files that were not included by any of the source files in the submission. To get around this, you can check out source files that do include these headers and add them to the set of files to check.</p>
+<p class="p2">If files have parse errors during the check operation, the cause probably lies in the collection of files to parse with. Using Rational ClearCase on Unix, the client view is used for the parsing, so all that is required is to make sure that the files to be checked can be built in the client environment. In all other circumstances, however, the files used for the check are the ones seen during the original model build, which may be outdated with respect to the new submission. To work around this, any files the checked files depend on should be checked out and added to the set in the Submission Check user interface. Then the check operation sends them to the server to be parsed instead of using the old versions.</p>
+<p class="p2">If files that are successfully checked show incorrect results for <b>New hits</b> or <b>Modified Objects</b>, there are two possible difficulties. One is that the files that DIScover is using as the baseline for your submission are not the actual predecessors of your versions. This can occur, for instance, if the predecessor to your version of a file was submitted outside of Submission Check after the model was built, or if another submission, you have not yet merged with, was made inside of Submission Check. The other possibility is that hits or entities are being marked as new because they are on lines you have made unrelated changes to. This is a limitation of Submission Check, which uses diff to determine whether hits or entities are new.</p>
+<p class="p2"> </p>
+<p class="p4"> </p>
+</body>
+</html>

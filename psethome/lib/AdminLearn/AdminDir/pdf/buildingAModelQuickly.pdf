@@ -1,0 +1,9 @@
+BuildingAModelQuickly : $sharedSrcRoot <-> /BuildingAModelQuickly
+{
+
+  **.[cChH]
+  **.cpp
+  **.hpp
+
+}
+

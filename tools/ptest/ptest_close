@@ -1,0 +1,8 @@
+#!/bin/sh
+
+from_dir=${PTEST_PENDING:=/users/ptest/pending}/submit
+to_dir=$PTEST_PENDING/accept
+
+cat $* | sed 's/[^0-9][^0-9]*/ /g' | ptest_process_list close $from_dir $to_dir
+exit
+

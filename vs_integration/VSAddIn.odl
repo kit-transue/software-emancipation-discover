@@ -1,0 +1,64 @@
+// VSAddIn.odl : type library source for VSAddIn.dll
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (VSAddIn.tlb).
+
+[	uuid(ADD9091A-E555-4B40-B64B-AF0E9103D03D), version(1.0),
+	helpstring ("VSADDIN Developer Studio Add-in") ]
+library VSAddIn
+{
+	importlib("stdole32.tlb");
+	importlib("devshl.dll");
+	importlib("ide\devdbg.pkg");
+	
+
+	//  Dual interface for CCommands
+	//
+	//  All commands that your add-in adds to DevStudio
+	//   must appear in this interface.  You may use the
+	//   ClassView to add methods to this interface, which
+	//   will cause stub implementations of those methods to
+	//   appear in your CCommands class.
+	
+	[	uuid(ADD90916-E555-4B40-B64B-AF0E9103D03D),
+		oleautomation,
+		dual
+	]
+
+	interface ICommands : IDispatch
+	{
+		[id(1)]
+		HRESULT CodeRoverInfoMethod();
+		[id(2)]
+		HRESULT CodeRoverOpenDefinitionMethod();
+		[id(3), helpstring("method CodeRoverBrowseMethod")] HRESULT CodeRoverBrowseMethod();
+		[id(4)]
+		HRESULT CodeRoverBuildMethod();
+		[id(5)]
+		HRESULT CodeRoverActivateMethod();
+	};
+
+	//  Class information for CCommands
+
+	[ uuid(ADD90917-E555-4B40-B64B-AF0E9103D03D) ]
+	coclass Commands
+	{
+		[default] interface ICommands;
+	};
+
+	[ hidden, uuid(ADD90918-E555-4B40-B64B-AF0E9103D03D) ]
+	coclass ApplicationEvents
+	{
+		[default] interface IApplicationEvents;
+	}
+
+	[ hidden, uuid(ADD90919-E555-4B40-B64B-AF0E9103D03D) ]
+	coclass DebuggerEvents
+	{
+		[default] interface IDebuggerEvents;
+	}
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};
+

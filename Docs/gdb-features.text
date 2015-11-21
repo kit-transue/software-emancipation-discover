@@ -1,0 +1,29 @@
+
+break ... if -expr- is not supported in a function which is
+interpreted.
+
+break [file:] -line- is not supported when -line- is in a function
+which is interpreted. (This can be done using Debugger button).
+
+break [file:] -function- is not supported if -function- is
+interpreted. (This can be done using Debugger button).
+
+break + -offset- is not supported when in a function which is
+interpreted.
+
+break - -offset- is not supported when in a function which is
+interpreted.
+
+watch -expr- is not suppported.
+
+next [count] is not supported.
+
+step [count] is not supported.
+
+show commands [n|+] is not supported.
+
+nexti [count] is not supported.
+
+stepi [count] is not supported.
+
+

@@ -1,0 +1,134 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis require.dis
+
+global __WORKFLOW_AUX_DIS
+if [ info exists __WORKFLOW_AUX_DIS ] { 
+    puts_verbose "__WORKFLOW_AUX_DIS == '$__WORKFLOW_AUX_DIS'"
+    return 
+}
+set __WORKFLOW_AUX_DIS 2
+
+#
+# Workflow helper functions:
+#
+
+proc sel2sym { SELSTR explicit} {
+    global BATCH_QAR
+    if { [info exists BATCH_QAR] } {
+	return $SELSTR
+    }
+    if { "$SELSTR" == "selection" } {
+	if { [ check_gala_val GLOBAL_GALA_RTL ] } {
+	    return [ get_gala_selection [ get_gala_val GLOBAL_GALA_RTL ] ]
+	} else {
+	    if { "[ info command get_selection ]" != "" } {
+		set sel [ get_selection ]
+	    } else {
+		set sel [ new_set ]
+	    }
+	    if { [size $sel] == 0 } {
+		error "Current selection is empty."
+	    }
+	    return $sel
+	}
+    } elseif { "$SELSTR" == "scope" } {
+	if { "[ info command get_scope ]" != "" } {
+	    set RET [ get_scope ]
+	} elseif { [ check_gala_val GLOBAL_GALA_SCOPE ] } {
+	    set RET [ get_gala_val GLOBAL_GALA_SCOPE ]
+	} else {
+	    set RET [ new_set ]
+	}
+	return $RET
+    } elseif { "$SELSTR" == "group" } {
+	set GROUPS ""
+	if { [ check_gala_val GLOBAL_GALA_GROUP_RTL ] } {
+	    set ARR [ get_gala_selection [ get_gala_val GLOBAL_GALA_GROUP_RTL ] ]
+	    foreach G $ARR { lappend GROUPS "group@[ name $G ]" }
+	} else {
+	    if { [ info commands smgr ] != "" } {
+		set NAMES [ smgr -getsel ]
+		foreach G $NAMES { lappend GROUPS "group@$G" }
+	    }
+	}
+	return [ set_unique [ set_copy $GROUPS ] ]
+    } elseif { "$SELSTR" == "explicit" } {
+	return [ set_copy $explicit ]
+    } else {
+	return -code 1
+    }
+}
+
+proc wfclear {} {
+  foreach TYPE {param node task} {
+    foreach EL [ wf${TYPE} info ] { 
+      wf${TYPE} delete $EL
+    }
+  }
+}
+
+proc set_gala_val { NAME RTL } {
+  global __GLOBAL_GALA_VAL
+  set __GLOBAL_GALA_VAL($NAME) $RTL
+}
+
+proc unset_gala_val { NAME } {
+  global __GLOBAL_GALA_VAL
+  unset __GLOBAL_GALA_VAL($NAME)
+}
+
+proc get_gala_val { NAME } {
+  global __GLOBAL_GALA_VAL
+  if [ info exists __GLOBAL_GALA_VAL($NAME) ] {
+    return $__GLOBAL_GALA_VAL($NAME)
+  } else {
+    return ""
+  }
+}
+
+proc check_gala_val { NAME } {
+  global __GLOBAL_GALA_VAL
+  info exists __GLOBAL_GALA_VAL($NAME)
+}
+
+catch {require closure.dis}
+catch {require user.dis -ignore}
+
+proc lambda { var body val } {
+    uplevel "set $var \"$val\"; $body" 
+}
+
+proc viewable_instances { args } {
+    set input [set_copy $args]
+    set ast [filter ast||cell $input]
+    set other [filter !(ast||cell) $input]
+    set inst [instances $other]
+    sappend $inst $ast
+    return $inst
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Attributes of AST Nodes</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 2.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {text-decoration: underline ; color: #ff6262}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 13.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Attributes of AST Nodes</b></p>
+<p class="p2"><span class="s1"><a href="../access_04_fundamentals/access_fundamentals.html#XREF_Access_Fundamentals">Access Fundamentals</a></span> introduces attributes that have meaning when applied to symbols. TPM adds attributes that are applicable to AST nodes; you can access these attributes the in same way you do the attributes of symbols:</p>
+<p class="p3">apply kind [data node main]<br>
+ast</p>
+<p class="p2">All AST nodes are of <span class="s2">kind</span> “ast”—kind does not subclass AST nodes the way it does symbols. Instead, the attribute <span class="s2">ast_code</span> returns the sub-type of the node:</p>
+<p class="p3">apply ast_code [data node main]<br>
+function_def</p>
+<p class="p2">The <span class="s2">ast_code</span> attribute is used by the <span class="s2"><b>tree print</b></span> command; ast_codes may be <span class="s2">global_id</span>, <span class="s2">list_decl</span>, <span class="s2">local_id</span>, <span class="s2">for_stmt</span>, and so on.</p>
+<p class="p2">The attribute <span class="s2">ast_info</span> is made up of the ast_code, the byte offset of the text, its length, and the source text elided to fit on one line:</p>
+<p class="p3">apply ast_info [data node main]<br>
+function_def 13809 4976 ‘int main (arg ...  warning */ \}’</p>
+<p class="p2">When displaying AST nodes in an interactive Access session, <span class="s2">ast_info</span> is a useful <span class="s2">printformat</span> attribute:</p>
+<p class="p3">printformat %s ast_info</p>
+<p class="p2">Each ast_code corresponds to a boolean attribute. The attribute returns <span class="s2">1</span> (true) if the node is of that ast_code; otherwise, <span class="s2">0</span>.</p>
+<p class="p3">apply function_def [data node main]<br>
+1<br>
+apply loop_stmt [data node main]<br>
+0</p>
+<p class="p2">These attributes do not automatically convert their arguments from symbols to AST nodes:</p>
+<p class="p3">apply function_def [data symbol [data node main]]<br>
+0</p>
+<p class="p2">Similar types of AST structures can be described by the same AST category code. For example, if statements (<span class="s2">if_stmt</span><span class="s3">)</span> and loop statements (<span class="s2">loop_stmt</span>) are both members of the same general category—statements (<span class="s2">ast_stmt</span>). The category for a particular AST can be obtained with the <span class="s2">astcategory</span> attribute and can be used as a boolean attribute, just like concrete AST codes.</p>
+<p class="p2">AST nodes maintain their mapping to source text. The <span class="s2">ast_text</span> for a node returns the section of text that corresponds to the parse tree for that node:</p>
+<p class="p4">apply ast_text main<br>
+{int main (argc, argv)<br>
+int argc;<br>
+char **argv;<br>
+{<br>
+int file_count; /* number of files to process */<br>
+int proglen; /* length of progname */<br>
+int optc; /* current option */<br>
+<br>
+EXPAND(argc, argv); /* wildcard expansion if necessary*/<br>
+. . .<br>
+return exit_code; /* just to avoid lint warning */<br>
+}}</p>
+<p class="p5"><b>Note: </b>The extra pair of curly braces in the preceding example is provided by Tcl to indicate that this is a single string and not a list.</p>
+</body>
+</html>

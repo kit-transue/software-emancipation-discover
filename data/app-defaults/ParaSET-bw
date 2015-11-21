@@ -1,0 +1,457 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!                                                                     !!!
+!!! Default Application Resources                                       !!!
+!!!                                                                     !!!
+!!! ParaSET                                                             !!!
+!!! Copyright (C) 1992,1993 Software Emancipation Technology, Inc.      !!!
+!!! All rights reserved.                                                !!!
+!!!                                                                     !!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!				Reset Misc				!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+*BorderWidth: 0
+*InternalBorderWidth: 0
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!				ParaCancel				!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ParaCANCEL*background:                  black
+ParaCANCEL*foreground:                  white
+
+ParaCANCEL*FontList:                    -adobe-helvetica-bold-r-normal-*-12-*,aseticons-20=aseticons
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!				DrawParaSET				!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+DrawParaSET*font:			9x15
+DrawParaSET*background:			White
+DrawParaSET*foreground:			Black
+
+DrawParaSET*cursorForeground:		White
+DrawParaSET*cursorBackground:		Black
+
+DrawParaSET*baseForeground:		Black
+DrawParaSET*baseBackground:		White
+DrawParaSET*baseFont:			-*-lucidatypewriter-bold-r-normal-*-12-*
+
+DrawParaSET*hiliteForeground:		White
+DrawParaSET*hiliteBackground:		Black
+DrawParaSET*hiliteFont:			-*-lucidatypewriter-bold-r-normal-*-12-*
+DrawParaSET*hiliteBinding:		1
+
+DrawParaSET*hiliteTextForeground:	White
+DrawParaSET*hiliteTextBackground:	Black
+DrawParaSET*hiliteTextFont:		-*-lucidatypewriter-bold-r-normal-*-12-*
+
+DrawParaSET*selectForeground:		White
+DrawParaSET*selectBackground:		Black
+DrawParaSET*selectFont:			-*-lucidatypewriter-bold-r-normal-*-12-*
+
+DrawParaSET*collapseForeground:		Black
+DrawParaSET*collapseBackground:		White
+DrawParaSET*collapseFont:		-*-lucidatypewriter-bold-r-normal-*-12-*
+
+DrawParaSET*normalForeground:		Black
+DrawParaSET*normalBackground:		White
+DrawParaSET*normalFont:			-*-lucidatypewriter-bold-r-normal-*-12-*
+
+DrawParaSET*connectionForeground:	Black
+DrawParaSET*connectionBackground:	White
+DrawParaSET*hiliteConnectionForeground: Black
+
+DrawParaSET*hasFriendRelClr:		Black
+DrawParaSET*isFriendRelClr:		Black
+DrawParaSET*containsRelClr:		Black
+DrawParaSET*containedInRelClr:		Black
+DrawParaSET*pointsToRelClr:		Black
+DrawParaSET*pointedToByRelClr:		Black
+DrawParaSET*refersToRelClr:		Black
+DrawParaSET*referredToByRelClr:		Black
+DrawParaSET*functionReturnsRelClr:	Black
+DrawParaSET*returnedByFunctionRelClr:	Black
+DrawParaSET*takesArgumentRelClr:	Black
+DrawParaSET*isArgumentRelClr:		Black
+DrawParaSET*inheritanceRelClr:		Black
+
+DrawParaSET*erdArrowheadLength:		10.0
+DrawParaSET*erdArrowheadWidth:		5.0
+
+DrawParaSET*flowchartLabelFont:	6x13
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!				 ParaSET				!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!
+! Emacs key binding for text widget for X11R4
+!
+ParaSET*XmText.translations: #override\n\
+	Ctrl <Key>b:		backward-character()\n\
+	Alt <Key>b:		backward-word()\n\
+	Meta <Key>b:		backward-word()\n\
+	Shift Alt <Key>b:	backward-word(extend)\n\
+	Shift Meta <Key>b:	backward-word(extend)\n\
+	Alt <Key><:		beginning-of-file()\n\
+	Meta <Key><:		beginning-of-file()\n\
+	Ctrl <Key>a:		beginning-of-line()\n\
+	Shift Ctrl <Key>a:	beginning-of-line(extend)\n\
+	Ctrl <Key>osfInsert:	copy-clipboard()\n\
+	Shift <Key>osfDelete:	cut-clipboard()\n\
+	Shift <Key>osfInsert:	paste-clipboard()\n\
+	Alt <Key>>:		end-of-file()\n\
+	Meta <Key>>:		end-of-file()\n\
+	Ctrl <Key>e:		end-of-line()\n\
+	Shift Ctrl <Key>e:	end-of-line(extend)\n\
+	Ctrl <Key>f:		forward-character()\n\
+	Ctrl Alt <Key>f:	forward-word()\n\
+	Ctrl Meta <Key>f:	forward-word()\n\
+	Ctrl <Key>d:		kill-next-character()\n\
+	Alt <Key>BackSpace:	kill-previous-word()\n\
+	Meta <Key>BackSpace:	kill-previous-word()\n\
+	Ctrl <Key>w:		key-select() kill-selection()\n\
+	Ctrl <Key>y:		unkill()\n\
+	Ctrl <Key>k:		kill-to-end-of-line()\n\
+	Alt <Key>Delete:	kill-to-start-of-line()\n\
+	Meta <Key>Delete:	kill-to-start-of-line()\n\
+	            		                    \
+	Ctrl <Key>o:		newline-and-backup()\n\
+	Ctrl <Key>j:		newline-and-indent()\n\
+	Ctrl <Key>n:		next-line()\n\
+	Ctrl <Key>osfLeft:	page-left()\n\
+	Ctrl <Key>osfRight:	page-right()\n\
+	Ctrl <Key>p:		previous-line()\n\
+	Ctrl <Key>g:		process-cancel()\n\
+	Ctrl <Key>l:		redraw-display()\n\
+	Ctrl <Key>osfDown:	next-page()\n\
+	Ctrl <Key>osfUp:	previous-page()\n\
+	Ctrl <Key>space:	set-anchor()\n\
+	<Key>osfLeft:		backward-character()\n\
+	<Key>osfRight:		forward-character()\n\
+	<Key>osfUp:		previous-line()\n\
+	<Key>osfDown:		next-line()\n\
+	<Key>osfDelete:		delete-previous-character()
+
+!
+! Emacs key binding for text widget for X11R4
+!
+ParaSET*XmTextField.translations: #override\n\
+	Ctrl <Key>b:		backward-character()\n\
+	Alt <Key>b:		backward-word()\n\
+	Meta <Key>b:		backward-word()\n\
+	Shift Alt <Key>b:	backward-word(extend)\n\
+	Shift Meta <Key>b:	backward-word(extend)\n\
+	Ctrl <Key>a:		beginning-of-line()\n\
+	Shift Ctrl <Key>a:	beginning-of-line(extend)\n\
+	<Key>Return:            process-return() end_of_file()\n\
+	Ctrl <Key>osfInsert:	copy-clipboard()\n\
+	Shift <Key>osfDelete:	cut-clipboard()\n\
+	Shift <Key>osfInsert:	paste-clipboard()\n\
+	Ctrl <Key>e:		end-of-line()\n\
+	Shift Ctrl <Key>e:	end-of-line(extend)\n\
+	Ctrl <Key>f:		forward-character()\n\
+	Ctrl Alt <Key>f:	forward-word()\n\
+	Ctrl Meta <Key>f:	forward-word()\n\
+	Ctrl <Key>osfLeft:	page-left()\n\
+	Ctrl <Key>osfRight:	page-right()\n\
+	Ctrl <Key>g:		process-cancel()\n\
+	Ctrl <Key>space:	set-anchor()\n\
+	<Key>osfLeft:		backward-character()\n\
+	<Key>osfRight:		forward-character()\n\
+	<Key>osfDelete:		delete-previous-character()
+
+!
+! Default Font-list
+!
+ParaSET*FontList:				-adobe-helvetica-bold-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*XmMenuShell*FontList:			-adobe-helvetica-bold-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*list_button*FontList:			-adobe-helvetica-medium-r-normal-*-10-*
+ParaSET*XmList*FontList:                       aseticons-20=aseticons
+
+!
+! Splash screen
+!
+ParaSET*about_ParaSET.geometry:		+342+160
+ParaSET*about_ParaSET*XmFrame*Background:	White
+ParaSET*about_ParaSET*XmFrame*Foreground:	Black
+ParaSET*about_ParaSET*XmFrame*logo*Foreground:	Black
+ParaSET*about_ParaSET*frame*FontList:		-adobe-helvetica-medium-r-normal-*-10-*
+ParaSET*about_ParaSET*frame*paraset*FontList:	-adobe-times-bold-i-normal-*-24-*
+ParaSET*about_ParaSET*frame*version*FontList:	-adobe-times-bold-r-normal-*-18-*
+ParaSET*about_ParaSET.mwmDecorations: MWM_DECOR_BORDER
+ParaSET*about_ParaSET.mwmFunctions: MWM_FUNC_CLOSE | MWM_FUNC_MOVE | MWM_FUNC_RESIZE
+
+!
+! Window Manager Icon
+!
+ParaSET*icon_bitmap*Background:		white
+ParaSET*icon_bitmap*Foreground:		black
+
+!
+! BrowserShell fonts
+!
+ParaSET*project_browser_label*FontList:	-adobe-helvetica-bold-r-normal-*-14-*,aseticons-20=aseticons
+ParaSET*project_browser*run_time_list*FontList:-*-lucidatypewriter-medium-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*project_browser*run_time_list*FontList:-*-lucidatypewriter-medium-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*project_browser*list_status.FontList:	-adobe-helvetica-medium-r-normal-*-10-*
+
+ParaSET*file_browser_label*FontList:		-*-lucidatypewriter-bold-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*file_browser*directory*FontList:	-*-lucidatypewriter-medium-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*file_browser*directory_label*FontList: -*-lucidatypewriter-bold-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*file_browser*list_status.FontList:	-adobe-helvetica-medium-r-normal-*-10-*
+ParaSET*file_browser*directory*XmMenuShell*FontList:	-adobe-helvetica-bold-r-normal-*-12-*,aseticons-20=aseticons
+
+!
+! Watch Variables Fonts
+!
+ParaSET*Watch_Variables*listLabel*FontList:	8x13
+ParaSET*Watch_Variables*list*FontList:		8x13
+
+!
+! Feedback during command execution
+!
+ParaSET*Feedback.NoFeedback:		false
+ParaSET*Feedback*minTime:		0
+ParaSET*Feedback*staticCursor:		hourglass
+
+ParaSET*Feedback.Import*dialog:	bar
+
+!
+! File suffixes
+!
+ParaSET*plain.suffix:			txt
+ParaSET*ascii.suffix:			txt
+ParaSET*c.suffix:			c
+ParaSET*cplusplus.suffix:		C
+ParaSET*fortran.suffix:		f77
+ParaSET*cobol.suffix:			cbl
+ParaSET*ste.suffix:			ste
+ParaSET*spd.suffix:			spd
+ParaSET*journal.suffix:		jrnl
+ParaSET*category.suffix:		cat
+ParaSET*style.suffix:			sty
+
+!
+! Miscellaneous resources
+!
+ParaSET*XmScale.minimum:		0
+ParaSET*XmScale.maximum:		100
+
+!!! Runtime List Formats !!!
+
+ParaSET*rtlProjectFormat:	%os
+ParaSET*rtlModuleFormat:	%os
+
+!
+! STE
+!
+ParaSET*STE_global.style.default.name:			Default Document Style
+ParaSET*STE_global.style.default.font:			times
+ParaSET*STE_global.style.default.fg_color:		Black
+ParaSET*STE_global.style.default.bg_color:		White
+ParaSET*STE_global.style.default.cursor_fg_color:	White
+ParaSET*STE_global.style.default.cursor_bg_color:	Black
+
+ParaSET*STE_global.style.doc.title.name:		Default Document Title
+ParaSET*STE_global.style.doc.title.font:		helvetica
+
+ParaSET*STE_global.style.title1.name:			Default Title Style
+ParaSET*STE_global.style.title1.font:			times
+
+!
+! QUERY dialog
+!
+ParaSET*query_dialog*query_error_label*FontList:	-adobe-helvetica-bold-r-normal-*-12-*
+
+		       !!! VIEWERSHELL FILE MENU !!!
+
+!*ViewerShell*menubar*file.mnemonic: F
+
+ParaSET*ViewerShell*menubar*file_open.mnemonic: O
+ParaSET*ViewerShell*menubar*file_open.accelerator: Shift Ctrl<Key>o
+ParaSET*ViewerShell*menubar*file_open.acceleratorText: ^$-O
+
+ParaSET*ViewerShell*menubar*file_open_erd.mnemonic: E
+ParaSET*ViewerShell*menubar*file_open_erd.accelerator: Shift Ctrl<Key>e
+ParaSET*ViewerShell*menubar*file_open_erd.acceleratorText: ^$-E
+
+ParaSET*ViewerShell*menubar*file_calltree.mnemonic: T
+
+ParaSET*ViewerShell*menubar*file_save.mnemonic: S
+ParaSET*ViewerShell*menubar*file_save.accelerator: Shift Ctrl<Key>s
+ParaSET*ViewerShell*menubar*file_save.acceleratorText: ^$-S
+
+ParaSET*ViewerShell*menubar*file_save_as.mnemonic: A
+
+ParaSET*ViewerShell*menubar*file_save_btn_bar.mnemonic: W
+
+ParaSET*ViewerShell*menubar*file_close_view.mnemonic: V
+
+ParaSET*ViewerShell*menubar*file_print.mnemonic: P
+
+ParaSET*ViewerShell*menubar*file_close_window.mnemonic: C
+ParaSET*ViewerShell*menubar*file_close_window.accelerator: Shift Ctrl<Key>W
+ParaSET*ViewerShell*menubar*file_close_window.acceleratorText: ^$-W
+
+!!! VIEWERSHELL EDIT MENU !!!
+
+!*ViewerShell*menubar*edit.mnemonic: E
+
+ParaSET*ViewerShell*menubar*edit_undo.mnemonic: U
+ParaSET*ViewerShell*menubar*edit_undo.accelerator: Shift Ctrl<Key>u
+ParaSET*ViewerShell*menubar*edit_undo.acceleratorText: ^$-U
+
+ParaSET*ViewerShell*menubar*edit_cut.mnemonic: t
+ParaSET*ViewerShell*menubar*edit_cut.accelerator: Shift Ctrl<Key>x
+ParaSET*ViewerShell*menubar*edit_cut.acceleratorText: ^$-X
+
+ParaSET*ViewerShell*menubar*edit_copy.mnemonic: C
+ParaSET*ViewerShell*menubar*edit_copy.accelerator: Shift Ctrl<Key>c
+ParaSET*ViewerShell*menubar*edit_copy.acceleratorText: ^$-C
+
+ParaSET*ViewerShell*menubar*edit_paste.mnemonic: P
+ParaSET*ViewerShell*menubar*edit_paste.accelerator: Shift Ctrl<Key>v
+ParaSET*ViewerShell*menubar*edit_paste.acceleratorText: ^$-V
+
+ParaSET*ViewerShell*menubar*edit_delete.mnemonic: D
+ParaSET*ViewerShell*menubar*edit_delete.accelerator: Shift Ctrl<Key>d
+ParaSET*ViewerShell*menubar*edit_delete.acceleratorText: ^$-D
+
+ParaSET*ViewerShell*menubar*edit_refer.mnemonic: f
+ParaSET*ViewerShell*menubar*edit_refer.accelerator: Shift Ctrl<Key>f
+ParaSET*ViewerShell*menubar*edit_refer.acceleratorText: ^$-F
+
+ParaSET*ViewerShell*menubar*edit_refer_graphics.mnemonic: G
+ParaSET*ViewerShell*menubar*edit_refer_graphics.accelerator: Shift Ctrl<Key>g
+ParaSET*ViewerShell*menubar*edit_refer_graphics.acceleratorText: ^$-G
+
+ParaSET*ViewerShell*menubar*edit_search.mnemonic: S
+
+ParaSET*ViewerShell*menubar*edit_replace.mnemonic: R
+ParaSET*ViewerShell*menubar*edit_replace.accelerator: Shift Ctrl<Key>r
+ParaSET*ViewerShell*menubar*edit_replace.acceleratorText: ^$-R
+
+ParaSET*ViewerShell*menubar*edit_rename.mnemonic: n
+
+ParaSET*ViewerShell*menubar*edit_change_args.mnemonic: A
+
+ParaSET*ViewerShell*menubar*edit_clear_selection.mnemonic: C
+ParaSET*ViewerShell*menubar*edit_clear_selection.accelerator: Shift<Key>Escape
+ParaSET*ViewerShell*menubar*edit_clear_selection.acceleratorText: $-Esc
+
+!!! VIEWERSHELL VIEW MENU !!!
+
+!*ViewerShell*menubar*view.mnemonic: V
+
+ParaSET*ViewerShell*menubar*view_shrink.mnemonic: S
+ParaSET*ViewerShell*menubar*view_shrink.accelerator: Shift Ctrl<Key>greater
+ParaSET*ViewerShell*menubar*view_shrink.acceleratorText: ^$->
+
+ParaSET*ViewerShell*menubar*view_magnify.mnemonic: M
+ParaSET*ViewerShell*menubar*view_magnify.accelerator: Shift Ctrl<Key>less
+ParaSET*ViewerShell*menubar*view_magnify.acceleratorText: ^$-<
+
+ParaSET*ViewerShell*menubar*view_zoomtofit.mnemonic: F
+ParaSET*ViewerShell*menubar*view_zoomtofit.accelerator: Shift Ctrl<Key>t
+ParaSET*ViewerShell*menubar*view_zoomtofit.acceleratorText: ^$-T
+
+ParaSET*ViewerShell*menubar*view_reset.mnemonic: e
+ParaSET*ViewerShell*menubar*view_reset.accelerator: Ctrl<Key>equal
+ParaSET*ViewerShell*menubar*view_reset.acceleratorText: ^-=
+
+ParaSET*ViewerShell*menubar*view_split.mnemonic: V
+ParaSET*ViewerShell*menubar*view_split.accelerator: Shift Ctrl<Key>percent
+ParaSET*ViewerShell*menubar*view_split.acceleratorText: ^$-%
+
+ParaSET*ViewerShell*menubar*view_remove.mnemonic: R
+ParaSET*ViewerShell*menubar*view_remove.accelerator: Shift Ctrl<Key>caret
+ParaSET*ViewerShell*menubar*view_remove.acceleratorText: ^$-^
+
+ParaSET*ViewerShell*menubar*view_mode_buttons.mnemonic: M
+
+ParaSET*ViewerShell*menubar*view_button_bar.mnemonic: B
+
+!!! VIEWERSHELL STRUCTURE MENU !!!
+
+!*ViewerShell*menubar*structure.mnemonic: S
+
+ParaSET*ViewerShell*menubar*structure_collapse.mnemonic: C
+ParaSET*ViewerShell*menubar*structure_collapse.accelerator: Shift Ctrl<Key>braceleft
+ParaSET*ViewerShell*menubar*structure_collapse.acceleratorText: ^$-{
+
+ParaSET*ViewerShell*menubar*structure_expand.mnemonic: E
+ParaSET*ViewerShell*menubar*structure_expand.accelerator: Shift Ctrl<Key>braceright
+ParaSET*ViewerShell*menubar*structure_expand.acceleratorText: ^$-}
+
+ParaSET*ViewerShell*menubar*structure_collapse_level.mnemonic: l
+ParaSET*ViewerShell*menubar*structure_collapse_level_b1.mnemonic: 1
+ParaSET*ViewerShell*menubar*structure_collapse_level_b2.mnemonic: 2
+ParaSET*ViewerShell*menubar*structure_collapse_level_b3.mnemonic: 3
+ParaSET*ViewerShell*menubar*structure_collapse_level_b4.mnemonic: 4
+ParaSET*ViewerShell*menubar*structure_collapse_level_b5.mnemonic: 5
+
+ParaSET*ViewerShell*menubar*structure_expand_level.mnemonic: x
+ParaSET*ViewerShell*menubar*structure_expand_level_b1.mnemonic: 1
+ParaSET*ViewerShell*menubar*structure_expand_level_b2.mnemonic: 2
+ParaSET*ViewerShell*menubar*structure_expand_level_b3.mnemonic: 3
+ParaSET*ViewerShell*menubar*structure_expand_level_b4.mnemonic: 4
+ParaSET*ViewerShell*menubar*structure_expand_level_b5.mnemonic: 5
+
+ParaSET*ViewerShell*menubar*structure_next.mnemonic: N
+ParaSET*ViewerShell*menubar*structure_next.accelerator: Shift Ctrl<Key>n
+ParaSET*ViewerShell*menubar*structure_next.acceleratorText: ^$-N
+
+ParaSET*ViewerShell*menubar*structure_previous.mnemonic: P
+ParaSET*ViewerShell*menubar*structure_previous.accelerator: Shift Ctrl<Key>p
+ParaSET*ViewerShell*menubar*structure_previous.acceleratorText: ^$-P
+
+ParaSET*ViewerShell*menubar*structure_traverse.mnemonic: T
+ParaSET*ViewerShell*menubar*structure_traverse_brkpt.mnemonic: B
+ParaSET*ViewerShell*menubar*structure_traverse_exec.mnemonic: x
+ParaSET*ViewerShell*menubar*structure_traverse_changes.mnemonic: C
+ParaSET*ViewerShell*menubar*structure_traverse_errors.mnemonic: E
+ParaSET*ViewerShell*menubar*structure_traverse_search_hits.mnemonic: S
+
+!!! VIEWERSHELL DEBUG MENU !!!
+
+!*ViewerShell*menubar*debug.mnemonic: D
+ParaSET*ViewerShell*menubar*debug_interpret.mnemonic: R
+ParaSET*ViewerShell*menubar*debug_arguments.mnemonic: w
+ParaSET*ViewerShell*menubar*debug_executable.mnemonic: P
+ParaSET*ViewerShell*menubar*debug_attach.mnemonic: A
+ParaSET*ViewerShell*menubar*debug_evaluate.mnemonic: v
+ParaSET*ViewerShell*menubar*debug_interpret_functions.mnemonic: I
+ParaSET*ViewerShell*menubar*debug_trace.mnemonic: T
+
+ParaSET*ViewerShell*menubar*debug_brkpt_at_selection.mnemonic: B
+ParaSET*ViewerShell*menubar*debug_brkpt_at_selection.accelerator: Shift Ctrl<Key>asterisk
+ParaSET*ViewerShell*menubar*debug_brkpt_at_selection.acceleratorText: ^$-*
+
+ParaSET*ViewerShell*menubar*debug_brkpt_in_function.mnemonic: F
+ParaSET*ViewerShell*menubar*debug_brkpt_in_function.accelerator: Shift Ctrl<Key>ampersand
+ParaSET*ViewerShell*menubar*debug_brkpt_in_function.acceleratorText: ^$-&
+
+ParaSET*ViewerShell*menubar*debug_brkpt_if_expression.mnemonic: E
+ParaSET*ViewerShell*menubar*debug_brkpt_if_expression.accelerator: Shift Ctrl<Key>question
+ParaSET*ViewerShell*menubar*debug_brkpt_if_expression.acceleratorText: ^$-?
+
+ParaSET*ViewerShell*menubar*debug_show_brkpts.mnemonic: S
+ParaSET*ViewerShell*menubar*debug_remove_brkpts.mnemonic: m
+
+ParaSET*ViewerShell*menubar*debug_kill.mnemonic: K
+ParaSET*ViewerShell*menubar*debug_toggle.mnemonic: D
+
+!!! Change Propagation !!!
+
+! The impact analysis dialog needs a fixed width font. 
+ParaSET*impact_analysis*list_header*FontList:	-*-lucidatypewriter-medium-r-normal-*-12-*,aseticons-20=aseticons
+ParaSET*impact_analysis*impact_list*FontList:	-*-lucidatypewriter-medium-r-normal-*-12-*,aseticons-20=aseticons
+
+pset_config*VT100*geometry:	80x5
+pset_config*VT100*Background:	White
+pset_config*VT100*Foreground:	Black
+

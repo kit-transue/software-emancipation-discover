@@ -1,0 +1,40 @@
+#!/bin/sh
+# cm_delete_src (ClearCase) - Delete (uncheckout for ClearCase) source file
+
+# exit script if we get any errors
+set -e
+
+set +e
+version=`cleartool describe $cm_workfile 2> /dev/null | head -1 | grep 'version'`
+set -e
+
+if [ "$version" = "" ] ; then
+  \rm -f $cm_workfile
+else
+  # Uncheckout it so that we see the system version again
+  cleartool uncheckout -rm $cm_options $cm_workfile
+fi
+
+# Execute the user-defined after put script (async) if it exists
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterput ] ; then
+  $cm_optscripts/cm_afterput &
+fi
+
+exit 0
+
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = informational (displayed in configshell)
+		   : stderr = error messages (displayed in config status dialog box)
+
+#### Environment Variables
+# Environment variables setup by DISCOVER for ALL config scripts:
+#	$cm_optscripts    - Points to the directory of optional scripts
+# Additional environment variables setup for this script by the configurator:
+#	$cm_workfile	  - path to local (private) copy of file to be processed
+#	$cm_options       - user defined options as configured in Configurator
+#			    preferences dialog box for delete
+
+#### Optional Scripts
+#	cm_afterput	  - Run in the background if the check out (or delete) succeeds

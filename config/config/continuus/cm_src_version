@@ -1,0 +1,3 @@
+#!/bin/sh
+
+$CCM_HOME/bin/ccm ls $cm_workfile | grep -v "Referenced object version could not be identified: " | sed -e "s%^.*,%%"

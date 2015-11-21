@@ -1,0 +1,5697 @@
+/*************************************************************************
+* Copyright (c) 2015, Synopsys, Inc.                                     *
+* All rights reserved.                                                   *
+*                                                                        *
+* Redistribution and use in source and binary forms, with or without     *
+* modification, are permitted provided that the following conditions are *
+* met:                                                                   *
+*                                                                        *
+* 1. Redistributions of source code must retain the above copyright      *
+* notice, this list of conditions and the following disclaimer.          *
+*                                                                        *
+* 2. Redistributions in binary form must reproduce the above copyright   *
+* notice, this list of conditions and the following disclaimer in the    *
+* documentation and/or other materials provided with the distribution.   *
+*                                                                        *
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    *
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      *
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  *
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   *
+* HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, *
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       *
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  *
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  *
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    *
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
+*************************************************************************/
+#define SERVER // this code for server only
+
+#include <vport.h>
+#include vstartupHEADER
+#include vstdlibHEADER
+#include vsessionHEADER
+#include vserviceHEADER
+#include vscrapHEADER
+#include vdasservHEADER
+#include vstdioHEADER
+
+#include <signal.h>
+#ifndef ISO_CPP_HEADERS
+#include <iostream.h>
+#else /* ISO_CPP_HEADERS */
+#include <iostream>
+using namespace std;
+#endif /* ISO_CPP_HEADERS */
+#include "Application.h"
+
+#ifdef SERVER
+#include <tcl.h>
+#endif /* SERVER */
+ 
+#ifndef _WIN32
+#ifndef SIG_TYP
+typedef void (*SIGHANDLER)(int);
+#define SIG_TYP SIGHANDLER
+#endif
+#endif
+
+static int Block(vsessionStatement *statement)
+{
+#ifndef _WIN32
+    SIG_TYP old = signal(SIGALRM,SIG_IGN);
+#endif
+    int retval = statement->Block(NULL);
+#ifndef _WIN32
+    signal(SIGALRM,old);
+#endif
+    return retval;
+}
+
+typedef void async;
+typedef char* _charptr;
+typedef vstr* _vstrptr;
+
+#define g_push(s) {vscrapSetArrayCount(real_result,array_index2+1);vscrapSetElementAt(real_result,array_index2,s);array_index2++;}
+#define g_take() sarg? vscrapGetElementAt(sarg,array_index++): 0
+ 
+static vscrap*  marshall_char(char x){return vscrapFromCharacter(x);}
+static vscrap*  marshall_short(short x){return vscrapFromInteger((int)x);}
+static vscrap*  marshall_int(int x){return vscrapFromInteger(x);}
+static vscrap*  marshall_float(float x){return vscrapFromFloat(x);}
+static vscrap*  marshall_double(double x){return vscrapFromFloat(x);}
+static vscrap*  marshall__charptr(_charptr x){if (!x)x="";vstr*_x=vstrClone((vchar*)x);vscrap* s=vscrapFromString(_x);vstrDestroy(_x);return s;}
+static vscrap*  marshall__vstrptr(_vstrptr x){if (!x)x=(_vstrptr)"";return vscrapFromString(x);}
+ 
+static void demarshall_char(char* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetCharacter(s);delete s;
+    } else { 
+        *x = '\0'; 
+    } 
+} 
+ 
+static void demarshall_short(short* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_int(int* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_float(float* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+static void demarshall_double(double* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+ 
+extern "C" char* strdup(const char*);
+static void demarshall__charptr(char** x, vscrap* s) 
+{ 
+    if (s) { 
+        vstr*y = vstrCloneScribed(vscrapScribeString(s));delete s;
+        *x = strdup((char*)y);
+        vstrDestroy(y);
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static void demarshall__vstrptr(vstr** x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vstrCloneScribed(vscrapScribeString(s));delete s;
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static vscrap *answer_scrap;
+
+
+static void errmsg(char*msg){cerr << msg << endl;}
+static void std_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+    vscrap *sync_answer_scrap = NULL;
+
+    switch (vsessionStatement::GetEventCode (event)) {
+        case vsessionStatementEVENT_COMPLETED:
+            statement->GetReturnValue(statement, &sync_answer_scrap);
+            statement->SetData(sync_answer_scrap);
+            break;
+        case vsessionStatementEVENT_CANNOT_SEND:
+            errmsg("*** cannot send!\n");
+            Application::SetCannotSend(vTRUE);
+            break;
+        case vsessionStatementEVENT_END_SESSION:
+            errmsg("*** end session!\n");
+            break;
+        case vsessionStatementEVENT_FAILED:
+            errmsg("*** failed!\n");
+            break;
+    }
+}
+
+static void std_async_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+
+    Application::DecrementCount();
+}
+
+static Application* DISmain_app;
+#ifdef SERVER
+#include <cLibraryFunctions.h>
+#ifndef ISO_CPP_HEADERS
+#include <stdlib.h>
+#include <fstream.h>
+#else /* ISO_CPP_HEADERS */
+#include <cstdlib>
+#include <fstream>
+#endif /* ISO_CPP_HEADERS */
+
+#include "DIS_main/include/prefs.h"
+#include "customize.h"
+#include "pref_registry.h"
+#include "proj.h"
+#include "driver.h"
+#include "symbolPtr.h"
+#include "symbolScope.h"
+#include "ParaCancel.h"
+#include "steView.h"
+#include "dialog.h"
+#include "symbolScope.h"
+#include "closure.h"
+#include "BrowserController.h"
+#include "LanguageController.h"
+#include "BrowserData.h"
+
+#include "dis_view_create.h"
+#include "SelectionIterator.h"
+#include "ginterp.h"
+#include "gRTListServer.h"
+#include "gLayerServer.h"
+#include "gviewerShell.h"
+#include "gviewerMenuBar.h"
+#include "gviewerPopupMenuList.h"
+#include "representation.h"
+#include "symbolArr.h"
+#include "objOper.h"
+#include "partition.h"
+#include "messages.h"
+#include "iQuestion.h"
+#include "dis_view_create.h"
+#include "StatusDialog.h"
+#include "genError.h"
+#include "smt.h"
+#include "objRawApp.h"
+#include "db.h"
+#include "../DIS_ui/interface.h"
+#include "messages.h"
+#include "errorBrowser.h"
+#include "xref_queries.h"
+
+#include "symbolArr.h"
+#include "objOper.h"
+#include "partition.h"
+#include "smt.h"
+#include "objRawApp.h"
+#include "db.h"
+#include "viewTypes.h"
+#include "DIS_main/include/projscope.h"
+#include "Interpreter.h"
+#include "statistics.h"
+#include "metric.h"
+#include "charstream.h"
+#include "Interpreter.h"
+
+
+int dis_select (char *f_name, int lin, int off, int tab, const char *tok, int add);
+int dis_cm_get(int);
+
+int dis_cm_event_internal(const char* event, const char *fname);
+int dis_ide_command_event(int argc, char *argv[]);
+
+int dis_create_view_of_def (symbolPtr sym);
+void getSelection (int id, symbolArr &symbols);
+
+void get_all_uses(symbolArr& entities, symbolArr& result);
+void update_selection(symbolArr& modules);
+void unload_selection(symbolArr& modules);
+void preload_selection(symbolArr& modules);
+void setup_home_from_selection(symbolArr& projects);
+extern "C" void aset_driver_exit( int );
+int cli_process_input(char *, ostream&, Interpreter*, int do_propmt_and_print);
+void newui_handle_menuitem(int argc, char **argv);
+void GetSavedResult( Interpreter *, symbolArr & );
+void newui_execute_query(symbolArr& results, const symbolArr& selection, const char* cmd_to_eval);
+
+//-----------------------------------------------------------------------------
+
+
+extern "C" char build_date[];
+
+extern "C" void galaxyStartTimer (void);
+extern "C" void galaxyStopTimer (void);
+extern void open_view (viewtype, symbolArr&);
+extern void ste_set_current_focus (steView*, steScreen*);
+extern void delete_scratch_apps();
+extern StatInfo* StatisticsList[NUM_OF_STATS];
+extern char* PrefsFileName;
+extern Interpreter *interpreter_instance;
+extern void getAllFilters(genString&);
+extern int getFilterPhyname(char *, char *, genString&);
+
+class galaxyBoost {
+    public:
+        galaxyBoost (void) { galaxyStopTimer (); }
+        ~galaxyBoost (void) { galaxyStartTimer (); }
+};
+
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+
+int gala_current_layer;
+steScreen* gala_current_screen;
+dialog* gala_current_screen_dialog;
+int gala_current_screen_layer;
+int gala_current_viewer;
+int gala_current_view;
+int gala_current_window;
+
+//----------------------------------------------------------------------------
+BrowserController* GetBrowserController()
+{
+        return LanguageController::GetBrowserController();
+}
+//-----------------------------------------------------------------------------
+
+static void initSearchPath (void)
+{
+    char* pathlist = "/";
+    projList::domain_reset ();
+    projList::search_list->parse_names_init (pathlist);
+    projList::search_list->put_old_pathlist ((const char*) 0);
+    projList::search_list->domain_string ();
+}
+
+
+ extern int dis_focus_node(Relational *);
+ extern int dis_focus_instance(symbolPtr);
+
+//-----------------------------------------------------------------------------
+
+static void setProjScope (char *searchList)
+{
+    static genString oldPathList = "";
+
+    projList::domain_reset ();
+    projList::search_list->parse_names_init (searchList);
+    projList::search_list->put_old_pathlist (oldPathList.str());
+    projList::search_list->domain_string ();
+
+    oldPathList = searchList;
+}
+
+//-----------------------------------------------------------------------------
+
+extern Application* DISui_app;
+
+static void get_syms_for_metric_analysis(
+                symbolArr & selected, symbolArr & domain, 
+                bool need[MI_num], int recursive) 
+{
+    Initialize(do_batch_metric_analysis);
+    
+    domain.removeAll();
+    symbolPtr sym;
+    ForEachS(sym, selected) {
+        switch (sym.get_kind()) {
+          case DD_FUNC_DECL:
+            if (need[MI_func]) domain.insert_last(sym);
+            break;
+          case DD_CLASS:
+            if (need[MI_class]) domain.insert_last(sym);
+            break;
+          case DD_MODULE:
+            if (recursive) {
+                symbolArr links;
+                sym->get_link((linkType)is_defining, links);
+                symbolPtr link;
+                ForEachS(link, links) {
+                    ddKind kind = link.get_kind();
+                    if (kind == DD_FUNC_DECL && need[MI_func] || 
+                        kind == DD_CLASS && need[MI_class])
+                      domain.insert_last(link);
+                }
+            }
+            if (need[MI_file]) domain.insert_last(sym);
+            break;
+        }
+    }
+    domain.remove_dup_syms();
+}
+#endif
+
+
+/*----------------------------- dis_connect_app ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_connect_app (Application* app, _vstrptr name)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_connect_app in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_connect_app (Application* app, _vstrptr name)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_connect_app"));
+          g_push(marshall__vstrptr(name));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_connect_app (Application* app, _vstrptr name)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_connect_app (_vstrptr name)
+{
+    Initialize (dis_connect_DISui);
+    galaxyBoost boost;
+
+    if (strcmp((char*)name, "DISui") == 0) {
+        if (DISui_app) {
+            fprintf (stderr, "Disconnecting from \"%s\"\n", (char*) name);
+            delete DISui_app;
+        }
+        {
+            const char* group = Application::getGroupName();
+            DISui_app = new Application;
+            if (DISui_app->connect (group, "DISui")) {
+                fprintf (stderr, "Cannot connect to service \"%s:DISui\"\n", group);
+            } else {
+                fprintf (stderr, "%s:DISmain connected to %s:DISui.\n", group, group);
+            }
+        }
+
+    }   
+    return OSapi_getpid();
+}
+
+void dis_connect_app_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr name;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_connect_app (Application* app, _vstrptr name)\n");
+    demarshall__vstrptr (&name, g_take());
+
+    int return_val = dis_connect_app (name);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_connect_app (Application* app, _vstrptr name)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_create ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_create (Application* app, int a0)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_create in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_create (Application* app, int a0)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_create"));
+          g_push(marshall_int(a0));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_create (Application* app, int a0)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_create (int a0)
+{
+    Initialize (dis_rtl_create);
+    galaxyBoost boost;
+
+    RTListServer* server = new RTListServer (a0);
+
+    return server->id();
+}
+
+void dis_rtl_create_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int a0;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_create (Application* app, int a0)\n");
+    demarshall_int (&a0, g_take());
+
+    int return_val = dis_rtl_create (a0);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_create (Application* app, int a0)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_set_caller ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_set_caller (Application* app, int id, _vstrptr caller)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_set_caller in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_set_caller (Application* app, int id, _vstrptr caller)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_set_caller"));
+          g_push(marshall_int(id));
+          g_push(marshall__vstrptr(caller));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_set_caller (int id, _vstrptr caller)
+{
+    RTListServer* server = RTListServer::find (id);
+    if (!server) return;
+
+    server->set_caller (caller);
+}
+
+void dis_rtl_set_caller_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    _vstrptr caller;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_set_caller (Application* app, int id, _vstrptr caller)\n");
+    demarshall_int (&id, g_take());
+    demarshall__vstrptr (&caller, g_take());
+
+    dis_rtl_set_caller (id,caller);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_set_caller (Application* app, int id, _vstrptr caller)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_init ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_init (Application* app, int id, _vstrptr spec)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_init in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_init (Application* app, int id, _vstrptr spec)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_init"));
+          g_push(marshall_int(id));
+          g_push(marshall__vstrptr(spec));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_init (int id, _vstrptr spec)
+{
+    Initialize (dis_rtl_init);
+    galaxyBoost boost;
+
+        if (!interpreter_instance)
+                return;
+    //----------
+    // find list
+    //----------
+
+    RTListServer* server = RTListServer::find (id);
+    if (!server)
+        return;
+
+    //-----------
+    // clear list
+    //-----------
+
+    server->clear ();
+
+        symbolArr result;
+        symbolArr       subproj_arr;
+        projNode        *pr;
+
+        int i;
+        for (i = 0; pr = projList::search_list->get_scan (i); i++)
+            subproj_arr.insert_last (pr);
+
+        //----------------------
+    // parse selection range
+    //----------------------
+
+        ParaCancel::set();
+
+        genArrCharPtr cmd_arr;
+        i = -1;
+        //break out of the loop when next selected category name is empty       
+        while (true)
+        {
+                //get next selected Category
+                genString cmd;
+                cmd.printf("lindex {%s} %d", spec, ++i);
+                interpreter_instance->EvalCmd(cmd);
+                genString CategoryName = Tcl_GetStringResult(interpreter_instance->interp);
+                
+                if (CategoryName.is_null() || CategoryName.length() == 0)
+                        break;
+        
+                CategoryName.trim();
+                const char* command = GetBrowserController()->get_category_command(CategoryName);
+                if (command && strlen(command) > 0)
+                {
+                        cmd_arr.append((char**)&command);
+                }               
+        }
+
+        int size = cmd_arr.size();
+        genString* cmds = new genString[size];
+        genString defines;
+        ddSelector defines_dd;
+
+        GetBrowserController()->process_commands(cmd_arr, cmds, defines, defines_dd);
+        
+        symbolArr temp;
+        
+        if (defines.not_null())
+        {
+                newui_execute_query(temp, subproj_arr, defines);
+                result.insert_last(temp);
+        }
+        for (i = 0; i < size; ++i)
+        {
+                genString cmd = cmds[i];
+                if (cmd.is_null())
+                        break;
+                newui_execute_query(temp, subproj_arr, cmd);
+                result.insert_last(temp);
+        }
+        
+        delete [] cmds;
+
+        ParaCancel::reset();
+        
+        result.remove_dup_syms();
+        server->insert (result);
+    
+    return;
+}
+
+void dis_rtl_init_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    _vstrptr spec;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_init (Application* app, int id, _vstrptr spec)\n");
+    demarshall_int (&id, g_take());
+    demarshall__vstrptr (&spec, g_take());
+
+    dis_rtl_init (id,spec);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_init (Application* app, int id, _vstrptr spec)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_clear ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_clear (Application* app, int id)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_clear in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_clear (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_clear"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_clear (int id)
+{
+    Initialize (dis_rtl_clear);
+    galaxyBoost boost;
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list)
+        return;
+
+    list->clear ();
+
+    return;
+}
+
+void dis_rtl_clear_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_clear (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    dis_rtl_clear (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_clear (Application* app, int id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_select ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_select (Application* app, int id, _vstrptr spec)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_select in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_select (Application* app, int id, _vstrptr spec)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_select"));
+          g_push(marshall_int(id));
+          g_push(marshall__vstrptr(spec));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_select (int id, _vstrptr spec)
+{
+    Initialize (dis_rtl_select);
+    galaxyBoost boost;
+
+    //----------
+    // find list
+    //----------
+
+    RTListServer* server = RTListServer::find (id);
+    if (!server)
+        return;
+
+    //--------------
+    // set selection
+    //--------------
+
+        genMask selMask;
+        SelectionIterator catSel((char*)spec);
+        while (catSel.Next() ) 
+                selMask += catSel.GetNext();
+
+    if (!server->setSel (selMask) )
+        return;
+
+    return;
+}
+
+void dis_rtl_select_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    _vstrptr spec;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_select (Application* app, int id, _vstrptr spec)\n");
+    demarshall_int (&id, g_take());
+    demarshall__vstrptr (&spec, g_take());
+
+    dis_rtl_select (id,spec);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_select (Application* app, int id, _vstrptr spec)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_query_links ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_query_links (Application* app, int src_id, _vstrptr spec, int trg_id)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_query_links in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_query_links (Application* app, int src_id, _vstrptr spec, int trg_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_query_links"));
+          g_push(marshall_int(src_id));
+          g_push(marshall__vstrptr(spec));
+          g_push(marshall_int(trg_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_query_links (int src_id, _vstrptr spec, int trg_id)
+{
+    Initialize (dis_rtl_query);
+    galaxyBoost boost;
+
+    //-----------
+    // find lists
+    //-----------
+
+        if (!interpreter_instance)
+        return;
+
+    RTListServer* src = RTListServer::find (src_id);
+    if (!src)
+        return;
+
+    RTListServer* trg = RTListServer::find (trg_id);
+    if (!trg)
+        return;
+
+    ParaCancel::set();
+    symbolArr sel;
+    src->getSelArr (sel);
+
+    trg->clear ();
+
+        symbolArr result;
+        
+        genArrCharPtr cmd_arr;
+        int i = -1;
+        while(true)
+        {
+                //get next selected Query
+                genString cmd;
+                cmd.printf("lindex {%s} %d", spec, ++i);
+                interpreter_instance->EvalCmd(cmd);
+                genString QueryName = Tcl_GetStringResult(interpreter_instance->interp);
+                
+                if (QueryName.is_null() || QueryName.length() == 0)
+                        break;
+
+                QueryName.trim();
+                const char* command = GetBrowserController()->get_query_command(QueryName);
+                if (command && strlen(command) > 0)
+                {
+                        cmd_arr.append((char**)&command);
+                }
+        }
+
+        int size = cmd_arr.size();
+        genString* cmds = new genString[size];
+        genString defines;
+        ddSelector defines_dd;
+
+        GetBrowserController()->process_commands(cmd_arr, cmds, defines, defines_dd);
+        
+        symbolArr temp;
+        genString cmd;
+
+        if (defines.not_null())
+        {
+                GetBrowserController()->handle_closure(defines, cmd);
+                newui_execute_query(temp, sel, cmd);
+                result.insert_last(temp);
+        }
+        for (i = 0; i < size; ++i)
+        {
+                if (cmds[i].is_null())
+                        break;
+
+                GetBrowserController()->handle_closure(cmds[i], cmd);
+                newui_execute_query(temp, sel, cmd);
+                result.insert_last(temp);
+        }
+        
+        delete [] cmds;
+
+        result.remove_dup_syms();
+     
+        trg->insert(result);
+
+    ParaCancel::reset();
+
+    return;
+}
+
+void dis_rtl_query_links_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int src_id;
+    _vstrptr spec;
+    int trg_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_query_links (Application* app, int src_id, _vstrptr spec, int trg_id)\n");
+    demarshall_int (&src_id, g_take());
+    demarshall__vstrptr (&spec, g_take());
+    demarshall_int (&trg_id, g_take());
+
+    dis_rtl_query_links (src_id,spec,trg_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_query_links (Application* app, int src_id, _vstrptr spec, int trg_id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_query_proj ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_query_proj (Application* app, int src_id, int pos, int trg_id)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_query_proj in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_query_proj (Application* app, int src_id, int pos, int trg_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_query_proj"));
+          g_push(marshall_int(src_id));
+          g_push(marshall_int(pos));
+          g_push(marshall_int(trg_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_query_proj (int src_id, int pos, int trg_id)
+{
+    Initialize (dis_rtl_query_proj);
+    galaxyBoost boost;
+
+    //-----------
+    // find lists
+    //-----------
+
+    RTListServer* src = RTListServer::find (src_id);
+    if (!src)
+        return;
+ 
+    RTListServer* trg = RTListServer::find (trg_id);
+    if (!trg)
+        return;
+
+    trg->queryProjects (src, pos);
+
+    return;
+}
+
+void dis_rtl_query_proj_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int src_id;
+    int pos;
+    int trg_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_query_proj (Application* app, int src_id, int pos, int trg_id)\n");
+    demarshall_int (&src_id, g_take());
+    demarshall_int (&pos, g_take());
+    demarshall_int (&trg_id, g_take());
+
+    dis_rtl_query_proj (src_id,pos,trg_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_query_proj (Application* app, int src_id, int pos, int trg_id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_query_top_proj ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_query_top_proj (Application* app, int trg_id)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_query_top_proj in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_query_top_proj (Application* app, int trg_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_query_top_proj"));
+          g_push(marshall_int(trg_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_query_top_proj (int trg_id)
+{
+    Initialize (dis_rtl_query_top_proj);
+    galaxyBoost boost;
+
+    //----------
+    // find list
+    //----------
+
+    RTListServer* trg = RTListServer::find (trg_id);
+    if (!trg)
+        return;
+ 
+    trg->queryProjects ();
+
+    return;
+}
+
+void dis_rtl_query_top_proj_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int trg_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_query_top_proj (Application* app, int trg_id)\n");
+    demarshall_int (&trg_id, g_take());
+
+    dis_rtl_query_top_proj (trg_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_query_top_proj (Application* app, int trg_id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_query_parent_proj ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_rtl_query_parent_proj (Application* app, int trg_id)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_query_parent_proj in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_query_parent_proj (Application* app, int trg_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_query_parent_proj"));
+          g_push(marshall_int(trg_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_rtl_query_parent_proj (int trg_id)
+{
+    Initialize (dis_rtl_query_parent_proj);
+    galaxyBoost boost;
+    //----------
+    // find list
+    //----------
+
+    RTListServer* trg = RTListServer::find (trg_id);
+    if (!trg)
+        return;
+
+    trg->queryParentProject ();
+
+    return;
+}
+
+void dis_rtl_query_parent_proj_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int trg_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_query_parent_proj (Application* app, int trg_id)\n");
+    demarshall_int (&trg_id, g_take());
+
+    dis_rtl_query_parent_proj (trg_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_query_parent_proj (Application* app, int trg_id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_get_title ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_rtl_get_title (Application* app, int id)
+{
+    DISmain_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_get_title in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_get_title (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_get_title"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_get_title (Application* app, int id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_rtl_get_title (int id)
+{
+    Initialize (dis_rtl_get_title);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server)
+        return (vstr*) server->getTitle ();
+
+    return 0;
+}
+
+void dis_rtl_get_title_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_get_title (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    _vstrptr return_val = dis_rtl_get_title (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_get_title (Application* app, int id)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_get_item ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_rtl_get_item (Application* app, int id, int idx)
+{
+    DISmain_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_get_item in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_get_item (Application* app, int id, int idx)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_get_item"));
+          g_push(marshall_int(id));
+          g_push(marshall_int(idx));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_get_item (Application* app, int id, int idx)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_rtl_get_item (int id, int idx)
+{
+    Initialize (dis_rtl_get_item);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server)
+        return (vstr*) server->getItem (idx);
+
+    return 0;
+}
+
+void dis_rtl_get_item_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    int idx;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_get_item (Application* app, int id, int idx)\n");
+    demarshall_int (&id, g_take());
+    demarshall_int (&idx, g_take());
+
+    _vstrptr return_val = dis_rtl_get_item (id,idx);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_get_item (Application* app, int id, int idx)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_get_unfilteredSize ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_get_unfilteredSize (Application* app, int id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_get_unfilteredSize in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_get_unfilteredSize (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_get_unfilteredSize"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_get_unfilteredSize (Application* app, int id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_get_unfilteredSize (int id)
+{
+    Initialize (dis_rtl_get_unfilteredSize);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server) return server->get_unfilteredSize();
+    else return (0);
+}
+
+void dis_rtl_get_unfilteredSize_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_get_unfilteredSize (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    int return_val = dis_rtl_get_unfilteredSize (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_get_unfilteredSize (Application* app, int id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_isFiltered ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_isFiltered (Application* app, int id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_isFiltered in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_isFiltered (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_isFiltered"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_isFiltered (Application* app, int id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_isFiltered (int id)
+{
+    Initialize (dis_rtl_isFiltered);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server) return server->isFiltered();
+    else return (0);
+}
+
+void dis_rtl_isFiltered_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_isFiltered (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    int return_val = dis_rtl_isFiltered (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_isFiltered (Application* app, int id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- gc_put_access_result_into_rtl ------------------------------*/
+
+#ifdef SERVER
+int gc_put_access_result_into_rtl (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    void GetSavedResult(symbolArr& arr);
+
+    int id             = atoi(argv[1]);
+    RTListServer *list = RTListServer::find(id);
+    if(!list) return TCL_OK;
+    symbolArr res_arr;
+    GetSavedResult(res_arr);
+    list->clear();
+    list->insert( res_arr );
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- gc_put_access_value_into_rtl ------------------------------*/
+
+#ifdef SERVER
+int gc_put_access_value_into_rtl (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    void GetAccessValue(char *val, symbolArr& arr);
+
+    int id             = atoi(argv[1]);
+    char *val          = argv[2];
+    RTListServer *list = RTListServer::find(id);
+    if(!list) return TCL_OK;
+    symbolArr res_arr;
+    GetAccessValue(val, res_arr);
+    list->clear();
+    list->insert( res_arr );
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- gc_rtl_propagate ------------------------------*/
+
+#ifdef SERVER
+int gc_rtl_propagate (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int id             = atoi(argv[1]);
+    RTListServer *list = RTListServer::find(id);
+    if(!list) return TCL_OK;
+    list->_propagate();
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_get_size ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_get_size (Application* app, int id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_get_size in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_get_size (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_get_size"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_get_size (Application* app, int id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_get_size (int id)
+{
+    Initialize (dis_rtl_get_size);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server)
+        return server->getSize ();
+
+    return 0;
+}
+
+void dis_rtl_get_size_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_get_size (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    int return_val = dis_rtl_get_size (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_get_size (Application* app, int id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_get_type ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_get_type (Application* app, int id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_get_type in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_get_type (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_get_type"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_get_type (Application* app, int id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_get_type (int id)
+{
+    Initialize (dis_rtl_get_type);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server)
+        return server->getType ();
+
+    return rtlUnknown;
+}
+
+void dis_rtl_get_type_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_get_type (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    int return_val = dis_rtl_get_type (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_get_type (Application* app, int id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_destroy ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_destroy (Application* app, int id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_destroy in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_destroy (Application* app, int id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_destroy"));
+          g_push(marshall_int(id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_destroy (Application* app, int id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_destroy (int id)
+{
+    Initialize (dis_rtl_destroy);
+    galaxyBoost boost;
+
+    RTListServer* server = RTListServer::find (id);
+    if (server) {
+        delete server;
+        return 0;
+    }
+
+    return 1;
+}
+
+void dis_rtl_destroy_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_destroy (Application* app, int id)\n");
+    demarshall_int (&id, g_take());
+
+    int return_val = dis_rtl_destroy (id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_destroy (Application* app, int id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_edit_copy ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_edit_copy (Application* app, int source, int target)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_edit_copy in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_edit_copy (Application* app, int source, int target)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_edit_copy"));
+          g_push(marshall_int(source));
+          g_push(marshall_int(target));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_edit_copy (Application* app, int source, int target)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_edit_copy (int source, int target)
+{
+    Initialize (dis_rtl_paste);
+    galaxyBoost boost;
+
+    int ret_val = 1;
+
+    RTListServer * source_rtl = RTListServer::find(source);
+    RTListServer * target_rtl = RTListServer::find(target);
+    if (source_rtl!=0 && target_rtl!=0) {
+        symbolArr source_sel;
+        source_rtl->getSelArr(source_sel);
+        if (source_sel.size() > 0) {
+            target_rtl->clear();
+            target_rtl->insert(source_sel);
+            ret_val = 0;
+        }
+    }
+
+    return ret_val;
+}
+
+void dis_rtl_edit_copy_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int source;
+    int target;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_edit_copy (Application* app, int source, int target)\n");
+    demarshall_int (&source, g_take());
+    demarshall_int (&target, g_take());
+
+    int return_val = dis_rtl_edit_copy (source,target);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_edit_copy (Application* app, int source, int target)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_copy_selected ------------------------------*/
+
+#ifdef SERVER
+int dis_rtl_copy_selected (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{       
+    if(argc != 3){
+        Tcl_AppendResult(interp, argv[0], ": wrong number of arguments. Should be: source_rtl_id target_rtl_id", NULL);
+        return TCL_ERROR;
+    }
+    int src = atoi(argv[1]);
+    int trg = atoi(argv[2]);
+    dis_rtl_edit_copy(src, trg);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_add_to_exist_xref ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_add_to_exist_xref (Application* app, int source_id, int target_id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_add_to_exist_xref in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_add_to_exist_xref (Application* app, int source_id, int target_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_add_to_exist_xref"));
+          g_push(marshall_int(source_id));
+          g_push(marshall_int(target_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_add_to_exist_xref (Application* app, int source_id, int target_id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_add_to_exist_xref (int source_id, int target_id)
+{
+    Initialize (dis_rtl_add_to_exist_xref);
+
+    int ret_val = 0;
+
+    RTListServer * source_rtl = RTListServer::find(source_id);
+    RTListServer * target_rtl = RTListServer::find(target_id);
+    if (source_rtl!=0 && target_rtl!=0) 
+    {
+            symbolArr source_sel;
+            source_rtl->getSelArr(source_sel);
+    
+        symbolArr tobe_inserted;
+        //get selections from a global stack
+        Obj *pObj;
+            OperPoint *pPoint;
+            ForEach( pObj, driver_instance->sel_list.oper_pts )
+            {
+                    if( pObj )
+                    {
+                            pPoint = (OperPoint *)pObj;
+                            symbolPtr sym = pPoint->node.get_xrefSymbol();
+                            if( !sym.isnull() && sym.get_kind() != DD_SOFT_ASSOC  )
+                                    tobe_inserted.insert_last( sym );
+                    }   
+            }
+    
+        symbolPtr x_sym;
+        //get only xref symbols from selection
+        ForEachS(x_sym, source_sel)
+        {
+            if( x_sym.is_xrefSymbol() && x_sym.get_kind() != DD_SOFT_ASSOC )
+                tobe_inserted.insert_last( x_sym );
+        }
+
+            symbolArr target ( target_rtl->getArr() );
+        if (tobe_inserted.size() > 0) {
+            ForEachS(x_sym, tobe_inserted) 
+            {
+                if (!target.includes(x_sym))
+                {
+                    ret_val++;
+                    target.insert_last(x_sym);
+                }
+            }
+
+                if( ret_val > 0 )
+            {
+                target_rtl->clear();
+                    target_rtl->insert(target);
+            }
+            }
+    }
+
+    return ret_val;
+}
+
+void dis_rtl_add_to_exist_xref_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int source_id;
+    int target_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_add_to_exist_xref (Application* app, int source_id, int target_id)\n");
+    demarshall_int (&source_id, g_take());
+    demarshall_int (&target_id, g_take());
+
+    int return_val = dis_rtl_add_to_exist_xref (source_id,target_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_add_to_exist_xref (Application* app, int source_id, int target_id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_add_selected_xref ------------------------------*/
+
+#ifdef SERVER
+int dis_rtl_add_selected_xref (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{       
+    if(argc != 3){
+        Tcl_AppendResult(interp, argv[0], ": wrong number of arguments. Should be: source_rtl_id target_rtl_id", NULL);
+        return TCL_ERROR;
+    }
+    int src = atoi(argv[1]);
+    int trg = atoi(argv[2]);
+    dis_rtl_add_to_exist_xref(src, trg);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+
+/*----------------------------- dis_rtl_add_to_exist ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_add_to_exist (Application* app, int source_id, int target_id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_add_to_exist in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_add_to_exist (Application* app, int source_id, int target_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_add_to_exist"));
+          g_push(marshall_int(source_id));
+          g_push(marshall_int(target_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_add_to_exist (Application* app, int source_id, int target_id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_add_to_exist (int source_id, int target_id)
+{
+    Initialize (dis_rtl_add_to_exist);
+
+    int ret_val = 0;
+
+    RTListServer * source_rtl = RTListServer::find(source_id);
+    RTListServer * target_rtl = RTListServer::find(target_id);
+    if (source_rtl!=0 && target_rtl!=0) {
+        symbolArr source_sel;
+        source_rtl->getSelArr(source_sel);
+        symbolArr target ( target_rtl->getArr() );
+    if (source_sel.size() > 0) {
+        symbolPtr x_sym;
+        ForEachS(x_sym, source_sel) 
+        {
+            if (!target.includes(x_sym))
+            {
+                ret_val++;
+                target.insert_last(x_sym);
+            }
+        }
+
+            if( ret_val > 0 )
+        {
+            target_rtl->clear();
+                target_rtl->insert(target);
+        }
+        }
+    }
+
+    return ret_val;
+}
+
+void dis_rtl_add_to_exist_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int source_id;
+    int target_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_add_to_exist (Application* app, int source_id, int target_id)\n");
+    demarshall_int (&source_id, g_take());
+    demarshall_int (&target_id, g_take());
+
+    int return_val = dis_rtl_add_to_exist (source_id,target_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_add_to_exist (Application* app, int source_id, int target_id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_add_selected ------------------------------*/
+
+#ifdef SERVER
+int dis_rtl_add_selected (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{       
+    if(argc != 3){
+        Tcl_AppendResult(interp, argv[0], ": wrong number of arguments. Should be: source_rtl_id target_rtl_id", NULL);
+        return TCL_ERROR;
+    }
+    int src = atoi(argv[1]);
+    int trg = atoi(argv[2]);
+    dis_rtl_add_to_exist(src, trg);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_remove_selected ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_remove_selected (Application* app, int source_id)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_remove_selected in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_remove_selected (Application* app, int source_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_remove_selected"));
+          g_push(marshall_int(source_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_remove_selected (Application* app, int source_id)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_remove_selected (int source_id)
+{
+    Initialize (dis_rtl_remove_selected);
+
+    int ret_val = 0;
+
+    RTListServer * source_rtl = RTListServer::find(source_id);
+    if (source_rtl!=0) {
+        symbolArr source_sel;
+        source_rtl->getSelArr(source_sel);
+        symbolArr &source = source_rtl->getArr();
+    symbolArr result;
+    if (source_sel.size() > 0) {
+        symbolPtr x_sym;
+        ForEachS(x_sym, source) 
+        {
+            if (!source_sel.includes(x_sym))
+                result.insert_last(x_sym);
+            else
+                ret_val++;
+        }
+
+        source_rtl->clear();
+        
+        if (result.size() > 0)
+                source_rtl->insert(result);
+        else
+            source_rtl->_propagate();
+        }
+    }
+
+    return ret_val;
+}
+
+void dis_rtl_remove_selected_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int source_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_remove_selected (Application* app, int source_id)\n");
+    demarshall_int (&source_id, g_take());
+
+    int return_val = dis_rtl_remove_selected (source_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_remove_selected (Application* app, int source_id)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_delete_selected ------------------------------*/
+
+#ifdef SERVER
+int dis_rtl_delete_selected (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{       
+    if(argc != 2){
+        Tcl_AppendResult(interp, argv[0], ": wrong number of arguments. Should be: rtl_id", NULL);
+        return TCL_ERROR;
+    }
+    int src = atoi(argv[1]);
+    dis_rtl_remove_selected(src);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_edit_paste ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_edit_paste (Application* app, int source, int target)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_edit_paste in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_edit_paste (Application* app, int source, int target)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_edit_paste"));
+          g_push(marshall_int(source));
+          g_push(marshall_int(target));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_edit_paste (Application* app, int source, int target)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_edit_paste (int source, int target)
+{
+    Initialize (dis_rtl_paste);
+    galaxyBoost boost;
+
+    int ret_val = 1;
+
+    RTListServer * source_rtl = RTListServer::find(source);
+    RTListServer * target_rtl = RTListServer::find(target);
+    if (source_rtl!=0 && target_rtl!=0) {
+        symbolArr & source_arr = source_rtl->getArr();
+        if (source_arr.size() > 0) {
+            target_rtl->clear();
+            target_rtl->insert(source_arr);
+            ret_val = 0;
+        }
+    }
+
+    return ret_val;
+}
+
+void dis_rtl_edit_paste_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int source;
+    int target;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_edit_paste (Application* app, int source, int target)\n");
+    demarshall_int (&source, g_take());
+    demarshall_int (&target, g_take());
+
+    int return_val = dis_rtl_edit_paste (source,target);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_edit_paste (Application* app, int source, int target)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_layer_create ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_layer_create (Application* app, int a0, int a1, int a2)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_layer_create in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_layer_create (Application* app, int a0, int a1, int a2)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_layer_create"));
+          g_push(marshall_int(a0));
+          g_push(marshall_int(a1));
+          g_push(marshall_int(a2));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_layer_create (Application* app, int a0, int a1, int a2)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_layer_create (int a0, int a1, int a2)
+{
+    galaxyBoost boost;
+    LayerServer* layers = new LayerServer (a0, a1, a2);
+
+    return 1;
+}
+
+void dis_layer_create_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int a0;
+    int a1;
+    int a2;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_layer_create (Application* app, int a0, int a1, int a2)\n");
+    demarshall_int (&a0, g_take());
+    demarshall_int (&a1, g_take());
+    demarshall_int (&a2, g_take());
+
+    int return_val = dis_layer_create (a0,a1,a2);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_layer_create (Application* app, int a0, int a1, int a2)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_layer_destroy ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_layer_destroy (Application* app, int a0)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_layer_destroy in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_layer_destroy (Application* app, int a0)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_layer_destroy"));
+          g_push(marshall_int(a0));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_layer_destroy (Application* app, int a0)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_layer_destroy (int a0)
+{
+    galaxyBoost boost;
+    LayerServer* server = LayerServer::find_layer_server (a0);
+    if (server) {
+        delete server;
+        return 0;
+    }
+    return 1;
+}
+
+void dis_layer_destroy_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int a0;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_layer_destroy (Application* app, int a0)\n");
+    demarshall_int (&a0, g_take());
+
+    int return_val = dis_layer_destroy (a0);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_layer_destroy (Application* app, int a0)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_set_layer ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_set_layer (Application* app, int a0)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_set_layer in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_set_layer (Application* app, int a0)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_set_layer"));
+          g_push(marshall_int(a0));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_set_layer (int a0)
+{
+    Initialize (dis_view_open);
+    galaxyBoost boost;
+    
+    ste_set_current_focus (NULL, NULL);
+    LayerServer* server = LayerServer::find_layer_server (a0);
+    if (server) {
+        gala_current_layer = server->id();
+        if (server->window()) gala_current_window = server->window();
+        if (server->screen()) {
+            gala_current_screen_layer = server->id();
+            gala_current_screen_dialog = server->dlg();
+            gala_current_screen = server->screen();
+        }
+    }
+}
+
+void dis_set_layer_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int a0;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_set_layer (Application* app, int a0)\n");
+    demarshall_int (&a0, g_take());
+
+    dis_set_layer (a0);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_set_layer (Application* app, int a0)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_open_selection ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_open_selection (Application* app, int rtl_id, int rep_type)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_open_selection in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_open_selection (Application* app, int rtl_id, int rep_type)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_open_selection"));
+          g_push(marshall_int(rtl_id));
+          g_push(marshall_int(rep_type));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_open_selection (Application* app, int rtl_id, int rep_type)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_open_selection (int rtl_id, int rep_type)
+{
+    Initialize (dis_view_open);
+    galaxyBoost boost;
+    
+    RTListServer* server = RTListServer::find (rtl_id);
+  
+    if (!server) 
+        return 1;
+  
+    symbolArr symbols;
+    server->getSelArr (symbols);
+
+    symbolPtr el;
+    symbolArr files_to_open;
+    ForEachS(el, symbols) {
+        dis_view_create(el, (repType) rep_type, 0);
+    }
+
+    return 0;
+}
+
+void dis_open_selection_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int rtl_id;
+    int rep_type;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_open_selection (Application* app, int rtl_id, int rep_type)\n");
+    demarshall_int (&rtl_id, g_take());
+    demarshall_int (&rep_type, g_take());
+
+    int return_val = dis_open_selection (rtl_id,rep_type);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_open_selection (Application* app, int rtl_id, int rep_type)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- server_eval ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_server_eval (Application* app, _vstrptr server, _vstrptr str)
+{
+    DISmain_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call server_eval in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_server_eval (Application* app, _vstrptr server, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("server_eval"));
+          g_push(marshall__vstrptr(server));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_server_eval (Application* app, _vstrptr server, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr server_eval (_vstrptr server, _vstrptr str)
+{
+    Application* app = Application::findApplication ((vchar*)server);
+    vstr* result = NULL;
+    if (app) {
+        int e = app->eval((vchar*)str);
+        result = app->getEvalResult();
+    }
+
+    return result;
+}
+
+void server_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr server;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_server_eval (Application* app, _vstrptr server, _vstrptr str)\n");
+    demarshall__vstrptr (&server, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = server_eval (server,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_server_eval (Application* app, _vstrptr server, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- server_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_server_eval_async (Application* app, _vstrptr server, _vstrptr str)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call server_eval_async in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_server_eval_async (Application* app, _vstrptr server, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("server_eval_async"));
+          g_push(marshall__vstrptr(server));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async server_eval_async (_vstrptr server, _vstrptr str)
+{
+    Application* app = Application::findApplication ((vchar*)server);
+    vstr* result = NULL;
+    if (app) {
+        app->eval((vchar*)str);
+    }
+
+    return;
+}
+
+void server_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr server;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_server_eval_async (Application* app, _vstrptr server, _vstrptr str)\n");
+    demarshall__vstrptr (&server, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    server_eval_async (server,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_server_eval_async (Application* app, _vstrptr server, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_show_file ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_show_file (Application* app, _vstrptr name)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_show_file in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_show_file (Application* app, _vstrptr name)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_show_file"));
+          g_push(marshall__vstrptr(name));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_show_file (_vstrptr name)
+{
+    dis_view_create ((char*)name);
+    printf ("Showing %s\n", (char*) name);
+}
+
+void dis_show_file_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr name;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_show_file (Application* app, _vstrptr name)\n");
+    demarshall__vstrptr (&name, g_take());
+
+    dis_show_file (name);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_show_file (Application* app, _vstrptr name)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_shutdown_server ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_shutdown_server (Application* app)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_shutdown_server in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_shutdown_server (Application* app)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_shutdown_server"));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_shutdown_server (Application* app)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_shutdown_server ()
+{
+
+        int answer = 1;
+        // Get the list of modified objects.
+        objArr* modified = app::get_modified_headers();
+
+        if (modified->size() > 0) {
+                int myAnswer = dis_confirm_save_objects(*modified);
+        }
+
+        if (answer > 0) {
+                delete_scratch_apps();
+                projHeader::save_all_projects();
+        }
+
+        // We can tell the client to go ahead and exit. There is a watchdog
+        // timer that will notice that the client is no longer communicating
+        // and quit the server after all reasonable processing has completed.
+
+        return (answer);
+}
+
+void dis_shutdown_server_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_shutdown_server (Application* app)\n");
+
+    int return_val = dis_shutdown_server ();
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_shutdown_server (Application* app)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_viewer_selection_exists ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_viewer_selection_exists (Application* app)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_viewer_selection_exists in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_viewer_selection_exists (Application* app)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_viewer_selection_exists"));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_viewer_selection_exists (Application* app)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_viewer_selection_exists ()
+{
+        return driver_instance->sel_list.oper_pts.size();
+}
+
+void dis_viewer_selection_exists_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_viewer_selection_exists (Application* app)\n");
+
+    int return_val = dis_viewer_selection_exists ();
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_viewer_selection_exists (Application* app)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_insert_selection_into_rtl ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_insert_selection_into_rtl (Application* app, int rtl_id)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_insert_selection_into_rtl in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_insert_selection_into_rtl (Application* app, int rtl_id)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_insert_selection_into_rtl"));
+          g_push(marshall_int(rtl_id));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_insert_selection_into_rtl (int rtl_id)
+{
+        RTListServer* server = RTListServer::find (rtl_id);
+        if( server )
+        {
+                Obj *pObj;
+                OperPoint *pPoint;
+                server->clear();
+    server->_propagate();
+                int fInserted = 0;
+                ForEach( pObj, driver_instance->sel_list.oper_pts )
+                {
+                        if( pObj )
+                        {
+                                pPoint = (OperPoint *)pObj;
+                                symbolPtr sym = pPoint->node.get_xrefSymbol();
+                                if( !sym.isnull() )
+                                {
+                                        server->insert( sym );
+                                        fInserted = 1;
+                                }
+                        }       
+                }
+                if( !fInserted )
+                {
+      rcall_dis_DISui_eval_async (DISui_app, 
+                                                (vstr *)"dis_prompt OKDialog DISCOVER [concat Current selection doesn't contain any symbols]");
+                }
+        }
+}
+
+void dis_insert_selection_into_rtl_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int rtl_id;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_insert_selection_into_rtl (Application* app, int rtl_id)\n");
+    demarshall_int (&rtl_id, g_take());
+
+    dis_insert_selection_into_rtl (rtl_id);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_insert_selection_into_rtl (Application* app, int rtl_id)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_open_selected_in_view ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_open_selected_in_view (Application* app)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_open_selected_in_view in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_open_selected_in_view (Application* app)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_open_selected_in_view"));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_open_selected_in_view ()
+{
+        OperPoint *pPoint = driver_instance->sel_list.top_pt();
+        if( pPoint )
+        {
+                symbolPtr sym = pPoint->node;
+                sym = sym.get_xrefSymbol();
+                if( !sym.isnull() )
+                        dis_create_view_of_def(sym);
+                else
+      rcall_dis_DISui_eval_async (DISui_app, 
+                                (vstr *)"dis_Message [concat Current selection doesn't contain any symbols]");
+        }
+        else
+    rcall_dis_DISui_eval_async (DISui_app, 
+                        (vstr *)"dis_Message [concat There is no symbol selected to open definition for]");
+
+}
+
+void dis_open_selected_in_view_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_open_selected_in_view (Application* app)\n");
+
+    dis_open_selected_in_view ();
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_open_selected_in_view (Application* app)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_create_package_input ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_create_package_input (Application* app, int fUseScope, int rtl_id, _charptr pszScope, _charptr pszFile)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_create_package_input in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_create_package_input (Application* app, int fUseScope, int rtl_id, _charptr pszScope, _charptr pszFile)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_create_package_input"));
+          g_push(marshall_int(fUseScope));
+          g_push(marshall_int(rtl_id));
+          g_push(marshall__charptr(pszScope));
+          g_push(marshall__charptr(pszFile));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_create_package_input (Application* app, int fUseScope, int rtl_id, _charptr pszScope, _charptr pszFile)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_create_package_input (int fUseScope, int rtl_id, _charptr pszScope, _charptr pszFile)
+{
+  int nRet = 0;
+  symbolArr funcs;
+  if( !fUseScope )
+  {
+    RTListServer* server = RTListServer::find( rtl_id );
+    if( server )
+      server->getSelArr( funcs );
+  }
+  else
+  {
+    genString cmd;
+    cmd.printf("set_result [defines -func %s]", pszScope);
+    if( interpreter_instance )
+    {
+      int nCode = interpreter_instance->EvalCmd((char *)cmd.str());
+      if( nCode == TCL_OK )
+        GetSavedResult( interpreter_instance, funcs );
+    } 
+  }
+  FILE *out_file = OSapi_fopen(pszFile, "w" );
+  if( out_file )
+  {
+    symbolPtr func_ptr;
+    char kind_name[4];
+    ForEachS(func_ptr, funcs)
+    {
+      nRet++;
+      symbolPtr mod = func_ptr->get_def_file();
+      OSapi_strncpy( kind_name, ddKind_name(func_ptr.get_kind()) + 3, 3 );
+      kind_name[3] = '\0'; 
+      if (mod.isnull())
+        OSapi_fprintf(out_file,TXT("  %s: %s [ ]\n"),
+          kind_name, func_ptr.get_name());
+      else
+        OSapi_fprintf(out_file,TXT("  %s: %s [%s]\n"),
+          kind_name, func_ptr.get_name(), mod.get_name());
+    }
+    OSapi_fclose( out_file );
+  } 
+  return nRet;
+}
+
+void dis_create_package_input_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int fUseScope;
+    int rtl_id;
+    _charptr pszScope;
+    _charptr pszFile;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_create_package_input (Application* app, int fUseScope, int rtl_id, _charptr pszScope, _charptr pszFile)\n");
+    demarshall_int (&fUseScope, g_take());
+    demarshall_int (&rtl_id, g_take());
+    demarshall__charptr (&pszScope, g_take());
+    demarshall__charptr (&pszFile, g_take());
+
+    int return_val = dis_create_package_input (fUseScope,rtl_id,pszScope,pszFile);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_create_package_input (Application* app, int fUseScope, int rtl_id, _charptr pszScope, _charptr pszFile)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_view ------------------------------*/
+
+#ifdef SERVER
+int dis_view (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  LayerServer* server =  LayerServer::find_layer_server (gala_current_layer);
+    if (server) 
+        {
+        view* v = LayerServer::get_current_view_of_screen(server->screen());
+                symbolArr array;
+
+                int rtl_id = -1;
+                if (argv[2] && strcmp (argv[2], "-rtl") == 0) 
+                {
+                        rtl_id = atoi(argv[3]);
+                
+                   RTListServer* rtl_server = RTListServer::find(rtl_id);
+                        if (rtl_server) 
+                        {
+                                rtl_server->getSelArr (array);
+                        }
+                } 
+                else if (v) 
+                {
+                        driver_instance->update_selection(v, 1);
+                        driver_instance->fill_array_with_selected_appnodes(NULL, array, 1);
+                }        
+
+                int selected = array.size();
+        
+                if (strcmp(argv[1], "-assistline") == 0) 
+                {
+                        if(selected) 
+                        {
+                                symbolPtr sym = array[selected-1];
+                                genString result;
+                                char *selectedname = sym.get_name();
+                                Tcl_SetResult (interp, (char *)selectedname, TCL_VOLATILE);
+                        }
+                }
+                else if (selected)
+                {
+                        for(int i = 0; i < selected; i++) 
+                        {
+                                symbolPtr sym = array[i];
+                        
+                                //try user defined action first
+                                int kind = sym.get_kind();
+                                const char* cmd = LanguageController::GetBrowserData()->get_action_cmd(kind);
+                                if (cmd && (strcmp(argv[1], "-definition") == 0 || strcmp(argv[1], "-text") == 0))
+                                {
+                                        if (strlen(cmd) > 0)
+                                        {
+                                                symbolArr sel, dummy;
+                                                sel.insert_last(sym);
+                                                newui_execute_query(dummy, sel, cmd);
+                                        }
+                                }
+                                else 
+                                {
+                                        dis_open_view(sym, argv[1]);
+                                }
+                        }
+                }
+                else if (v) 
+                {
+                        OperPoint* pt = v->insertion_point();
+                        if(pt  &&  !pt->node.isnull())
+                        {
+                                symbolPtr sym = pt->node;
+                                dis_create_view_of_def(sym);
+                        }
+                        delete pt;
+                }
+        }
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_get_token_info ------------------------------*/
+
+#ifdef SERVER
+int dis_get_token_info (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    //$ideHandle $tab $col $sel $fname $line"
+
+    if (argc != 7) {
+        Tcl_SetResult (interp, "wrong number of arguments", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+// The last argument means "add selection to selection list" (if it is not zero)
+    return dis_select (argv[5], atoi(argv[6]), atoi(argv[3]), atoi(argv[2]), argv[4], 0);
+}
+#endif /* SERVER */
+
+/*----------------------------- dis_IDE_command_event ------------------------------*/
+
+#ifdef SERVER
+int dis_IDE_command_event (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    //$ideHandle $back $wv $cmd $arg 
+    return dis_ide_command_event(argc, argv ); 
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_get_variable ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_get_variable (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    // {-string, -int, -bool} $KeyName
+    if(strcmp(argv[1], "-string") == 0) {
+        char* pref = customize::getStrPref(argv[2], false);
+        Tcl_SetResult (interp, pref, TCL_VOLATILE);
+
+    } else if(strcmp(argv[1], "-int") == 0) {
+        const int pref = customize::getIntPref(argv[2]);
+        genString tmp;
+        tmp.printf("%d", pref);
+        Tcl_SetResult(interp, (char *)tmp, TCL_VOLATILE);
+    } else {
+        Tcl_SetResult (interp, "invalid parameter", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_put_variable ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_put_variable (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    // {-string, -int, -bool} $KeyName $Value
+   if(strcmp(argv[1], "-string") == 0) {
+      genString value = argv[3];
+      customize::putPref(argv[2], value, false);
+
+   } else if(strcmp(argv[1], "-int") == 0) {
+      int value = atoi(argv[3]);
+      customize::putPref(argv[2], value);
+
+   } else {
+      Tcl_SetResult (interp, "invalid parameter", TCL_STATIC);
+   }
+       
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_get_folder ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_get_folder (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   if(argc != 4) {
+       dis_message(NULL, MSG_ERROR,
+                "dis_pref_get_folder requires 3 args instead of %d",
+                argc-1);
+   } else if (strcmp(argv[1], "-getList") == 0) {
+       int viewId = atoi(argv[2]);
+       vchar* FolderName = (vchar*) argv[3];
+       GetFolder(viewId, FolderName);
+ 
+    } else {
+        dis_message(NULL, MSG_ERROR,
+                "Preference folder '%s' not found.", argv[1]);
+    }
+ 
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_get_values ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_get_values (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   if(argc != 4) {
+       dis_message(NULL, MSG_ERROR,
+                "dis_pref_get_values requires 3 args instead of %d",
+                argc-1);
+   } else {
+       char* SelectedName = argv[1];
+       int viewId = atoi(argv[2]);
+       vchar* Valuelist = (vchar*) argv[3];
+       GetValues(SelectedName, viewId, Valuelist);
+   } 
+ 
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_get_engname ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_get_engname (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   char ename[1024];
+   if(argc != 5) {
+       dis_message(NULL, MSG_ERROR,
+                "dis_pref_get_engname requires 4 args instead of %d",
+                argc-1);
+   } else {
+       char *SelectedName = argv[1];
+       GetEname(SelectedName, ename);
+       genString command;
+       command.printf ("dis_setvar %s %s %s {%s}", argv[2], argv[3],
+                          argv[4], ename);
+       rcall_dis_DISui_eval_async (DISui_app, (vstr *)command.str());
+
+//       Tcl_SetResult (interp, ename, TCL_VOLATILE);
+   }
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_get_type ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_get_type (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   char ename[1024];
+   int type;
+   if(argc != 6) {
+       dis_message(NULL, MSG_ERROR,
+                "dis_pref_get_type requires 5 args instead of %d",
+                argc-1);
+   } else {
+       char *Foldname = argv[1];
+       char *SelectedName = argv[2];
+       GetEname(SelectedName, ename);
+       type = GetType(Foldname, ename);
+       char typestr[10];
+       sprintf(typestr, "%d", type);
+       genString command;
+       command.printf ("dis_setvar %s %s %s {%s}", argv[3], argv[4], argv[5], typestr);
+       rcall_dis_DISui_eval_async (DISui_app, (vstr *)command.str());
+
+//       sprintf(interp->result, "%d", type);
+   }
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_get_selectedvalue ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_get_selectedvalue (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   char retval[1024];
+   if(argc != 5) {
+       dis_message(NULL, MSG_ERROR,
+                "dis_pref_get_selectedvalue requires 4 args instead of %d",
+                argc-1);
+   } else {
+       char *SelectedName = argv[1];
+       GetSelectedValue(SelectedName, retval);
+       genString command;
+       command.printf ("dis_setvar %s %s %s {%s}", argv[2], argv[3],
+                           argv[4], retval);
+       rcall_dis_DISui_eval_async (DISui_app, (vstr *)command.str());
+ 
+//       Tcl_SetResult (interp, retval, TCL_VOLATILE);
+   }
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_pref_change_prefvalue ------------------------------*/
+
+#ifdef SERVER
+int dis_pref_change_prefvalue (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   // parameters: { -string, -int } $folderengname $prefengname $value
+
+   char keyname[1024];
+   if(argc != 5) {
+       dis_message(NULL, MSG_ERROR,
+                "dis_pref_change_prefvalue requires 4 args instead of %d",
+                argc-1);
+   } else {
+       char *engname = argv[3];
+       GetKeyname(argv[2], engname, keyname);
+
+       if((strcmp(argv[1], "-string") == 0) && 
+          (strcmp(keyname, "DIS_misc.MiniBrowserHistory") != 0)) {
+          genString value = argv[4];
+          customize::putPref(keyname, value, false);
+ 
+       } else {  
+          int value = atoi(argv[4]);
+          customize::putPref(keyname, value);
+       }
+   } 
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_StatusDialogOK ------------------------------*/
+
+#ifdef SERVER
+int dis_StatusDialogOK (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+#ifdef NEW_UI
+    int dialogId = atoi (argv[1]);
+    if (!dialogId) return TCL_ERROR;
+ 
+    StatusDialog* sd = StatusDialog::FindDialog (dialogId);
+    if (!sd) return TCL_ERROR;
+ 
+    sd->ok_cb();
+#endif
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_StatusDialogCancel ------------------------------*/
+
+#ifdef SERVER
+int dis_StatusDialogCancel (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+#ifdef NEW_UI
+    int dialogId = atoi (argv[1]);
+    if (!dialogId) return TCL_ERROR;
+ 
+    StatusDialog* sd = StatusDialog::FindDialog (dialogId);
+    if (!sd) return TCL_ERROR;
+ 
+    sd->cancel_cb();
+#endif
+    return TCL_OK;
+}
+#endif /* SERVER */
+#include "gglobalFuncs.h"
+#undef _view_h
+#define Window Window_
+#define Display Display_
+#include "gview.h"
+#include "gviewer.h"
+
+
+/*----------------------------- dis_setProjectScopeFromRTL ------------------------------*/
+
+#ifdef SERVER
+int dis_setProjectScopeFromRTL (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc < 4)
+        return TCL_ERROR;
+    RTListServer* server = RTListServer::find (atoi (argv[3]));
+    if (!server) return TCL_ERROR;
+ 
+    symbolArr symbols;
+    server->getSelArr (symbols);
+ 
+    genString selString;
+    symbolPtr sym;
+ 
+ 
+    ForEachS (sym, symbols) {
+        if (sym.isnotnull() && sym.get_kind() == DD_PROJECT) {
+            char * nm = sym.get_name();
+            if (nm) {
+               selString = nm;
+               break;
+            }
+        }
+    }
+ 
+    if (!selString.length()) return TCL_OK;
+ 
+    genString command;
+    command.printf ("dis_setvar %s %s {%s}", argv[1], argv[2], selString.str());
+
+    if (server->get_caller() == 1) {
+        Viewer* vr;
+        View *v;        
+        Viewer::GetExecutingView (vr, v);
+        if (vr && v) {
+            Tcl_Interp *interp = v->interp();
+            gala_eval (interp, (char *)command.str());
+        }
+    }
+
+    else {
+        rcall_dis_DISui_eval_async (DISui_app, (vstr *)command.str());
+    }
+ 
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_setProjectScope ------------------------------*/
+
+#ifdef SERVER
+int dis_setProjectScope (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc < 4)
+        return TCL_ERROR;
+
+    setProjScope (argv[1]);
+
+    if(!argv[2] || atoi(argv[2])){
+       return TCL_OK;
+    }
+
+    RTListServer* server = RTListServer::find (atoi (argv[3]));
+    if (!server) return TCL_ERROR;
+
+    // This needs to change in next release. Now the project browser
+    // only shows the contents of the first one if multiple projects
+    // are input.
+/*
+    char *ptr = argv[1];
+    while ( ptr[0]!='\0' && !(isspace(ptr[0])) )
+        ptr++;
+    *ptr = '\0';
+*/
+    if(!strcmp(argv[1], "/")) {
+        server->queryProjects ();
+        return TCL_OK;
+    }
+
+    int ret;
+    server->queryProjects(argv[1], &ret);
+
+    if(!ret)
+        dis_message(NULL, MSG_ERROR,
+                "Could not find project '%s'", argv[1]);
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_setClosure ------------------------------*/
+
+#ifdef SERVER
+int dis_setClosure (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int status = TCL_OK;
+    if (argc != 2) {
+        dis_message(NULL, MSG_ERROR, 
+                "dis_setClosure requires 1 arg, not %d",
+                argc-1);
+        status = TCL_ERROR;
+    } else {
+        int closure = atoi(argv[1]);
+        set_closure_state(closure);
+    }
+    return status;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_getClosure ------------------------------*/
+
+#ifdef SERVER
+int dis_getClosure (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int status = TCL_OK;
+    if (argc != 3) {
+        printf("Usage:dis_getClosure varId varName\n");
+        dis_message(NULL, MSG_ERROR, 
+                "dis_getClosure requires 2 args instead of %d",
+                argc-1);
+        status = TCL_ERROR;
+    } else {
+        int closure = get_closure_state();
+        genString cmd;
+        cmd.printf("dis_setvar %s %s {%d}", argv[1], argv[2], closure);
+        rcall_dis_DISui_eval_async(DISui_app, (vstr *)cmd.str() );
+    }
+    return status;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_SetStatusInfo ------------------------------*/
+
+#ifdef SERVER
+int dis_SetStatusInfo (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   RTListServer* server = RTListServer::find (atoi (argv[1]));
+   if (!server) return TCL_ERROR;  
+
+   symbolArr symbols;
+   server->getSelArr (symbols);
+ 
+   int selected = symbols.size();
+
+   if(selected) {
+      symbolPtr sym = symbols[selected-1];
+      genString info_msg;
+      if(sym.without_xrefp())
+                 get_display_string_from_symbol(sym, info_msg);
+      else {
+         fsymbolPtr xsym = sym.get_xrefSymbol();
+         if (xsym.xrisnotnull())
+                        get_display_string_from_symbol(xsym, info_msg);
+      }
+      if (info_msg.length()) {
+          genString command;
+          command.printf ("dis_Message {%s}", info_msg.str());
+          rcall_dis_DISui_eval_async (DISui_app, (vstr *)command.str());
+      }
+   }
+
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_processKey ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_rtl_processKey (Application* app, int id, _vstrptr thekey, int mod, int startat)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_rtl_processKey in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_rtl_processKey (Application* app, int id, _vstrptr thekey, int mod, int startat)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_rtl_processKey"));
+          g_push(marshall_int(id));
+          g_push(marshall__vstrptr(thekey));
+          g_push(marshall_int(mod));
+          g_push(marshall_int(startat));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_rtl_processKey (Application* app, int id, _vstrptr thekey, int mod, int startat)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_rtl_processKey (int id, _vstrptr thekey, int mod, int startat)
+{
+    Initialize (dis_rtl_processKey);
+    galaxyBoost boost;
+    
+    RTListServer* server = RTListServer::find (id);
+    if (!server)
+        return -1;
+   
+    symbolArr symbols = server->getArr();
+    symbols.sort();
+    symbolPtr sym;
+
+    int size = symbols.size();
+    if(size <= 0)  return -1;
+
+    char key = (char)*thekey;
+
+    static int current = 0;
+    static char buffer[1024] = "";
+    
+    static char searchmode = ' ';
+
+    if(mod == 0) {
+       if(startat >=0 ) {
+          strcpy(buffer, "");
+          searchmode = ' ';
+          current = startat;
+       }
+
+       if(strcmp(buffer,"")==0)
+          strcpy(buffer, (char *)thekey);
+       else
+          strcat(buffer, (char *)thekey);
+
+       if(searchmode == '>') {
+          current = size-1;
+          for(int i = size-1; i >= 0; i--) {
+             sym = symbols[i];
+             if (sym.isnotnull()) {
+                char * nm = sym.get_name();
+                if (strstr(nm, buffer)) {
+                   return current;
+                }
+             }
+             current--;
+          }  
+       } else {
+          if(searchmode == '<')
+             current = 0;
+          
+           for(int i = current; i < size; i++) {
+             sym = symbols[i];
+             if (sym.isnotnull()) {
+                char * nm = sym.get_name();
+                if (strstr(nm, buffer)) {
+                   return current;
+                }
+             }
+             current++;
+          }
+       } 
+    } else if(mod == 1) {              // CTRL is pressed
+
+       if((key == 's') || (key == 'S')) {        // search forward
+          for(int i = current+1; i < size; i++) {
+             current++;
+             sym = symbols[i];
+             if (sym.isnotnull()) {
+                char * nm = sym.get_name();
+                if (strstr(nm, buffer)) 
+                   return current;
+             }
+          }
+       } 
+       if((key == 'r') || (key == 'R')) {       // search backward
+          for(int i = current-1; i >= 0; i--) {
+             current--;
+             sym = symbols[i];
+             if (sym.isnotnull()) {
+                char * nm = sym.get_name();
+                if (strstr(nm, buffer)) 
+                   return current;
+             }
+          }
+       } 
+    } else if(mod ==2) {             // ALT + SHIFT + '<' or '>'
+       if(key == '<') {
+          searchmode = '<';
+          strcpy(buffer, "");
+          return 0;
+       }
+       if(key == '>') {
+          searchmode = '>';
+          strcpy(buffer, "");
+          return size-1;
+       }
+    }     
+
+    return -1;   
+}
+
+void dis_rtl_processKey_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    _vstrptr thekey;
+    int mod;
+    int startat;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_rtl_processKey (Application* app, int id, _vstrptr thekey, int mod, int startat)\n");
+    demarshall_int (&id, g_take());
+    demarshall__vstrptr (&thekey, g_take());
+    demarshall_int (&mod, g_take());
+    demarshall_int (&startat, g_take());
+
+    int return_val = dis_rtl_processKey (id,thekey,mod,startat);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_rtl_processKey (Application* app, int id, _vstrptr thekey, int mod, int startat)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_SimplifyIncludes ------------------------------*/
+
+#ifdef SERVER
+int dis_SimplifyIncludes (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   RTListServer* server = RTListServer::find (atoi (argv[1]));
+   if (!server) return TCL_ERROR;  
+
+   symbolArr symbols;
+   server->getSelArr (symbols);
+
+   dis_message(NULL, MSG_INFORM, "Simplify/sw started ...");
+   simplify_headers (symbols);   
+   dis_message(NULL, MSG_INFORM, "Simplify/sw completed.");
+   
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_ModuleSave ------------------------------*/
+
+#ifdef SERVER
+int dis_ModuleSave (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   int success = 0;
+
+   symbolArr symbols;
+   getSelection (atoi(argv[1]), symbols);
+
+   objArr app_array(symbols);
+
+   for (int i = 0; i < app_array.size(); i++) {
+      appPtr ap = NULL;
+      Relational *ob = (Relational *)app_array[i];
+      if (!ob) continue;
+
+      if(is_projModule(ob)) {
+          projModule *pj = (projModule *)ob;
+          genString fn;
+          pj->get_phys_filename (fn);
+          ap = app::get_header(App_RAW, fn);
+          if (!ap) ap = pj->get_app();
+      }
+
+      else if(is_app(ob))   ap = (appPtr)ob;
+
+      if(ap)
+        ::db_save(ap, NULL);
+   }
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_moduleUpdate ------------------------------*/
+
+#ifdef SERVER
+int dis_moduleUpdate (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   int success = 0;
+
+   symbolArr symbols;
+   getSelection (atoi(argv[1]), symbols);
+
+   update_selection (symbols);
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_moduleLoad ------------------------------*/
+
+#ifdef SERVER
+int dis_moduleLoad (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  symbolArr symbols;
+  getSelection (atoi(argv[1]), symbols);
+
+// Need to reimplement the function get_module_from_view that is found in viewerShell.h.C and call it
+// here.
+
+  preload_selection (symbols); 
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_moduleUnload ------------------------------*/
+
+#ifdef SERVER
+int dis_moduleUnload (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  symbolArr symbols;
+  getSelection (atoi(argv[1]), symbols);
+
+// Need to reimplement the function get_module_from_view that is found in viewerShell.h.C and call it
+// here.
+
+  unload_selection (symbols);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_set_homeproj ------------------------------*/
+
+#ifdef SERVER
+int dis_set_homeproj (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   RTListServer* server = RTListServer::find (atoi (argv[1]));
+   if (!server) return TCL_ERROR;
+
+   symbolArr sels;
+   server->getSelArr (sels);
+
+   setup_home_from_selection(sels);
+
+   if(sels.size() == 1) {
+      symbolPtr sym = sels[0];
+      projNode* proj = projNode::find_project(sym.get_name());
+      proj->refresh_projects();
+   }
+
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_projscope_startup ------------------------------*/
+
+#ifdef SERVER
+int dis_projscope_startup (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   RTListServer* visible = RTListServer::find (atoi (argv[1]));
+   RTListServer* hidden = RTListServer::find (atoi (argv[2]));
+   if (!visible || !hidden) return TCL_ERROR;
+
+   symbolArr visibleprojs, hiddenprojs;
+   load_projlists(visibleprojs, hiddenprojs);
+
+   visible->clear();
+   visible->insert(visibleprojs);
+   hidden->clear();
+   hidden->insert(hiddenprojs);
+
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_projscope_transfer ------------------------------*/
+
+#ifdef SERVER
+int dis_projscope_transfer (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   int allflag = atoi(argv[1]);
+
+   RTListServer* source = RTListServer::find (atoi (argv[2]));
+   RTListServer* target = RTListServer::find (atoi (argv[3]));
+   if (!source || !target) return TCL_ERROR;
+
+   symbolArr s_projs, t_projs, sel_projs;
+
+   s_projs = source->getArr();
+   if(!s_projs.size())
+       return TCL_OK;
+
+   if (allflag) {
+       sel_projs = source->getArr();
+       s_projs.removeAll();
+   } else {
+       source->getSelArr(sel_projs);
+       if(!sel_projs.size()) {
+           dis_message(NULL, MSG_WARN,
+                "No projects were selected.");
+           return TCL_OK;
+       }
+       symbolArr s_copy;
+       s_copy = source->getArr();
+       symbolPtr  s1, s2;
+       ForEachS(s1, s_copy) {
+          ForEachS(s2, sel_projs) {
+             if(!strcmp(s1.get_name(), s2.get_name())) {
+                s_projs.remove(s1);
+                break;
+             }
+          }
+       }
+   }
+
+       
+   t_projs = target->getArr();
+   symbolPtr  sym;
+   ForEachS(sym, sel_projs) {
+      if(!t_projs.includes(sym))
+         t_projs.insert_last(sym);
+   }
+               
+   source->clear();
+   source->insert(s_projs);
+   target->clear();
+   target->insert(t_projs);
+
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_projscope_ok ------------------------------*/
+
+#ifdef SERVER
+int dis_projscope_ok (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+   RTListServer* visible = RTListServer::find (atoi (argv[1]));
+   if (!visible) return TCL_ERROR;
+
+   symbolArr visible_projs;
+
+   visible_projs = visible->getArr();
+   unload_projlists(visible_projs);
+
+   symbolArr allprojs;
+   projList::search_list->get_search_list(allprojs);
+   symbolPtr sym = allprojs[0];
+   projNode* proj = projNode::find_project(sym.get_name());
+   proj->refresh_projects();
+
+   return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_version_info ------------------------------*/
+
+#ifdef SERVER
+int dis_version_info (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (interp) {
+        Tcl_SetResult(interp, (char *)build_date, TCL_VOLATILE);
+    }
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_run_stats_report ------------------------------*/
+
+#ifdef SERVER
+int dis_run_stats_report (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  dis_message(NULL, MSG_INFORM, "Summary/sw Report started .....");
+  Interpreter* cli_interp = Interpreter::Create();
+  if( cli_interp ) //use global Access interpreter unstance
+  {
+    genString fname = "..";
+    char *home = OSapi_getenv("PSETHOME");
+    if( home )
+      fname  = home;
+    fname += "/lib/discover.summary.dis";
+    if( argc > NUM_OF_STATS )
+    {
+      statistics_list_init();
+      for (int i = 0; i < NUM_OF_STATS; i++) 
+      {
+                    if (StatisticsList[i]->type != OPTION_STAT) 
+          Tcl_SetVar( cli_interp->interp, StatisticsList[i]->string, argv[i+1], TCL_GLOBAL_ONLY );
+                    else 
+        {
+                            switch (*(argv[i+1])) 
+          {
+                              case 'A' :
+              Tcl_SetVar( cli_interp->interp, StatisticsList[i]->string, "STAT_ASCII_FILE", TCL_GLOBAL_ONLY );
+                                    break;
+                              case 'H' :
+              Tcl_SetVar( cli_interp->interp, StatisticsList[i]->string, "STAT_HTML_FILE", TCL_GLOBAL_ONLY );
+                                    break;
+                              case 'R' :
+              Tcl_SetVar( cli_interp->interp, StatisticsList[i]->string, "STAT_RTF_FILE", TCL_GLOBAL_ONLY );
+                                    break;
+                              default :
+              Tcl_SetVar( cli_interp->interp, StatisticsList[i]->string, "STAT_PRINTER", TCL_GLOBAL_ONLY );
+                            }
+                    }
+            }
+          cli_interp->SetOutputStream(cerr);
+      int ret_code = cli_interp->EvalFile(OSPATH(fname));
+      if (ret_code == TCL_OK) 
+        dis_message(NULL, MSG_INFORM, "Summary/sw Report completed.");
+      else 
+        dis_message(NULL, MSG_ERROR, "Summary/sw Report could not be generated.");
+
+      //Clean up variables we just added (just in case if we change this to use global interp)
+      for (i = 0; i < NUM_OF_STATS; i++)
+        Tcl_UnsetVar( cli_interp->interp, StatisticsList[i]->string, TCL_GLOBAL_ONLY );
+    }
+    else
+      dis_message(NULL, MSG_ERROR, "Summary/sw Report could not be generated. Not enough arguments.");
+
+    
+    //Memory Leak!!!!!!!!!!!!!
+    //We have to delete cli_interp instance here.
+    //When Interpreter's destructor is implemented, uncomment the following line:
+    //delete cli_interp;
+  
+  }
+  else
+  {
+    dis_message(NULL, MSG_ERROR, "Summary/sw Report could not be generated.");
+    dis_message(NULL, MSG_ERROR, "Could not create Access/sw Interpreter instance.");
+  }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_open_view ------------------------------*/
+
+#ifdef SERVER
+int dis_open_view (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    symbolArr symbols;
+    getSelection (atoi (argv[1]), symbols);
+
+    viewtype vt;
+    if(strcmp(argv[2], "Text") == 0) {
+        OperPoint *pPoint = driver_instance->sel_list.top_pt();
+            if( pPoint )
+            {
+                    symbolPtr sym = pPoint->node;
+                    sym           = sym.get_xrefSymbol();
+                    if( !sym.isnull() )
+                            dis_create_view_of_def(sym);
+                    else
+          rcall_dis_DISui_eval_async (DISui_app, 
+                                    (vstr *)"dis_Message [concat Current selection doesn't contain any symbols]");
+            }
+            else
+        rcall_dis_DISui_eval_async (DISui_app, 
+                            (vstr *)"dis_Message [concat There is no symbol selected to open definition for]");
+      return TCL_OK;
+    }
+    if (strcmp (argv[2], "Calltree") == 0)              vt = viewCallTree;
+    else if (strcmp (argv[2], "Flowchart") == 0)        vt = viewFlowchart;
+    else if (strcmp (argv[2], "Outline") == 0)          vt = viewOutline;
+    else if (strcmp (argv[2], "Inheritance") == 0)      vt = viewInheritance;
+    else if (strcmp (argv[2], "Datachart") == 0)        vt = viewDatachart;
+    else if (strcmp (argv[2], "Graph") == 0)            vt = viewGraph;
+    else if (strcmp (argv[2], "Relations") == 0)        vt = viewERD;
+    else if (strcmp (argv[2], "Subsystem") == 0)        vt = viewSubsysBrowser;
+
+    open_view (vt, symbols);
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_metrics_get_num_metrics ------------------------------*/
+
+#ifdef SERVER
+int dis_metrics_get_num_metrics (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    genString tmp;
+    tmp.printf("%d", NUM_OF_METRICS);
+    Tcl_SetResult(interp, (char *)tmp, TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_metrics_get_metric_name ------------------------------*/
+
+#ifdef SERVER
+int dis_metrics_get_metric_name (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc == 2) {
+        int i = atoi (argv[1]);
+        if ((i>=0) || (i<NUM_OF_METRICS)) {
+            Tcl_SetResult(interp, (char *)Metric::definitions[i].name, TCL_VOLATILE);
+            return TCL_OK;
+        }
+    }
+    return TCL_ERROR;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_metrics_get_metric ------------------------------*/
+
+#ifdef SERVER
+int dis_metrics_get_metric (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc == 2) {
+        for (int i=0; i<NUM_OF_METRICS; i++) {
+            if (strcmp (argv[1], Metric::definitions[i].name) == 0) {
+               genString tmp;
+               tmp.printf("%d", i);
+               Tcl_SetResult(interp, (char *)tmp, TCL_VOLATILE);
+               return TCL_OK;
+            }
+        }
+    }
+    return TCL_ERROR;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_metrics_query ------------------------------*/
+
+#ifdef SERVER
+int dis_metrics_query (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (argc != 9)
+                return TCL_ERROR;
+        
+    RTListServer* selectionRTL = RTListServer::find (atoi(argv[6]));
+    RTListServer* resultRTL = RTListServer::find (atoi(argv[7]));
+        
+    if (!selectionRTL && !resultRTL)
+                return TCL_ERROR;
+        
+    resultRTL->clear();
+        
+    symbolArr selected;
+    selected.insert_last (selectionRTL->getArr());
+        
+    if (selected.empty()) {
+                return TCL_ERROR;
+    }
+        
+    int type = Metric::definitions[atoi(argv[2])].type;
+    bool need[MI_num];
+        
+    need[MI_file] = Metric::need_to_compute_def(MI_file, type);
+    need[MI_func] = Metric::need_to_compute_def(MI_func, type);
+    need[MI_class] = Metric::need_to_compute_def(MI_class, type);
+        
+    int recursive = atoi(argv[3]);
+        
+    if ( ! (need[MI_file] || need[MI_func] || need[MI_class])) {
+        dis_message (NULL, MSG_INFORM, "All Entity Types Excluded");
+                return TCL_ERROR;
+    }
+        
+    genString lowstr = argv[4];
+    genString highstr = argv[5];
+    lowstr += "-1";
+    highstr += "-1";
+    int low = atoi(lowstr);
+    int high = atoi(highstr);
+    double low_f = atof(lowstr);
+    double high_f = atof(highstr);
+    
+    if (low < 0 && high < 0) {
+                dis_message (NULL, MSG_INFORM, "Limits Not Specified");
+                return TCL_ERROR;
+    }
+        
+    if (low >= 0 && high >= 0 && low >= high) {
+                dis_message (NULL, MSG_INFORM, "Limits Inconsistent");
+                return TCL_ERROR;
+    }
+
+    needLoad temp_needLoad(false);   // When computing a metric, don't load files.
+        
+    symbolArr domain;
+    get_syms_for_metric_analysis(selected, domain, need, recursive);
+    if (domain.empty()) {
+                dis_message (NULL, MSG_INFORM, "No Entities of Selected Types");
+                return TCL_ERROR;
+    }
+        
+    symbolArr result;
+    int no_ent = domain.size();
+    
+    genString txt;
+    txt.printf(TXT("Starting analysis of %d entities."), no_ent);
+        dis_message (NULL, MSG_INFORM, (char*)txt);
+    
+        int       mod    = no_ent < 100 ? 1 : no_ent / 100;
+        int       cnt    = 0;
+    bool      is_int = Metric::def_array[type]->type_is_int;
+    symbolPtr dsym;
+        
+    ForEachS(dsym, domain) {
+                if (ParaCancel::is_cancelled()) {
+            dis_message (NULL, MSG_INFORM, "Cancelled.");
+                        return TCL_ERROR;
+                }
+                if (is_int) {
+                        int val;
+                        Metric::get_metric((metricType)type, dsym, &val);
+                        if (val >= 0 && (low < 0 || val > low) && (high < 0 || val < high))
+                                result.insert_last(dsym);
+                } else {
+                        double val;
+                        Metric::get_metric((metricType)type, dsym, &val);
+                        if (val >= 0 && (low_f < 0 || val > low_f) && (high_f < 0 || val < high_f))
+                                result.insert_last(dsym);
+                }
+                cnt++;
+
+                if ( mod == 1 || cnt % mod == 0 || cnt == 0 || cnt == no_ent )
+                {
+                        txt.printf(TXT("%d%%%% complete."), (cnt * 100) / no_ent);
+                        dis_message (NULL, MSG_INFORM, (char*)txt);
+                }
+                vevent::FlushProcessing();
+    }
+        
+    resultRTL->insert (result);
+        
+    //Update RTL format to show the criteria
+    
+    genString sort, format, show, hide;
+    genString metric_filter = "met_";
+    metric_filter += Metric::definitions[atoi(argv[2])].abbrev;
+    
+        resultRTL->getFilter( sort, format, show, hide );
+
+    if( !strstr( format, metric_filter ) )
+    {
+                if( format.is_null() || !format.length() )
+                        format = "%on,";
+                format += " %";
+                format += metric_filter;
+                format += ',';
+
+                resultRTL->setFilter( (char  *)sort.str(), (char *)format.str(), (char *)show.str(), (char *)hide.str() );
+    }
+    
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_metrics_init ------------------------------*/
+
+#ifdef SERVER
+int dis_metrics_init (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    RTListServer* l1 = RTListServer::find (atoi(argv[1]));
+    RTListServer* l2 = RTListServer::find (atoi(argv[2]));
+ 
+    if (l1 && l2) {
+        symbolArr sel;
+        l2->getSelArr(sel);
+
+        l1->clear();
+        l1->insert (sel);
+ 
+        return TCL_OK;
+    }
+
+    return TCL_ERROR;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_parser_get_error_filename ------------------------------*/
+
+#ifdef SERVER
+int dis_parser_get_error_filename (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    const char* filename = get_parser_error_filename();
+    Tcl_SetResult (interp, (char*) filename, TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- cli_process_shell_request ------------------------------*/
+
+#ifdef CLIENT
+async rcall_cli_process_shell_request (Application* app, _charptr in, int id, _charptr tag)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call cli_process_shell_request in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_cli_process_shell_request (Application* app, _charptr in, int id, _charptr tag)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("cli_process_shell_request"));
+          g_push(marshall__charptr(in));
+          g_push(marshall_int(id));
+          g_push(marshall__charptr(tag));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async cli_process_shell_request (_charptr in, int id, _charptr tag)
+{
+  static   ocharstream result;
+  cli_process_input(in, result, NULL, 1);
+  result << ends;
+  char * ostring = result.ptr();
+  Application *appl = Application::findApplication("DISui");
+  if( appl )
+    rcall_access_shell_set_result (appl, id, tag, ostring);
+  result.reset();
+}
+
+void cli_process_shell_request_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _charptr in;
+    int id;
+    _charptr tag;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_cli_process_shell_request (Application* app, _charptr in, int id, _charptr tag)\n");
+    demarshall__charptr (&in, g_take());
+    demarshall_int (&id, g_take());
+    demarshall__charptr (&tag, g_take());
+
+    cli_process_shell_request (in,id,tag);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_cli_process_shell_request (Application* app, _charptr in, int id, _charptr tag)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_access_eval ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_access_eval (Application* app, _charptr cmd, _charptr& out)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_access_eval in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_access_eval (Application* app, _charptr cmd, _charptr& out)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_access_eval"));
+          g_push(marshall__charptr(cmd));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+        demarshall__charptr(&out, g_take());
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_access_eval (Application* app, _charptr cmd, _charptr& out)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_access_eval (_charptr cmd, _charptr& out)
+{
+  out = NULL;
+  int nRes = TCL_ERROR;
+  if( interpreter_instance )
+  {
+    if (Application::traceMode)
+      printf ("Evaluating command : %s\n", cmd);
+    nRes = interpreter_instance->EvalCmd( cmd );
+    out  = Tcl_GetStringResult(interpreter_instance->interp);
+  }
+  /* NOTE: because demarshall__charptr uses strdup, we have to free the memory (YUCK!!!!)
+         This really needs to be fixed in galgen, but until then...
+         */
+        free(cmd);
+        cmd=NULL;
+  return nRes;
+}
+
+void dis_access_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _charptr cmd;
+    _charptr out;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_access_eval (Application* app, _charptr cmd, _charptr& out)\n");
+    demarshall__charptr (&cmd, g_take());
+
+    int return_val = dis_access_eval (cmd,out);
+
+    g_push(marshall__charptr(out));
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_access_eval (Application* app, _charptr cmd, _charptr& out)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_access_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_access_eval_async (Application* app, _charptr str)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_access_eval_async in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_access_eval_async (Application* app, _charptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_access_eval_async"));
+          g_push(marshall__charptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_access_eval_async (_charptr str)
+{
+  if( interpreter_instance )
+    {
+      if (Application::traceMode)
+        printf ("Evaluating command : %s\n", str);
+      interpreter_instance->EvalCmd(str);
+    }
+        /*SEE previous comment*/
+        free(str);
+        str=NULL;
+}
+
+void dis_access_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _charptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_access_eval_async (Application* app, _charptr str)\n");
+    demarshall__charptr (&str, g_take());
+
+    dis_access_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_access_eval_async (Application* app, _charptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_get_filterlist ------------------------------*/
+
+#ifdef SERVER
+int dis_get_filterlist (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if(argc != 1)
+       return TCL_ERROR;
+
+    genString filterlist;
+    getAllFilters(filterlist);
+
+    Tcl_SetResult (interp, (char*) filterlist.str(), TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_get_filtername ------------------------------*/
+
+#ifdef SERVER
+int dis_get_filtername (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if(argc != 3 || (OSapi_strcmp(argv[1], "-save")!=0 && OSapi_strcmp(argv[1], "-load")!=0))
+       return TCL_ERROR;
+
+    char type[1024];
+    if(strcmp(argv[1], "-load")==0) {
+       if(strcmp(argv[2], "Default")==0) {
+          char filename[1024];
+          char *path = OSapi_getenv("PSETHOME");
+          if(!path)
+             return TCL_ERROR;
+          strcpy(filename, path);
+          strcat(filename, "\\lib\\Default.flt");
+          Tcl_SetResult (interp, filename, TCL_VOLATILE);
+          return TCL_OK;
+       } else
+          OSapi_strcpy(type, "load");
+    } else
+       OSapi_strcpy(type, "save");
+
+    genString physicalname;
+    int ret = getFilterPhyname(argv[2], type, physicalname);
+    if(ret == -1)
+       return TCL_ERROR;
+
+    Tcl_SetResult (interp, (char *)physicalname.str(), TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_access_menu_eval ------------------------------*/
+
+#ifdef SERVER
+int dis_access_menu_eval (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  newui_handle_menuitem(argc - 1, argv + 1);
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_rtl_nsel ------------------------------*/
+
+#ifdef SERVER
+int dis_rtl_nsel (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+  // Returns the number of items selected in a given
+  // RTL (-1 means the RTL couldn't be found):
+
+  int ret = TCL_ERROR;
+
+  if (argc == 2) {
+    int nsel = -1;
+    int id = atoi(argv[1]);
+    RTListServer *rtl = RTListServer::find(id);
+    if (rtl) {
+      symbolArr arr(0);
+      rtl->getSelArr(arr);    
+      nsel = arr.size();
+    }
+    genString result;
+    result.printf("%d", nsel);
+    Tcl_SetResult(interp, (char *)result, TCL_VOLATILE);
+    ret = TCL_OK;
+  }
+  else {
+    genString usage;
+    usage.printf("Usage: %s <sid>", argv[0]);
+    Tcl_AppendResult(interp, (char *)usage, NULL);
+  }
+
+  return ret;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_browser_get ------------------------------*/
+
+#ifdef SERVER
+int dis_browser_get (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+        if (argc > 1 ) {
+                const char* what_to_get = argv[1];
+                if (strcmp(what_to_get, "-categoriesList") == 0) {
+                        genString list;
+                        GetBrowserController()->get_categories(list);
+                        Tcl_SetResult(interp, list, TCL_VOLATILE);
+                } else if (strcmp(what_to_get, "-askList") == 0) {
+                        genString list;
+                        GetBrowserController()->get_all_queries(list);
+                        Tcl_SetResult(interp, list, TCL_VOLATILE);
+                } else if (strcmp(what_to_get, "-askListForRTL") == 0) {
+                        if (argc == 3 ) {
+                                const char* rtl = argv[2];
+                                int rtlId = OSapi_atoi(rtl);
+                                RTListServer* elementsRTL = RTListServer::find(rtlId);                                  
+                                if (elementsRTL) {
+                                        symbolArr syms;
+                                        elementsRTL->getSelArr(syms);
+                                        genString list;
+                                        GetBrowserController()->get_queries((const symbolArr&) syms, list);
+                                        Tcl_SetResult(interp, list, TCL_VOLATILE);
+                                }
+                        } else {
+                                dis_message(NULL, MSG_ERROR,
+                                        "'%s' requires an RTL Id.",
+                                        what_to_get);
+                        }
+                } else if (strcmp(what_to_get, "-askListForCategories") == 0) {
+                        if (argc >= 3 ) {
+                                // parse selection range
+                                genMask ddsel;
+                                
+                                //break out of the loop when next selected category name is empty       
+                                for (int i = 2; i < argc; i++)                          {
+                                        //get next selected Category
+                                        genString CategoryName = argv[i];
+                                        if (CategoryName.is_null())
+                                                continue;
+                        
+                                        CategoryName.trim();
+                                        int kind = GetBrowserController()->get_category_kind(CategoryName);
+                                        if (kind >= 0)
+                                                ddsel += kind;
+                                }
+                                
+                                if (ddsel.empty() ) {
+                                        genString list;
+                                        GetBrowserController()->get_all_queries(list);
+                                        Tcl_SetResult(interp, list, TCL_VOLATILE);
+                                } else {
+                                        genString list;
+                                        GetBrowserController()->get_queries((const genMask&)ddsel, list);
+                                        Tcl_SetResult(interp, list, TCL_VOLATILE);
+                                }
+                        } else {
+                                dis_message(NULL, MSG_ERROR,
+                                        "'%s' requires an RTL Id.",
+                                        what_to_get);
+                        }
+                } else {
+                        dis_message(NULL, MSG_ERROR,
+                                "'%s' is an unknown dis_browser_get option.",
+                                what_to_get);
+                }
+        } else {
+                dis_message(NULL, MSG_ERROR,
+                        "dis_browser_get requires at least one arg instead of %d", argc);
+        }
+  return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_is_module ------------------------------*/
+
+#ifdef CLIENT
+int rcall_dis_is_module (Application* app, int id, int pos)
+{
+    DISmain_app = app;
+    int return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_is_module in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_is_module (Application* app, int id, int pos)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_is_module"));
+          g_push(marshall_int(id));
+          g_push(marshall_int(pos));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall_int (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_is_module (Application* app, int id, int pos)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+int dis_is_module (int id, int pos)
+{
+    int fRet = 0;
+
+    RTListServer* server = RTListServer::find (id);
+    if( server )
+    {
+        symbolPtr sym = server->getSortedEntry (pos);
+        if( sym.get_kind() == DD_MODULE )
+            fRet = 1;
+    }
+    return fRet;
+}
+
+void dis_is_module_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    int id;
+    int pos;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_is_module (Application* app, int id, int pos)\n");
+    demarshall_int (&id, g_take());
+    demarshall_int (&pos, g_take());
+
+    int return_val = dis_is_module (id,pos);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_is_module (Application* app, int id, int pos)\n");
+    g_push(marshall_int(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval ------------------------------*/
+
+#ifdef CLIENT
+static _vstrptr rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISmain_app = app;
+    static _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static _vstrptr dis_servereval (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    static vstr* myresult = NULL;
+    if (!myapp) 
+        myapp = DISmain_app;
+    int e = myapp->eval((vchar*)str);
+    myresult = NULL;
+    myresult = myapp->getEvalResult();
+    return myresult;
+}
+
+
+static void dis_servereval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_servereval (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval_async ------------------------------*/
+
+#ifdef CLIENT
+static async rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval_async in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval_async"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static async dis_servereval_async (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    if (!myapp) 
+        myapp = DISmain_app;
+    int e = myapp->eval((vchar*)str);
+    return;
+}
+
+
+static void dis_servereval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    dis_servereval_async (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISmain_eval ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_DISmain_eval (Application* app, _vstrptr str)
+{
+    DISmain_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISmain_eval in DISmain - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISmain_eval (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISmain_eval"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_DISmain_eval (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_DISmain_eval (_vstrptr str)
+{
+    int e = DISmain_app->eval((vchar*)str);
+    static vstr* result = NULL;
+    result = DISmain_app->getEvalResult();
+    return result;
+}
+
+
+void dis_DISmain_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISmain_eval (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_DISmain_eval (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISmain_eval (Application* app, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISmain_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_DISmain_eval_async (Application* app, _vstrptr str)
+{
+    DISmain_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISmain_eval_async in DISmain - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISmain_eval_async (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISmain_eval_async"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_DISmain_eval_async (_vstrptr str)
+{
+   int e = DISmain_app->eval((vchar*)str);
+}
+
+
+void dis_DISmain_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISmain_eval_async (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    dis_DISmain_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISmain_eval_async (Application* app, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+#ifdef SERVER
+
+    static int serverInited = 0;
+
+void DISmainServerInit(){
+    DISmain_app = Application::findApplication("DISmain");
+    if (!serverInited) {
+        Tcl_CreateCommand (DISmain_app->interp(), "gc_put_access_result_into_rtl", gc_put_access_result_into_rtl, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "gc_put_access_value_into_rtl", gc_put_access_value_into_rtl, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "gc_rtl_propagate", gc_rtl_propagate, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_rtl_copy_selected", dis_rtl_copy_selected, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_rtl_add_selected_xref", dis_rtl_add_selected_xref, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_rtl_add_selected", dis_rtl_add_selected, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_rtl_delete_selected", dis_rtl_delete_selected, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_view", dis_view, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_get_token_info", dis_get_token_info, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_IDE_command_event", dis_IDE_command_event, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_get_variable", dis_pref_get_variable, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_put_variable", dis_pref_put_variable, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_get_folder", dis_pref_get_folder, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_get_values", dis_pref_get_values, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_get_engname", dis_pref_get_engname, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_get_type", dis_pref_get_type, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_get_selectedvalue", dis_pref_get_selectedvalue, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_pref_change_prefvalue", dis_pref_change_prefvalue, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_StatusDialogOK", dis_StatusDialogOK, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_StatusDialogCancel", dis_StatusDialogCancel, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_setProjectScopeFromRTL", dis_setProjectScopeFromRTL, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_setProjectScope", dis_setProjectScope, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_setClosure", dis_setClosure, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_getClosure", dis_getClosure, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_SetStatusInfo", dis_SetStatusInfo, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_SimplifyIncludes", dis_SimplifyIncludes, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_ModuleSave", dis_ModuleSave, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_moduleUpdate", dis_moduleUpdate, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_moduleLoad", dis_moduleLoad, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_moduleUnload", dis_moduleUnload, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_set_homeproj", dis_set_homeproj, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_projscope_startup", dis_projscope_startup, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_projscope_transfer", dis_projscope_transfer, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_projscope_ok", dis_projscope_ok, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_version_info", dis_version_info, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_run_stats_report", dis_run_stats_report, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_open_view", dis_open_view, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_metrics_get_num_metrics", dis_metrics_get_num_metrics, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_metrics_get_metric_name", dis_metrics_get_metric_name, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_metrics_get_metric", dis_metrics_get_metric, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_metrics_query", dis_metrics_query, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_metrics_init", dis_metrics_init, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_parser_get_error_filename", dis_parser_get_error_filename, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_get_filterlist", dis_get_filterlist, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_get_filtername", dis_get_filtername, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_access_menu_eval", dis_access_menu_eval, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_rtl_nsel", dis_rtl_nsel, NULL, NULL);
+        Tcl_CreateCommand (DISmain_app->interp(), "dis_browser_get", dis_browser_get, NULL, NULL);
+        serverInited = 1;
+    }
+}
+
+
+vscrap* DISmainServer(    vservicePrimitive *primitive,
+    vsession          *session,
+    vscrap            *scrapArgs)
+{
+    DISmainServerInit();
+
+    DISmain_app = Application::findApplication(session);
+    vscrapArray *sarg=0;
+    int array_index,max_index,array_index2;
+    vstr *command;
+    primitive->GetArgs(scrapArgs,&sarg);
+    array_index=0;array_index2=0;
+    max_index=vscrapGetArrayCount(sarg);
+    demarshall__vstrptr (&command, g_take());
+    vscrap *real_result=vscrapCreateArray();
+
+    if (strcmp((char*)command, "dis_connect_app") == 0) dis_connect_app_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_create") == 0) dis_rtl_create_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_set_caller") == 0) dis_rtl_set_caller_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_init") == 0) dis_rtl_init_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_clear") == 0) dis_rtl_clear_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_select") == 0) dis_rtl_select_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_query_links") == 0) dis_rtl_query_links_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_query_proj") == 0) dis_rtl_query_proj_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_query_top_proj") == 0) dis_rtl_query_top_proj_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_query_parent_proj") == 0) dis_rtl_query_parent_proj_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_get_title") == 0) dis_rtl_get_title_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_get_item") == 0) dis_rtl_get_item_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_get_unfilteredSize") == 0) dis_rtl_get_unfilteredSize_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_isFiltered") == 0) dis_rtl_isFiltered_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_get_size") == 0) dis_rtl_get_size_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_get_type") == 0) dis_rtl_get_type_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_destroy") == 0) dis_rtl_destroy_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_edit_copy") == 0) dis_rtl_edit_copy_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_add_to_exist_xref") == 0) dis_rtl_add_to_exist_xref_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_add_to_exist") == 0) dis_rtl_add_to_exist_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_remove_selected") == 0) dis_rtl_remove_selected_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_edit_paste") == 0) dis_rtl_edit_paste_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_layer_create") == 0) dis_layer_create_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_layer_destroy") == 0) dis_layer_destroy_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_set_layer") == 0) dis_set_layer_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_open_selection") == 0) dis_open_selection_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "server_eval") == 0) server_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "server_eval_async") == 0) server_eval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_show_file") == 0) dis_show_file_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_shutdown_server") == 0) dis_shutdown_server_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_viewer_selection_exists") == 0) dis_viewer_selection_exists_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_insert_selection_into_rtl") == 0) dis_insert_selection_into_rtl_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_open_selected_in_view") == 0) dis_open_selected_in_view_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_create_package_input") == 0) dis_create_package_input_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_rtl_processKey") == 0) dis_rtl_processKey_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "cli_process_shell_request") == 0) cli_process_shell_request_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_access_eval") == 0) dis_access_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_access_eval_async") == 0) dis_access_eval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_is_module") == 0) dis_is_module_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISmain_eval") == 0) dis_DISmain_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISmain_eval_async") == 0) dis_DISmain_eval_async_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+
+    vscrap *temp= primitive->MakeReturnScrap(session,real_result);
+    if (real_result) delete real_result;
+    if (command) vstrDestroy (command);
+    if (sarg) delete sarg;
+    return temp;
+}
+
+#endif /* SERVER */

@@ -1,0 +1,160 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+################################################################################
+#
+# Main TCL startup script for DIScover.
+#
+################################################################################
+
+source_dis require.dis
+
+set discover_scripts_dir [get_pref_value configuratorOptionalScriptsDir]
+
+add_attribute operator    {function&&regexp("operator[^_a-zA_Z0-9]",cname)}
+add_attribute constructor {cdtor&&cname[0]!='~'&&cname!="finalize"}
+add_attribute destructor  {cdtor&&(cname[0]=='~'||cname=="finalize")}
+
+proc describe { pat } {
+    foreach att [info attribute $pat] {
+	if {[info kind $att] != ""} {
+	    puts "entity kind: \t$att"
+	} elseif {[info astcode $att] != ""} {
+	    puts "ast code: \t$att"
+	} elseif {[info astcat $att] != ""} {
+	    puts "ast category: \t$att"
+	} elseif {[string first "ast_" $att] == 0} {
+	    puts "ast attribute: \t$att"
+	} else {
+	    puts "\nentity attribute: \t$att"
+	    describe_one $att
+	}
+    }
+    foreach cmd [info discover $pat] {
+	puts "\ndiscover command: $cmd"
+	describe_one $cmd
+    }
+}
+
+proc describe_one { command } {
+    set fn [source_find _help.dis]
+    if { $fn == ""} {
+	puts "cannot find help file"
+	return
+    }
+    set f [open $fn  "r"] 
+    set found 0
+    while { [gets $f line] >= 0 } {
+	if { [string trim $line] == "$command" } {
+	    set found 1
+	    break
+	}	
+    }
+    if $found { 
+	while { [gets $f line] >= 0 } {
+	    if {[string first "\t" $line] == 0}  break
+	    puts $line
+	}
+    }
+
+    close $f
+}
+
+catch {require els.dis}
+catch {require simplify.dis}
+catch {require misc_utils.dis}
+
+if {! [is_gui]} {
+    return
+}
+
+catch {require tkoptions.dis}
+catch {require tk_dialogs.dis}
+
+if { [info commands prompt] != "" } {
+    rename prompt __prompt
+    proc prompt args {string trim [eval __prompt $args]}
+}
+
+if { [info commands add_menu] == "" } { 
+    return 
+}
+
+proc proj_leaves { proj } {
+    set proj [set_copy $proj]
+    set x [new_set]
+    foreach el $proj {
+	set y [filter project [contents $el]]
+	if [size $y] {
+	    sappend $x [ proj_leaves $y]
+	} else {
+	    sappend $x $el
+	}
+    }
+    return $x
+}
+
+proc filterprojname { name proj } {
+    if { [size $proj] == 0 } { return [new_set]}
+    set yes [filter $name $proj]
+    if [size $yes] {
+	return $yes
+    } else {
+	set proj [filter project [contents $proj]]      
+	return [filterprojname $name $proj]
+    }
+}
+
+proc find_project { name proj } {
+
+    set newname [string trimright $name /]
+
+    if {[string first * $newname] >= 0 } {
+	if { [string index $newname 0] != "/" } {
+	    set newname "/*$newname"
+	}
+	set filter "match(\"$newname\", name)"
+    } elseif {$newname == $name } { 
+	set filter "strstr(name,\"$newname\")"
+    } else {  
+	set len [string length $newname]
+	set filter "name + (strlen(name)-$len) == @$newname"
+    }
+    filterprojname $filter $proj
+}
+
+proc find_proj { name } {  find_project $name / }
+
+proc get_instances_for_attribute_editor { sel } {
+    global tmp_RESULT
+    set tmp_RESULT [viewable_instances $sel]
+}
+
+if {[OS] == "unix"} {
+	require load_menus.dis
+}
+catch {require workflow_aux.dis}

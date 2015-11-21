@@ -1,0 +1,6 @@
+#!/bin/sh -f
+
+revname=`$PSETCFG/util/cvs_find_name $cm_revision_file`
+cd `dirname $cm_workfile`
+cvs diff -d `pwd` $revname 2>&1
+

@@ -1,0 +1,36 @@
+<html>
+<body>
+
+<p><b>UOUIMM - Use Of Unnecessary Interface Member Modifiers</b></p>
+
+<p>All interface operations are implicitly public and abstract.
+All interface attributes are implicitly public, final and static.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+interface UOUIMM {<br>
+&nbsp; &nbsp; int attr1;<br>
+&nbsp; &nbsp; <font color='red'>public final static int ATTR2; </font><br>
+&nbsp; &nbsp; void oper1 ();<br>
+&nbsp; &nbsp; <font color='red'>public abstract void oper2 (); </font><br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Get rid of superfluous interface member modifiers
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+interface UOUIMM {<br>
+&nbsp; &nbsp; int attr1;<br>
+&nbsp; &nbsp; <font color='blue'>final static int ATTR2; </font><br>
+&nbsp; &nbsp; void oper1 ();<br>
+&nbsp; &nbsp; <font color='blue'>void oper2 (); </font><br>
+}
+</code></p></nobr>
+
+</body>
+</html>

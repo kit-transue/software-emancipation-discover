@@ -1,0 +1,47 @@
+all: obj client_object.o libdiapi.so.1.0 browser_members.i
+	echo 'Made all objects.'
+
+obj :
+	mkdir obj
+
+obj/api: obj/api.o obj/api_util.o
+	cc $(CFLAGS) -o obj/api obj/api.o obj/api_util.o
+
+obj/api.o: $(SRC)/api.l
+	lex -t $(SRC)/api.l > obj/api.c
+	cc $(CFLAGS) -c obj/api.c -o obj/api.o
+
+obj/api_util.o: $(SRC)/api_util.c
+	cc $(CFLAGS) -c $(SRC)/api_util.c -o obj/api_util.o
+
+client_object.o: obj/api $(SRC)/SPEC
+	obj/api <$(SRC)/SPEC 
+	mv client.c obj/client.c
+	rm -f server.c
+	cc $(CFLAGS) -c -o obj/client.o obj/client.c 
+	cc $(CFLAGS) -c -o obj/comm.o $(SRC)/DI_communication.c 
+	ld -r -o client_object.o obj/comm.o obj/client.o 
+	
+libdiapi.so.1.0: obj/api $(SRC)/SPEC $(SRC)/extension.c
+	obj/api <$(SRC)/SPEC 
+	cat  server.c $(SRC)/extension.c > obj/server.c
+	rm -f server.c
+	rm -f client.c
+	cc $(CFLAGS) -c -o obj/server.o obj/server.c 
+	make -f $(SRC)/Makefile.sun4 -k -s errorfree 
+	mv server.o obj/server.o
+	ld -assert pure-text -o libdiapi.so.1.0 obj/server.o
+	
+browser_members.i: $(SRC)/SPEC
+	$(SRC)/genmembers.sh <$(SRC)/SPEC  > browser_members.i	
+
+clean:
+	rm -rf ./*
+
+errorfree:
+	cc $(CFLAGS) -c -pic obj/server.c 
+
+
+
+
+

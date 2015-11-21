@@ -1,0 +1,1 @@
+java -w --jdk --classpath "C:/jbuilder5/jdk1.3/jre/lib/rt.jar;C:/Program Files/swemancipation/prebuilt/source/xerces"

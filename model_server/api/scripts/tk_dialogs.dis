@@ -1,0 +1,374 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+set tk_library $env(PSETHOME)/lib/tk8.3
+source $tk_library/tk.tcl
+
+proc _list_make_selection { sel_all w } {
+    global list_dialog_result 
+    if $sel_all {
+	set list_dialog_result all
+    } else {
+	if [catch { set list_dialog_result [ selection get ] }] {return}
+    }
+    destroy $w
+    update
+}
+
+proc _list_cancel { w } {
+  global list_dialog_result 
+  set list_dialog_result ""
+  destroy $w
+  update
+}
+
+if { [OS] == "unix" } {
+    wm withdraw .
+} else {
+    update
+    wm withdraw .
+    update
+}
+
+proc set_discover_colors { w } {
+    catch { $w config -background {#e2dcb0} }
+    catch { $w config -highlightbackground {#e2dcb0} }
+    catch { $w config -selectforeground {#e2dcb0} }
+    catch { $w config -selectbackground black }
+    foreach child [winfo children $w] {
+	set_discover_colors $child
+    }
+}
+
+proc list_save_all { title sel} {
+    set list [apply name $sel]
+    list_selection_aux 1 $title $list ""
+}
+
+proc list_selection { title list {mode ""}} {
+    list_selection_aux 0 $title $list $mode
+}
+if {[info commands refresh_ui] == ""} {
+    proc refresh_ui {} {}
+}
+
+
+proc list_selection_aux { sel_all title list mode } {
+    global list_dialog_result
+    set list_dialog_result {}
+    set w .d1
+    set t $w.top
+    set b $w.bot
+    catch {destroy $w}
+    toplevel $w -class Dialog
+
+    bind $w <Visibility> "refresh_ui; raise $w"
+    bind $w <Expose> refresh_ui
+    bind $w <Configure> refresh_ui
+
+    wm minsize $w 250 100
+    wm title $w $title
+    frame $t -relief raised -bd 1
+    pack $t -side top -fill both -expand true
+    frame $b -relief raised -bd 1
+    pack $b  -side bottom -fill both
+    
+    if { "$mode" != "" } {
+	listbox $t.list -yscrollcommand "$t.scroll set" -selectmode $mode
+    } else {
+	listbox $t.list -yscrollcommand "$t.scroll set" -selectbackground black -selectforeground white
+    }
+    scrollbar $t.scroll -command "$t.list yview"
+    eval   $t.list insert end $list
+
+    pack $t.list -side left -fill both -expand true
+    pack $t.scroll -side right -fill y 
+
+    bind $t.list <Double-Button-1> "_list_make_selection $sel_all $w"
+    bind $t.list <Return> "_list_make_selection $sel_all $w"
+    bind $t.list <KeyPress> { set key %A; if { "$key" == "" } { continue }; set l [%W get 0 end];
+                              set i [lsearch $l $key*]; %W selection clear 0 end; %W selection set $i; 
+                              %W activate $i }
+
+    if $sel_all {
+        set label "Save All"
+    } else {    
+        set label "OK"
+	$t.list selection set 0
+    }
+    button $b.b1 -text $label -command "_list_make_selection $sel_all $w"
+    pack $b.b1 -side left -expand 1
+    button $b.b2 -text Cancel -command "_list_cancel $w"
+    pack $b.b2 -side right -expand 1
+
+    set_discover_colors $w
+    set old_focus [focus]
+    grab set $w
+    focus $t.list
+    update
+    raise $w
+    tkwait window $w
+    focus $old_focus
+    return $list_dialog_result
+}
+
+proc FileDialogInit {} {
+    if {[info commands tkFDialog]=={}} {
+	global env
+	set tklib $env(PSETHOME)/lib/tk
+	source $tklib/msgbox.tcl
+	source $tklib/bgerror.tcl
+	source $tklib/dialog.tcl
+	source $tklib/tkfbox.tcl
+	source $tklib/comdlg.tcl
+	source $tklib/optMenu.tcl
+    }
+}
+
+proc FileDialog { open w types name title ent } {
+#    FileDialogInit
+    global cpp_output_dir cpp_output_file
+    if $open {
+	set file [tk_getOpenFile -filetypes $types  -parent $w \
+	  -initialfile $name -defaultextension .i -title $title ]
+    } else {
+	set file [tk_getSaveFile -filetypes $types  -parent $w \
+	  -initialfile $name -defaultextension .i -title $title ]
+    }
+    if {$file!=""} {
+        $ent delete 0 end
+	$ent insert 0 $file
+	$ent xview end
+    }
+}
+
+proc promptFileOpen { types name msg {title "File Open"} } {
+    FileChooserDialog 1 $types $name $msg $title
+}
+proc promptFileSave { types name msg {title "File Save"} } {
+    FileChooserDialog 0 $types $name $msg $title
+}
+
+proc FileChooserDialog { open types name msg {title "File Dialog"} } {
+    global cpp_output_dir cpp_output_file
+    set cpp_output_file {}
+
+    if ![info exists cpp_output_dir] {
+	set cpp_output_dir [pwd]
+    }
+
+    set w .filebox
+    catch {destroy $w}
+    toplevel $w
+    wm title $w $title
+    wm iconname $w "filebox"
+    #    positionWindow $w
+
+    bind $w <Visibility> "refresh_ui"
+    bind $w <Expose> refresh_ui
+    bind $w <Configure> refresh_ui    
+
+    set f [frame $w.open]
+    label $f.lab -text $msg -anchor e
+    entry $f.ent  -width 40
+    $f.ent insert 0 $cpp_output_dir/$name
+    $f.ent xview end
+    $f.ent selection range 0 end
+    focus $f.ent
+    bind $f.ent <Return> "FileDialogOK $w $w.open.ent"
+
+    pack $f.lab -side top
+    pack $f.ent -side left -expand yes -fill x
+    pack $f -fill x -padx 1c -pady 3
+    
+    frame $w.buttons
+    pack $w.buttons -side bottom -fill x -pady 2m
+
+
+    set cmd [list FileDialog $open $f $types $name $title $f.ent] 
+    button $w.buttons.browse -text "Browse ..." -command $cmd
+
+    button $w.buttons.dismiss -text OK -command "FileDialogOK $w $w.open.ent"
+    button $w.buttons.code -text Cancel -command "destroy $w"
+    pack $w.buttons.dismiss $w.buttons.browse $w.buttons.code -side left -expand 1
+    
+    tkwait window $w
+    update
+    return $cpp_output_file
+}
+
+proc FileDialogOK {w ent} {
+    global cpp_output_file cpp_output_dir
+    set cpp_output_file [$ent get]    
+    set  cpp_output_dir [file dirname $cpp_output_file]
+    destroy $w
+}
+
+image create bitmap ComboboxArrow -foreground #000000 -data "
+#define ComboboxArrow_width 16
+#define ComboboxArrow_height 10
+static unsigned char ComboboxArrow_bits[] = {
+   0x00, 0x00, 
+   0x00, 0x00, 
+   0xfc, 0x3f, 
+   0xf8, 0x1f, 
+   0xf0, 0x0f, 
+   0xe0, 0x07,
+   0xc0, 0x03, 
+   0x80, 0x01, 
+   0x00, 0x00, 
+   0x00, 0x00};
+"
+proc createPopup {w name varname width height list_items disabled} {
+
+	entry $w.${name}_e -textvariable $varname -width $width \
+		-selectforeground #e2dcb0 -selectbackground black
+	button $w.${name}_b -image ComboboxArrow
+	set button $w.${name}_b
+	set entry $w.${name}_e
+        if {$disabled} {
+	    $w.${name}_e config -state disabled
+	    if {[OS] == "unix"} {	    
+		$w.${name}_e config -bg #e2dcb0
+	    } else {
+		$w.${name}_e config -bg #aaa
+	    }
+	}
+	frame $w.${name}_f 
+	set ff $w.${name}_f
+	$button configure -command "
+	    if {\[OS\] == "unix"} {
+		if { \"\[info commands set_discover_colors\]\" == \"set_discover_colors\" } {
+		    catch { set_discover_colors .${name}_menu }
+		}
+	    }
+
+	    set hgt \[winfo reqheight .${name}_menu.list\]
+	    set wth \[expr \[winfo reqwidth .${name}_menu.list\] + \
+		    \[winfo reqwidth $button\]\]
+	    raise .${name}_menu
+	    set xcoord \[winfo rootx $ff\]
+	    set ycoord \[expr \[winfo rooty $ff\] + \[winfo height $ff\] \]
+	    if {\$xcoord < 0} {
+		set xcoord 0
+	    } elseif {\$xcoord > [winfo screenwidth .]} {
+		set xcoord \[eval expr [winfo screenwidth .] - \$wth\]
+	    }		
+	    if {\$ycoord < 0} {
+		set ycoord 0
+	    } elseif {\[eval expr \$ycoord + \$hgt\] > [winfo screenheight .]} {
+		set ycoord \[eval expr [winfo screenheight .] - \$hgt\]
+	    }
+
+	    wm geometry .${name}_menu \${wth}x\${hgt}+\${xcoord}+\${ycoord}
+	    wm deiconify .${name}_menu
+	    # repeat geometry command for NT
+	    wm geometry .${name}_menu \${wth}x\${hgt}+\${xcoord}+\${ycoord}
+	    focus .${name}_menu
+	"
+	pack $entry -in $w.${name}_f -side left -fill x -expand true -anchor w
+	pack $button -in $w.${name}_f -side right -fill both -anchor w -padx 3
+	raise $entry
+	raise $button
+	
+	toplevel .${name}_menu -bd 1 -relief raised -class ComboBox \
+		-highlightthickness 0 -cursor top_left_arrow
+	wm overrideredirect .${name}_menu 1
+	
+	listbox .${name}_menu.list -height $height -width [$entry cget -width] \
+		-yscrollcommand ".${name}_menu.scroll set" -relief flat \
+		-selectforeground #e2dcb0 -selectbackground black
+	scrollbar .${name}_menu.scroll -command ".${name}_menu.list yview" -relief ridge 
+        if {[OS] == "unix"} {	    
+	    .${name}_menu.scroll configure -troughcolor #cbc599
+	} 
+	pack .${name}_menu.list -in .${name}_menu -side left -pady 2 -ipadx 1
+	pack .${name}_menu.scroll -in .${name}_menu -side right -fill y -pady 2 
+	wm withdraw .${name}_menu
+
+	eval [concat [list .${name}_menu.list insert end] $list_items]
+
+	bind .${name}_menu <Key-Escape> "
+	    wm withdraw .${name}_menu
+	    $button configure -state normal
+	    $button config -relief raised 
+	    grab release \[grab current\]
+	    set tkPriv(buttonWindow) \"\"
+	"
+	bind .${name}_menu.list <Key-Return> "
+	    set sel \[.${name}_menu.list curselection\]
+	    set var_name [$entry cget -textvariable]
+	    if {\"\$sel\" != \"\"} {
+		set \$var_name \[.${name}_menu.list get \$sel\] 
+	    }
+	    eval \[bind .${name}_menu <Key-Escape>\]
+	"
+	bind .${name}_menu <ButtonRelease-1> "
+	    if {\"%W\" != \".${name}_menu.scroll\"} {
+		eval \[bind .${name}_menu <Key-Escape>\]
+		$button configure -state normal
+		break
+	    }
+	"
+	bind .${name}_menu.list <ButtonRelease-1> "
+	    eval \[bind .${name}_menu.list <Key-Return>\]
+	"
+	bind $button <Key-Return> "
+	    tkButtonUp %W
+	    %W invoke
+	    focus .${name}_menu.list
+	    grab -global .${name}_menu
+	    update
+	"
+
+	bind $button <ButtonRelease-1> "
+	    if {\[wm state .${name}_menu\] == \"normal\"} {
+		# keep button pressed down
+		break
+	    }
+	"
+
+	bind $button <Button-1> {
+	    # reset and then press button
+	    tkButtonUp %W
+	    %W invoke
+	}
+
+	bind $button <Leave> "
+	    if {\[wm state .${name}_menu\] == \"normal\"} {
+		grab -global .${name}_menu
+		focus .${name}_menu
+		update
+		break
+	    } else {
+		$button configure -state normal		    
+	    }
+	"
+
+	return $w.${name}_f
+}
+

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- Configuration for files which are recognized as headers
+     based on their position in a DSP file.
+     These are not compiled independently, even if /TP or /TC applies. 
+     Return H to indicate C or CPP header file.
+  -->
+<cmdline nameintro="/" unrecognized="no_message">
+<compilername>ignorable header</compilername>
+H
+</cmdline>

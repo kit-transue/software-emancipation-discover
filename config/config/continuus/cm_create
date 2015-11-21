@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "ccm create $cm_workfile"
+ccm create $cm_workfile

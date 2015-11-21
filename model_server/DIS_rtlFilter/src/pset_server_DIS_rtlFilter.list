@@ -1,0 +1,13 @@
+TARGETS =
+        rtlFilter.o
+
+VPATH =
+	/paraset/src/paraset/DIS_rtlFilter/src
+
+CCINCLUDES =
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/gt/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/paraset/util/include
+	/paraset/src/paraset/nihcl/include

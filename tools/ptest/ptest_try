@@ -1,0 +1,140 @@
+#!/bin/csh -f
+
+if ("$1" == "" || "$1" == "-help" || "$1" == "help" || "$1" == "-?") then
+	echo ""
+	echo "      ptest_try [-help] -exec exec_file -outdir dir"
+	echo ""
+	echo "ptest_try run really short script on predefined PSETHOME area,"
+        echo "analyse results, exit with 0 if script succeeded, otherwise exit with 1"
+	echo ""
+	echo "Use PSETTEST current test area, executable and writable output"
+	echo "directory must be specified."
+	echo ""
+	exit 0
+endif
+
+set t_ex = ""
+set t_out = ""
+
+# Test to run
+set to_try = "$PTEST_ROOT/test_try/test.ccc"
+
+if (! -f "$to_try") then
+	echo "ptest_try: no such file $to_try"
+	exit 1
+endif
+
+set test_try = `dirname "$to_try"`
+
+while ("$1" != "")
+	if ("$1" == "-exec") then
+		shift
+		set t_ex = "$1"
+	else if ("$1" == "-outdir") then
+		shift
+		set t_out = "$1"
+	else
+		echo "ptest_try: strange parameter $1. Ignoring ..."
+	endif
+	shift
+end
+
+if ("$t_ex" == "") then
+	echo "ptest_try: executable is not specified"
+	exit 1
+else if (! -x "$t_ex") then
+	echo "ptest_try: no such executable $t_ex"
+	exit 1
+endif
+
+if ("$t_out" == "") then
+	echo "ptest_try: output directory is not specified
+else
+	if (! -d "$t_out") then
+		mkdir -p $t_out	>&! /dev/null
+		if ($status != 0) then
+			echo "ptest_try: failed to create output directory $t_out"
+			exit 1
+		endif
+	endif
+endif
+
+# Check PSETTEST area
+# Eliminate questions from ptest_copy about target directory
+#
+
+if (-d $PSETTEST) then
+    set w_cnt = `echo $PSETTEST/.* $PSETTEST/* | wc -w`
+    if ("$w_cnt" != "2") then
+       ls -A $PSETTEST/
+       echo -n "ptest_try: Target $PSETTEST is going to be overwritten [y|n]? "
+       set answer = "$<"
+       if ( $answer != "y" ) then
+          echo "ptest_try: Rejected."
+	  exit 1
+       else
+	  echo -n "Wiping up $PSETTEST ... "
+	  \rm -rf $PSETTEST >&! /dev/null
+          mkdir $PSETTEST
+          echo "Done"
+       endif
+    endif
+else
+    echo -n "ptest_try: Create PSETTEST directory $PSETTEST [y|n]? "
+    set answer = "$<"
+    if ( $answer == "y" ) then
+        mkdir -p "$PSETTEST"
+    endif
+endif
+
+if (! -d $PSETTEST) then
+    echo "ptest_try:  no PSETTEST directory $PSETTEST."
+    exit 1
+endif
+
+echo ""
+echo "     *** Try to run ... ***"
+echo ""
+echo "outdir     : $t_out"
+echo "executable :"
+ls -l $t_ex
+ls -l "$t_ex".dir
+ls -l "$t_ex".pag
+echo ""
+
+if (! -f "$t_ex".dir || ! -f "$t_ex".pag) then
+	echo "ptest_try: symtab files are  not found"
+	exit 1
+endif
+
+echo "Environment:"
+env | grep PSET
+env | grep PTEST
+echo ""
+
+set out_file = `basename "$test_try"`
+set out_file = "$t_out/$out_file-test.ccc.out"
+
+\rm -rf $out_file >&! /dev/null
+ptest_run  -exec $t_ex -outdir $t_out $test_try >&! /dev/null
+
+if ($status == 0 && -f $out_file) then
+	grep "Unable to find function" $out_file >&! /dev/null
+	if ($status == 0) then
+		echo "ptest_try: failed to lookup a function in symtab"
+		exit 1
+	endif
+
+	ptest_failed $t_out
+
+	if ($status == 0) then
+		echo "ptset_try: run succeeded"
+		exit 0
+	else
+		echo "ptest_try: run failed"
+		exit 1
+	endif
+else
+	echo "ptest_try: run exited abnormally"
+	exit 1
+endif

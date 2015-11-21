@@ -1,0 +1,12 @@
+BasedOn:html-report
+Files:DefinesMacros,DefinesEnums,DefinesTypedefs,DefinesClasses,DefinesVariables,DefinesFunctions
+Functions:UsedByFunctions,UsesFunctions
+Variables:WhereUsed
+Structures:WhereUsed
+Unions:WhereUsed
+Enums:WhereUsed
+EnumValues:WhereUsed
+Typedefs:WhereUsed
+Fields:WhereUsed
+Instances:WhereDefined
+

@@ -1,0 +1,41 @@
+<html>
+<body>
+
+<p><b>EBWB - Enclosing Body Within a Block</b></p>
+
+<p>The statement of a loop must always be a block. The 
+<code>then</code> and <code>else 
+</code> parts of <code>if</code>         
+      -statements must always be blocks.
+This makes it easier to add statements without accidentally introducing bugs
+due to forgetting to add braces.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+if( st == null )<br>
+&nbsp; &nbsp; <font color='red'>return;</font> <br>
+while( 
+st.countTokens() &gt;  2 )<br>
+&nbsp; &nbsp; <font color='red'>s +=  st.nextToken();</font>
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Always enclose body within a block
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+if( st == null ) <font color='blue'> {<br>
+&nbsp; &nbsp; return;<br>
+}</font><br>
+while( 
+st.countTokens() &gt;  2 ) <font color='blue'> {<br>&nbsp; &nbsp; s +=
+    st.nextToken();<br>
+}</font>
+</code></p></NOBR>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+DISCOVER METRICS
+Sergey Ioffe
+(compiled from notes made 17.Jul-13.Aug.96, by Kit Transue 20.Aug.96)
+
+
+SECTION I:  Description of the Metrics enhancement to DISCOVER
+
+
+(1) Introduction.
+
+Metrics are used to measure certain properties of program entities:
+files, functions, and classes.  Metrics implemented in the project so
+far are:
+
+"Cyclomatic Complexity" (CC)
+"Myer's Complexity" (MYERS)
+"Lines Of Code" (LOC)
+"Size in Bytes" (BYTES)
+"Base Classes (fan-in)" (FANIN)
+"Derived Classes (fan-out)" (FANOUT)
+"Nested Ctrl Structs" (DEPTH)
+"Dangling else-ifs" (DANG_EI)
+"Defaultless switches" (DANG_SW)
+"Return Statements" (RETURNS)
+"Starting line number" (START_LN)
+"Uncommented lines" (ULOC)
+
+Some enhancements have been made to the UI to accomodate
+metrics. These include REPORT/sw, a "Metric Analysis" dialog, and
+filter in the Browser and Mini-browser. Metrics are also accessible
+from CLI.
+
+(2) REPORT/sw enhancement.
+The following changes have been made to REPORT/sw.
+
+An extra query "Metrics" has been added. This query, when applied to a
+function, class or file, outputs into a file the metrics for this
+entity. The format in which metrics are printed is stored in the
+template report-query-body!metrics. All metacharacters ($...) used in
+templates before and that make sense for metrics still
+apply. Additional characters are:
+
+$N -- name of metric.
+$I -- identifier of a metric (given in brackets above).
+$V -- value of a metric
+$% -- same as above but multiplied by 100 if the value of a metric is
+a real number, and not an integer.
+
+In the list of queries, there must be an extra line(s) to specify
+which metrics should be output. For example, Metrics:All outputs all
+metrics that can be computed for each given entity. Metrics:DANG_EI,CC
+will compute metrics whose identifiers are given. Also, an extension
+in <> can be given to specify what type of entities each metric will
+be computed for. F,C,M stand for function, class, and module,
+respectively. For instance, Metrics:All<FM>,FANIN<C> will compute all
+metrics applicable for functions and modules, and only fan-in for
+classes.  The templates can be created that allow metrics to be
+exported in any format that REPORT/sw supports, such as HTML or
+Frame. In addition, there will be templates for export in a
+Spreadsheet format.
+
+(3) Metric Analysis box.
+
+This box is now spawned from Utility->Metric Analysis, but will
+probably move to "Queries". A user selects a metric and lower and/or
+upper bounds on this metric. He selects entities in a browser from
+which the box was spawned, clicks "Run Query", and the symbols whose
+metrics satisfy the criteria will appear in the results list.
+
+The user has an option to select which entity types -- files,
+functions, classes -- he wants, and only those will be chosen. In
+addition, if the user wants to select a file(s) and get a list of
+functions and/or classes defined in these files (with appropriate
+metrics), then he checks the "select entities in files" box.
+
+
+(4) CLI (Command Line Interface).
+
+CLI is a new enhancement to DISCOVER that allows to run queries and
+execute scripts interactively and in batch mode. One of the CLI
+capabilities is computing attributes for program entities, for
+example, defining filename, number of arguments for a function, and so
+forth. Metrics are also implemented as attributes, which means that,
+in CLI, a user can run arbitrary queries on the metric values. For
+example it would take only a couple of lines of CLI script to generate
+a list of all functions in a project that have more than 100 lines of
+code, have complexity less than 5, and use at least one printf.
+
+(5) Filter dialog.
+
+This is spawned from the status button of a list. The modifications
+have been made to enable formatting, sorting and selection of entities
+using their CLI attributes, including all Metrics.
+
+In the format and sort spec design boxes a user can now choose, in
+addition to what was there before, a number of attributes and/or
+metrics. The number of sort and format fields has been increased, and
+the dialog box dinamically resizes to accomodate them.
+
+A "Format Expression" box has been added. Here a user can type a
+string specifying which format to use. a "%" stands for an entry from
+the format spec (the width is specified in the spec). Thus, if "entity
+name" and "cyclomatic complexity" are chosen for format spec and "%
+(%)" is the format expression then in the list there will be displayed
+a name followed by the metric value in brackets.
+
+A "CLI expression" box is an expression that can contain arbitrary
+attributes of the symbol, and will be used for filtering. Since all
+metrics are also CLI attributes, specifiying CLI filter such as
+"met_LOC == 3" will pick only those entities that have 3 lines of
+code.
+
+
+
+
+SECTION II:  Implementation Details
+
+
+The main classes for metric computation are MetricSet, MetricElement,
+and Metric.  MetricElements are stored in an MLinkTable, which is an
+array of 4-byte fields of the same architecture as Link, used in
+pmods.  MetricElement supports a tree architecture, in that an
+element can have a block that is itself a MetricElement. Most
+importantly, MetricElement contains pairs of type and value of
+integer-valued met- rics, or other attributes. MetricSet is a hash
+table that allows, from the offset of a symbol in pmod, to quickly
+find the corresponding MetricElement in associated MLinkTable, if one
+exists, or to put a new element into the table. MetricSet and
+MetricElement are used entirely to support storage of metrics in
+files. Definitions are in MetricElement.C and prototypes are in
+metric.h.
+
+Metric is the class that will be used by the end users, and it tries
+to use information from MetricSet, or, if it is unavailable or
+out-of-date, recomputes the metrics. Met- rics are computed for files,
+functions and classes. Each of these has list of metrics that can be
+computed for these entities, and these lists can be changed by the
+user.
+
+The files where the metrics are stored will be in the same directories
+as *.pmod.* files, with different extensions. A preference will be
+added to control whether to use files to store metrics in or to just
+recompute them on the fly.
+
+metric.h contains enumeration type metricType, which contains all the
+metric types used, and a new metric would require modifying that
+enum. metric.C initializes sev- eral arrays.  Metric::definitions
+contains information about metrics, such as name, type (int or
+double), and function that computes each metric. Metric::
+{class|func|file}_sequence specifies which metrics have to be computed
+for each entity type. Finally, in MetricElement.C, arrays
+MetricElement:: {class|func|file}_array specify which metrics get
+stored in a file (naturally the met- rics that can be recomputed from
+pmods need not be stored).
+
+Example: in Report/sw, one wants to compute several metrics for all
+functions.  Then, for each function, a Metric object is created, then
+we set which metrics need to be computed, and then call
+Metric::compute_all_metrics(). All file storage is taken care of and
+need not be paid attention to by the end user.
+
+
+
+(1) Defining a new metric.
+
+Each metric has a kind, a name, identifier(abbreviation), type (int or
+double) and a function that computes it.
+
+Kind of metric has enumeration type metricType, defined in metric.h.  A
+function to compute metrics must have a prototype:
+ 
+static void name(symbolPtr& sym, smtTree*& node, Relational* met, void* res)
+
+Here sym is the symbolPtr whose metric is to be computed. node points
+to smtTree corresponding to the symbol or is NULL. If if an smtTree
+and/or smtHeader are required for the computation of metric, use
+get_smt_of_sym(sym, node) or get_smt_of-sym(sym, node, h), where h is
+smtHeader*. If the metric can't be computed, return, otherwise assign
+the result to *(int*)res or *(double*)res, depending on the type of
+metric. met argument will be used if a metric uses another metric. To
+compute another metric, use the function void compute_one_metric(type,
+sym, node, met, &tmp) where tmp is where the result will go.
+
+Two functions used for computation of several metrics are
+smt_node_count and smt_token_count defined in metric.C.
+
+Add the definition of metric to Metric_definitions in metric.h.
+
+When defining a new metric, add its type to
+Metric_{file|class|file}_sequence in metric.h.
+
+Also, if you want this metric to be stored in a .pmod.met file, add
+its type to MetricElement_{file|class|file}_array in metric.h
+
+(2) Computing a metric of a symbolPtr.
+
+Call void Metric::get_metric(metricType type, symbolPtr& sym0, void *
+res), where res is address where to put the result.  It is also
+possible, as done in REPORT/sw, to compute many metrics for the same
+symbol at once. Class Metric has a constructor
+Metric::Metric(symbolPtr&), that creates an object which will contain
+metrics for a symbol. Metric::compute_all_metrics computes all metrics
+that can be computed for this symbol, and them ForEachMetric iterator
+can be used go through all computed metrics.
+
+Whenever a name or abbreviation or value type for a particular metric
+type are needed, use
+Metric::def_array[type]->{name|abbrev|type_is_int}
+
+(3) Storage of metrics.
+
+To avoid always loading a file, metrics can be written into a special
+"metric pmod". For each project this file is in the same directory as
+pmod, with same name and extension ".pmod.met". A preference that
+controls whether this file is used is DIS_misc:StoreMetrics. A class
+that handles file storage is MetricSet, which contains a
+MetricTable. MetricTable is an expandable array of 4-bute blocks,
+containing metric types and values, as well as some other
+information. To access and modify information in a MetricTable, a
+MetricElement is used.
+
+MetricElement contains a pointer to a MetricTable and an offset in
+MetricTable. This points to an element in MetricTable that contains
+the length of block in MetricTable. Also, MetricElement contains a
+pointer to a private MetricTable, so that it can "get" and "put"
+blocks of information, using MetricElement::get and
+MetricElement::put.
+
+The elements of MetricTable have type MLink, that has 7 bits for type,
+1 bit for block flag, and 24 bits for the index. if block flag is set
+then this MLink is the start of a block, and index contains its
+length. Otherwise the index is any information. For Metrics, the index
+can be an offset of the corresponding xrefSymbol in pmod, or a value
+of a metric.
+
+MetricElement::append allows to create a MetricElement within another
+MetricElement. This allows to store information for functions and
+classes within the MetricTable blocks for their defining files.
+
+To be able to quickly find a MetricElement corresponding to a
+particular symbolPtr, member set of MetricSet is derived from Set.
+
+The MetricTable gets updated during model build (unless
+DIS_misc:BuildMetrics or DIS_misc:StoreMetrics is set to 0). Also, the
+table gets updated if during a metric computation the metrics for the
+defining file are not in table. This is done to be able to display
+metrics in the browser.

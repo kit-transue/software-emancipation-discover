@@ -1,0 +1,3809 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis closure.dis
+global AllFunctionThisClass
+
+#======================================================================================
+# Name:		GetRecompileFilesSignatureChanged
+# Description:	find all files that may need recompilation if given entities are changed
+# Returns:	set of all files that include the files declaring or defining entities
+#======================================================================================
+proc GetRecompileFilesSignatureChanged { EntitySet } {
+	set FilesNeedingRecompilation [where defined [instances $EntitySet]]
+	sappend $FilesNeedingRecompilation [query_closure 50 "where included" $FilesNeedingRecompilation]
+	set FilesNeedingRecompilation [set_unique $FilesNeedingRecompilation]
+	set FilesNeedingRecompilation [sort cname $FilesNeedingRecompilation]
+	return $FilesNeedingRecompilation
+}
+
+#======================================================================================
+# Name:		GetRecompileFilesFunctBodyChanged
+# Description:	find all files that may need recompilation if given entities are changed
+# Returns:	set of all files that include the files defining the seleted functions
+#======================================================================================
+proc GetRecompileFilesFunctBodyChanged { EntitySet } {
+	set FilesNeedingRecompilation [where defined $EntitySet]
+	sappend $FilesNeedingRecompilation [query_closure 50 "where included" $FilesNeedingRecompilation]
+	set FilesNeedingRecompilation [set_unique $FilesNeedingRecompilation]
+	return $FilesNeedingRecompilation
+}
+
+#======================================================================================
+# Name:		GetRecompileFilesMacroBodyChanged
+# Description:	find all files that may need recompilation if given entities are changed
+# Returns:	set of all files that include the files declaring or defining the mselected macros
+#======================================================================================
+proc GetRecompileFilesMacroBodyChanged { EntitySet } {
+	set FilesNeedingRecompilation [where defined [filter astdeclaration [instances $EntitySet]]]
+	sappend $FilesNeedingRecompilation [where defined $EntitySet]
+	sappend $FilesNeedingRecompilation [query_closure 50 "where included" $FilesNeedingRecompilation]
+	set FilesNeedingRecompilation [set_unique $FilesNeedingRecompilation]
+	return $FilesNeedingRecompilation
+}
+
+#======================================================================================
+# Name:		FilterInstanceByFunction
+# Description:	match instances that are in the scope of the given function
+# Returns:	subset of instances that are in the scope of the given function
+#======================================================================================
+proc FilterInstanceByFunction { Instances Function } {
+	return [filter local&&inst_scope=="[name $Function]" $Instances]
+}
+
+#======================================================================================
+# Name:		FunctionDefinesLocals
+# Description:	find local variable defined in given function
+# Returns:	set of locals defined in given function
+#======================================================================================
+proc FunctionDefinesLocals { Function } {
+	set DeclarationsInFile [get_declarations [where defined $Function]]
+	return FilterInstanceByFunction $DeclarationsInFile $Function
+}
+
+#======================================================================================
+# Name:		IsFunctionConst
+# Description:  checks the arguments of the function to see if const is specified
+# Returns:	true if the function is defined as const, false otherwise
+#======================================================================================
+proc IsFunctionConst { Function } {
+	set Args [ args $Function ] 
+	return [ string match "*const" $Args ]
+}
+
+#======================================================================================
+# Name:		IsConst
+# Description:	Returns true if the field is a declared to be const
+# Returns:	true or false
+#======================================================================================
+proc IsConst { Var } { 
+	set type [typesym $Var]
+	set is_const 0
+	while { [ size $type ] > 0 } { 
+		if { [ const $type ] == "1" } { 
+			set is_const 1
+			set type [nil_set]
+		} else {
+			set name [name $type]
+			if { [ regexp {\]$} $name ] } { 
+				set type [ typesym $type ];  # array
+			} else {
+				set type [nil_set]
+			}
+		}
+	}
+	return $is_const
+}
+
+#======================================================================================
+# Name: 	IsExtern
+# Description:  return true is the variable is declared as extern
+# Returns:	true or false
+#======================================================================================
+proc IsExtern { Var } { 
+	set Declaration [ get_instance_statement [ filter astcategory=="declaration" [instances $Var ] ] ] 
+	if { [ string first "extern" $Declaration ] == 0 } { 
+		return 1
+	} else {
+		return 0
+	}
+}
+
+#======================================================================================
+# Name:		IsStatic
+# Decription:	Returns true if the variable is static
+# Returns:	true or false
+#======================================================================================
+proc IsStatic { Var } { 
+	set Instances [instances $Var]
+	set DeclInst [nil_set]
+	foreach Instance $Instances {
+		set AstCat [ astcategory $Instance ] 
+		if { [ string match "*declaration*" $AstCat ] } { 
+			sappend $DeclInst $Instance
+		}
+	}
+	if { [ size $DeclInst ] == 1 } { 
+		set DeclStr [get_instance_statement $DeclInst ]
+		if { [ string match "*static *" $DeclStr ] != 0 } { 
+			return 1 
+		} else {
+			return 0
+		}
+	} else {
+		# Return 0 if there is no unique declaration or if there is no declaration
+		return 0
+	}
+}
+
+#======================================================================================
+# Name: 	GetAssignmentInstances
+# Description:	Uses TPM and string matching to see which instances are assignments
+# Returns:	A subset of Instances
+#======================================================================================
+proc GetAssignmentInstances { Instances } {
+	set ReturnInstances [nil_set]
+	foreach Instance $Instances {
+		set AstNode [ tree navigate {<-} $Instance ]
+		if { ![ string match "" [  apply ast_block $AstNode ] ] } {
+			set Code [ ast_code $AstNode ]
+			if { [ string match "*component*" $Code ] } {
+				set AstNode [ tree navigate { <-<- } $Instance ]
+				if [assignment $Instance] {
+					set assignNode [tree navigate { r(<-) (assign_expr )} $Instance]
+					# have we found assignment node
+					if {"$assignNode" != ""} {
+						# now we need to make sure that something gets assigned to the instance
+						# not vice versa
+						set startNode [tree find {-> , nil} $assignNode]
+						if {"[tree navigate {,} $startNode]"!=""} {
+							set startNode [tree navigate {->} $startNode]
+						}
+						set startNode [tree navigate {->} $assignNode]
+						if {"$startNode" != ""} {
+							set origInst [tree find {global_id} $startNode]
+							if {[etag $origInst]==[etag [data node $Instance]]} {
+								set AstNode $assignNode
+							}
+						}
+					}
+				}
+				if { ![ string match "" [  apply ast_block $AstNode ] ] } {
+					set Code [ ast_code $AstNode ]
+					if { [ IsAssignment $Code ] } {
+						sappend $ReturnInstances $Instance
+					}
+				}
+			} elseif { [ IsAssignment $Code ] } {
+				sappend $ReturnInstances $Instance
+			}
+		}
+	}
+	return $ReturnInstances
+}
+
+#======================================================================================
+# Name:		IsAssignment
+# Description:	Uses string matching with tpm expression codes to find out if
+# 		the given code is an assignment expression (including ones like +=0
+# Returns:	true or false
+#======================================================================================
+proc IsAssignment { Code } {
+	if { [ string match "" $Code ] == 0  } {
+		# all assignement instances either are postfixed by assign_expr
+		# or are one of the following 
+		if { [ string match "*assign_expr" $Code ] == 1 ||
+		     [ string match "postdecrement_expr" $Code ] == 1 ||
+		     [ string match "predecrement_expr" $Code ] == 1 ||
+		     [ string match "postincrement_expr" $Code ] == 1 ||
+		     [ string match "preincrement_expr" $Code ] == 1  } {
+			     return 1
+		} else {
+			return 0
+		}
+	}
+}
+
+#======================================================================================
+# Name: 	GetFunctionsUsingLocal 
+# Description:	Using the instances of the local variable, find all where the inst_scope
+#		is a function
+# Returns:	a set of all functions that defined the given local variable
+#======================================================================================
+proc GetFunctionsUsingLocal { Local } { 
+	set Functions [nil_set]
+	set Instances [  instances $Local  ]
+	foreach Instance $Instances {
+		if { [ string match [kind [ inst_scope $Instance ]] "funct" ] } { 
+			sappend $Functions [inst_scope $Instance]
+		}
+	}
+	set Functions [ sort [ set_unique $Functions]]
+	return $Functions
+
+}
+
+#======================================================================================
+# Name:		GetStandardSignature
+# Description:	remove white spaces after commas, change []'s into *'s, remove const
+#		qualifier from end of signature, no more than 1 consecutive space.
+# Returns:	standardized signature string
+#======================================================================================
+proc GetStandardSignature { CName Arguments } {
+	regsub -all {\)const} "$CName$Arguments" {)} StandardSignature
+	regsub -all {[\{\}][\{\}]*} $StandardSignature {} StandardSignature
+	regsub -all { \* } $StandardSignature {* } StandardSignature
+	regsub -all {,  *} $StandardSignature { } StandardSignature
+	regsub -all {  *,} $StandardSignature {,} StandardSignature
+	regsub -all {   *} $StandardSignature {,} StandardSignature
+	regsub -all {\[[0-9]*\]} $StandardSignature {*} StandardSignature
+	regsub -all {\(\*\)\*} $StandardSignature {**} StandardSignature
+	return $StandardSignature
+}
+
+#======================================================================================
+# Name:		GetSameSignatureFunctions
+# Description:	search through list in arg1 to find function with same signature as arg2
+# Returns:	all matching functions in list
+#======================================================================================
+proc GetSameSignatureFunctions { FunctionSearchSet FunctionSignature } {
+	set SameSignatureFunctions [nil_set]
+	foreach Function $FunctionSearchSet {
+		set CurrentStandardSignature [GetStandardSignature [apply cname $Function] [apply arguments $Function]]
+		if {"$CurrentStandardSignature" == "$FunctionSignature"} {
+			sappend $SameSignatureFunctions $Function
+		}
+	}
+	return $SameSignatureFunctions
+}
+
+#======================================================================================
+# Name:		IsSameSignatureFunction
+# Description:	search through list in 'FunctionSearchSet' to find function
+#               with same signature as 'FunctionSignature'
+# Returns:	'1' - found function with same signature
+#               '0' - not found
+#======================================================================================
+proc IsSameSignatureFunction {FunctionSearchSet FunctionSignature} {
+	foreach Function $FunctionSearchSet {
+		set CurrentStandardSignature [GetStandardSignature [apply cname $Function] [apply arguments $Function]]
+		if {"$CurrentStandardSignature" == "$FunctionSignature"} {
+			return "1"
+		}
+	}
+	return "0"
+}
+
+#======================================================================================
+# Name:		ReportImpactCategory
+# Description:	print category line (to be followed by impact instances or entities)
+# Returns:	stdout
+#======================================================================================
+proc ReportImpactCategory { Level CategoryName CategoryType } {
+	puts "$Level\t$CategoryName\t$CategoryType\t\t\t\t\t\t\t"
+}
+
+#======================================================================================
+# Name:		ReportImpact
+# Description:	print list of all impact entities/instances
+#		the first element of the set determines category "INSTANCE" or "ENTITY"
+# Returns:	stdout
+#======================================================================================
+proc ReportImpact { Level Entity } {
+	if {[size $Entity]} {
+		set EntityLine [line $Entity]
+		set CategoryName "ENTITY"
+		if {[apply instance $Entity]} {
+			set CategoryName "INSTANCE"
+		}
+		puts "$Level\t$CategoryName\t[name $Entity]\t[kind $Entity]\t[language $Entity]\t[protected $Entity]\t[private $Entity]\t[etag $Entity]\t[fname $Entity]\t$EntityLine"
+	}
+}
+
+#======================================================================================
+# Name:		ReportImpacts
+# Description:	print list of all impact entities/instances
+#		the first element of the set determines category "INSTANCE" or "ENTITY"
+# Returns:	stdout
+#======================================================================================
+proc ReportImpacts { Level EntitySet } {
+	set sizeset [ size $EntitySet ]
+	if { $sizeset } { 
+		if { $sizeset > 1 } { 
+			foreach Entity $EntitySet {
+				ReportImpact $Level $Entity
+			}
+		} else {
+			ReportImpact $Level $EntitySet
+		}
+	}	
+}
+
+#======================================================================================
+# Name:		ReportSortedImpactsAtLevel
+# Description:	print tab separated list of attributes for a set of impacts
+#		first level entity at specified level
+#		list of all second level impact entities/instances at specified level
+# Returns:	stdout
+#======================================================================================
+proc ReportSortedImpactsAtLevel { FirstLevel NextLevel FirstLevelEntity NextLevelEntitySet } {
+	ReportImpact $FirstLevel $FirstLevelEntity
+	ReportImpacts $NextLevel $NextLevelEntitySet
+}
+
+#======================================================================================
+# Name:		ReportSimpleImpacts
+# Description:	print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		list of all impact entities or instances
+# Returns:	stdout
+#=====================================================================================
+proc ReportSimpleImpacts { CategoryName CategoryType EntitySet } {
+	if {[size $EntitySet]} {
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		ReportImpacts 1 $EntitySet
+	}
+}
+
+#======================================================================================
+# Name:		ReportImpactNoInstances
+# Description:	print tab separated list of attributes for a set of impacts
+#		first level entity at specified level.  Do not print each entities instances
+# Returns:	stdout
+#======================================================================================
+proc ReportImpactNoInstances { CategoryName CategoryType EntitySet } {
+	if { [ size $EntitySet] > 0 } {
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		if { [ size $EntitySet ] == 1 }  {
+			set Entity [name $EntitySet]
+			ReportImpact 1 $Entity
+		} else {
+			foreach Entity $EntitySet { 
+				if { [ name $Entity ] != "" } {
+					ReportImpact 1 $Entity
+				}
+			}
+		}
+	} 
+}
+
+#======================================================================================
+# Name:		ReportImpactOneInstance
+# Description:	print tab separated list of attributes for a set of impacts
+#		first level entity at specified level.  Print only one instance of each
+#		entity.  The instance that matches the file the entity is defined in.
+# Returns:	stdout
+#======================================================================================
+proc ReportImpactOneInstance { CategoryName CategoryType EntitySet } {
+	if { [ size $EntitySet] > 0 } {
+		set lineNum [ line $EntitySet ] 
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		set Level 1
+		if { [ size $EntitySet ] == 1 }  {
+			set Entity [name $EntitySet]
+			ReportImpact 1 $Entity
+			set Instances [ instances $Entity ]
+			foreach Inst $Instances {
+				if { [ string match [line $Inst] $lineNum ] && [string match [ fname $Inst ] [ fname $Entity ] ] } {
+					ReportImpact 2 $Inst
+					break;
+				}
+			}
+		} else {
+			foreach Entity $EntitySet { 
+				if { [ string match "" [ where declared $Entity ] ] == 0 } { 
+					set lineNum [ line $Entity ] 
+					if { [ name $Entity ] != "" } {
+						ReportImpact 1 $Entity
+						set Instances [ instances $Entity ]
+						foreach Inst $Instances {
+							if { [ string match [line $Inst] $lineNum ]  &&  [ string match [ fname $Inst ] [ fname $Entity ] ] } {
+								ReportImpact 2 $Inst
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#======================================================================================
+# Name:		ReportSimpleSortedImpacts
+# Description:	print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		entity name from specified set, followed by ...
+#		list of all instances for that entity
+# Returns:	stdout
+#======================================================================================
+proc ReportSimpleSortedImpacts { CategoryName CategoryType EntitySet } {
+	if {[size $EntitySet]} {
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		foreach Entity $EntitySet {
+			if {[module $Entity]} {					;# files do not have instances
+				ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+			} elseif { [ constructor $Entity ] } {
+				set Class [GetClassOf $Entity]
+				ReportImpact 1 $Entity
+				if { [ string match "java" [ language $Entity ] ] } {
+					ReportImpacts 2 [ GetPlacesClassIsInstantiated $Class ]
+				} else {
+					foreach Place [ where used $Entity ] {
+						puts "2\tINSTANCE\t[name $Place]\t[kind $Place]\t[language $Place]\t[protected $Place]\t[private $Place]\t[etag $Place]\t[fname $Place]\t[line $Place]"
+					}
+				}
+			} else {
+				set InstancesOfEntity [sort [set_unique [instances $Entity]]]
+				if { [size $InstancesOfEntity] } {
+					ReportSortedImpactsAtLevel 1 2 $Entity $InstancesOfEntity
+				} else {
+					ReportImpact 1 $Entity
+				}
+			}
+		}
+	}
+}
+
+#======================================================================================
+# Name:		ReportSimpleSortedImpactsEnum
+# Description:	This method is called by Impact:DeleteUnionEnumStructMember.  It's the original
+#		ReportSimpleSortedImpacts that was release in Blizzard.
+# Returns:	stdout
+#======================================================================================
+proc ReportSimpleSortedImpactsEnum { CategoryName CategoryType EntitySet } {
+	if {[size $EntitySet]} {
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		foreach Entity $EntitySet {
+			if {[module $Entity]} {					;# files do not have instances
+				ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+			} else {
+				set InstancesOfEntity [instances $Entity]	;# only report on entities that
+				ReportSortedImpactsAtLevel 1 2 $Entity $InstancesOfEntity
+			}
+		}
+	}
+}
+
+#======================================================================================
+# Name:		ReportSimpleSortedImpactsPkg
+# Description:  This method is for DeletePackage reporting for Referenced but not defined	
+#		Only instances that are outside of the package being deleted will be shown
+#		print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		entity name from specified set, followed by ...
+#		list of all instances for that entity
+# Returns:	stdout
+#======================================================================================
+proc ReportSimpleSortedImpactsPkg { CategoryName CategoryType EntitySet Package } {
+	if {[size $EntitySet]} {
+		set InstancesToReport [nil_set]
+		foreach Entity $EntitySet {
+			if {[module $Entity]} {					;# files do not have instances
+				sappend $InstancesToReport $Entity
+			} else {
+				set InstancesOfEntity [sort [set_unique [instances $Entity]]];
+				foreach Inst $InstancesOfEntity {
+					if { ![ IsPartOfPackage [ name $Package ] [ inst_scope $Inst ] ] } {
+							sappend $InstancesToReport $Inst
+					}
+				}
+				if { [size $InstancesToReport] } {
+					set InstancesToReport [ set_unique $InstancesToReport ]
+				}
+			}
+		}
+		if { [ size $InstancesToReport ] > 0 } { 
+			ReportImpactCategory 0 $CategoryName $CategoryType
+			foreach Entity $EntitySet {
+				if {[module $Entity]} {					;# files do not have instances
+					ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+				} else {
+					set InstancesOfEntity [sort [set_unique [instances $Entity]]];
+					set InstancesOfMemberToReport [nil_set]
+					foreach Inst $InstancesOfEntity {
+						if { ![ IsPartOfPackage [ name $Package ] [ inst_scope $Inst ] ] } {
+								sappend $InstancesOfMemberToReport $Inst
+						}
+					}
+					if { [size $InstancesOfMemberToReport] } {
+						set InstancesOfMemberToReport [ set_unique $InstancesOfMemberToReport ]
+						ReportSortedImpactsAtLevel 1 2 $Entity $InstancesOfMemberToReport
+					}
+				}
+			}
+		}
+	}
+}
+
+#======================================================================================
+# Name:		ReportSimpleSortedOutOfClassImpacts
+# Description:	print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		entity name from specified set, followed by ...
+# 		instances that are not in the same class
+# Returns:	stdout
+#======================================================================================
+proc ReportSimpleSortedOutOfClassImpacts { CategoryName CategoryType EntitySet Class } {
+	set ReturnSet [nil_set]
+	if { [size $EntitySet]} {
+		# when this is set to 0, the category has not be reported yet
+		# once it's set to 1, the category has been reported
+		set AnythingToReport 0
+		set FileName [fname $Class]
+		foreach Entity $EntitySet {
+			if {[module $Entity]} {					;# files do not have instances
+				if { !$AnythingToReport } { 
+					set AnythingToReport 1
+					ReportImpactCategory 0 $CategoryName $CategoryType
+				}
+				sappend $ReturnSet $Entity
+				ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+			} else {
+				set Instances [ instances $Entity ] 
+				set WhereDefined [ where defined $Class ] 
+				set definedClasses [ new_set] 
+				if { [name $WhereDefined] != "" } { 
+					if { [ psetfile $WhereDefined ] != "" } {
+						set definedClasses [filter cname=="[cname $Class]" [defines -classes $WhereDefined]]
+					}
+				}
+				set InstancesToReport [nil_set]
+				foreach Instance $Instances {
+					set InstScope [ inst_scope $Instance ] 
+					if { [string match "" [name $InstScope] ] == 0 } { 
+						if { [ struct $InstScope ] } { 
+							set ClassOfInst $InstScope
+						} else { 
+						set ClassOfInst [ GetClassOf $InstScope ] 
+						}
+						if { [ size $ClassOfInst ] > 0 } { 
+							if { ![ string match [cname $ClassOfInst] [cname $Class] ] } { 
+								# The following if statements filter out the line instance
+								# where an inner class is defined since inst_scope will return
+								# the parent class rather then the inner class
+								if { [ size $definedClasses ] > 0 } { 
+									if { [ fname $definedClasses ] != [ fname $Instance ] } {
+										sappend $InstancesToReport $Instance
+									} elseif  { [ line $definedClasses ] != [ line $Instance ] } { 
+										sappend $InstancesToReport $Instance
+									}
+								} else  {
+									sappend $InstancesToReport $Instance
+								}
+							}
+						}
+					}
+				}
+				if { [size $InstancesToReport] } {
+					if { !$AnythingToReport } { 
+						set AnythingToReport 1
+						ReportImpactCategory 0 $CategoryName $CategoryType
+					}
+					sappend $ReturnSet $Entity
+					ReportSortedImpactsAtLevel 1 2 $Entity $InstancesToReport
+					if { ![ string match $CategoryName "REFERENCED_BUT_NOT_DEFINED" ] } { 
+						if { [ string match [ cname $Entity ] [ cname $Class ] ] } { 
+							if { [ size $definedClasses ] > 0 } { 
+									puts "2\tINSTANCE\t[name $definedClasses]\t[kind $definedClasses]\t[language $definedClasses]\t[protected $definedClasses]\t[private $definedClasses]\t[etag $definedClasses]\t[fname $definedClasses]\t[line $definedClasses]"
+								}
+							}
+						}
+					}
+				}
+			}
+		# in case nothing was reported, we still need to report the class that we are changing
+		if { !$AnythingToReport && [ string match $CategoryName "NEED_CHANGE" ] } {
+			ReportImpactCategory 0 $CategoryName $CategoryType
+			ReportImpact 1 $Class
+			# report the place where the file is declared as well
+			set WhereDefined [ where defined $Class ]
+			if { [name $WhereDefined] != "" } {
+				if { [ psetfile $WhereDefined ] != "" } {
+					set definedClasses [filter cname=="[cname $Class]" [defines -classes $WhereDefined]]
+					puts "2\tINSTANCE\t[name $definedClasses]\t[kind $definedClasses]\t[language $definedClasses]\t[protected $definedClasses]\t[private $definedClasses]\t[etag $definedClasses]\t[fname $definedClasses]\t[line $definedClasses]"
+				}
+			}
+		}
+		if { !$AnythingToReport && [ string match $CategoryName "REFERENCED_BUT_NOT_DEFINED" ] } { 
+			sappend $ReturnSet $Class
+		}
+	}
+	if { [ string match $CategoryName "REFERENCED_BUT_NOT_DEFINED" ] } { 
+		return $ReturnSet
+	}
+}
+
+#======================================================================================
+# Name:		ReportSimpleSortedOutOfFileImpacts
+# Description:	print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		entity name from specified set, followed by ...
+# 		instances that are not in the same class
+# Returns:	stdout
+#======================================================================================
+proc ReportSimpleSortedOutOfFileImpacts { CategoryName CategoryType EntitySet File } {
+	if { [size $EntitySet]} {
+		# when this is set to 0, the category has not be reported yet
+		# once it's set to 1, the category has been reported
+		set AnythingToReport 0
+		set DefinesAll [defines $File]
+		foreach Entity $EntitySet {
+			if { [ size [ set_intersect $DefinesAll $Entity ] ] != 0 } { 
+			if {[module $Entity]} {					;# files do not have instances
+				if { !$AnythingToReport } { 
+					set AnythingToReport 1
+					ReportImpactCategory 0 $CategoryName $CategoryType
+				}
+				ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+			} else {
+				set InstancesToReport [filter fname!=\"[fname $File]\" [instances $Entity]]
+				if { [size $InstancesToReport] } {
+					if { !$AnythingToReport } { 
+						set AnythingToReport 1
+						ReportImpactCategory 0 $CategoryName $CategoryType
+					}
+					ReportSortedImpactsAtLevel 1 2 $Entity $InstancesToReport
+				}
+			}
+		}
+		}
+		# in case nothing was reported, we still need to report the file that we are changing
+		if { !$AnythingToReport && [ string match $CategoryName "NEED_CHANGE" ] } {
+			ReportImpactCategory 0 $CategoryName $CategoryType
+			ReportImpact 1 $File
+		}
+	}
+}
+#======================================================================================
+# Name:		ReportImpactsInFunction
+# Description:	print tab separated list of attributes for a set of impacts where only
+#		instances that are in the given function show up
+#		prints in the same format as ReportSimpleSortedImpacts
+# Returns:	stdout
+#======================================================================================
+proc ReportImpactsInFunction { CategoryName CategoryType EntitySet Function InstancesOfMember } {
+	if { [size $EntitySet]} {
+		set InstancesToReport [nil_set]
+		foreach Entity $EntitySet {
+			if {[module $Entity]} {					;# files do not have instances
+				sappend $InstancesToReport $Entity
+			} else {
+				set Instances [ filter inst_scope=="[name $Function]" [instances $Entity ] ]
+				set Constructors [ filter -constructor [ instances $Entity ] ]
+				foreach Constructor $Constructors {
+					set Class [GetClassOf $Constructor]
+					sappend $Instances [ filter inst_scope=="[name $Function]" [ GetPlacesClassIsInstantiated $Class ] ]
+				}
+				set Instances [ set_unique $Instances ]
+				if { [size $Instances] } {
+					sappend $InstancesToReport $Instances
+				}
+			}
+		}
+		if  { [ size $InstancesToReport ] > 0 } {
+			ReportImpactCategory 0 $CategoryName $CategoryType
+			foreach Entity $EntitySet {
+				if {[module $Entity]} {					;# files do not have instances
+					ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+				} else {
+					# double check that the instances are only assignment instances in the function
+					# if this is the following folder
+					if { [ string match "ASSIGNING_VALUES_IN_CONST_FUNCTION" $CategoryName ] } {
+						set TempInstances [ filter inst_scope=="[name $Function]" [instances $Entity ] ]
+						set Instances [ GetAssignmentInstances $TempInstances ]
+						set Constructors [ filter -constructor [ instances $Entity ] ]
+					} else {
+						set Instances [ filter inst_scope=="[name $Function]" [instances $Entity ] ]
+						set Constructors [ filter -constructor [ instances $Entity ] ]
+					}
+
+					foreach Constructor $Constructors {
+						set Class [GetClassOf $Constructor]
+						sappend $Instances [ filter inst_scope=="[name $Function]" [ GetPlacesClassIsInstantiated $Class ] ]
+					}
+					set Instances [ set_unique $Instances ]
+					if { [size $Instances] } {
+						ReportSortedImpactsAtLevel 1 2 $Entity $Instances
+						sappend $InstancesOfMember $Instances
+					} else {
+						# for the CALLING_NONCONST folder report all entities whether
+						# or not we have an instance with a line number for it
+						if { [ string match "CALLING_NONCONST" $CategoryName ] } {
+							ReportImpact 1 $Entity
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#======================================================================================
+# Name:		ReportInclusionTree
+# Description:	print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		entity name from specified set, followed by ...
+#		modules and all files where it included
+# Returns:	stdout
+#======================================================================================
+proc ReportInclusionTree { CategoryName CategoryType EntitySet } {
+	if {[size $EntitySet]} {
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		foreach Entity $EntitySet {
+			set whereIncluded [where included $Entity]
+			ReportSortedImpactsAtLevel 1 2 $Entity $whereIncluded
+		}
+	}
+}
+
+#======================================================================================
+# Name:		ReportCallsImpacts
+# Description:	print tab separated list of attributes for a set of impacts
+#		category line first, followed by ...
+#		entity name from specified set, followed by ...
+#		list of all instances for that entity
+# Returns:	stdout
+#======================================================================================
+proc ReportCallsImpacts { CategoryName CategoryType EntitySet } {
+	if {[size $EntitySet]&&[size [filter !astdeclaration [instances $EntitySet]]]} {
+		ReportImpactCategory 0 $CategoryName $CategoryType
+		foreach Entity $EntitySet {
+			set InstancesOfEntity [instances $Entity]	;# only report on entities that
+			set InstancesOfEntity [filter !astdeclaration $InstancesOfEntity]	;# ... have atleast
+			if {[size $InstancesOfEntity]} {		;# ... 1 non-declaration instance
+				ReportSortedImpactsAtLevel 1 2 $Entity $InstancesOfEntity
+			}
+		}
+	}
+}
+
+#======================================================================================
+# Name:		GetClassOf
+# Description:	determines the class, if any, that contains the given member entity
+# Returns:	corresponding class
+#======================================================================================
+proc GetClassOf { Member }  {
+	set class [where declared $Member]
+	if {[size $class]==0} {
+		set class [filter {class || interface || union || enum} [where used $Member]]
+	}
+	if {[size $class]==0 && [evalue $Member]} {
+		set class [set_copy "enum@[type $Member]"]
+	}
+	return $class
+}
+
+#======================================================================================
+# Name:		GetPackage
+# Description:	determines the package, if any, that contains the given member entity
+# Returns:	corresponding package 
+#======================================================================================
+proc GetPackage { Member } { 
+	if { [ apply package $Member ] } { 
+		return $Member
+	} 
+
+	set Class [GetClassOf $Member ]
+	set PackagesUsedIn [filter -package [where used $Class]]
+	foreach Package $PackagesUsedIn { 
+		if { [IsMethodPartOfPackage [name $Package] [name $Member ]] } { 
+			return [name $Package]
+		}
+	}
+}
+
+#======================================================================================
+# Name:		GetPlacesClassIsInstantiated
+# Description:	Returns all instances where this class is instantiated. This is
+# 		used for JAVA ONLY
+# Returns:	Instances
+#======================================================================================
+proc GetPlacesClassIsInstantiated { Class } {
+	set Constructors [ filter -constructor [ uses -functions $Class ] ]
+	set ClassCName [cname $Class]
+	set PlacesUsed [nil_set]
+	foreach Constructor $Constructors {
+		sappend $PlacesUsed [where used $Constructor]
+	}
+	set PlacesUsed [set_unique $PlacesUsed ]
+	set EasyNews [nil_set]
+	foreach Place $PlacesUsed {
+		sappend $EasyNews [ tree find "easy_new" $Place ]
+	}
+	set EasyNews [ set_unique $EasyNews ]
+	set Nodes [nil_set]
+	foreach EasyNew $EasyNews {
+		sappend $Nodes [ tree navigate { ->-> } $EasyNew ]
+	}
+	set Nodes [ set_unique $Nodes ]
+	set ThingsToReport [nil_set]
+	foreach Node $Nodes {
+		if { [ string match "$ClassCName" "[cname $Node]" ] } {
+			sappend $ThingsToReport [data instance $Node]
+		}
+	}
+
+	# for C++ we need to find all the places where we CALL the constructor
+	set ClassType "$ClassCName&"
+	foreach Place $PlacesUsed {
+		set callExprs [ tree find {call_expr (ast_offset==0) (ast_length==0)} $Place ]
+		set lName [lname $Place]
+		foreach ConstrCall $callExprs {
+			set ConstrType [tree navigate {->} $ConstrCall]
+			if {"[type $ConstrType]"==$ClassType} {
+				set Instance [tree navigate {r(<-) (ast_offset!=0)} $ConstrType]
+				sappend $ThingsToReport [instance_from_offset $lName [ast_offset $Instance]]
+			}
+		}
+	}
+
+	return [ set_unique $ThingsToReport ]
+}
+
+
+#=====================================================================================
+# Name:		GetPermission
+# Description:	discover the permissions for a particular entity
+# Returns:	0=public, 1=default, 2=protected, 3=private
+#======================================================================================
+proc GetPermission { Member } {
+	if {! [apply member $Member]} {			;# non-class members are public
+		return 0
+	}
+	if {[apply private $Member]} {
+		return 3
+	} elseif {[apply protected $Member]} {
+		return 1
+	} elseif {[apply public $Member]} {
+		return 0
+	} else {					;# if permission not listed, is default
+		return 2
+	}
+}
+
+#======================================================================================
+# Name:		Impact:ChangeFilename
+# Description:	A file is renamed
+# Returns:	all instances of corresponding class, if file is java
+#		name conflicts with other files
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeFilename {OldFileEtag NewFileName} {
+	set OldFile [set_copy $OldFileEtag]
+
+	set PossibleNameConflicts [filter cname=="$NewFileName" [defines -modules /]]
+	ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $PossibleNameConflicts
+
+	set thisLang [string tolower [language $OldFile]]
+	set FilesIncludingHeader [nil_set]
+
+	if {$thisLang == "c" || $thisLang == "cpp"} {
+		ReportInclusionTree "NEED_CHANGE" "folder" $OldFile
+		sappend $FilesIncludingHeader [query_closure 50 "where included" $OldFile]
+	} else {
+		if {$thisLang == "java"} {
+			set NeedsChanging [nil_set]
+			sappend $NeedsChanging $OldFile
+			sappend $NeedsChanging [filter regexp("PUBLIC",java_attributes) [defines -class $OldFile]]	;# ... then the public class needs renamed
+			sappend $NeedsChanging [filter regexp("PUBLIC",java_attributes) [defines -interface $OldFile]]	;# ... then the public class needs renamed
+		}
+		ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $NeedsChanging
+		foreach Ent $NeedsChanging {
+			sappend $FilesIncludingHeader [where referenced $Ent]
+		}
+		set FilesIncludingHeader [ set_subtract $FilesIncludingHeader $OldFile ]
+   	}
+	sappend $FilesIncludingHeader $OldFileEtag
+	set FilesIncludingHeader [ sort [ set_unique $FilesIncludingHeader ] ]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesIncludingHeader
+
+}
+
+#======================================================================================
+# Name:		Impact:ChangeClassname
+# Description:	A class (interface) is renamed
+# Returns:	all instances of class (interface)
+#		name conflicts with other classes (interfaces) or typdefs
+#		all files that will need to be recompiled
+#		filename, if entity is java public class, and its name is equal to file name
+#======================================================================================
+proc Impact:ChangeClassname {ThisClassEtag NewClassName} {
+	set ThisClass [set_copy $ThisClassEtag]
+	set LogicalFileName [lname $ThisClass]
+	if {$LogicalFileName==""} {
+		set isInterface [interface $ThisClassEtag]
+		if {$isInterface=="1"}  {
+   	    		ReportImpactNoInstances "INTERFACE_NOT_IN_THE_MODEL" "error" $ThisClass
+		} else {
+   	    		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+		}
+	} elseif { [psetfile $ThisClassEtag ] == "" } { 
+    		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+	}
+
+
+	set ThisContext [context $ThisClass]
+	set NameConf [filter context=="$ThisContext" [filter cname=="$NewClassName" [defines -classes {/}]]]
+	ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $NameConf
+
+	set NeedsChanging [set_copy $ThisClass]
+
+	if {$LogicalFileName!="" && [ string match "*.jar" $LogicalFileName ] == 0 } { 
+		set ThisLanguage [string tolower [language $LogicalFileName]]
+
+		if {$ThisLanguage=="java"} {
+			;# If we have Java's class
+
+			set ShortFileName [string tolower [cname $LogicalFileName]]
+			set ClassNameWithSuffix [format "%s.java" [string tolower [cname $ThisClassEtag]]]
+
+			if {$ClassNameWithSuffix==$ShortFileName} {
+				;# And the class name is equal to the name of the file where it resides
+				;# We also must check whether the class is public!!!
+				sappend $NeedsChanging $LogicalFileName
+			}
+		}
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $NeedsChanging
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:AddBaseClass
+# Description:	A Class adds inheritance from a specified superclass
+# Returns:	all files that will need to be recompiled
+#======================================================================================
+proc Impact:AddBaseClass {ThisClassEtag NewBaseClassEtag} {
+	set ThisClass [set_copy $ThisClassEtag]
+
+    	if {[psetfile $ThisClass]==""} {
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:RemoveBaseClass
+# Description:	A class removes it's superclass inheritance
+# Returns:	all files that will need to be recompiled
+#		(would require ast info to determine usage of inherited members)
+#======================================================================================
+proc Impact:RemoveBaseClass {ThisClassEtag BassClassEtag} {
+	set ThisClass [set_copy $ThisClassEtag]
+	set BassClass [set_copy $BassClassEtag]
+
+    	if {[psetfile $ThisClass]==""} {
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+
+	# this could be improved by eliminating calls by classes that
+	# ... are not in the direct hierachy of the original class
+    	set AllBaseClasses [set_copy $BassClass]
+	sappend $AllBaseClasses [query_closure 50 "get_super_classes" $BassClass]
+	set BassClassMemberInstances [filter !private [get_member_functions $AllBaseClasses]]
+	sappend $BassClassMemberInstances [filter !private [get_member_data $AllBaseClasses]]
+	ReportCallsImpacts "POSSIBLE_ILLEGAL_USE" "warning" $BassClassMemberInstances
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeBaseClass
+# Description:	A class changes it's superclass inheritance (for Java only!!!)
+# Returns:	all files that will need to be recompiled
+#		(would require ast info to determine usage of inherited members)
+#======================================================================================
+proc Impact:ChangeBaseClass {ThisClassEtag OldBaseClassEtag} {
+	set ThisClass [set_copy $ThisClassEtag]
+
+    	if {[psetfile $ThisClass]==""} {
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+
+	if {$OldBaseClassEtag == "java.lang.Object"} {
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	} else {
+		# this could be improved by eliminating calls by classes that
+		# ... are not in the direct hierachy of the original class
+		set BaseClass [set_copy $OldBaseClassEtag]
+		set AllBaseClasses [set_copy $BaseClass]
+		sappend $AllBaseClasses [query_closure 50 "get_super_classes" $BaseClass]
+		set BaseClassMemberInstances [filter !private [get_member_functions $AllBaseClasses]]
+		sappend $BaseClassMemberInstances [filter !private [get_member_data $AllBaseClasses]]
+		ReportCallsImpacts "POSSIBLE_ILLEGAL_USE" "warning" $BaseClassMemberInstances
+
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	}
+}
+
+#======================================================================================
+# Name:		Impact:AddBaseInterface
+# Description:	A Class adds inheritance from a specified interface
+# Returns:	all files that will need to be recompiled
+#======================================================================================
+proc Impact:AddBaseInterface {ThisClassEtag NewBaseInterfaceEtag} {
+	set ThisClass [set_copy $ThisClassEtag]
+	set BaseInterface [set_copy $NewBaseInterfaceEtag]
+
+    	if {[psetfile $ThisClass]==""} {
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+
+	if {[interface $ThisClass] == "0"} {
+		set AllBaseInterfaces [set_copy $BaseInterface]
+		sappend $AllBaseInterfaces [query_closure 50 "get_super_classes" $BaseInterface]
+		set AllBaseInterfaceMembers [get_member_functions $AllBaseInterfaces] 
+		ReportSimpleImpacts "NEED_IMPLEMENT_METHODS" "folder" $AllBaseInterfaceMembers
+	}
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:RemoveBaseInterface
+# Description:	A class removes it's interface inheritance
+# Returns:	all files that will need to be recompiled
+#		(would require ast info to determine usage of inherited members)
+#======================================================================================
+proc Impact:RemoveBaseInterface {ThisClassEtag BaseInterfaceEtag} {
+	set ThisClass [set_copy $ThisClassEtag]
+	set BaseInterface [set_copy $BaseInterfaceEtag]
+
+    	if {[psetfile $ThisClass]==""} {
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+
+	# Get all methods of the interface that will be removed
+	set AllBaseInterfaces [set_copy $BaseInterface]
+	sappend $AllBaseInterfaces [query_closure 50 "get_super_classes" $BaseInterface]
+	set AllBaseMethods [get_member_functions $AllBaseInterfaces]
+
+	# Get all methods of the class that are implementation of the interface.
+	# And need to be deleted or reviewed at least.
+	set ThisMethods [get_member_functions $ThisClass]
+	set MethodsToReview [nil_set]
+	foreach Method $ThisMethods {
+		set CurSig [GetStandardSignature [apply cname $Method] [apply arguments $Method]]
+		set Res [IsSameSignatureFunction $AllBaseMethods $CurSig]
+		if {"$Res" == "1"} {
+			sappend $MethodsToReview $Method
+		}
+	}
+	ReportSimpleImpacts "NEED_REMOVE_METHODS" "folder" $MethodsToReview
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeJavaFieldDeclaration
+# Description:	A member of a class has it's permissions changed or becomes virtual,
+#		final or static
+#		NewPermission is one of public, protected, package or private
+# Returns:	"Value cannot be assigned to a constant variable", "Possible Value overwriting",
+#		"Different Instances", "Variable may have incorrect value", "Field in 
+#		inner class can't be declared static", "Entities that need to be changed"
+#		"Files that need to be recompiled".
+#======================================================================================
+proc Impact:ChangeJavaFieldDeclaration {MemberEtag NewPermission IsFinal IsStatic } {
+    	if {[psetfile $MemberEtag] == ""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $MemberEtag
+	}
+	# Get all the old permissions and declarations
+	set OldPermission [ GetPermission $MemberEtag ]
+	set OldFinal [ final $MemberEtag]  
+	set OldStatic [ static $MemberEtag ]
+
+	# create new sets
+	set InstancesToReport [nil_set]
+	set NeedsChange [nil_set]
+	set RecompileFiles [nil_set]
+
+	if {$NewPermission != $OldPermission } {
+		ChangePermissionGetSets $MemberEtag $OldPermission $NewPermission $NeedsChange
+	}
+
+	set NonStaticEntities [nil_set]
+	set NonStaticInstances [nil_set]
+	# static changes require TPM
+	# changing from static to non-static
+	if {$OldStatic && !$IsStatic} {
+		# get where this funciton is declared
+		set WhereDeclared [ where declared $MemberEtag ]	
+		if { [string match [ name $WhereDeclared ] "" ] == 0 } { 
+			if { [ apply struct  $WhereDeclared ] || [ apply class $WhereDeclared ] } {
+				set InstancesToReport [nil_set]
+				foreach Instance [instances $MemberEtag ] {
+					if { [ string match "*value*" [ astcategory $Instance ]] } { 
+						sappend $InstancesToReport $Instance
+					}
+				}
+				if { [ size $InstancesToReport ] >= 1 } { 
+					ReportImpactCategory 0 "INCORRECT_VALUE" "warning"
+					ReportImpact 1 $MemberEtag
+					foreach Instance $InstancesToReport {
+						ReportImpact 2 $Instance 
+					}
+				}
+			}
+		}
+		foreach Instance [ instances $MemberEtag ] { 
+			if { [ static [ inst_scope $Instance ] ] } { 
+				if { [string match [astcategory $Instance] "*declaration*" ] == 0 && [ inst_scope $Instance ] != [ name $MemberEtag ] } { 
+					sappend $NonStaticInstances $Instance 
+					sappend $RecompileFiles [fname $Instance] 
+				}
+			}
+		}
+	}
+			
+	# changing from non-static to static
+	if {!$OldStatic && $IsStatic} {
+		# check to see if it's declared in an inner class
+		if { [ IsInnerClass [ GetClassOf $MemberEtag ] ] } { 
+			ReportSimpleImpacts "INNER_CLASS" "error" $MemberEtag
+			return 0
+		}
+		set PossibleValueOverwritting [nil_set]
+		set WhereDeclared [ where declared $MemberEtag ]
+		if { [ string match [ name $WhereDeclared ] "" ] == 0 } {
+			# if the variable is declared in a class or struct
+			if {  [ apply struct $WhereDeclared ] || [ apply class $WhereDeclared ] } { 
+				sappend $PossibleValueOverwritting [GetAssignmentInstances [ instances $MemberEtag ] ]
+			}
+			# Report results 
+			if { [ size $PossibleValueOverwritting ] > 0 } { 
+				ReportImpactCategory 0 "POSSIBLE_VALUE_OVERWRITTING" "warning"
+				ReportImpact 1 $MemberEtag
+				foreach Entity $PossibleValueOverwritting {
+					ReportImpact 2 $Entity
+				}
+			}
+		}
+	}
+
+	set AssigningFinal [nil_set]
+	if {!$OldFinal && $IsFinal} {
+		sappend $AssigningFinal [ GetAssignmentInstances [ instances $MemberEtag ] ] 
+		sappend $RecompileFiles [ where defined $AssigningFinal ]
+		if { [ size $AssigningFinal ] > 0 } { 
+			ReportImpactCategory 0 "CANNOT_CHANGE_VALUE_OF_FINAL_VARIABLE" "warning"
+			ReportImpact 1 $MemberEtag
+			foreach Entity $AssigningFinal {
+				ReportImpact 2 $Entity
+				sappend $InstancesToReport $Entity
+			}
+		}
+	}
+
+	set NeedsChange [sort [set_unique $NeedsChange]]
+	foreach Item $NeedsChange {
+		sappend $RecompileFiles [ where defined $Item]
+	}
+	sappend $RecompileFiles [ where defined $MemberEtag ]
+	set RecompileFiles [set_unique $RecompileFiles ] 
+
+	ReportImpactOneInstance "NON_STATIC" "warning" $NonStaticEntities
+	
+	if { [ size $NonStaticInstances ] > 0 } { 
+		ReportImpactCategory 0 "NON_STATIC" "warning" 
+		ReportImpact 1 $MemberEtag 
+		ReportImpacts 2 $NonStaticInstances 
+	}
+
+	ReportImpactCategory 0 "NEED_CHANGE" "folder"
+	ReportImpact 1 $MemberEtag
+	set Instances [ instances $MemberEtag ] 
+	foreach Inst $Instances {
+		if { [ string match [line $Inst] [line $MemberEtag ]  ] && [string match [ fname $Inst ] [ fname $MemberEtag ] ] } {
+			sappend $InstancesToReport $Inst
+			break;
+		}
+	}
+	if { [ size $AssigningFinal ] > 0 } { 
+		foreach Entity $AssigningFinal {
+			sappend $InstancesToReport $Entity
+		}
+	}
+	# get other instances of this member depending on what we are chaning the new permission to
+	if { $NewPermission != $OldPermission } {
+		# making protected and wasn't private 
+		if { $NewPermission == 1  && $OldPermission != 3} { 
+			foreach Instance $Instances { 
+				if { ![ IsPartOfSubClass [ name [GetClassOf $MemberEtag ]] [inst_scope $Instance] ] && 
+				     ![ IsPartOfClass [ name [ GetClassOf $MemberEtag ] ] [ inst_scope $Instance ] ]} {
+					sappend $InstancesToReport $Instance
+				}
+			}
+		# making package and wasn't protected or private
+		} elseif { $NewPermission == 2 && $OldPermission != 3 } { 
+			set Package [ GetPackage $MemberEtag ]
+			foreach Instance $Instances { 
+				if { ![ IsPartOfPackage [ name $Package ]  [inst_scope $Instance] ] } { 
+					sappend $InstancesToReport $Instance
+				}
+			}
+		} elseif { $NewPermission == 3 && $OldPermission < 3} { 
+			foreach Instance $Instances { 
+				if { ![ IsPartOfClass [name [ GetClassOf $MemberEtag ]] [inst_scope $Instance] ] } { 
+					sappend $InstancesToReport $Instance
+				}
+			}
+		}
+	} 
+	sappend $InstancesToReport $NonStaticInstances 
+	set InstancesToReport [sort [set_unique $InstancesToReport ]]
+	foreach Instance $InstancesToReport {
+		ReportImpact 2 $Instance 
+		sappend $RecompileFiles [ fname $Instance ]
+	}
+	set RecompileFiles [sort [set_unique $RecompileFiles ]]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles 
+
+}
+
+#======================================================================================
+# Name: 	Impact:ChangeVariableDeclaration
+# Description:	This is for non CPP and C only and find the impact of making a variable
+# 		that is not a member of any class const, non-const, static and/or non-static
+# Results:	"Entities that need to be changed", "Files that need to be recompiled" and 
+# 		various other folders based on the user input.
+#======================================================================================
+proc Impact:ChangeVariableDeclaration { Member IsConst IsStatic } { 
+	set RecompileFiles [nil_set]
+	set NeedsChange [ nil_set ]
+	set CheckLogicInstances [ nil_set ] 
+	set MultipleDefinesInstances [ nil_set ]
+	set AssigningConst [ nil_set ]
+	set OldStatic [ IsStatic $Member ] 
+	set OldConst [ IsConst $Member ] 
+	set InstancesToReport [ nil_set ]
+	set WhereDeclared [ where defined $Member ]
+
+	if { [ psetfile $Member ] == "" } { 
+		ReportImpactNoInstances "FIELD_NOT_IN_THE_MODEL" "error" $Member
+	}
+
+	if {$OldStatic && !$IsStatic} { 
+		if { [name $WhereDeclared] != "" } { 
+		if { [ header $WhereDeclared ] } { 
+			sappend $CheckLogicInstances [ filter astcategory!="*declaration*" [ instances $Member ] ]  
+			if { [ size $CheckLogicInstances ] > 0 } { 
+				sappend $RecompileFiles [ apply fname $CheckLogicInstances ] 
+			}
+		}
+		}
+		if { !$IsConst } { 
+			set WhereIncluded [ where included $WhereDeclared ] 
+			if { [ size $WhereIncluded ] > 1 } { 
+				sappend $MultipleDefinesInstances [ filter fname!="$WhereDeclared" [ instances $Member ] ]  
+				sappend $InstancesToReport $MultipleDefinesInstances
+			}
+		}
+	} elseif {!$OldStatic && $IsStatic} { 
+		if { [ name $WhereDeclared ] != "" } { 
+		if { [ header $WhereDeclared ] } { 
+			sappend $CheckLogicInstances [ filter astcategory!="*declaration*" [ instances $Member ] ]  
+			if { [ size $CheckLogicInstances ] > 0 } { 
+				sappend $RecompileFiles [ apply fname $CheckLogicInstances ] 
+			}
+		}
+	} 
+	} 
+
+	if { $OldConst && !$IsConst } { 
+		if { [ header $WhereDeclared ] } { 
+			if {  !$IsStatic  } { 
+				sappend $CheckLogicInstances [ filter astcategory!="*declaration*" [ instances $Member ] ]  
+				if { [ size $CheckLogicInstances ] > 0 } { 
+					sappend $RecompileFiles [apply  fname $CheckLogicInstances ] 
+				}
+			}
+			set WhereIncluded [ where included $WhereDeclared ] 
+			if { [ size $WhereIncluded ] > 1 } { 
+				sappend $MultipleDefinesInstances [ filter fname!="$WhereDeclared" [ instances $Member ] ]  
+				sappend $InstancesToReport $MultipleDefinesInstances
+			}
+		}
+	} elseif { !$OldConst && $IsConst } { 
+		sappend $AssigningConst [ GetAssignmentInstances [ instances $Member ] ]  
+		sappend $InstancesToReport $AssigningConst
+	} 
+
+	set CheckLogicInstances [ sort [ set_unique $CheckLogicInstances ] ]
+	if { [ size $CheckLogicInstances] > 0 } { 
+		ReportImpactCategory 0  "CHECK_LOGIC" "folder" 
+		ReportImpact 1 $Member
+		ReportImpacts 2 $CheckLogicInstances
+	}
+
+	set MultipleDefinesInstances [ sort [ set_unique $MultipleDefinesInstances ] ]
+	if { [ size $MultipleDefinesInstances] > 0 } { 
+		ReportImpactCategory 0  "MULTIPLE_DEFINES" "folder" 
+		ReportImpact 1 $Member
+		ReportImpacts 2 $MultipleDefinesInstances
+	}
+
+	set AssigningConst [ sort [ set_unique $AssigningConst ] ]
+	if { [ size $AssigningConst ] > 0 } { 
+		ReportImpactCategory 0  "CANNOT_CHANGE_VALUE_OF_FINAL_VARIABLE" "folder"
+		ReportImpact 1 $Member
+		ReportImpacts 2 $AssigningConst
+	}
+	
+	sappend $InstancesToReport [ filter astcategory=="*declaration*" [ instances $Member ] ] 
+	foreach Instance [instances $Member] { 
+		if { [ string match "*declaration*" [astcategory $Instance ] ] } { 
+			sappend $InstancesToReport $Instance 
+		}
+	}
+	
+	set InstancesToReport [ sort [ set_unique $InstancesToReport ] ]
+	if { [ size $InstancesToReport ] > 0 } { 
+		ReportImpactCategory 0  "NEED_CHANGE" "folder" 
+		ReportImpact 1 $Member
+		ReportImpacts 2 $InstancesToReport
+	}
+	
+	if { [ size $InstancesToReport ] > 0 } { 
+		sappend $RecompileFiles [ apply fname $InstancesToReport ] 
+	}
+	
+	sappend $RecompileFiles [ where defined $Member ] 
+	sappend $RecompileFiles [ query_closure 50 "where included" $RecompileFiles ]
+	set RecompileFiles [ sort [ set_unique $RecompileFiles ] ]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+}
+
+#======================================================================================
+# Name:		Impact:ChangeCPPFieldDeclaration
+# Description:	A member of a class has it's permissions change or becomes const or static
+#		NewPermission is one of public, protected, package or private
+# Returns:	"Value cannotbe assigned to a constant variable", "Possible Value overwriting",
+#		"Different Instances", "Variable may have incorrect value", "Field in 
+#		inner class can't be declared static", "Entities that need to be changed"
+#		"Files that need to be recompiled".
+#======================================================================================
+proc Impact:ChangeCPPFieldDeclaration {MemberEtag NewPermission IsConst IsStatic} {
+    	if {[psetfile $MemberEtag] == ""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $MemberEtag
+	}
+	# get all the original member information
+	set OldPermission [GetPermission $MemberEtag ]
+	set OldConst [ IsConst $MemberEtag ] 
+	set OldStatic [ IsStatic $MemberEtag ]
+	set InstancesToReport [nil_set]
+
+	# create new sets
+	set NeedsChange [nil_set]
+	set RecompileFiles [nil_set]
+	sappend $RecompileFiles [ where defined $MemberEtag ]
+
+	if {$NewPermission > $OldPermission} {
+		ChangePermissionGetSets $MemberEtag $OldPermission $NewPermission $NeedsChange 
+	}
+
+	set NonStaticInstances [nil_set]
+	# static changes require TPM
+	# changing from static to non-static
+	if {$OldStatic && !$IsStatic} {
+		# get where this funciton is declared
+		set WhereDeclared [ where declared $MemberEtag ]	
+		if { [string match [ name $WhereDeclared ] "" ] == 0 } { 
+			if { [ apply struct  $WhereDeclared ] || [ apply class $WhereDeclared ] } {
+				
+				set InstancesToReport [nil_set]
+				foreach Instance [instances $MemberEtag ] {
+					if { [ string match "*value*" [ astcategory $Instance ]] } { 
+						sappend $InstancesToReport $Instance
+					}
+				}
+				if { [ size $InstancesToReport ] >= 1 } { 
+					ReportImpactCategory 0 "INCORRECT_VALUE" "warning"
+					ReportImpact 1 $MemberEtag
+					foreach Instance $InstancesToReport {
+						ReportImpact 2 $Instance 
+						sappend $RecompileFiles [ fname $Instance ]
+					}
+				}
+			}
+		}
+		foreach Instance [instances $MemberEtag ] { 
+			if { [ static [ inst_scope $Instance ] ] == 1 } { 	
+				if { [string match [astcategory $Instance] "*declaration*" ] == 0  && [ inst_scope $Instance ] != [ name $MemberEtag ] } { 
+					sappend $NonStaticInstances  $Instance
+					sappend $RecompileFiles [fname $Instance ] 
+				}
+			}
+		}
+	}
+	
+	set FilesNeedingDecl [ nil_set ]
+	# changing from non-static to static
+	if {!$OldStatic && $IsStatic} {
+		# check to see if it's declared in an inner class
+		if { [ IsInnerClass [ GetClassOf $MemberEtag ] ] } { 
+			ReportSimpleImpacts "INNER_CLASS" "error" $MemberEtag
+			return
+		}
+		if { [ string match [ language $MemberEtag ] "CPP" ] } { 
+			ReportImpactCategory 0 "NEED_DECLARATION" "warning"
+			ReportImpact 1 $MemberEtag 
+		}
+	
+		set PossibleValueOverwritting [nil_set]
+		set WhereDeclared [ where declared $MemberEtag ]
+		if { [ string match [ name $WhereDeclared ] "" ] == 0 } {
+			# if the variable is declared in a class or struct
+			if {  [ apply struct $WhereDeclared ] || [ apply class $WhereDeclared ] } { 
+				sappend $PossibleValueOverwritting  [GetAssignmentInstances [instances $MemberEtag ] ] 
+			}
+			# Report results 
+			if { [ size $PossibleValueOverwritting ] > 0 } { 
+				ReportImpactCategory 0 "POSSIBLE_VALUE_OVERWRITTING" "warning"
+				ReportImpact 1 $MemberEtag
+				foreach Entity $PossibleValueOverwritting {
+					ReportImpact 2 $Entity
+					sappend $RecompileFiles [ fname $Entity ]
+				}
+			}
+		}
+	}
+
+	set AssigningConst [nil_set]
+	if {!$OldConst && $IsConst} {
+		sappend $AssigningConst [ GetAssignmentInstances [instances $MemberEtag ]  ]
+		sappend $RecompileFiles [ where defined $AssigningConst ]
+		if { [ size $AssigningConst ] > 0 } { 
+			ReportImpactCategory 0 "CANNOT_CHANGE_VALUE_OF_FINAL_VARIABLE" "warning"
+			ReportImpact 1 $MemberEtag
+			foreach Entity $AssigningConst {
+				ReportImpact 2 $Entity
+				sappend $RecompileFiles [ fname $Entity ]
+			}
+		}
+	}
+
+	set NeedsChange [sort [set_unique $NeedsChange]]
+	foreach Item $NeedsChange {
+		sappend $RecompileFiles [fname $Item]
+	}
+	if { [ size $NonStaticInstances ] > 0 } { 
+		ReportImpactCategory 0 "NON_STATIC" "warning" 
+		ReportImpact 1 $MemberEtag
+		ReportImpacts 2 $NonStaticInstances
+	}
+
+	foreach Element $NeedsChange { 
+		sappend $RecompileFiles [ fname $Element ]
+	}
+	ReportImpactCategory 0 "NEED_CHANGE" "folder"
+	ReportImpact 1 $MemberEtag
+	set Instances [ instances $MemberEtag ] 
+	foreach Instance $Instances { 
+		if { [ string match "*declaration*" [ astcategory $Instance ] ] } { 
+			sappend $InstancesToReport $Instance 
+		}
+	}
+	if { [ size $AssigningConst ] > 0 } { 
+		foreach Entity $AssigningConst {
+			sappend $InstancesToReport $Entity
+		}
+	}
+
+	# get other instances of this member depending on what we are chaning the new permission to
+	if { $NewPermission > $OldPermission  } {
+		if { $NewPermission == 1 } { 
+			foreach Instance $Instances { 
+				if { ![ IsPartOfSubClass [name [GetClassOf $MemberEtag ]] [inst_scope $Instance] ] && 
+				     ![ IsPartOfClass [ name [ GetClassOf $MemberEtag] ] [ inst_scope $Instance ] ]} {
+					sappend $InstancesToReport $Instance
+				}
+			}
+		} elseif { $NewPermission == 3} { 
+			foreach Instance $Instances { 
+				if { ![ IsPartOfClass [name [GetClassOf $MemberEtag ]] [inst_scope $Instance] ] } { 
+					sappend $InstancesToReport $Instance
+				}
+			}
+		}
+	} 
+	sappend $InstancesToReport $NonStaticInstances 
+	set InstancesToReport [sort [set_unique $InstancesToReport ]]
+	foreach Instance $InstancesToReport {
+		ReportImpact 2 $Instance 
+		sappend $RecompileFiles [ fname $Instance ]
+	}
+	
+	set TempRecompileFiles [ query_closure 50 "where included" $RecompileFiles ]
+	sappend $RecompileFiles $TempRecompileFiles
+	set RecompileFiles [sort [set_unique $RecompileFiles ]]
+	
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles 
+
+}
+
+#======================================================================================
+# Name:		ChangPermissionGetSets
+# Description:	Populates the NeedsChange set based on what we are changing the permission
+#		too.  This is called by Change Entity Declaration commands
+# Returns:	The Needs Change set 
+#======================================================================================
+proc ChangePermissionGetSets { Member OldPermission Permission NeedsChange } {
+	set WhereUsed [ where used $Member ] 
+	# now protected
+	if { $Permission == 1 && $OldPermission != 3} {
+		foreach Item $WhereUsed { 
+			if { [IsPartOfSubClass [ GetClassOf $Member ] $Item ] == "0" } {
+				sappend $NeedsChange $Item 
+			}
+		}
+	# now package
+	} elseif { $Permission == 2 && $OldPermission != 3} {
+		foreach Item $WhereUsed { 
+			if { [ IsMethodPartOfPackage [name [where used [ where defined $Member]]] [name $Item] ] == "0" } {
+				sappend $NeedsChange $Item
+			}
+		}
+	# now private
+	} elseif { $Permission == 3 } {
+		foreach Item $WhereUsed {
+			if { [IsPartOfClass [name [GetClassOf $Member]] [name $Item ]] == "0" } {
+				sappend $NeedsChange $Item 
+			}
+		}	
+	}
+}
+
+#======================================================================================
+# Name:		Impact:ChangeClassDeclaration
+# Description:	A member of a class has it's permissions change or becomes virtual
+#		NewPermission is one of public, protected or private
+# Returns:	"Class is abstract and can't be instanstiated", "Abstract methods should be
+#		implemented", "Final class can't have subclass", "Non static entities can't
+#		be referenced from a static context", "Entities that need changed", "Files
+#		that need to be recompiled"
+#==================================================================================== + " " + ==
+proc Impact:ChangeClassDeclaration {MemberEtag NewPermission IsAbstract IsFinal IsStatic } {
+	if { [psetfile $MemberEtag] == "" } {
+   		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $MemberEtag
+	}
+	# public = 0 protected = 1 package = 2 private = 3
+	set OldPermission [GetPermission $MemberEtag]
+	set wasAbstract [ abstract $MemberEtag ]  
+	set wasFinal [ final $MemberEtag ]
+	set wasStatic [ static $MemberEtag ]
+	set RecompileFiles [ nil_set ] 
+	set NeedsChange [ nil_set ]
+	set ReferencedButNotDefined [ nil_set ]
+	set AbstractClass [ nil_set ] 
+	set AbstractMethod [ nil_set ]  
+	set SubClasses [ nil_set ]
+	set NeedsChange [ nil_set ]
+	set NonStatic [nil_set]
+	
+	# Test all things that may return errors first
+	if { $IsStatic && !$wasStatic} {
+		if { [ FileSameAsClass $MemberEtag ] } { 
+			return ""
+		} else { 
+			set AllFields [ get_member_data $MemberEtag ]
+			foreach Field $AllFields {
+				if { [ field $Field ] && ![ static $Field ] } {
+					sappend $NonStatic $Field  
+				}
+			}
+		}
+	}
+	if { $NewPermission != $OldPermission } {
+		if { $NewPermission == 1 && [FileSameAsClass $MemberEtag] } {
+			return ""
+		} elseif { $NewPermission == 3 && [FileSameAsClass $MemberEtag ]} {
+			return ""
+		} else {
+			ChangePermissionGetSets $MemberEtag $OldPermission $NewPermission $NeedsChange 
+		}
+	}
+	if { $IsAbstract && !$wasAbstract } {
+		# find all instances of this class 
+		set WhereUsed [ where used $MemberEtag ]
+		if { [ size $WhereUsed ] == "1" } { 
+			foreach Item $WhereUsed {
+				if { [ apply package $Item ] } {
+					sappend  $AbstractClass [ where referenced $MemberEtag ]
+				} else {
+					sappend $AbstractClass $WhereUsed
+				}
+			}
+		} else {
+			sappend $AbstractClass $WhereUsed
+		}
+	} elseif { !$IsAbstract && $wasAbstract }  {
+		set TempMethods [ get_member_functions $MemberEtag ] 
+		foreach Meth $TempMethods {
+			if { [ funct $Meth ] && [ abstract $Meth ] } {
+				sappend $AbstractMethod $Meth
+			}
+		}
+	}
+	if { $IsFinal  && !$wasFinal} {
+		sappend $SubClasses [get_sub_classes $MemberEtag ]
+	} 
+	
+	# get the results ready for display
+	set FilesToRecompile [nil_set]
+	sappend $NeedsChange $MemberEtag
+	foreach Item $AbstractClass {
+		sappend $FilesToRecompile [ where defined $Item ]
+		sappend $NeedsChange $Item
+	}
+	foreach Item $AbstractMethod { 
+		sappend $FilesToRecompile [ where defined $Item ]
+		sappend $NeedsChange $Item
+	}
+	foreach Item $SubClasses { 
+		sappend $FilesToRecompile [ where defined $Item ]
+		sappend $NeedsChange $Item
+	}
+	foreach Item $NeedsChange { 
+		sappend $FilesToRecompile [ where defined $Item ]
+	}
+	ReportSimpleSortedImpacts "NON_STATIC" "warning" $NonStatic
+	ReportSimpleSortedImpacts "FINAL_CLASS_CANNOT_HAVE_SUBCLASSES" "warning" $SubClasses
+	ReportSimpleSortedImpacts "ABSTRACT_CLASS" "warning" $AbstractClass
+	ReportSimpleSortedImpacts "ABSTRACT_METHOD" "warning" $AbstractMethod
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $NeedsChange
+	set RecompileFiles [ sort [ set_unique $FilesToRecompile ]]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+}
+
+#======================================================================================
+# Name:		Impact:ChangeCPPFunctionDeclaration
+# Description:	A member of a class has it's permissions change or becomes virtual
+#		NewPermission is one of public, protected or private
+# Returns:	Instances where access is now illegal
+#		members of derived classes that start/stop being hidden because of virtual
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeCPPFunctionDeclaration { Member NewPermission IsConst IsStatic IsVirtual } {
+	# Permission Level: 0=Public, 1=NONE(should never happen), 2=Protected, 3=Private
+    if {[psetfile $Member] == ""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $Member
+	}
+
+	set NeedsChange [nil_set]
+	set FilesToRecompile [nil_set]
+	set InaccessableEntities [nil_set]
+
+	# Find instances that are now not allowed
+	set CurrentPermission [GetPermission $Member]			;
+	set InstancesOfMemberToReport [nil_set]
+	if {$CurrentPermission < $NewPermission} {			;# protection has been increased (private or protected)
+		set WhereUsed [ instances $Member ] 
+		# now protected
+		if { $NewPermission == 2 } {
+			foreach Item $WhereUsed { 
+				if { [IsPartOfSubClass [ GetClassOf $Member ] [inst_scope $Item] ] == "0" } {
+					sappend $InstancesOfMemberToReport $Item 
+					sappend $FilesToRecompile [fname $Item]
+
+				}
+			}
+		# now private
+		} elseif { $NewPermission == 3 } {
+			foreach Item $WhereUsed {
+				if { [IsPartOfClass  [ name [ GetClassOf $Member ]] [ name [ inst_scope $Item]]] == "0" } {
+					sappend $InstancesOfMemberToReport $Item 
+					sappend $FilesToRecompile [fname $Item]
+				}
+			}	
+		}
+
+		if { [size $InstancesOfMemberToReport] > 0 } {
+			sappend $InaccessableEntities $Member
+		}
+	}
+
+	#  Pure Virtual Functions
+	if {$IsVirtual != [apply virtual $Member]} {
+		set ThisClass [GetClassOf $Member]
+		set Signature [GetStandardSignature [cname $Member] [arguments $Member]]
+		# Find Methods with same signature in sub-class heirarchy
+		set AllSubClasses [query_closure 50 get_sub_classes $ThisClass]
+		set HeirarchyFunctions [get_member_functions $AllSubClasses]
+		set HeirarchyFunctions [filter cname=="[cname $Member]" $HeirarchyFunctions]
+		set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $Signature]
+
+		if {$IsVirtual} {					;# changed from non-virtual to virtual
+			ReportImpactOneInstance "STOPS_HIDING_DERIVED" "warning" $SameSignatureFunctions
+			sappend $NeedsChange $SameSignatureFunctions
+		} else {						;# changed from virtual to non-virtual
+			ReportImpactOneInstance "STARTS_HIDING_DERIVED" "warning" $SameSignatureFunctions
+			sappend $NeedsChange $SameSignatureFunctions
+		}
+
+		# report all those methods that may need implementation
+		set AllSubs [ filter !virtual [ get_sub_classes [ GetClassOf $Member ] ] ]
+		foreach Sub $AllSubs {
+			set Signature [GetStandardSignature [cname $Member] [arguments $Member]]
+			set Methods [ filter !virtual [ get_member_functions $Sub ] ]
+			set SubMethodsSignatures [nil_set]
+			set Temp [nil_set]
+			foreach Meth $Methods {
+				set TempSig [ GetStandardSignature [cname $Meth] [arguments $Meth]]
+				if { $TempSig == $Signature } {
+					sappend $Temp $Meth
+					break
+				}
+			}
+		}
+	}
+
+	set NonStaticEntities [nil_set]
+	set NonStaticInstances [nil_set]
+	# changing from non-static to static
+	if {$IsStatic && ![static $Member]} {
+		set MethodUses [ uses -functions $Member ]
+		sappend $MethodUses [ uses -fields $Member ]
+		foreach Item $MethodUses {
+			if { ![static $Item] && ![constructor $Item] } {
+				sappend $NonStaticEntities $Item
+			}
+		}
+		set NonStaticEntities [ sort [ set_unique $NonStaticEntities ] ]
+	}
+	# changing from static to non-static
+	if {!$IsStatic && [static $Member]} {
+		foreach Instance [instances $Member] {
+			if { [ static [ inst_scope $Instance ] ] == 1 } {
+				if { [string match [astcategory $Instance] "*declaration*" ] == 0  && [ inst_scope $Instance ] != [ name $Member ] } {
+					sappend $NonStaticInstances  $Instance
+					sappend $FilesToRecompile [ fname $Instance ]
+				}
+			}
+		}
+	}
+
+	set NonConstEntities [nil_set]
+	set AssigningConst [nil_set]
+	set AstNodes [nil_set]
+	if {$IsConst && ![IsFunctionConst $Member]} {
+		set MethodUses [ uses -functions $Member ]
+		foreach Item $MethodUses {
+			if { ![constant $Item] && [method $Item] && ![constructor $Item] && ![destructor $Item] } {
+				sappend $NonConstEntities $Item
+			}
+
+		}
+
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {alshift_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {arshift_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {bit_and_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {bit_ior_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {bit_xor_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {trunc_div_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {minus_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {trunc_mod_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {mult_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {plus_assign_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {postdecrement_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {postincrement_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {predecrement_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {preincrement_expr} [data node $Member]]]
+		sappend $AstNodes [tree navigate {->} [tree find -ignore {rdiv_assign_expr} [data node $Member]]]
+
+		foreach Item $AstNodes {
+			if {[array_ref $Item]} {
+				set Temp [tree navigate {-> -> .} $Item]
+				if [component_ref $Temp] {
+					set Temp [tree navigate {->,} $Temp]
+				} else {
+					set Temp [tree navigate {,} $Temp]
+				}
+				if { [ IsPartOfSuperClass [GetClassOf $Member] [name $Temp] ] } {
+					sappend $AssigningConst [name $Temp]
+				}
+			} else {
+				set Temp [name [tree navigate {-> ,} $Item]]
+				if { [ IsPartOfSuperClass [GetClassOf $Member] $Temp ] } {
+					sappend $AssigningConst [name [tree navigate {-> ,} $Item]]
+				}
+			}
+		}
+		set AssigningConst [ sort [ set_unique $AssigningConst ] ]
+	}
+
+	set NeedsChange [ sort [ set_unique $NeedsChange ] ]
+	foreach Item $NeedsChange { 
+		sappend $FilesToRecompile [ where defined $Item ]
+	}
+
+	sappend $FilesToRecompile [where defined [where declared $Member]]
+	sappend $FilesToRecompile [query_closure 50 "where included" $FilesToRecompile]
+	ReportImpactsInFunction "NON_STATIC" "warning" $NonStaticEntities $Member $InstancesOfMemberToReport
+	if { [size $NonStaticInstances ] > 0 } {
+		ReportImpactCategory 0 "NON_STATIC" "warning" 
+		ReportImpact 1 $Member
+		ReportImpacts 2 $NonStaticInstances 
+	}
+	sappend $InstancesOfMemberToReport $NonStaticInstances
+	foreach Instance [ instances $Member ] {
+		if { [ string match "*declaration*" [ astcategory $Instance ] ] } {
+			sappend $InstancesOfMemberToReport $Instance
+		}
+	}
+	ReportImpactsInFunction "CALLING_NONCONST" "warning" $NonConstEntities $Member $InstancesOfMemberToReport
+	ReportImpactsInFunction "ASSIGNING_VALUES_IN_CONST_FUNCTION" "warning" $AssigningConst $Member $InstancesOfMemberToReport
+	if {[size $InaccessableEntities]} {
+		ReportImpactCategory 0 "ILLEGAL_ACCESS" "warning"
+		foreach Entity $InaccessableEntities {
+			if {[module $Entity]} {					;# files do not have instances
+				ReportSortedImpactsAtLevel 1 2 $Entity [nil_set]
+			} else {
+				set InstancesOfEntity [sort [set_unique [instances $Entity]]]	;# only report on entities that
+				if { [ string match "" [name [ where defined $Entity]] ] == 0 } {
+					set InstancesOfEntity [filter fname!="[fname [where defined $Entity]]" $InstancesOfEntity]
+				}
+				if { [ string match "" [name [ where defined [ where declared $Entity]]] ] == 0 } {
+					set InstancesOfEntity [filter fname!="[fname [where defined [where declared $Entity]]]" $InstancesOfEntity]
+				}
+
+				if { [size $InstancesOfEntity] } {
+					ReportSortedImpactsAtLevel 1 2 $Entity $InstancesOfEntity
+				} else {
+					ReportImpact 1 $Entity
+				}
+
+				sappend $InstancesOfMemberToReport [ filter cname=="[cname $Member]" $InstancesOfEntity]
+			}
+		}
+	}
+	set InstancesOfMemberToReport [ sort [ set_unique $InstancesOfMemberToReport ] ]
+	if { [ size $NeedsChange ] != 0 } {
+		ReportImpactOneInstance "NEED_CHANGE" "folder" $NeedsChange
+		ReportImpact 1 $Member
+		ReportImpacts 2 $InstancesOfMemberToReport
+	} else {
+		ReportImpactCategory 0 "NEED_CHANGE" "folder"
+		ReportImpact 1 $Member
+		ReportImpacts 2 $InstancesOfMemberToReport
+	}
+	sappend $FilesToRecompile [ where defined $Member ]
+	set FilesToRecompile [ sort [set_unique $FilesToRecompile ]]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeJavaFunctionDeclaration
+# Description:	A member of a class has it's permissions change or becomes abstract, final static or native
+#		NewPermission is one of public, protected, package or private
+# Returns:	"Classes that should implement method", "Final methods that can't be overwritten",  "Non
+#		static entities that can't be referenced from a static context", "Native methods can't
+#		have bodies", "Entities that need to be changed", "Files that need to be recompiled"
+#======================================================================================
+proc Impact:ChangeJavaFunctionDeclaration {MemberEtag NewPermission IsAbstract IsFinal IsStatic IsNative } {
+	if {[psetfile $MemberEtag] == ""} {
+   		ReportImpactNoInstances "FUNCTION_BODY_NOT_IN_THE_MODEL" "error" $MemberEtag
+	}
+	# public = 0 protected = 1 package = 2 private = 3
+	set OldPermission [GetPermission $MemberEtag]
+	set MethodNeedsImpl [ nil_set ]
+	set OverloadFinalMethod [nil_set]
+	set NonStatic [ nil_set]
+	set NeedsChange [ nil_set ]
+	set FilesToRecompile [nil_set]
+	set InstancesOfMemberToReport [nil_set]
+	set WhereUsed [instances $MemberEtag ]
+
+	# make protected
+	if { $NewPermission == 1 && $OldPermission != 3} {
+		foreach Item $WhereUsed { 
+			if { [IsPartOfSubClass [ GetClassOf $MemberEtag ] [inst_scope $Item ]] == "0" } {
+				sappend $InstancesOfMemberToReport $Item
+				sappend $FilesToRecompile [fname $Item]
+			}
+		}
+	# now package
+	} elseif { $NewPermission == 2 && $OldPermission != 3} {
+		foreach Item $WhereUsed { 
+			if { [ IsMethodPartOfPackage [name [where used [ where defined $MemberEtag] ] ] [name [inst_scope $Item] ] ] == "0" } {
+				sappend $InstancesOfMemberToReport $Item
+				sappend $FilesToRecompile [fname $Item]
+			}
+		}
+	# now private
+	} elseif { $NewPermission == 3 } {
+		foreach Item $WhereUsed {
+			if { [IsPartOfClass  [name [GetClassOf $MemberEtag]] [name [inst_scope $Item ]]] == "0" } {
+				sappend $InstancesOfMemberToReport $Item 
+				sappend $FilesToRecompile [fname $Item]
+			}
+		}
+	}
+
+	if {$IsAbstract && ![ abstract $MemberEtag]} {
+		# Find Methods with same signature in sub-class heirarchy
+		# This will populate the "Classes that should implement method" folder
+		set AllSubs [ filter !abstract [ query_closure 50 "get_sub_classes" [ GetClassOf $MemberEtag ] ] ]
+		foreach Sub $AllSubs {
+			set Signature [GetStandardSignature [cname $MemberEtag] [arguments $MemberEtag]]
+			set Methods [ filter !abstract [ get_member_functions $Sub ] ]
+			set SubMethodsSignatures [nil_set]
+			set Temp [nil_set]
+			foreach Meth $Methods {
+				set TempSig [ GetStandardSignature [cname $Meth] [arguments $Meth]]
+				if { $TempSig == $Signature } {
+					sappend $Temp $Meth
+					break
+				}
+			}
+			if  { [ size $Temp ] == "0" } {
+				sappend $MethodNeedsImpl $Sub
+			}
+		}
+		# This will populate the "Abstract class cannot be instantiated" foler
+		set Class [ GetClassOf $MemberEtag ] 
+		if { ![abstract $Class] } {
+			sappend $NeedsChange $Class
+			ReportImpactCategory 0 "ABSTRACT_CLASS" "warning"
+			set ThingsToReport [ GetPlacesClassIsInstantiated $Class ]	
+			if { [size $ThingsToReport] } {
+				ReportSortedImpactsAtLevel 1 2 $Class $ThingsToReport
+			} else {
+				ReportImpact 1 $Class
+			}	
+		}		
+	}
+
+	if {$IsFinal && ![final $MemberEtag]} {
+		set AllSubs [ filter !abstract [ get_sub_classes [ GetClassOf $MemberEtag ] ] ]
+		foreach Sub $AllSubs {
+			set Signature [GetStandardSignature [cname $MemberEtag] [arguments $MemberEtag]]
+			set Methods [ filter !abstract [ get_member_functions $Sub ] ]
+			set SubMethodsSignatures [nil_set]
+			foreach Meth $Methods {
+				set TempSig [ GetStandardSignature [cname $Meth] [arguments $Meth]]
+				if { $TempSig == $Signature } {
+					sappend $OverloadFinalMethod $Meth
+					break;
+				}
+			}
+		}
+	}
+
+	if {$IsStatic && ![static $MemberEtag]} {
+		set MethodUses [ uses $MemberEtag ]
+		foreach Item $MethodUses {
+			if { ! [static $Item] } {
+				# make sure you are only returning variables, functions or classes that are used 
+				# inside the method.
+				if { [apply local $Item] || [apply var $Item] || [apply funct $Item] || [apply field $Item] } {
+					sappend $NonStatic $Item
+				}
+			}
+		}
+	}
+	set NonStaticInstances [ nil_set ]
+	if {!$IsStatic && [static $MemberEtag]} {
+		foreach Instance [instances $MemberEtag ] { 
+			if { [ static [ inst_scope $Instance ] ] == 1 } { 	
+				if { [string match [astcategory $Instance] "*declaration*" ] == 0 && [ inst_scope $Instance ] != [ name $MemberEtag ] } { 
+					sappend $NonStaticInstances  $Instance
+					sappend $FilesToRecompile [ fname $Instance ] 
+				}
+			}
+		}
+	}
+	
+	if { [ size $NonStaticInstances ] > 0 } { 
+		ReportImpactCategory 0 "NON_STATIC" "warning"
+		ReportImpact 1 $MemberEtag
+		ReportImpacts 2 $NonStaticInstances
+	}
+
+	if {$IsNative != [apply native $MemberEtag]} { 
+		set AstBlock [ tree navigate { -> , , } $MemberEtag ] 
+		# make sure the ast node isn't empty first
+		if { ![ string match "" [  apply ast_block $AstBlock ] ] } { 
+			if { [ ast_block $AstBlock ] } {
+				if { $IsNative } { 
+					ReportImpactOneInstance "NATIVE_METHOD_CANNOT_HAVE_IMPLEMENTATION" "warning" [set_copy $MemberEtag] 
+				} 
+			} else { 
+				if { ! $IsNative } { 
+					ReportImpactOneInstance "NON_NATIVE_METHOD_MUST_HAVE_IMPLEMENTATION" "warning" [set_copy $MemberEtag] 
+				} 
+			} 
+		}
+	} 
+	
+	sappend $NeedsChange $MethodNeedsImpl
+	sappend $NeedsChange $OverloadFinalMethod
+
+	set NeedsChange [ sort [ set_unique $NeedsChange ] ]
+
+	foreach Item $NeedsChange { 
+		sappend $FilesToRecompile [ where defined $Item ]
+	}
+	set FilesToRecompile [ sort [set_unique $FilesToRecompile ]] 
+	set FilesToRecompile [ GetRecompileFilesSignatureChanged $FilesToRecompile ]
+
+	sappend $InstancesOfMemberToReport $NonStaticInstances 
+	foreach Instance [instances $MemberEtag ] { 
+		if { [ string match "*declaration*" [ astcategory $Instance ] ] } { 
+			sappend $InstancesOfMemberToReport $Instance
+		}
+	}
+
+	ReportImpactNoInstances "METHOD_NEEDS_IMPL" "warning" $MethodNeedsImpl
+	ReportImpactOneInstance "OVERLOAD_FINAL_METHOD" "warning" $OverloadFinalMethod
+	ReportImpactsInFunction "NON_STATIC" "warning" $NonStatic $MemberEtag $InstancesOfMemberToReport
+
+	set InstancesOfMemberToReport [ sort [ set_unique $InstancesOfMemberToReport ]]
+	if { [ size $NeedsChange ] != 0 } { 
+		ReportImpactOneInstance "NEED_CHANGE" "folder" $NeedsChange
+		ReportImpact 1 $MemberEtag
+		ReportImpacts 2 $InstancesOfMemberToReport
+	} else { 
+		ReportImpactCategory 0 "NEED_CHANGE" "folder"
+		ReportImpact 1 $MemberEtag
+		ReportImpacts 2 $InstancesOfMemberToReport
+	}	
+	sappend $FilesToRecompile [ where defined $MemberEtag ]
+	set FilesToRecompile [sort [ set_unique $FilesToRecompile ]] 
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeFunctionArguments
+# Description:	A function has it's arguments change
+#		*  NewArgumentString must be of form:  "(qualifier typ1, type2 ,type2)"
+#		*  args is the list of etags of modified original arguments
+# Returns:	all instances of modified function
+#		all modified arguments
+#		symbols with name conflicts (or members if is a member)
+#		functions that are overloaded or hidden in the base or derived
+#		... class hierarchy (4 possibilities)
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeFunctionArguments { EntityEtag NewArgumentString args } {
+	set Entity [set_copy $EntityEtag]
+	if {[psetfile $Entity] == ""} {
+   		ReportImpactNoInstances "FUNCTION_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set functionExistsFlag "0"
+	if {[member $Entity]} {
+		set ThisClass [GetClassOf $Entity]
+		# potential trouble when calling procedure with bad NewArgumentString
+		set NewSignature [GetStandardSignature [cname $Entity] $NewArgumentString]
+		set OldSignature [GetStandardSignature [cname $Entity] [arguments $Entity]]
+
+		# Find Methods with same signature in current class
+		set HeirarchyFunctions [get_member_functions $ThisClass]
+		set HeirarchyFunctions [filter cname=="[cname $Entity]"&&etag!="$EntityEtag" $HeirarchyFunctions]
+		set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+		ReportSimpleImpacts "METHOD_EXISTS" "error" $SameSignatureFunctions
+		set functionExistsFlag [size $SameSignatureFunctions]
+	}
+
+	set ModifiedArguments [nil_set]
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+	if {$functionExistsFlag == "0"} {
+		if {[member $Entity]} {
+			set ThisClass [GetClassOf $Entity]
+
+			# potential trouble when calling procedure with bad NewArgumentString
+			set NewSignature [GetStandardSignature [cname $Entity] $NewArgumentString]
+			set OldSignature [GetStandardSignature [cname $Entity] [arguments $Entity]]
+
+			# Find Methods with same signature in super-class heirarchy
+			set AllSuperClasses [filter class [query_closure 50 get_super_classes $ThisClass]]
+			set HeirarchyFunctions [get_member_functions $AllSuperClasses]
+			set HeirarchyFunctions [filter cname=="[cname $Entity]" $HeirarchyFunctions]
+			set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+			set Virtuals [filter virtual $SameSignatureFunctions]
+			set NonVirtuals [filter !virtual $SameSignatureFunctions]
+			ReportSimpleSortedImpacts "OVERLOAD_VIRTUAL_BASE" "warning" $Virtuals
+			ReportSimpleSortedImpacts "HIDE_NONVIRTUAL_BASE" "warning" $NonVirtuals
+
+			# Find Methods with same signature in sub-class heirarchy
+			set AllSubClasses [query_closure 50 get_sub_classes $ThisClass]
+			set HeirarchyFunctions [get_member_functions $AllSubClasses]
+			set HeirarchyFunctions [filter cname=="[cname $Entity]" $HeirarchyFunctions]
+			set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+			if {[apply virtual $Entity]} {
+				ReportSimpleSortedImpacts "OVERLOAD_VIRTUAL_DERIVED" "warning" $SameSignatureFunctions
+			} else {
+				ReportSimpleSortedImpacts "HIDE_NONVIRTUAL_DERIVED" "warning" $SameSignatureFunctions
+			}
+
+		} else {
+			set ThisLanguage [string tolower [language $Entity]]
+
+			if {$ThisLanguage != "c" && $ThisLanguage != "cpp"} {
+				# this works IFF sql stored procs have empty "arguments" attribute
+				set PossibleNameConflicts [set_copy "[context $Entity][cname $Entity]$NewArgumentString"]
+				ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $PossibleNameConflicts
+			}
+		}
+	}
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeFunctionName
+# Description:	A function's name has been changed
+# Returns:	all instances of modified function
+#		symbols with name conflicts (or members if is a member)
+#		functions that are overloaded or hidden in the base or derived
+#		... class hierarchy (4 possibilities)
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeFunctionName { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "FUNCTION_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set ThisClass [GetClassOf $Entity]
+
+	set functionExistsFlag "0"
+	if {[member $Entity]} {
+		# Find Methods with same signature in current class
+		set NewSignature [GetStandardSignature $NewEntityName [arguments $Entity]]
+		set HeirarchyFunctions [get_member_functions $ThisClass]
+		set HeirarchyFunctions [filter cname=="$NewEntityName" $HeirarchyFunctions]
+		set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+		ReportSimpleImpacts "METHOD_EXISTS" "error" $SameSignatureFunctions
+		set functionExistsFlag [size $SameSignatureFunctions]
+	} elseif {[static $Entity]} {
+		set matchingFunctions [filter cname=="$NewEntityName" [defines -functions [where defined $Entity]]]
+		ReportSimpleImpacts "FUNCTION_EXISTS" "error" $matchingFunctions
+		set functionExistsFlag [size $matchingFunctions]
+	} else {
+		set matchingFunctions [filter cname=="$NewEntityName"&&!static [defines -functions /]]
+		ReportSimpleImpacts "FUNCTION_EXISTS" "error" $matchingFunctions
+		set functionExistsFlag [size $matchingFunctions]
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	if {$functionExistsFlag == "0"} {
+		if {[member $Entity]} {
+			set NewSignature [GetStandardSignature $NewEntityName [arguments $Entity]]
+
+			# Find Methods with same signature in super-class heirarchy
+			set AllSuperClasses [filter class [query_closure 50 get_super_classes $ThisClass]]
+			set HeirarchyFunctions [get_member_functions $AllSuperClasses]
+			set HeirarchyFunctions [filter cname=="$NewEntityName" $HeirarchyFunctions]
+			set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+			set Virtuals [filter virtual $SameSignatureFunctions]
+			set NonVirtuals [filter !virtual $SameSignatureFunctions]
+			ReportSimpleSortedImpacts "OVERLOAD_VIRTUAL_BASE" "warning" $Virtuals
+			ReportSimpleSortedImpacts "HIDE_NONVIRTUAL_BASE" "warning" $NonVirtuals
+
+			# Find Methods with same signature in sub-class heirarchy
+			set AllSubClasses [query_closure 50 get_sub_classes $ThisClass]
+			set HeirarchyFunctions [get_member_functions $AllSubClasses]
+			set HeirarchyFunctions [filter cname=="$NewEntityName" $HeirarchyFunctions]
+			set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+			if {[apply virtual $Entity]} {
+				ReportSimpleSortedImpacts "OVERLOAD_VIRTUAL_DERIVED" "warning" $SameSignatureFunctions
+			} else {
+				ReportSimpleSortedImpacts "HIDE_NONVIRTUAL_DERIVED" "warning" $SameSignatureFunctions
+			}
+		} else {
+			# this works IFF sql stored procs have empty "arguments" attribute
+			set thisLang [string tolower [language $Entity]]
+
+			if {$thisLang == "c" || $thisLang == "cpp"} {
+				set ThisContext [context $Entity]
+				set NameConf [filter context=="$ThisContext" [filter cname=="$NewEntityName" [defines -functions {/}]]]
+			} else {
+				# This is sql. I don't know anything concerning it. Let's stay as is.
+				set NameConf [set_copy "[context $Entity]$NewEntityName[arguments $Entity]"]
+			}
+			ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $NameConf
+		}
+	}
+
+	if {[apply virtual $Entity]} {
+		set oldName [cname $Entity]
+		set args [arguments $Entity]
+		set allSubClasses [filter class [query_closure 50 get_sub_classes $ThisClass]]
+		set allFuncs [get_member_functions $allSubClasses]
+		set allFuncs [filter cname=="$oldName" $allFuncs]
+		set allFuncs [filter arguments=="$args" $allFuncs]
+		set allFuncs [filter !private $allFuncs]
+		set allFuncs [filter virtual $allFuncs]
+		ReportSimpleImpacts "RENAME_VIRTUAL_DERIVED" "warning" $allFuncs
+	}
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeFieldName
+# Description:	A Variable's name has been changed
+# Returns:	all instances
+#		if name conflicts with any existing entity, the first entity
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeFieldName { EntityEtag NewEntityName NewPermission} {
+	set Entity [set_copy $EntityEtag]
+	set ThisClass [GetClassOf $Entity]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "FIELD_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set ThisClassNameConflicts [filter cname=="$NewEntityName" [get_member_data $ThisClass]]
+	if {[size $ThisClassNameConflicts]>0} {
+		ReportSimpleImpacts "FIELD_EXISTS" "error" $ThisClassNameConflicts
+	}
+
+	set Entity [set_copy $EntityEtag]
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	# Find fields with same name in super-class heirarchy
+	set AllSuperClasses [filter class [query_closure 50 get_super_classes $ThisClass]]
+	set HeirarchyFields [get_member_data $AllSuperClasses]
+	set HeirarchyFields [filter cname=="$NewEntityName"&&!private $HeirarchyFields]
+	ReportSimpleSortedImpacts "HIDES_BASE_CLASS_NONPRIVATE_FIELD" "warning" $HeirarchyFields
+
+	# Find fields with same name in sub-class heirarchy
+	if {$NewPermission < 3} {
+		set AllSubClasses [query_closure 50 get_sub_classes $ThisClass]
+		set HeirarchyFields [get_member_data $AllSubClasses]
+		set HeirarchyFields [filter cname=="$NewEntityName" $HeirarchyFields]
+		ReportSimpleSortedImpacts "HIDES_THIS_CLASS_NONPRIVATE_FIELD" "warning" $HeirarchyFields
+	}
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeVariableName
+# Description:	A Variable's name has been changed
+# Returns:	all instances
+#		if name conflicts with any existing entity, the first entity
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeVariableName { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+    	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	if {[static $Entity]} {
+		set sameName [filter cname=="$NewEntityName" [defines -variables [where defined $Entity]]]
+		if {[size $sameName]>0} {
+			ReportSimpleSortedImpacts "VAR_EXISTS" "error" $sameName
+		}
+	} else {
+		set sameName [filter cname=="$NewEntityName"&&!static [defines -variables /]]
+		if {[size $sameName]>0} {
+			ReportSimpleSortedImpacts "VAR_EXISTS" "error" $sameName
+		}
+
+		set sameName [filter cname=="$NewEntityName"&&static [defines -variables /]]
+		if {[size $sameName]>0} {
+			ReportSimpleSortedImpacts "STATIC_VAR_EXISTS" "warning" $sameName
+		}
+	}
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:AddFunction
+# Description:	A function's has been added
+# Returns:	symbols with name conflicts (or members if is a member)
+#		member functions that are overloaded or hidden in the base or derived
+#		... class hierarchy (4 possibilities)
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:AddFunction { ClassEtag Type NewEntityName Protection IsVirtual NewArgumentString} {
+	set ThisClass [set_copy $ClassEtag]
+
+	if {[psetfile $ThisClass]==""} {
+		set isInterface [interface $ThisClass]
+		if {$isInterface=="1"}  {
+			ReportImpactNoInstances "INTERFACE_NOT_IN_THE_MODEL" "error" $ThisClass
+		} else {
+			ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+		}
+		ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+	} else {
+
+	 	if {[size $ThisClass]} {
+			ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+	
+			set NewSignature [GetStandardSignature $NewEntityName $NewArgumentString]
+	
+			# Find Methods with same signature in current class
+			set HeirarchyFunctions [get_member_functions $ThisClass]
+			set HeirarchyFunctions [filter cname=="$NewEntityName" $HeirarchyFunctions]
+			set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+			ReportSimpleImpacts "METHOD_EXISTS" "error" $SameSignatureFunctions
+	
+			# Find Methods with same signature in super-class heirarchy
+			set AllSuperClasses [filter class [query_closure 50 get_super_classes $ThisClass]]
+			set HeirarchyFunctions [get_member_functions $AllSuperClasses]
+			set HeirarchyFunctions [filter cname=="$NewEntityName" $HeirarchyFunctions]
+			set HeirarchyFunctions [filter !private $HeirarchyFunctions]
+			set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+			set Finals [filter final $SameSignatureFunctions]
+			if {[size $Finals]} {
+				ReportSimpleSortedImpacts "OVERLOAD_FINAL_METHOD" "error" $Finals
+			} else {
+				if {$Protection != "3"} {  ;# Private method cannothide methods of superclass
+					set Virtuals [filter virtual $SameSignatureFunctions]
+					set NonVirtuals [filter !virtual $SameSignatureFunctions]
+					ReportSimpleSortedImpacts "OVERLOAD_VIRTUAL_BASE" "warning" $Virtuals
+					ReportSimpleSortedImpacts "HIDE_NONVIRTUAL_BASE" "warning" $NonVirtuals
+				}
+			}
+
+			if {$Protection != "3"} {  ;# Private method cannotbe hidden by methods of subclass
+				# Find Methods with same signature in sub-class heirarchy
+				set AllSubClasses [query_closure 50 get_sub_classes $ThisClass]
+				set HeirarchyFunctions [get_member_functions $AllSubClasses]
+				set HeirarchyFunctions [filter cname=="$NewEntityName" $HeirarchyFunctions]
+				set HeirarchyFunctions [filter !private $HeirarchyFunctions]
+				set SameSignatureFunctions [GetSameSignatureFunctions $HeirarchyFunctions $NewSignature]
+				if {$IsVirtual} {
+					ReportSimpleSortedImpacts "OVERLOAD_VIRTUAL_DERIVED" "warning" $SameSignatureFunctions
+				} else {
+					ReportSimpleSortedImpacts "HIDE_NONVIRTUAL_DERIVED" "warning" $SameSignatureFunctions
+				}
+			}
+		} else {
+			set PossibleNameConflicts [set_copy $NewEntityName]
+			sappend $PossibleNameConflicts [set_copy "$NewEntityName$NewArgumentString"]
+			ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $PossibleNameConflicts
+		}
+
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	}
+}
+
+#======================================================================================
+# Name:		Impact:AddVariable
+# Description:	A function's has been added
+# Returns:	symbols with name conflicts (or members if is a member)
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:AddVariable { ClassEtag Type NewEntityName Protection } {
+	set ThisClass [set_copy $ClassEtag]
+
+    	if {[psetfile $ThisClass]==""} {
+		set isInterface [interface $ThisClass]
+		if {$isInterface=="1"}  {
+			ReportImpactNoInstances "INTERFACE_NOT_IN_THE_MODEL" "error" $ThisClass
+		} else {
+			ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+		}
+		ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+	} else {
+		if {[size $ThisClass]} {
+			ReportSimpleImpacts "NEED_CHANGE" "folder" $ThisClass
+
+			# Find Methods with same signature in current class
+			set MemberVariables [get_member_data $ThisClass]
+			set MemberVariables [filter cname=="$NewEntityName" $MemberVariables]
+			ReportSimpleImpacts "FIELD_EXISTS" "error" $MemberVariables
+	
+			# Find fields with same name in super-class heirarchy
+			set AllSuperClasses [filter class [query_closure 50 get_super_classes $ThisClass]]
+			set HeirarchyFields [get_member_data $AllSuperClasses]
+			set HeirarchyFields [filter cname=="$NewEntityName"&&!private $HeirarchyFields]
+			ReportSimpleSortedImpacts "HIDES_BASE_CLASS_NONPRIVATE_FIELD" "warning" $HeirarchyFields
+	
+			# Find fields with same name in sub-class heirarchy
+			if {$Protection < 3} {
+				set AllSubClasses [query_closure 50 get_sub_classes $ThisClass]
+				set HeirarchyFields [get_member_data $AllSubClasses]
+				set HeirarchyFields [filter cname=="$NewEntityName" $HeirarchyFields]
+				ReportSimpleSortedImpacts "HIDES_THIS_CLASS_NONPRIVATE_FIELD" "warning" $HeirarchyFields
+			}
+		} else {
+			set PossibleNameConflicts [set_copy $NewEntityName]
+			ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $PossibleNameConflicts
+		}
+	
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	}
+}
+
+#======================================================================================
+# Name:		Impact:DeleteVariableFromClass
+# Description:	A member of a class is deleted
+# Returns:	all instances of member
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:DeleteVariableFromClass { EntityEtag } {
+	if { [psetfile $EntityEtag] == "" } {
+   		ReportImpactNoInstances "FIELD_NOT_IN_THE_MODEL" "error" $EntityEtag
+	}
+
+	set Entity [set_copy $EntityEtag]
+	set ThisClass [GetClassOf $EntityEtag]
+
+	if {[size $ThisClass] != 0 } { 
+		# Report if the class is not in the model.  
+    		if {[psetfile $ThisClass] == 0} {
+			ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+		}	
+	} else {
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set Instances [ sort [  instances $EntityEtag ]]
+	set NonDecl [nil_set]
+	if { [ size $Instances] > 0 } { 
+		foreach Instance $Instances {
+			set AstCat [ astcategory $Instance ]
+			if { [ string match "*declaration*" $AstCat ]  == 0 } { 
+				sappend $NonDecl $Instance
+			}
+		}
+	}
+
+	if { [ size $NonDecl ] > 0  } { 
+		ReportImpactCategory 0 "REFERENCED_BUT_NOT_DEFINED" "warning" 
+		ReportImpact 1 $EntityEtag
+		foreach Instance $NonDecl {
+			ReportImpact 2 $Instance
+		}
+	}
+	if { [ size $Instances] >= 1 } { 
+		ReportImpactCategory 0 "NEED_CHANGE" "folder" 
+		ReportImpact 1 $EntityEtag
+		foreach Instance $Instances {
+			ReportImpact 2 $Instance
+		}
+	}
+	set RecompileFiles [GetRecompileFilesSignatureChanged $EntityEtag]
+	sappend $RecompileFiles [ where defined $EntityEtag ]
+	set RecompileFiles [ sort [ set_unique $RecompileFiles ]]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+}
+
+#======================================================================================
+# Name:		Impact:ChangeFunctionBody
+# Description:	A function's body has been changed
+# Returns:	all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeFunctionBody { EntityEtag } {
+	set Entity [set_copy $EntityEtag]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "FUNCTION_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" [def_symbols $Entity]
+	ReportCallsImpacts "CHECK_LOGIC" "folder" $Entity
+
+	if {[lname $Entity]!=""} {
+		set FilesToRecompile [GetRecompileFilesFunctBodyChanged $Entity]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	}
+}
+
+#======================================================================================
+# Name:		Impact:ChangeFunctionType
+# Description:	A function's return type has been changed
+# Returns:	all instances
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeFunctionType { EntityEtag Type } {
+	set Entity [set_copy $EntityEtag]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "FUNCTION_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeVariableType
+# Description:	A Variable's type has been changed
+# Returns:	all instances
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeVariableType { EntityEtag Type } {
+	set Entity [set_copy $EntityEtag]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeUnionEnumStructName
+# Description:	A Union Enum or Struct's name is changed
+# Returns:	all instances
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeUnionEnumStructName { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set SameNameEntities [set_copy $NewEntityName]
+	ReportSimpleImpacts "MEMBER_EXISTS" "error" $SameNameEntities
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:DeleteUnionEnumStructMember
+# Description:	remove a member from a Union Enum or Struct
+# Returns:	all instances
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:DeleteUnionEnumStructMember { EntityEtag } {
+	set Entity [set_copy $EntityEtag]
+	set ThisStruct [GetClassOf $Entity]
+
+	if { [lname $ThisStruct] == "" } {
+
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $EntityEtag
+	}
+
+	ReportSimpleSortedImpactsEnum "NEED_CHANGE" "folder" $Entity
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:AddUnionEnumStructMember
+# Description:	add a member to a Union Enum or Struct
+# Returns:	all instances
+#		members that already exist with new name
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:AddUnionEnumStructMember { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set SameNameMembers [filter cname=="$NewEntityName" set_add [get_member_data $Entity] [uses -evalue $Entity]]
+	ReportSimpleImpacts "MEMBER_EXISTS" "error" $SameNameMembers
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeTypedefName
+# Description:	A Union Enum or Struct's name is changed
+# Returns:	all instances
+#		entities that already exist with new name
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeTypedefName { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+
+	if {[psetfile $Entity]==""} {
+		ReportImpactsNoInstances "BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set SameNameEntities [set_copy $NewEntityName]
+	ReportSimpleSortedImpacts "METHOD_EXISTS" "error" $SameNameEntities
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeMacroName
+# Description:	A Macro name is changed
+# Returns:	all instances
+#		entities that already exist with new name
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeMacroName { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "MACRO_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	set SameNameEntities [filter cname=="$NewEntityName" [defines -macros /]]
+	ReportSimpleSortedImpacts "MACRO_EXISTS" "warning" $SameNameEntities
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeMacroBody
+# Description:	A macro body is changed
+# Returns:	all instances
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeMacroBody { EntityEtag } {
+	set Entity [set_copy $EntityEtag]
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "MACRO_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $Entity
+
+	set Entity [set_copy $EntityEtag]
+	ReportCallsImpacts "CHECK_LOGIC" "folder" $Entity
+
+	if {[lname $Entity]==""} {
+		set FilesToRecompile [GetRecompileFilesMacroBodyChanged $Entity]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	}
+}
+
+#======================================================================================
+# Name:		Impact:ChangeTemplateName
+# Description:	A Union Enum or Struct's name is changed
+# Returns:	all instances
+#		entities that already exist with new name
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeTemplateName { EntityEtag NewEntityName } {
+	set Entity [set_copy $EntityEtag]
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "TEMPLATE_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Entity
+
+	set SameNameEntities [set_copy "template@[context $Entity]::$NewEntityName"]
+	ReportSimpleImpacts "TEMPLATE_EXISTS" "error" $SameNameEntities
+
+	set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:ChangeTemplateName
+# Description:	A Union Enum or Struct's name is changed
+# Returns:	all instances
+#		entities that already exist with new name
+#		all files that will need to be recompiled
+#======================================================================================
+proc Impact:ChangeTemplateBody { EntityEtag } {
+	set Entity [set_copy $EntityEtag]
+	if {[psetfile $Entity]==""} {
+		ReportImpactNoInstances "TEMPLATE_BODY_NOT_IN_THE_MODEL" "error" $Entity
+	}
+
+	ReportSimpleImpacts "NEED_CHANGE" "folder" [filter !astdeclaration $Entity]
+	ReportCallsImpacts "CHECK_LOGIC" "folder" $Entity
+	if {[lname $Entity]!=""} {
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $Entity]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	}
+}
+
+#======================================================================================
+# Name:		Impact:RenamePackage
+# Description:  Renames a java package (for Java only!!), this gets all the files
+#		in the package and called MoveToPackage on them
+# Returns: 	Entities that need to be changed because they import the package.	
+#		"Referenced but not defined entities", "Files that need to be recompiled"
+#======================================================================================
+proc Impact:RenamePackage { PackageEtag NewPackageName } {
+	# check to see if our package is in the model
+	set AllPackages [ packages / ]
+	if { ![size [ set_intersect $AllPackages $PackageEtag ] ] } {
+		ReportSimpleImpacts "BODY_NOT_IN_THE_MODEL" "error" $PackageEtag
+	}
+
+	set TheNewPackage $NewPackageName 
+	if { [size [ set_intersect $AllPackages $TheNewPackage ] ] } {
+		ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "folder" $TheNewPackage
+	}
+
+	# get all files and run move to package on them
+	set ReferencedButNotDefined [ nil_set]
+	set NeedsChange [nil_set]
+	set RecompileFiles [nil_set]
+
+	set SubPackages [ uses -packages $PackageEtag ] 
+	RenamePackageGetSets $PackageEtag $ReferencedButNotDefined $NeedsChange $RecompileFiles
+	foreach SubPackage $SubPackages { 
+		RenamePackageGetSets $SubPackage $ReferencedButNotDefined $NeedsChange $RecompileFiles
+	}
+
+	# filter out all files that are contained in the Referenced But not defined folder 42650
+	set RefNotDefined [ sort [ filter !module [ set_unique $ReferencedButNotDefined ]]]
+	set NeedsChange [ sort [ set_unique $NeedsChange ]]
+	sappend $RecompileFiles $NeedsChange
+	set RecompileFiles [ sort [ set_unique $RecompileFiles ]]
+	ReportSimpleSortedImpactsPkg "REFERENCED_BUT_NOT_DEFINED" "warning" $RefNotDefined $PackageEtag
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $NeedsChange
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+}
+
+#======================================================================================
+# Name: 	RenamePackageGetSets
+# Description:  Populates the display folders for the RenamePackage command
+# Returns:
+#======================================================================================
+proc RenamePackageGetSets { PackageEtag ReferencedButNotDefined NeedsChange RecompileFiles } {
+	set AllClasses [ uses -classes $PackageEtag ]
+	set AllInterfaces [ uses -interfaces $PackageEtag ]
+	set AllFiles [ uses -modules $PackageEtag ]
+
+	foreach Class $AllClasses {
+		if { [ IsPartOfPackage [ name $PackageEtag ] [ name $Class ] ] } {
+			if { [ IsUsedOutsidePackage [ name $PackageEtag ] [ name $Class ] $NeedsChange ] } {
+				sappend $ReferencedButNotDefined $Class
+			}
+		}
+	}
+	foreach Interface $AllInterfaces {
+		if { [ IsPartOfPackage [ name $PackageEtag ] [ name $Interface ]  ] } {
+			if { [ IsUsedOutsidePackage [ name $PackageEtag ] [ name $Interface ] $NeedsChange ] } {
+				sappend $ReferencedButNotDefined $Interface
+			}
+		}
+	}
+		
+	foreach File $AllFiles { 
+		MoveToPackageGetSets $File $ReferencedButNotDefined $NeedsChange $RecompileFiles
+	}
+}
+
+#======================================================================================
+# Name: 	MoveToPackageGetSets
+# Description:	Moves class/file to another package (JAVA only!!!), This is called
+# 		but Impact:MoveToPackge and Impact:RenamePackage
+# Returns:	Inaccessible entities if class is moved
+#		Entities that need to be changed
+#		Files that need to be recompiled
+#======================================================================================
+proc MoveToPackageGetSets { Entity ReferencedButNotDefined NeedsChange RecompileFiles } {
+	set TempReferencedButNotDefined [ nil_set ]
+	set TempNeedsChange [ nil_set ]
+	set TempRecompileFiles [ nil_set ]
+
+	if { [ module $Entity ] } { 
+		set ItemsDefined [ defines -classes $Entity ]
+		sappend $ItemsDefined [ defines -interfaces $Entity ]
+		# get every class this file defines
+		foreach Class $ItemsDefined {
+			# check to see if the class has package scope
+			if { ![ private $Class ] && ![ protected $Class ] } {
+				if { [package_prot $Class] } {
+					sappend $TempReferencedButNotDefined [where referenced $Class]
+					set TempReferencedButNotDefined [set_subtract $TempReferencedButNotDefined [where defined $Class]]
+				}
+
+				sappend $TempNeedsChange [where defined $Class]
+				sappend $TempNeedsChange [where referenced $Class]
+
+				sappend $TempRecompileFiles [where defined $Class]
+				sappend $TempRecompileFiles [where referenced $Class]
+			}
+		}
+		sappend $ReferencedButNotDefined [sort [set_unique $TempReferencedButNotDefined]]
+		sappend $NeedsChange [sort [set_unique $TempNeedsChange]]
+		sappend $RecompileFiles [sort [set_unique $TempRecompileFiles]]
+	} elseif { [ struct $Entity] } {
+		# get everything this class defines
+		set ItemsDefined [ uses $Entity ]
+		foreach Item $ItemsDefined {
+			if { [ struct $Item ] || [ funct $Item ] || [ var $Item ] } {
+				if { ![ public $Item ] &&  ![ private $Item ] && ![ protected $Item ] } {
+					sappend $TempReferencedButNotDefined $Item
+				}
+			}
+		}
+		sappend $TempNeedsChange $Entity
+		sappend $TempNeedsChange [ where used $Entity ] 
+		sappend $TempNeedsChange [ where referenced $Entity ]
+
+		# clean up the returning sets for display
+		sappend $NeedsChange [ sort [ set_unique $TempNeedsChange ] ]
+		sappend $ReferencedButNotDefined [ sort [ set_unique $TempReferencedButNotDefined ] ]
+		foreach Temp $NeedsChange { 
+			sappend $TempRecompileFiles  [ where defined $Temp ]
+		}
+		foreach Temp $ReferencedButNotDefined { 
+			sappend $TempRecompileFiles [ where defined $Temp ]
+		}
+		sappend $RecompileFiles [ sort [ set_unique $TempRecompileFiles ] ] 
+
+  	} else {
+		puts "Please select a valid file or class for this method"
+	}
+}
+
+#======================================================================================
+# Name: 	Impact:MoveToPackage
+# Description:	Moves class/file to another package (JAVA only!!!)
+# Returns:	Inaccessible entities if class is moved
+#		Entities that need to be changed
+#		Files that need to be recompiled
+#======================================================================================
+proc Impact:MoveToPackage { Entity NewPackageName} {
+	if { [ class $Entity ] } { 
+		if { [psetfile $Entity] == "" } {
+   			ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $Entity
+		}
+	}
+	set NewPackage [set_copy $NewPackageName]
+	set ThisClass [set_copy $Entity]
+	set AllPackages [ packages / ]
+	if { [size [set_intersect $AllPackages $NewPackage ] ] > 0 } {
+		set Nested [get_nested $NewPackage]
+		if { [ apply struct $Entity ] || [ apply class $Entity ] } { 
+			set Match [filter cname=="[cname $ThisClass]" $Nested]
+			if { [size $Match] > 0 } {
+				ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" $Match
+			}
+		} elseif { [ apply module $Entity ] } { 
+			set FileName [ string tolower [cname $Entity]]
+			set FileExtension [ string range $FileName [ string last . $FileName ] [ string length $FileName ] ] 
+			set PossibleNameConflicts [ nil_set ]
+			foreach Element $Nested {
+				set TempString [ string tolower "[cname $Element]" ] 
+
+				if { [ string match $TempString$FileExtension $FileName ] } {
+					sappend $PossibleNameConflicts $Element
+					break;
+				}
+			}
+			if { [ size $PossibleNameConflicts ] > 0 } { 
+				ReportSimpleImpacts "POSSIBLE_NAME_CONFLICT" "warning" [fname $PossibleNameConflicts]
+			}
+		}
+	}
+	set ReferencedButNotDefined [ nil_set ]
+	set NeedsChange [ nil_set ]
+	set RecompileFiles [ nil_set ]
+	MoveToPackageGetSets $Entity $ReferencedButNotDefined $NeedsChange $RecompileFiles
+	ReportSimpleImpacts "REFERENCED_BUT_NOT_DEFINED" "warning" $ReferencedButNotDefined
+	ReportSimpleImpacts "NEED_CHANGE" "folder" $NeedsChange
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+}
+
+#======================================================================================
+# Name:		Impact:DeleteMemberFunction
+# Description:	A member of a class (interface) is deleted
+# Returns:	all instances of member
+#		all files that will need to be recompiled
+#		pure virtual function of super class with same signature
+#======================================================================================
+proc Impact:DeleteMemberFunction {MemberEtag} {
+	set Member [set_copy $MemberEtag]
+	set ThisClass [GetClassOf $Member]
+
+    	if {[psetfile $ThisClass]==""} {
+		set isInterface [interface $ThisClass]
+		if {$isInterface=="1"}  {
+			ReportImpactNoInstances "INTERFACE_NOT_IN_THE_MODEL" "error" $ThisClass
+		} else {
+			ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ThisClass
+		}
+	}
+
+	ReportSimpleSortedImpacts "NEED_CHANGE" "folder" $Member
+
+	set BaseClassMembers [get_member_functions [query_closure 50 get_super_classes $ThisClass]]
+	set SameSignatureBaseClasses [filter cname=="[cname $Member]"&&arguments=="[arguments $Member]" $BaseClassMembers]
+	set BaseClassPureVirtuals [filter purevirt $SameSignatureBaseClasses]
+	ReportSimpleImpacts "PURE_VIRTUAL_OVERLOAD" "error" $BaseClassPureVirtuals
+
+
+	if { [ constructor $Member ] } { 
+		set FilesToRecompile [where defined [where used $Member]]
+		sappend $FilesToRecompile [query_closure 50 "where included" $FilesToRecompile]
+		set FilesToRecompile [set_unique $FilesToRecompile]
+		set FilesToRecompile [sort cname $FilesToRecompile]
+	} else { 
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $Member]
+		set FilesToRecompile [GetRecompileFilesSignatureChanged $ThisClass]
+	}
+	ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+}
+
+#======================================================================================
+# Name:		Impact:DeleteFunction
+# Description:  Deletes a file from the project	
+#======================================================================================
+proc Impact:DeleteFunction { FunctEtag } {
+	if { [psetfile $FunctEtag] == "" } {
+   		ReportImpactNoInstances "FUNCTION_BODY_NOT_IN_THE_MODEL" "error" $FunctEtag
+	}
+	if { [ funct $FunctEtag ] } {
+		set NeedsChange [ nil_set ]
+		set FilesToRecompile [ nil_set ]
+		set ReferencedButNotDefined [ nil_set ]
+
+		#Find all interfaces & super classes
+		set ThisClass [GetClassOf $FunctEtag]
+		set AllSuperClasses [get_super_classes $ThisClass]
+		sappend $AllSuperClasses [query_closure 50 "get_super_classes" $AllSuperClasses]
+		set AllBaseInterfaceMethods [get_member_functions [filter interface $AllSuperClasses]]
+		set AllBaseClassMethods [get_member_functions [filter class $AllSuperClasses]]
+
+		set FunctionSignature [GetStandardSignature [apply cname $FunctEtag] [apply arguments $FunctEtag]]
+
+		if { ![IsSameSignatureFunction $AllBaseClassMethods $FunctionSignature] && [IsSameSignatureFunction $AllBaseInterfaceMethods $FunctionSignature] } {
+			ReportSimpleImpacts "SHOULD_BE_DECLARED_ABSTRACT" "error" [GetClassOf $FunctEtag]
+		}	
+		
+		DeleteFunctionGetSets $FunctEtag $ReferencedButNotDefined $NeedsChange $FilesToRecompile
+		#ReportSimpleImpacts "REFERENCED_BUT_NOT_DEFINED" "warning" $ReferencedButNotDefined
+		ReportSimpleSortedImpacts "NEED_CHANGE" "folder"  $NeedsChange
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile 
+	} else {
+		puts "Please select a function for this method"
+	}
+}
+
+#======================================================================================
+# Name: 	DeleteFunctionGetSets
+# Description:	Called by any Impact command that needs to delete a function (DeleteFunction,
+#		DeleteClass, DeletePackage, ...).  This sets the return variables for this function
+#		Seperated this from DeleteFunction for display purposes
+#======================================================================================
+proc DeleteFunctionGetSets { FunctionEtag ReferencedButNotDefined NeedsChange FilesToRecompile } {
+	sappend $ReferencedButNotDefined $FunctionEtag
+	sappend $NeedsChange [ where used $FunctionEtag ]
+	sappend $NeedsChange $FunctionEtag
+	# get the files to recompile
+	set TempRecompileFiles [ nil_set ]
+	sappend $TempRecompileFiles [ where defined $FunctionEtag ]
+	foreach Ent $NeedsChange { 
+		sappend $TempRecompileFiles [ where defined $Ent ]
+	}
+	sappend $TempRecompileFiles  [ GetRecompileFilesSignatureChanged $FunctionEtag ]
+	set TempRecompileFiles [ sort [ set_unique $TempRecompileFiles ] ]
+	sappend $FilesToRecompile $TempRecompileFiles
+}
+
+#======================================================================================
+# Name :	Impact:DeleteLocalVariable
+# Description:	Deletes Variable local to a method
+# Returns:	A list of references to this variable - Referenced but not defined ent's
+#		The file where this variable is defined - Files that need to be recompiled
+#		The variable - Entities that need change
+#======================================================================================
+proc Impact:DeleteLocalVariable { VarEtag Function } {
+	if { [ local $VarEtag ] } {
+		set ReferencedButNotDefined $VarEtag
+		set NeedsChange $VarEtag
+		set RecompileFiles [nil_set]
+		sappend $RecompileFiles [ fname $Function ]
+		set Instances [ filter inst_scope=="[name $Function]" [instances $VarEtag ] ]
+		# Report the referenced but not defined.  Dont report where it's defined
+		set sizeInst [ size $Instances ]
+		if { $sizeInst > 1 } {
+			ReportImpactCategory 0 "REFERENCED_BUT_NOT_DEFINED" "warning" 
+			ReportImpact 1 $VarEtag
+			set ReportInstances [ set_copy $Instances 2-$sizeInst]
+			ReportImpacts 2 $ReportInstances
+		}
+		ReportImpactsInFunction "NEED_CHANGE" "folder" $NeedsChange $Function $Instances
+		sappend $RecompileFiles [ query_closure 50 "where included"  $RecompileFiles ] 
+		set RecompileFiles [ sort [set_unique $RecompileFiles ]]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+	} else {
+		puts "Please select a local variable for this method"
+	}
+}
+
+#======================================================================================
+# Name: 	Impact:DeleteVariable
+# Description: 	Deletes a variable, either local or not
+# Returns:	A list of references to this variable - Referenced but not defined ent's
+#		The file where this variable is defined - Files that need to be recompiled
+#		The variable - Entities that need change
+#======================================================================================
+proc Impact:DeleteVariable { VarEtag File } {
+    	if {[psetfile $VarEtag]==""} {
+		ReportImpactNoInstances "FIELD_NOT_IN_THE_MODEL" "error" $VarEtag
+	}
+	if { [ var $VarEtag ] } {
+		set ReferencedButNotDefined $VarEtag
+		set NeedsChange $VarEtag
+		set RecompileFiles [nil_set]
+		set InstancesToReport [instances $VarEtag]
+
+		# Report the referenced but not defined.  Dont report where it's defined
+		set NonDecl [nil_set]
+		if { [ size $InstancesToReport ] > 0  } { 
+			foreach Instance $InstancesToReport {
+				set AstCat [ astcategory $Instance ]
+				if { [ string match "*declaration*" $AstCat ]  == 0 } { 
+					sappend $NonDecl $Instance
+				}
+			}
+		}
+
+		if { [ size $NonDecl ] > 0  } { 
+			ReportImpactCategory 0 "REFERENCED_BUT_NOT_DEFINED" "warning" 
+			ReportImpact 1 $VarEtag
+			foreach Instance $NonDecl {
+				ReportImpact 2 $Instance
+			}
+		}
+
+		if { [ size $InstancesToReport ] > 0 } { 
+			ReportImpactCategory 0 "NEED_CHANGE" "folder" 
+			ReportImpact 1 $VarEtag
+			foreach Instance $InstancesToReport {
+				ReportImpact 2 $Instance
+				sappend $RecompileFiles [ fname $Instance ]
+			}
+		}
+		set RecompileFiles [GetRecompileFilesSignatureChanged $VarEtag]
+		sappend $RecompileFiles [ where defined $VarEtag ] 
+		set RecompileFiles [sort [ set_unique $RecompileFiles ] ]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+	} else {
+		puts "Please select a variable for this method"
+	}
+}
+
+#======================================================================================
+# Name: 	DeleteVariableGetSets
+# Description:	Called by any Impact command that needs to delete a function (DeleteVariable,
+#		DeleteClass, DeletePackage, ...).  This sets the return variables for this local 
+#		Seperated this from DeleteVariable for display purposes
+#======================================================================================
+proc DeleteVariableGetSets { VarEtag ReferencedButNotDefined NeedsChange RecompileFiles } {
+	sappend $ReferencedButNotDefined  [ where used $VarEtag ]
+	sappend $NeedsChange $VarEtag 
+	sappend $NeedsChange $ReferencedButNotDefined
+	sappend $NeedsChange [ where referenced $VarEtag ]
+	set TempRecompileFiles [nil_set]
+	foreach Item $NeedsChange {
+		sappend $TempRecompileFiles [ where defined $Item ]
+	}
+	set RecompileFiles [GetRecompileFilesSignatureChanged $VarEtag]
+	sappend $RecompileFiles [sort [ set_unique $TempRecompileFiles ]]
+}
+
+#======================================================================================
+# Name: 	DeleteInterfaceGetSets
+# Description:	Called by any Impact command that needs to delete a function (DeleteInterface,
+#		DeleteClass, DeletePackage, ...).  This sets the return variables for this local 
+#		Seperated this from DeleteInterface for display purposes
+#======================================================================================
+proc DeleteInterfaceGetSets { InterfaceEtag ClassBodyNotInModel NeedsChange NeedRemoveMethods RecompileFiles ExtendingInterfaces} { 
+	set ThisEntity [nil_set]
+	sappend $ThisEntity $InterfaceEtag
+
+	# where referenced interface returns files only
+	set TempClassesDefined [nil_set]
+	set InterfacesDefined [ nil_set ]
+	set BodyNotInModel [ nil_set ]
+	set TempNeedsChange [ nil_set ]
+	set TempNeedRemoveMethods [nil_set]
+	set TempRecompileFiles [ nil_set ]
+
+	set ClassesDefined [ filter class [ get_sub_classes $InterfaceEtag ] ]
+	
+	# for each class that references this interface, return the
+	# query for removing the interface for that class
+	foreach ThisClassEtag $ClassesDefined {
+		# this code is copied from RemoveBaseInterface but instead of
+		# reporting the impact, copy the info into a set and 
+		# report all at once so it's easier to read
+		sappend $TempNeedsChange $ThisClassEtag
+		set ThisClass [set_copy $ThisClassEtag]
+		set BaseInterface [set_copy $InterfaceEtag]
+
+  	  	if {[psetfile $ThisClass]==""} {
+			sappend $BodyNotInModel $ThisClass
+		}
+
+		sappend $TempNeedsChange $ThisClass
+
+		# Get all methods of the interface that will be removed
+		set AllBaseInterfaces [set_copy $BaseInterface]
+		sappend $AllBaseInterfaces [query_closure 50 "get_super_classes" $BaseInterface]
+		set AllBaseMethods [get_member_functions $AllBaseInterfaces]
+
+		# Get all methods of the class that are implementation of the interface.
+		# And need to be deleted or reviewed at least.
+		set ThisMethods [get_member_functions $ThisClass]
+		set MethodsToReview [nil_set]
+		foreach Method $ThisMethods {
+			set CurSig [GetStandardSignature [apply cname $Method] [apply arguments $Method]]
+			set Res [IsSameSignatureFunction $AllBaseMethods $CurSig]
+			if {"$Res" == "1"} {
+				sappend $TempNeedRemoveMethods $Method
+			}
+		}
+		sappend $TempRecompileFiles [ where defined $ThisClass ]
+	}
+	
+	# make all results have unique entries
+	sappend $ClassBodyNotInModel [ set_unique $BodyNotInModel ]
+	sappend $NeedsChange [ sort [ set_unique $TempNeedsChange ] ]
+	sappend $NeedRemoveMethods [ sort [ set_unique $TempNeedRemoveMethods ] ]
+	set TempRecompileFiles [GetRecompileFilesSignatureChanged $NeedsChange ]
+	sappend $RecompileFiles [ sort [ set_unique $TempRecompileFiles ] ]
+	sappend $ExtendingInterfaces [ filter interface [ get_sub_classes $InterfaceEtag ]]
+}
+
+#======================================================================================
+# Name: 	DeleteInterfaceGetSetsPkg
+# Description:	Called by DeletePackage, which requires a different output.
+#		This sets the return variables for this local Seperated this
+#		from DeleteInterface for display purposes
+#======================================================================================
+proc DeleteInterfaceGetSetsPkg { InterfaceEtag ClassBodyNotInModel NeedsChange NeedRemoveMethods RecompileFiles ExtendingInterfaces Package } {
+	set WhereReferenced [ where referenced $InterfaceEtag ]
+	set $WhereReferenced [ set_unique $WhereReferenced ]
+	set ClassesDefined [ nil_set ]
+	set InterfacesDefined [ nil_set ]
+
+	# for each file that was returned, get the class defined in the file
+	foreach Ref $WhereReferenced {
+		sappend $ClassesDefined	[ filter class [ defines $Ref ] ]
+	}
+	# for each class that references this interface, return the
+	# query for removing the interface for that class
+	foreach ThisClassEtag $ClassesDefined {
+		# this code is copied from RemoveBaseInterface but instead of
+		# reporting the impact, copy the info into a set and 
+		# report all at once so it's easier to read
+		sappend $NeedsChange [ where declared $ThisClassEtag ]
+		set ThisClass [set_copy $ThisClassEtag]
+		set BaseInterface [set_copy $InterfaceEtag]
+
+		if { [ psetfile $ThisClass ] == "" } { 
+		sappend $ClassBodyNotInModel $ThisClass
+		} 
+		# Get all methods of the interface that will be removed
+		set AllBaseInterfaces [set_copy $BaseInterface]
+		sappend $AllBaseInterfaces [query_closure 50 "get_super_classes" $BaseInterface]
+		set AllBaseMethods [get_member_functions $AllBaseInterfaces]
+
+		# Get all methods of the class that are implementation of the interface.
+		# And need to be deleted or reviewed at least.
+		set ThisMethods [get_member_functions $ThisClass]
+		set MethodsToReview [nil_set]
+		foreach Method $ThisMethods {
+			set CurSig [GetStandardSignature [apply cname $Method] [apply arguments $Method]]
+			set Res [IsSameSignatureFunction $AllBaseMethods $CurSig]
+			if {"$Res" == "1"} {
+				# this if is if the method calling this is DeletePackage
+				if { [string match "" $Package ] == 0 } { 
+					if { ![IsPartOfPackage $Package [name $Method] ] } { 
+						sappend $MethodsToReview $Method
+					}
+				} else { 
+					sappend $MethodsToReview $Method
+				}
+			}
+		}
+		sappend $NeedRemoveMethods $MethodsToReview
+
+		sappend $RecompileFiles [ where defined $ThisClass ]
+	}
+	
+	# make all results have unique entries
+	set ClassBodyNotInModel [ set_unique $ClassBodyNotInModel ]
+	set NeedsChange [ set_unique $NeedsChange ]
+	set NeedRemoveMethods [ set_unique $NeedRemoveMethods ]
+	set RecompileFiles [ set_unique $RecompileFiles ]
+	
+	# get all interfaces that reference this interface
+	foreach $Ref $WhereReferenced {
+		sappend $InterfacesDefined [ filter interface [ defines $Ref ] ]
+	}
+	set $InterfacesDefined [ set_unique $InterfacesDefined ]
+	# set $InterfacesDefined [ set_substract $InterfacesDefined $InterfaceEtag ]
+}
+
+#======================================================================================
+# Name: 	Impact:DeleteEntity
+# Description:	Given any entity, finds impacts of deleting it
+# Returns:	What ever Delete<Entity type> returns
+#======================================================================================
+proc Impact:DeleteEntity { Entity } { 
+	# determine what type of entity you have been given then call the 
+	# appropriate method
+	if { [ module $Entity ] } { 
+		Impact:DeleteFile $Entity
+	} elseif { [ funct $Entity ] } { 
+		Impact:DeleteFunction $Entity
+	} elseif { [ struct $Entity ] } { 
+		Impact:DeleteClass $Entity
+	} elseif { [ field $Entity ] } {
+		Impact:DeleteVariableFromClass $Entity
+	} elseif { [ interface $Entity ] } { 
+		Impact:DeleteInterface $Entity
+	} elseif { [ var $Entity ] } { 
+		Impact:DeleteVariableFromClass $Entity
+	} else { 
+		Impact:DeletePackage $Entity 
+	}
+}
+
+#======================================================================================
+# Name: 	Impact:DeleteInterface
+# Description:	Finds impact of deleting an interface
+# Returns:	Interfaces extending the interface, classes implementing the 
+#		interface
+#======================================================================================
+proc Impact:DeleteInterface { InterfaceEtag } {
+	if { [psetfile $InterfaceEtag] == "" } {
+   		ReportImpactNoInstances "INTERFACE_NOT_IN_THE_MODEL" "error" $InterfaceEtag
+	}
+	if { [ interface $InterfaceEtag ] } {
+		set ClassBodyNotInModel [ nil_set ]
+		set NeedsChange [ nil_set ]
+		set NeedRemoveMethods [ nil_set ]
+		set RecompileFiles [ nil_set ]
+		set ExtendingInterfaces [ nil_set ]
+		DeleteInterfaceGetSets $InterfaceEtag $ClassBodyNotInModel $NeedsChange $NeedRemoveMethods $RecompileFiles $ExtendingInterfaces
+		ReportSimpleImpacts "EXTENDING_INTERFACES" "folder" $ExtendingInterfaces
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "folder" $ClassBodyNotInModel
+		ReportSimpleImpacts "NEED_CHANGE" "folder" $NeedsChange
+		ReportSimpleImpacts "NEED_REMOVE_METHODS" "folder" $NeedRemoveMethods
+		set FilesToRecompile [ GetRecompileFilesSignatureChanged $RecompileFiles ]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	} else {
+		puts "Please select a valid interface for this method"
+	}
+}
+
+#======================================================================================
+# Name:		Impact:DeleteClass
+# Description:  Deletes a file from the project	
+# Returns:	The results of deleting every entity defined in the class
+#======================================================================================
+proc Impact:DeleteClass { ClassEtag } {
+	if { [psetfile $ClassEtag] == "" } {
+   		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "error" $ClassEtag
+	}
+	if { [ struct $ClassEtag ] } {
+		set ReferencedButNotDefined [ nil_set ]
+		set NeedsChange [ nil_set ]
+		set RecompileFiles [ nil_set ]
+
+		DeleteClassGetSets $ClassEtag $ReferencedButNotDefined $NeedsChange $RecompileFiles
+
+		sappend $ReferencedButNotDefined $ClassEtag
+
+		set ReferencedButNotDefined [ sort [ set_unique $ReferencedButNotDefined ] ] 
+		set NeedsChange [ sort [ set_unique $NeedsChange ] ] 
+		set RecompileFiles [ sort [ set_unique $RecompileFiles ]]
+
+		set NeedsChange  [ ReportSimpleSortedOutOfClassImpacts "REFERENCED_BUT_NOT_DEFINED" "warning" $ReferencedButNotDefined $ClassEtag ]
+		ReportSimpleSortedOutOfClassImpacts "NEED_CHANGE" "folder" $NeedsChange $ClassEtag
+		set RecompileFiles [ GetRecompileFilesSignatureChanged $ClassEtag ]
+		set ItemsDefined [nil_set]
+		set WhereDef [ where defined $ClassEtag ] 
+		foreach Item [ filter !module [ defines $WhereDef ] ] { 
+			if { ![ IsPartOfClass [name $ClassEtag] [name $Item ]] } { 
+				sappend $ItemsDefined $Item
+			}
+		}
+		if { [name $WhereDef ] != "" } { 
+			if { [ size $ItemsDefined ] == 0 } { 
+				set RecompileFiles [ filter fname!=\"[fname $WhereDef]\" $RecompileFiles ] 
+			}
+		}
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+	} else {
+		puts "Please select a valid class for this method"
+	}
+}
+
+#======================================================================================
+# Name:		DeleteClassGetSets
+# Description:	Called by DeleteClass, DeleteFile, DeleteEntity in order to popluate
+# 		the returning sets for display
+#======================================================================================
+proc DeleteClassGetSets { ClassEtag ReferencedButNotDefined NeedsChange RecompileFiles } {
+	sappend $ReferencedButNotDefined [uses $ClassEtag]
+	set File [ where defined $ClassEtag ] 
+	sappend $NeedsChange $ReferencedButNotDefined
+	sappend $NeedsChange $ClassEtag
+	if { [ name $File ] != "" } {
+		set DefinesAll [ defines -all $File ] 
+		set NeedsChange [ set_intersect $NeedsChange $DefinesAll ]
+	}
+	sappend $RecompileFiles [ where referenced $NeedsChange ] 
+}
+
+#======================================================================================
+# Name:		DeleteClassGetSetsPkg
+# Description:	Called by DeletePackage, which requires different output, in order 
+# 		to popluate the returning sets for display
+#======================================================================================
+proc DeleteClassGetSetsPkg { ClassEtag ReferencedButNotDefined NeedsChange RecompileFiles } {
+	set WhereUsed [ nil_set ]
+	set TempReferencedButNotDefined [ nil_set ]
+	set TempNeedsChange [ nil_set ]
+	set TempRecompileFiles [ nil_set ]
+
+	sappend $TempReferencedButNotDefined $ClassEtag
+	sappend $ReferencedButNotDefined [ sort [ set_unique $TempReferencedButNotDefined ] ]
+
+	sappend $NeedsChange [ where referenced $ClassEtag ]
+
+	foreach Ent $ReferencedButNotDefined { 
+		sappend $TempRecompileFiles [ where referenced $Ent ]
+	}
+	sappend $RecompileFiles [ sort [ set_unique $TempRecompileFiles ] ]
+}
+
+#======================================================================================
+# Name:		Impact:DeleteFile
+# Description:  Deletes a file from the project	
+# Returns: 	Set of files that use at least one entity defined in the deleted file.
+#		If deleted file is a header file, Set of files that include it.
+#		Also the file to be deleted should be returned in the Entities that need 
+#			to be changed.
+#======================================================================================
+proc Impact:DeleteFile { FileEtag } {
+	# if it's a header file simply return all the files that include it
+	# else return the files that use entities defined in the file.
+	if { [ header $FileEtag ] } { 
+		set RefNotDefined [ nil_set ]
+		set NeedsChange [nil_set]
+		set RecompileFiles [nil_set]
+		set Defines [ defines $FileEtag ]
+		foreach Def $Defines {
+			set WhereRef [ where used $Def ] 
+			foreach Ref $WhereRef {
+			puts "[name $Ref]"
+				if { [ string match [ name $Ref ] [ name $FileEtag ] ] == 0 } {
+					sappend $RefNotDefined $Def
+				}
+			}
+		}
+		set RefNotDefined [ sort [ set_unique $RefNotDefined ] ] 
+		sappend $NeedsChange $RefNotDefined
+		sappend $NeedsChange $FileEtag
+		sappend $NeedsChange [ where referenced $FileEtag ]
+		sappend $NeedsChange [ where included $FileEtag ]
+		set NeedsChange [sort [ set_unique $NeedsChange ] ] 
+	
+		foreach Need $NeedsChange {
+			sappend $RecompileFiles [ where defined $Need ]
+		}
+		
+		sappend $RecompileFiles [ query_closure 50 "where included" $FileEtag ]
+		set RecompileFiles [ set_unique $RecompileFiles]	
+		set FilesToRecompile [nil_set]
+		foreach File $RecompileFiles { 
+			if { ![ string match [fname $File] [ fname $FileEtag ]] } {
+				sappend $FilesToRecompile $File
+			}
+		}
+		set FilesToRecompile [ sort $FilesToRecompile ] 
+
+		set RefNotDefined [ filter !constructor $RefNotDefined ]
+		set NeedsChange [ filter !constructor $NeedsChange ]
+		ReportSimpleSortedOutOfFileImpacts "REFERENCED_BUT_NOT_DEFINED" "warning" $RefNotDefined $FileEtag
+		ReportSimpleSortedOutOfFileImpacts "NEED_CHANGE" "folder" $NeedsChange $FileEtag
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+ 
+	} else { 
+		# get a set of all entities defined in the given file
+		set EntitiesInFile [ defines $FileEtag ]
+		set ClassesInFile [ filter class||interface $EntitiesInFile ]
+
+		# Remove all entities that are in a class
+		if { [size $ClassesInFile] } {
+			set TempEntities [ nil_set ]
+			foreach Ent $EntitiesInFile {
+				if { ![EntInClass $ClassesInFile $Ent] } {
+					sappend $TempEntities $Ent
+				}
+			}
+			set EntitiesInFile [set_copy $TempEntities]
+		}
+
+		set ReferencedButNotDefined [ nil_set ]
+		set NeedsChange [ nil_set ]
+		set RecompileFiles [ nil_set ]
+		set ClassBodyNotInModel [ nil_set ]
+		set NeedRemoveMethods [ nil_set ]
+		set ExtendingInterfaces [ nil_set ]
+		set DummyNeedsChange [ nil_set ]
+		set DummyRecompileFiles [ nil_set ]
+
+		foreach Ent $EntitiesInFile {
+			if { [ funct $Ent ] } {
+				if { ![ EntInClass [name $ClassesInFile] [name $Ent ] ] } {
+					sappend $ReferencedButNotDefined $Ent
+					sappend $NeedsChange $Ent
+					sappend $RecompileFiles [ where referenced $Ent ]
+				}
+			} elseif { [ struct $Ent ] || [ class $Ent ] } { 
+				DeleteClassGetSets $Ent $ReferencedButNotDefined $NeedsChange $RecompileFiles
+				sappend $ReferencedButNotDefined $Ent
+			} elseif { [ var $Ent ] || [ local $Ent ] } { 
+				if { ![ EntInClass [name $ClassesInFile] [name $Ent ] ] } {
+					DeleteVariableGetSets $Ent $ReferencedButNotDefined $NeedsChange $RecompileFiles
+					sappend $ReferencedButNotDefined $Ent
+				}
+			} elseif { [ interface $Ent ] } { 
+				DeleteInterfaceGetSets $Ent $ClassBodyNotInModel $NeedsChange $NeedRemoveMethods $RecompileFiles $ExtendingInterfaces
+			}
+		}
+
+		set ReferencedButNotDefined [ sort [ set_unique $ReferencedButNotDefined ] ]
+		set ClassBodyNotInModel [ sort [ set_unique $ClassBodyNotInModel ] ]
+		set NeedRemoveMethods [ sort [ set_unique $NeedRemoveMethods ] ]
+		set ExtendingInterfaces [ sort [ set_unique $ExtendingInterfaces  ] ]
+
+		sappend $NeedsChange $FileEtag
+
+		set NeedsChange [ sort [ set_unique $NeedsChange ] ]
+		set RecompileFiles [ filter module [ sort [ set_unique $RecompileFiles ] ] ]
+		set RecompileFiles [ set_subtract $RecompileFiles $FileEtag ]
+
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "folder" $ClassBodyNotInModel
+		ReportSimpleImpacts "NEED_REMOVE_METHODS" "folder" $NeedRemoveMethods
+		ReportSimpleImpacts "EXTENDING_INTERFACES" "folder" $ExtendingInterfaces
+
+		ReportSimpleSortedOutOfFileImpacts "REFERENCED_BUT_NOT_DEFINED" "warning" $ReferencedButNotDefined $FileEtag
+		ReportSimpleSortedOutOfFileImpacts "NEED_CHANGE" "folder" $NeedsChange $FileEtag
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $RecompileFiles
+	}
+}
+
+#======================================================================================
+# Name:		Impact:DeletePackage
+# Description:  Deletes a package from the project	
+#======================================================================================
+proc Impact:DeletePackage { PackageEtag } {
+	# check to make sure this is really a package first
+	set AllPackages [ packages / ]
+	if { ![size [ set_intersect $AllPackages $PackageEtag ] ] } {
+		ReportSimpleImpacts "BODY_NOT_IN_THE_MODEL" "error" $PackageEtag
+	}
+
+	if { [ kind $PackageEtag ] == "package" } { 
+		# get all places package is imported
+		# get all defined classes in the model
+		set NeedsChange [nil_set]
+		set RecompileClasses [ nil_set ]
+		set RecompileInterfaces [nil_set]
+		set RecompileFiles [ nil_set ]
+		set ClassBodyNotInModel [ nil_set]
+		set NeedRemoveMethods [nil_set]
+		set ExtendingInterfaces [nil_set]
+		set ReferencedButNotDefined [nil_set]
+		
+		# Get all the info for all the folders
+		DeletePackageGetSets $PackageEtag $ClassBodyNotInModel $NeedRemoveMethods $ExtendingInterfaces $ReferencedButNotDefined $NeedsChange $RecompileFiles 
+		# Run the same query on all of the subpackages
+		set SubPackages [ uses -packages $PackageEtag ]
+		foreach SubPackage $SubPackages { 
+			DeletePackageGetSets $SubPackage $ClassBodyNotInModel $NeedRemoveMethods $ExtendingInterfaces $ReferencedButNotDefined $NeedsChange $RecompileFiles
+			sappend $NeedsChange [ uses -modules $SubPackage ] 
+		}
+
+		# populate the needs change folder with all files in this package, and all items in 
+		# referenced but not defined.
+		sappend $NeedsChange $ReferencedButNotDefined
+		sappend $NeedsChange [ uses -modules $PackageEtag ] 
+		
+		set ClassBodyNotInModel [ sort [ set_unique $ClassBodyNotInModel ] ]
+		set NeedRemoveMethods [ sort [set_unique $NeedRemoveMethods ]]
+		set ExtendingInterfaces [ sort [set_unique $ExtendingInterfaces ] ]
+		set ReferencedButNotDefined [ sort [  set_unique $ReferencedButNotDefined ]  ]
+		set NeedsChange [ sort [ set_unique $NeedsChange ] ]
+
+		ReportImpactNoInstances "CLASS_BODY_NOT_IN_THE_MODEL" "folder" $ClassBodyNotInModel
+		ReportSimpleImpacts "NEED_REMOVE_METHODS" "folder" $NeedRemoveMethods
+		ReportSimpleImpacts "EXTENDING_INTERFACES" "folder" $ExtendingInterfaces
+		ReportSimpleSortedImpactsPkg "REFERENCED_BUT_NOT_DEFINED" "warning" $ReferencedButNotDefined $PackageEtag
+		ReportSimpleSortedImpactsPkg "NEED_CHANGE" "folder" $NeedsChange $PackageEtag
+		set FilesToRecompile [nil_set]
+		foreach File $RecompileFiles {
+			if { ![ IsPartOfPackage [ name $PackageEtag ] [ name $File ] ] } { 
+				sappend $FilesToRecompile $File
+			}
+		}
+		set FilesToRecompile [sort [set_unique $FilesToRecompile ]]
+		ReportSimpleImpacts "RECOMPILE_FILE" "folder" $FilesToRecompile
+	} else {
+		puts "Please select a valid package for this method"
+	}
+}
+
+#======================================================================================
+# Name: 	DeletePackageGetSets 
+# Description: 	Gathers all the information that will be returned by DeletePackage
+# 		This method was created so that delete package can be called many times
+#		and all then the information can be resorted and displayed
+# Results:	ClassBodyNotInModel NeedRemoveMethods ExtendingInterfaces ReferencedButNotDefined NeedsChange RecompileFiles  
+#======================================================================================
+proc DeletePackageGetSets { PackageEtag ClassBodyNotInModel NeedRemoveMethods ExtendingInterfaces ReferencedButNotDefined NeedsChange RecompileFiles  } { 
+	set NeedsChange [ where included $PackageEtag ]
+	set AllClasses [ uses -classes $PackageEtag ]
+	set AllInterfaces [ uses -interfaces $PackageEtag ]
+	# foreach class in the model, check to see if the class
+	# is part of the given package, if so add it to the set
+	foreach Class $AllClasses {
+			DeleteClassGetSetsPkg $Class $ReferencedButNotDefined $NeedsChange $RecompileFiles
+			if { [ IsUsedOutsidePackage [ name $PackageEtag ] [ name $Class ] $NeedsChange ] } {
+				sappend $ReferencedButNotDefined $Class
+			}
+	}
+	set PackageName [name $PackageEtag]
+	foreach Interface $AllInterfaces {
+			DeleteInterfaceGetSetsPkg $Interface $ClassBodyNotInModel $NeedsChange $NeedRemoveMethods $RecompileFiles $ExtendingInterfaces $PackageName
+			if { [ IsUsedOutsidePackage [ name $PackageEtag ] [ name $Interface ] $NeedsChange ] } {
+				sappend $ReferencedButNotDefined $Interface
+			}
+	}
+}
+
+#======================================================================================
+# Name:		IsUsedOutsidePackage
+# Description:	Get's all places Ent is referenced, checks to see if those places
+#		are part of the given package. If not, add's that place to NeedsChange
+#======================================================================================
+proc IsUsedOutsidePackage { Package Ent NeedsChange } {
+	set WhereItemIsUsed [ where referenced $Ent ]
+	set ret 0;
+	foreach Item $WhereItemIsUsed { 
+		if { [string match "" [psetfile $Item]] == 0 } {
+			if { ![IsPartOfPackage [name $Package] [name $Item ]] } {
+				sappend $NeedsChange $Item
+				set ret 1;
+			}
+		}
+	}
+	return $ret
+}
+
+#======================================================================================
+# Name:		IsPartOfSubClass
+# Description:	Returns true if the Entity is defined in the class or any of it's subclasses
+#		result determined by string pattern matching
+#======================================================================================
+proc IsPartOfSubClass { Class Ent } {
+	if { [ IsPartOfClass [name $Class] [name $Ent] ] } { 
+		return 1
+	}
+	set Subs [query_closure 50 "get_sub_classes" $Class ]
+	foreach Sub $Subs { 
+		if { [ IsPartOfClass [name $Sub] [name $Ent] ] } {
+			return 1
+		}
+	}
+	return 0
+}
+
+#======================================================================================
+# Name:		IsPartOfSuperClass
+# Description:	Returns true if the Entity is defined in the class or any of it's superclasses
+#		result determined by string pattern matching
+#======================================================================================
+proc IsPartOfSuperClass { Class Ent } {
+	if { [ IsPartOfClass [name $Class] [name $Ent ]] } { 
+		return 1
+	}
+	set Subs [query_closure 50 "get_super_classes" $Class ]
+	foreach Sub $Subs { 
+		if { [ IsPartOfClass [name $Sub] [name $Ent] ] } {
+			return 1
+		}
+	}
+	return 0
+}
+
+#======================================================================================
+# Name:		IsPartOfPackage
+# Description:	This method is used by DeletePackage to get all the classes in that 
+#		Package. 
+# Returns:	1 if the class is in the same package, 0 if not
+#======================================================================================
+proc IsPartOfPackage { Package Class } { 
+	if { [ string match [name $Class] "" ] == 0 } {
+		if { [ module $Class ] } {
+			set Defines [ defines -classes $Class ] 
+			sappend $Defines [ defines -interfaces $Class ]
+			foreach Def $Defines { 
+				if { [ class $Def ] || [ interface $Def]} {
+					set temp [ IsPartOfPackage $Package [name $Def] ]
+					return $temp
+				} 
+			}
+		}
+		if { [ string first $Package $Class ] != 0 } {
+			return 0
+		} else {
+			set ClassName [ string range $Class [expr [string length $Package]+1 ] [string length $Class ] ]
+			if { [string match *.* $ClassName ] } {
+				append Package * 
+				if { [ string match $Package $Class ]  } {
+					return 1
+				}
+				return 0
+			} else {
+				return 1
+			}
+		}
+	}
+	return 0
+}	
+#======================================================================================
+# Name:		IsMethodPartOfPackage
+# Description:	Returns true iff the method is part of the package
+#======================================================================================
+proc IsMethodPartOfPackage { Package Method } { 
+	if { [ string first $Package $Method ] != 0 } {
+		return 0
+	} else {
+		set ClassName [ string range $Method [expr [string length $Package]+1 ] [string length $Method ] ]
+		if { [string first $ClassName $Method ] == 0 } {
+			return 0
+		} else {
+			return 1
+		}
+	}
+}
+
+#======================================================================================
+# Name:		IsPartOfClass
+# Description: 	Return true iff the entity is defined in the class
+#======================================================================================
+proc IsPartOfClass { Class Entity } {
+	if { [ string first $Class $Entity ] != 0 } { 
+		return 0
+	} else { 
+		set EntityName [ string range $Class [ expr [ string length $Class ] + 1 ] [ string length $Entity ] ] 
+		if { [ string match *.* $EntityName ] } { 
+			return 0
+		} else {
+			return 1
+		}
+	}
+}
+
+#======================================================================================
+# Name: 	IsInnerClass
+# Description:  Return true iff the entity is an inner class
+#======================================================================================
+proc IsInnerClass { Class } { 
+	set RelatedClasses [ filter struct||class [ get_related_classes $Class ] ]
+	foreach Relative $RelatedClasses {
+		if { ![ string match [name $Relative] [name $Class ]] } { 
+			if {  [ string first [name $Relative] [name $Class] ] >= 0 } {
+				if { [ string match [name $Relative].[cname $Class] [name $Class] ] } { 
+					return 1
+				}
+			}
+		}
+	}
+	return 0
+}
+
+#======================================================================================
+# Name: 	FileSameAsClass
+# Description:	Returns true if the class name is the same as the file name, thus the
+# 		class must be either public or package scope
+#======================================================================================
+proc FileSameAsClass { Entity } {
+	set FileName [ name [ where defined $Entity ] ]
+	set ClassName [ name $Entity ] 
+	return [ regexp -nocase $ClassName $FileName ]
+}
+
+#======================================================================================
+# Name:		IsUsedOutsideClass
+# Description:	Given an entity returns true if it is used outside the class
+# 		that it is defined in, else false
+#======================================================================================
+proc IsUsedOutsideClass { ClassEtag EntityEtag } {
+	set WhereItemIsUsed [ where used $EntityEtag ]
+	foreach Item $WhereItemIsUsed { 
+		if { [IsPartOfPackage [name $ClassEtag] [name $Item ]] } {
+		} else {
+			return 1
+		}
+
+	}
+	return 0
+}
+
+#======================================================================================
+# Name:		EntInClass
+# Description:  This entity returns true is defined in the given class
+#======================================================================================
+proc EntInClass { ClassSet Ent } {
+	foreach Class $ClassSet {
+		if { [ string first $Class $Ent ] != 0 } {
+			return 0
+		} else {
+			set EntName [ string range $Ent [expr [string length $Class]+1 ] [string length $Ent ] ]
+			if { [string match *.* $EntName ] } {
+				return 0
+			} else {
+				return 1
+			}
+		}
+	}
+	return 0
+}

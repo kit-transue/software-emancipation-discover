@@ -1,0 +1,867 @@
+EDG ELS IF AST Definition, Rev. 12, WMM, 98-03-20
+
+HISTORY:
+--------
+
+98-03-20 (Rev. 12): Added description of mapping in #if expressions;
+		changed constructor_call description.
+
+98-02-24 (Rev. 11): Updated description of microsoft_try.
+
+98-02-18 (Rev. 10): Added "defined" description.
+
+98-02-18 (Rev. 9): Added "case_label" description.
+
+98-01-31 (Rev. 8): Minor changes to "return" and "catch" descriptions.
+
+98-01-24 (Rev. 7): Added "ctor_init" and description of compiler-
+		generated return statements.
+
+98-01-21 (Rev. 6): Added "parm_decls" for pointers/references to
+		functions.
+
+98-01-14 (Rev. 5): "field" node names, "condition" node description.
+
+98-01-10 (Rev. 4): break, continue, default; optional declarator.
+
+98-01-06 (Rev. 3): Preprocessor AST.
+
+97-12-30 (Rev. 2): Declaration AST, placeholder for preprocessor AST.
+
+97-12-01 (Rev. 1): Constant folding.
+
+97-10-28 (Rev. 0): Initial release
+
+======================================================================
+
+I. Introduction
+---------------
+
+This document describes the implementation of the Abstract Syntax Tree
+(AST) in the Intermediate Format (IF) of the External Language Support
+(ELS) for the Edison Design Group (EDG) C/C++ parser.  The syntax
+assumed is that described in Rev. 4 (October 21, 1997) of the ELS
+document by Pero Smrzlic, except that the interpretation of the line
+numbers in a "MAP lines" line has been changed to be consistent with
+the ordering of the "MAP fixed" and "MAP copy" lines (e.g., in a line
+such as
+
+	MAP lines "f.c" {1 10, 50}
+
+the first two numbers reference a range of lines in the file f.c and
+the last number gives the line number in the imaginary output file
+corresponding to the beginning of the referenced section).
+
+II. General Principles
+----------------------
+
+The IF file is divided into two major sections, roughly corresponding
+to the preprocessor and the parser.  The preprocessor section is
+subdivided into groupings that essentially trace the inclusion tree,
+each grouping introduced by an "SMT file" line identifying the
+associated source or header file.  (There can be multiple "SMT file"
+lines for a given file as the tree walk returns to the including file
+from an included header.)  These sections contain all the MAP lines
+and the SYM, SMT, and REL lines for files and macros; the last element
+in the information for each file is the preprocessor AST for that
+file.  All source references in this section are unmapped, that is,
+they refer to line numbers and column offsets within the file
+identified in the most recent preceding "SMT file" line.  (An
+exception is made for the expressions in #if directives; the reason is
+that the nodes in the preprocessor AST reference constants that are
+probably not present in the source, i.e., are the result of macro
+expansion.  There is no way to give source-relative positions for
+these nodes.  Such nodes are flagged by the presence of the null file
+name, "", in the node, e.g.,
+
+	logical_or "" 1/5  1/12 {
+	 ...
+	}
+)
+
+The parser section is introduced by a line reading 'SMT file ""'
+(currently; a different name may be used eventually).  In this
+section, all source references are made using the the mapped line and
+column numbers specified in the MAP lines in the preprocessor section.
+No "astfile" is provided in the parser AST, either on the "AST" line
+or in "astloc" descriptions; instead, the file can be deduced from the
+mapping information.
+
+In both the preprocessor and parser AST, a node with no operands is
+generally represented on a single line with an empty brace list, e.g.,
+
+	variable_address [203] 1230/5 1230/7 {}
+
+The operands of nodes are each represented on a separate line,
+indented one space further than the node to which they belong, with
+the open brace on the same line as the node description and the
+closing brace on a line by itself at the same indentation level as the
+node description, e.g.,
+
+	constant [15] {
+	 "23"
+	}
+
+In the parser AST, expression nodes all have types.  If the
+"[identifier]" slot is not otherwise needed (e.g., to reference a
+variable or constant), it is used to reference a "type" SYM record
+indicating the type of the node.
+
+For executable (i.e., non-declaration) portions of the parser AST,
+the shape of the tree (the number and interpretation of the operands
+of the various kinds of nodes) follows that of the EDG Intermediate
+Langauge (IL) fairly closely; additional information regarding the
+tree can often be found or deduced from the EDG Program Logic Manual
+(PLM) or from the EDG header file il_def.h.  Changes have been made in
+certain cases, however, to make it easier to interpret the
+corresponding AST.  In particular, if a node can take a variable
+number of operands, the order of its operands has been either
+rearranged to place them as the node's last operands, or they have
+been moved under an artificial container operand that serves only to
+collect the operands in one place.
+
+The declarative AST has no correspondence in the EDG IL and has been
+invented strictly for the purposes of ELS.
+
+In all cases (preprocessor and parser, executable and declaration)
+where an operand other than the last may be omitted, a missing operand
+is represented in the AST output by a node labeled "null_operand."
+
+III. Preprocessor AST Nodes
+---------------------------
+
+This section contains an alphabetical listing and description of the
+nodes used in the preprocessor AST.  As in the declarative portions of
+the parser AST, there is no correspondence with the EDG IL, and the
+structures have been invented specifically for the purposes of ELS.
+Where an expression is needed (as operands of cpp_if and cpp_elif
+nodes), the expression is represented using the same node names as for
+the parser AST; these nodes are described in the next section rather
+than here.  The names of all other nodes used in the preprocessor AST
+begin with the string "cpp_" to distinguish them from parser AST
+nodes.
+
+cpp_define		This AST node represents a #define directive.
+			If the macro definition contains replacement
+			text, it is given as the operand of this node,
+			in the form of a quoted string representing
+			the canonicalized form of the text (comments
+			and all unnecessary spaces removed).
+
+cpp_elif		This AST node represents a #elif directive and
+			will always be the direct operand of a cpp_if,
+			cpp_ifdef, or cpp_ifndef node (qq.v.).  The
+			argument of the directive is presented as the
+			first operand of this node; it is a constant
+			expression and hence represented by a subtree
+			of parser-style AST nodes (described in the
+			next two sections).  If the #elif appears
+			within code that is not selected by
+			conditional compilation, however, the
+			expression will be represented by a
+			"null_operand" node (because the directive is
+			only processed by the compiler to the extent
+			of keeping track of the #if/#elif/#else/#endif
+			nesting level).  The following operands are
+			those representing the preprocessor directives
+			within the text controlled by the #elif.
+
+cpp_else		This AST node represents a #else directive and
+			will always be the last operand of a cpp_if,
+			cpp_ifdef, or cpp_ifndef node (qq.v.).  Its
+			operands are those representing the
+			preprocessor directives within the text
+			controlled by the #else.
+
+cpp_if			This AST node represents a #if directive.  The
+			argument of the directive is handled as for
+			cpp_elif (q.v.).  The second operand is a
+			cpp_then node (q.v.).  Following operands will
+			be either a cpp_elif or, for the last operand,
+			cpp_else node (qq.v.).
+
+cpp_ifdef		This AST node represents a #ifdef directive.
+			The argument of the directive is represented
+			by the symbol identifier of the node (i.e., an
+			identifier is assigned even for undefined
+			macro names that are referenced in this way);
+			however, if the #ifdef appears within code
+			that is not selected by conditional
+			compilation, no symbol identifier will be
+			given (because the directive is only processed
+			by the compiler to the extent of keeping track
+			of the #if/#elif/#else/#endif nesting level).
+			The first operand is a cpp_then node (q.v.).
+			Following operands will be either cpp_elif
+			nodes or, for the last operand, a cpp_else
+			node (qq.v.).
+
+cpp_ifndef		Identical to the cpp_ifdef node except
+			representing a #ifndef directive.
+
+cpp_include		This AST node represents a #include directive.
+			The file being included is denoted by both the
+			symbol identifier and as the first operand,
+			which is a character string containing the
+			spelling of the file name.
+
+cpp_macro_arg		This AST node represents a single argument in
+			the invocation of a function-style macro.  It
+			has a variable number of operands.  The first
+			operand is always a cpp_raw_arg node (q.v.).
+			If the argument contains no macro invocations,
+			the cpp_raw_arg node will be the only operand.
+			If, however, the argument does contain macro
+			invocations, the last operand will be a
+			cpp_processed_arg node (q.v.) and the
+			intervening operands will be cpp_macro_call
+			nodes (q.v.) reflecting the macro invocations
+			performed in creating the expanded version of
+			this argument.
+
+cpp_macro_call		This AST node represents an invocation of a
+			macro within the source code; the macro
+			involved is given by the symbol identifier.
+			If the macro is a function-style macro, the
+			operands of this node will be cpp_macro_arg
+			nodes (q.v.), one for each argument.
+			Otherwise, this node has no operands.
+
+cpp_processed_arg	This AST node represents the expanded text of
+			an argument in the invocation of a
+			function-style macro.  Its operand is a quoted
+			string containing the text of the macro
+			argument after expansion of all macro
+			invocations in the raw argument.  This node
+			will occur only if the argument actually
+			contains macro invocations.
+
+cpp_raw_arg		This AST node represents the unexpanded text
+			of an argument in the invocation of a
+			function-style macro.  Its operand a quoted
+			string containing the canonicalized version of
+			the text (comments and unnecessary spaces
+			removed).
+
+cpp_undef		This AST node represents a #undef directive.
+			The macro being undefined (whether previously
+			defined or not) is given by the symbol
+			identifier.  It has no operands.
+
+defined			Although this node is in most respects an
+			expression node, it occurs only in #if
+			expressions, hence the description here
+			rather than in the next section.  The symbol
+			identifier is handled as for #ifdef and
+			#ifndef, i.e., an identifier is assigned even
+			for undefined macro names.  The source range
+			corresponds to the beginning of the "defined"
+			keyword and the closing right parenthesis or
+			the end of the macro name, depending on the
+			form used in the source.  The operand is
+			either a "1L" or "0L", reflecting the
+			compiler's decision as to whether the name was
+			defined as a macro at that point or not.
+
+IV. Detailed Specification of Parser AST Nodes
+----------------------------------------------
+
+This section describes (in alphabetical order) nodes which may have
+non-obvious operands or conventions.  The remaining nodes are listed
+in the next section.
+
+asm			This AST node represents an asm statement; its
+			operand is an asm_entry (q.v.) node.
+
+asm_entry		This AST node corresponds to an asm
+			declaration.  Its operand is a constant
+			(referenced in the identifier symbol)
+			containing the assembly text.
+
+asm_function		The operand is a string containing the text of
+			the asm function body.  (It differs from an
+			asm_entry node in that the operand of an
+			asm_entry node is a constant whose value is
+			the assembly text, while the asm_function
+			operand is the text itself.)
+
+base_spec		This AST node represents a base specifier in a
+			class or struct definition.  The indicated
+			source range includes the access and "virtual"
+			specifiers, if present, and the base class
+			name; the symbol identifier for this node is
+			that of the base class.
+
+bit_field_ref		This operator returns the "address" of the
+			specified bit field of a structure
+			(value_bit_field_ref returns its value).  (The
+			"address" is an internal fiction used because
+			assignment operations are defined to take the
+			address of the item being modified in the
+			first operand.)  The first operand is a
+			pointer to the object containing the field;
+			the second is a field node (q.v.) identifying
+			the particular field being referenced.
+
+block			The source range indicated runs from the
+			opening brace to the closing brace.  The
+			operands are the statements in the block.
+
+case_label		Each case or default label in a switch_clause
+			(q.v.) is represented by a case_label node,
+			whose source range runs from the default or
+			case keyword up through the terminating colon.
+			A case_label node representing a default label
+			has no operands; otherwise, the operand
+			represents the constant expression given in
+			the case label in the source.
+
+case_values		This AST node represents the case labels of a
+			switch_clause (q.v.).  Its operands are
+			case_label nodes (q.v.).
+
+catch			This AST node represents a handler in a try
+			block.  The identifier reference, if any,
+			denotes the catch parameter (it will be
+			omitted for "catch(...)").  The source range
+			indicated runs from the beginning of the catch
+			keyword to the end of the associated block.
+			The first operand is the declaration of the
+			catch parameter (or null_operand for
+			"catch(...)").  The second operand is the
+			block containing the body of the handler.
+
+class_def		This AST node represents a class definition;
+			it occurs as the operand of a decl_specs node
+			(q.v.).  Its first operand is a name_clause
+			(q.v.); any following operands are declaration
+			nodes (q.v.) representing the members,
+			friends, and nested types of the class.  The
+			symbol identifier of this node indicates the
+			entity being defined.
+
+condition		This AST node represents a declaration inside
+			a loop control or switch statement.  The first
+			operand is a declaration node for the
+			variable, including the initialization to be
+			performed (each time through the loop) on the
+			declared object; the second operand is the
+			expression that accesses the value of the
+			condition for the loop or switch operation.
+
+constant		The identifier of the referenced constant is
+			listed, and the value of the constant is given
+			as the operand (so that the value of a
+			symbolic constant [i.e., enumerator] can be
+			seen).  If the constant represents a folded
+			expression, the operand will be a subtree
+			representing that expression (although the
+			associated symbol will reflect the folded
+			value); otherwise, it will be the literal
+			value enclosed in quotes.  In the case of a
+			string constant, the enclosing quotes are not
+			part of the value, and any embedded quotes are
+			only singly-escaped, e.g., a three-character
+			string with the value a"b would be rendered as
+
+				constant [237] 12/3 {
+				 "\"a\"b\""
+				}
+
+			Address constants are rendered with a leading
+			"&", whether the address of functions ("&f")
+			or of string constants ("&\"abc\"").  A null
+			pointer constant of a given type is
+			represented by a cast of 0 to that type
+			("(double *)0").  An aggregate constant (used
+			in aggregate initialization) is shown as a
+			brace-enclosed list of the individual scalar
+			constants.
+
+			Most constants are shared; for example, all
+			arithmetic expressions that add, subtract,
+			multiply, etc., the value "10" will refer to a
+			single symbol.  Case labels (and perhaps some
+			other constructs) have their own symbols,
+			however, for reasons having to do with the
+			internal data management of the EDG compiler.
+
+constructor_call	This AST node is used only in the second
+			operand of a dynamic_init (q.v.).  Its
+			operands are exactly like those of a normal
+			(non-member) function call: the first operand
+			is the address of the constructor and the
+			remaining operands are the explicit arguments;
+			the "this" parameter is not represented.
+			Contrary to early versions, the symbol
+			identifier for the node now gives the "return
+			type" of the constructor, not the symbol
+			identifier of the constructor.
+
+ctor_init		This AST node indicates either a base class or
+			member initialization or destruction.  Its
+			first operand is a dynamic_init node (q.v.)
+			that indicates the initialization or
+			destruction to be done.  If a value
+			initialization (i.e., not a constructor call)
+			is to be performed, the expression used in the
+			initialization appears as the second operand.
+
+decl			No longer used; superseded by the
+			"declaration" node (q.v.).
+
+decl_id			This AST node occurs as the only operand of a
+			declarator node (q.v.) and gives the symbol
+			identifier and source range of the identifier
+			in a declarator.
+
+decl_specs		This node represents the declaration
+			specifiers in a declaration.  If a class,
+			struct, union, or enum is being defined, the
+			XXX_def node will be this node's sole operand
+			and the symbol identifier for the defined
+			entity will be given in this node; otherwise,
+			the node has no operands and no symbol
+			identifier, serving only to indicate the
+			source position of the tokens in the
+			declaration specifier.
+
+declaration		Each declaration (except function definitions
+			and parameter declarations), whether external,
+			local, or member, is represented by a
+			declaration node.  The first operand is a
+			decl_specs node (q.v.)  or a null_operand if
+			the declaration specifiers are omitted (e.g.,
+			for a constructor or for an "implicit int"
+			declaration in C); the second and following
+			operands, if any, are declarator nodes (q.v.).
+
+declarator		This AST node represents a declarator in the
+			declaration of a variable, function, member,
+			or typedef.  Its source range reflects the
+			entire declarator syntax, including preceding
+			pointer operators and following array bounds,
+			parameter lists (as well as function bodies,
+			in function definitions), initial values, and
+			default expressions (for parameter
+			declarations).  Its first operand is a decl_id
+			node (q.v.).  If the declarator represents a
+			function (or a pointer or reference to a
+			function, pointer to pointer to function,
+			etc.) that has parameters, the second and
+			following operands are parm_decl nodes (q.v.)
+			representing the parameters (the "this"
+			parameter for member functions is not part of
+			the AST).  If the declarator represents a
+			variable that is initialized, the last operand
+			is an init node (q.v.); similarly, if the
+			declarator is part of a parameter declaration,
+			it may have a default node (q.v.)
+			representing the default argument expression.
+			If a declaration has no declarator (e.g., a
+			class or enum declaration with no object or a
+			nameless parameter declaration with no default
+			argument expression), the declarator node will
+			also be omitted.
+
+default			If (and only if) a parameter declaration
+			contains a default argument expression, this
+			node will be added as the second operand of
+			its declarator node (q.v.).  Its operand is
+			the default argument expression.  It may occur
+			in a function declaration regardless of
+			whether it is a definition or not.
+
+delete			There is only one kind of EDG IL node
+			representing both "new" and "delete"
+			expressions.  This AST node is emitted when
+			the IL node is identified as a "delete"
+			operation.  The identifier reference, if
+			present, denotes the particular deallocation
+			function (operator delete or operator
+			delete[]) that the expression will invoke; if
+			no reference is present, the system-supplied
+			deallocation function is to be invoked.  The
+			first operand, if present, is a dynamic_init
+			operation indicating the the destruction that
+			is to be done.  The second operand is the
+			pointer to the object to be deleted.
+
+do_while		The first operand is the expression in the
+			while clause, the second operand is the
+			controlled statement.
+
+dynamic_init 		This AST node represents some form of runtime
+			initialization, either for a variable, part of
+			a variable, or a temporary.  The operand
+			describes the kind of initialization being
+			done; if the initialization is copying a
+			constant or an expression value, the operand
+			will be that constant or expression.  If the
+			initialization requires invocation of a
+			constructor, the operand will be a dummy
+			constructor_call that identifies the
+			constructor to be invoked.  Otherwise, the
+			operand will be null_operand.
+
+enum_def		Similar to class_def (q.v.) except
+			representing the definition of an enumeration;
+			its second and following operands are constant
+			nodes representing the enumerators.
+
+error			Whenever the EDG IL indicates an error
+			expression node (resulting from recovery from
+			a source code error), the AST will have a node
+			named "error."  It follows all the usual rules
+			about types and operands.
+
+field			This AST node occurs as the second operand of
+			the various field_ref nodes (qq.v.) and
+			serves only to identify the field being
+			referenced.
+
+field_ref		This operator returns the address of the
+			specified field (value_field_ref returns its
+			value).  The first operand is a pointer
+			expression giving the address of the object;
+			the second is a field node (q.v.) that denotes
+			(by symbol identifier) the field being
+			referenced.
+			
+for			The first operand is the initialization
+			statement, if any; the second is the test
+			expression, if any; the third is the
+			end-of-loop "increment" expression, if any;
+			and the fourth is the controlled statement, if
+			any.
+
+function_body		No longer used; superseded by the function_def
+			node.
+
+function_def		Similar to the declaration node (q.v.) except
+			representing a function definition.  Its first
+			operand is the declaration specifiers (or a
+			null_operand node if there are none).  The
+			second operand is a declarator node (q.v.),
+			which lists the name and parameters of the
+			function as its operands.  If the function
+			being defined is a constructor or destructor,
+			there may be one or more ctor_init nodes
+			(q.v.) as t the third and following operands,
+			indicating base and member initialization or
+			destruction.  The last operand of the
+			function_def node is a block node (q.v.)
+			representing the body of the function.
+
+goto			The identifier of the target label is
+			referenced; the node has no operands.
+
+if			The first operand is the expression in the if
+			statement, the second and third are the
+			statements in the then and else clauses,
+			respectively.  A missing (null) then clause is
+			represented by a null_operand node; a missing
+			(null or omitted) else clause is simply
+			omitted from the AST.
+
+init 			This AST node represents the initialization in
+			a declaration statement.  Its only operand is
+			either a dynamic_init node describing the
+			initialization to be performed or a constant
+			node giving the value with which the variable
+			is initialized.
+
+label			The identifier of the label is referenced; the
+			node has no operands.
+
+lvalue_from_call_result	This AST node represents conversion of a
+			function return value that is a struct to an
+			lvalue to allow subscripting and such (C mode
+			only, not ISO C).
+
+microsoft_try		This AST node represents a Microsoft-style
+			try-finally or try-except statement.  The
+			first operand is expression tested by the
+			__except or null_operand for a try-finally.
+			The second operand is the statement guarded by
+			the __try.  The third operand is the cleanup
+			statement.
+
+name			This AST node appears only as an operand of
+			the name_clause node (q.v.) and only if there
+			are base specifiers in the definition of the
+			class or struct being defined.  It represents
+			the name of the class or struct by itself, and
+			the symbol identifier and source range are set
+			accordingly.
+
+name_clause		This AST node is an operand of the class_def,
+			enum_def, struct_def, and union_def nodes
+			(qq.v.).  If the entity being defined has no
+			base classes, it has no operands and gives the
+			source position of the tag.  If there are base
+			classes, the source position indicates the
+			range including the name and all the base
+			clauses; the first operand will be a name node
+			(q.v.) and the second and following operands
+			will base_spec nodes (q.v.).  The symbol
+			identifier for this node will indicate the
+			entity being defined.
+
+new			There is only one kind of EDG IL node
+			representing both "new" and "delete"
+			expressions.  This AST node is emitted when
+			the IL node is identified as a "new"
+			operation.  The identifier reference, if
+			present, denotes the particular allocation
+			function (operator new or operator new[]) that
+			the expression will invoke; if no reference is
+			present, the system-supplied allocation
+			function is to be invoked.  The first operand,
+			if present, is a dynamic_init operation
+			indicating the initialization to be performed
+			after the storage for the object is allocated.
+			The second operand, if present, is a
+			dynamic_init operation indicating the actions
+			required to free storage as cleanup if the
+			allocation fails.  The remaining operands are
+			the arguments to be passed to the allocation
+			function.
+
+object_lifetime		The operand is an expression; its appearance
+			as the operand of an object_lifetime node
+			indicates that temporaries created within the
+			expression will be destroyed when evaluation
+			of the expression is complete (unless
+			otherwise required by the semantics of the
+			language).
+
+parm_decl		Identical to the declaration node (q.v.),
+			except representing a parameter declaration.
+
+pm_field_ref		Identical to the field_ref node (q.v.) except
+			that it corresponds to a C++ pointer to member
+			dereference operation ("->*" applied to a
+			pointer to data member).
+
+ptr_add_subscript	This AST node is the same as a normal pointer
+			addition but resulting from a source subscript
+			operation.
+			
+return			If the return value requires a copy
+			constructor, the operand is a dynamic_init
+			node describing the initialization; otherwise,
+			the operand is the expression (if any) whose
+			value is to be returned.  Implicit returns
+			(executing the "}" at the end of the function)
+			are generally suppressed, except that the
+			implicit "return 0" at the end of main and the
+			compiler-generated return of the constructed
+			object at the end of a constructor are
+			represented by "return:cg" nodes.
+
+runtime_sizeof		If the operand of the sizeof is an expression,
+			the AST operand denotes that expression; if it
+			is a type, a dummy "type" AST node is created
+			to carry the reference to the symbol for that
+			type.
+
+set_vla_size		The EDG compiler supports variable length
+			arrays (VLAs).  When the bound of such an
+			array is given by an expression, this AST node
+			identifies that expression.  The identifier
+			symbol references the type of the array for
+			which the expression provides the bound.
+
+struct_def		Identical to class_def (q.v.) except
+			representing an entity defined using the
+			"struct" keyword.
+
+subscript		This operation returns the value of an element
+			of an array (ptr_add_subscript returns its
+			address instead).
+			
+switch			The first operand is the expression in the
+			switch statement.  The second operand is a
+			block node containing primarily switch_clause
+			nodes (q.v.), although other (generally
+			unreachable) statements may be present as
+			well.
+
+switch_clause		This AST node represents a portion of a switch
+			statement consisting of a group of case labels
+			and the group of statements to which they are
+			attached.  The case labels are represented by
+			the first operand, which is a case_values node
+			(q.v.); the statements are the second and
+			following operands.  (As of Rev. 4 of this
+			document, the "break" and fall-through cases
+			are represented in the AST as in the source,
+			no longer reflecting the EDG implementation
+			conventions.)
+
+throw			The operand is a dynamic_init operation
+			describing the copying of the thrown object.
+
+try_block		The first operand is the statement guarded by
+			the try; the remaining operands are catch
+			nodes representing the handlers associated
+			with the try.
+
+type			This AST node is a dummy operand for runtime
+			type operations (typeid and runtime_sizeof);
+			since the identifier reference on the parent
+			node denotes the type of the result of the
+			expression, not its operand, a dummy is needed
+			to carry the reference to the operand's type.
+
+typeid			If the operand of the typeid is an expression,
+			the AST operand denotes that expression; if it
+			is a type, a dummy "type" AST node is created
+			to carry the reference to the symbol for that
+			type.
+
+union_def		Identical to class_def (q.v.) except
+			representing a union definition.
+
+used_entity		The meaning of this AST node depends on
+			whether it is part of a using declaration or a
+			using directive.  In a using declaration, it
+			represents one of the imported entities (a
+			using declaration that names a set of
+			overloaded functions will have one used_entity
+			node for each member of the set that is
+			imported).  In a using directive, it
+			represents the namespace named in the
+			directive.
+
+using_decl		This AST node represents either a using
+			declaration or a using directive.  It has one
+			or more used_entity nodes (q.v.) as operands,
+			identifying either the imported entities (for
+			a using declaration) or the namespace (for a
+			using directive).
+
+value_bit_field_ref	This operator returns the value of the
+			specified bit field of a structure (the
+			bit_field_ref node returns its "address").  It
+			is identical to the bit_field_ref node except
+			that its first operand is an rvalue instead
+			of a pointer.
+			
+value_field_ref		This operator returns the value of the
+			specified field of a structure (the field_ref
+			node returns its address).  It is identical to
+			the field_ref node (q.v.) except that its
+			first operand is an rvalue instead of a
+			pointer.
+			
+vla_decl		This AST node represents a declaration of
+			either a typedef or a variable with a variable
+			length array.  If it is a typedef, the
+			identifier symbol references the type;
+			otherwise, it references the variable.
+
+while			The first operand is the expression in the
+			while statement, the second operand is the
+			controlled statement.
+
+V. Generic Nodes
+----------------
+
+The following nodes all correspond directly with C/C++ constructs
+(usually expression operators) in an obvious way; the number and
+interpretation of their operands is as would be expected from the
+corresponding source language construct.  They are therefore not
+described in detail but simply listed.
+
+The assignment, field selection, increment, and decrement nodes all
+take as their first operand a pointer to the lvalue; for example,
+an assignment like "i = 10" would be represented by the following AST:
+
+	int_assign [19]  3/5  3/10 {
+	 variable_address [24]  3/5  3/5  {}
+	 constant [21]  3/9  3/10  {
+	   "10"
+	 }
+	}
+
+(where [19] is the identifier for the "int" type, [24] is the
+identifier for "i", and [21] is the identifier for the constant "10").
+
+Similarly, call nodes take the address of the function being called
+rather than the function itself.  In all the call node varieties, if
+the target function is a member function, the second operand is the
+address of the object to which the member function belongs, i.e., the
+"this" pointer, and the third and following operands are the
+arguments; for non-member functions, the argument list begins with the
+second operand.
+
+The following abbreviations are used in the names of the AST nodes:
+
+		decr		decrement
+		eq		equals (==)
+		flt		floating point (all sizes)
+		ge		greater than or equal to
+		gt		greater than
+		incr		increment
+		int		integer (all sizes)
+		le		less than or equal to
+		lshift		left shift
+		lt		less than
+		ne		not equal (!=)
+		pm		pointer to member
+		ptr		pointer
+		rshift		right shift
+
+The AST node names are:
+
+	and				int_post_decr
+	and_assign			int_post_incr
+	block_assign			int_pre_decr
+	break				int_pre_incr
+	call				int_subtract
+	cast				int_subtract_assign
+	cast_to_base			logical_and
+	cast_to_bool			logical_or
+	cast_to_derived			lshift
+	comma				lshift_assign
+	complement			lvalue_cast
+	continue			not
+	dynamic_cast			or
+	extract_bit_field		or_assign
+	flt_add				pm_assign
+	flt_add_assign			pm_call
+	flt_assign			pm_cast_to_base
+	flt_divide			pm_cast_to_derived
+	flt_divide_assign		pm_eq
+	flt_eq				pm_ne
+	flt_ge				ptr_add
+	flt_gt				ptr_add_assign
+	flt_le				ptr_assign
+	flt_lt				ptr_diff
+	flt_multiple_assign		ptr_eq
+	flt_multiply			ptr_ge
+	flt_ne				ptr_gt
+	flt_negate			ptr_le
+	flt_post_decr			ptr_lt
+	flt_post_incr			ptr_ne
+	flt_pre_decr			ptr_post_decr
+	flt_pre_incr			ptr_post_incr
+	flt_subtract			ptr_pre_decr
+	flt_subtract_assign		ptr_pre_incr
+	indirect			ptr_subtract
+	int_add				ptr_subtract_assign
+	int_add_assign			question_colon
+	int_assign			remainder
+	int_divide			remainder_assign
+	int_divide_assign		rshift
+	int_eq				rshift_assign
+	int_ge				struct_assign
+	int_gt				vacuous_destructor_call
+	int_le				value_vacuous_destructor_call
+	int_lt				virtual_call
+	int_multiply			virtual_function_ptr
+	int_multiply_assign		xor
+	int_ne				xor_assign
+	int_negate		

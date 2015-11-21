@@ -1,0 +1,8 @@
+__ParaSPECIAL : $PSETHOME/lib <-> /__ParaSPECIAL 
+{
+	.boilerplate : report-templates <-> /boilerplate
+	{
+	    (*)
+	}
+}
+

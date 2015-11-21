@@ -1,0 +1,44 @@
+#!/bin/sh
+
+wf=$2 # working file
+wd=$1 # working dir
+sf=$4
+sd=$3
+
+echo $sd/$sf >&1
+
+version=`$CCM_HOME/bin/ccm ls $sd/$sf | grep -v "Referenced object version could not be identified"` 2> /dev/null
+if [ "$version" = "" ] ; then  
+# This is not a Continuus element
+  echo ""
+  # exit status 99 means that the file is not an element in Continuus
+  # cm_create will be called before cm_put_src is called
+  exit 99
+fi
+
+echo $sd/$version
+exit 0
+
+ 
+#### Parameters    : $1 = working (private) directory
+                   : $2 = working (private) filename
+                   : $3 = system (public) directory
+                   : $4 = system (public) filename
+#### Return values : 0 = success, 99 = not a ClearCase element, !{0,99} = failure
+#### Output        : stdout = first line is used by the configurator to set
+                              the value of cm_sysfile for the next script
+                              the second line sets cm_revision_file
+                   : stderr = ignored
+ 
+#### Environment Variables
+# Environment variables setup by ParaSET for ALL config scripts:
+#       $PSETCFG          - path to directory containing the config scripts
+#       $cm_uselinks      - set to "Y" if the user has set Create Soft Links in the
+#                           Configurator preferences dialog box (not used for ClearCase)
+#       $cm_optscripts    - Points to the directory of optional scripts
+ 
+#### Optional Scripts
+#       cm_pendfilt       - Filter to transform source and pset filenames before ci/co
+ 
+ 
+

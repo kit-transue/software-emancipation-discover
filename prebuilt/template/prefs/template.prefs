@@ -1,0 +1,38 @@
+*psetPrefs.pdfFileBuild:			%ADMINDIR%\pdf\template.pdf
+*psetPrefs.pdfFileUser:				%ADMINDIR%\pdf\template.pdf
+*psetPrefs.defaultPDF:				%ADMINDIR%\pdf\template.pdf
+
+*psetPrefs.doPassDependency:			yes
+*psetPrefs.doPassHeaders:			yes
+*psetPrefs.doPassSaveProj:			yes
+*psetPrefs.doPassSaveRoot:			yes
+
+*psetPrefs.acceptSyntaxErrors:			yes
+
+*psetPrefs.logFileCreate:			yes
+*psetPrefs.logFileDir:				%ADMINDIR%\log
+*psetPrefs.logFileMonitor:			yes
+
+*psetPrefs.DIS_misc_BuildMetrics:		1
+*psetPrefs.DIS_misc_StoreMetrics:		1
+*psetPrefs.DIS_model.MultiplePsets:		0
+*psetPrefs.DIS_model.SaveMetrics:		1
+
+*psetPrefs.DIS_model.GenerateY2KInfo:		2
+*psetPrefs.DIS_model.Strings_Enabled:		1
+*psetPrefs.DIS_model.LocalVars_Enabled:		1
+*psetPrefs.DIS_model.Instances_Enabled:		1
+*psetPrefs.DIS_model.Ast_Enabled:		1
+
+*psetPrefs.doPassProj:				yes
+*psetPrefs.projectList:				/example
+*psetPrefs.projectListHeaders:			/example
+*psetPrefs.projectListDependency:
+
+*psetPrefs.ADMINDIR:				%PSETHOME_LOCAL%\prebuilt\template
+*psetPrefs.projectHome:				/example
+*psetPrefs.sharedSrcRoot:			%ADMINDIR%\shared
+*psetPrefs.sharedModelRoot:			%ADMINDIR%\model
+*psetPrefs.privateSrcRoot:			%ADMINDIR%\private
+*psetPrefs.privateModelRoot:			%ADMINDIR%\model
+*psetPrefs.groupsPath:			      %ADMINDIR%\groups

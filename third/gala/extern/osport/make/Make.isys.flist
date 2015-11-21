@@ -1,0 +1,13 @@
+CPROOTS = \
+	bitMEM \
+	bufFile \
+	dirFSet \
+	pdufile \
+	pduio \
+	pdumem \
+	pdupath \
+	pduproc \
+	pdustring \
+	pdutime \
+	raFile
+

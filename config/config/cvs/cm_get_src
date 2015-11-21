@@ -1,0 +1,27 @@
+#!/bin/sh -f
+set -e
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeget ] ; then
+  $cm_optscripts/cm_beforeget
+  if [ $? -ne 0 ] ; then 
+      echo "%% get fail" >&2
+      exit 1
+  fi
+fi
+
+if [ -f $cm_workfile ] ; then
+  $PSETCFG/util/remove_file $cm_workfile
+fi
+
+revname=`$PSETCFG/util/cvs_find_name`
+rootname=`$PSETCFG/util/cvs_find_root`
+dname=`$PSETCFG/util/cvs_find_dir`
+cd $dname
+echo "cvs checkout -Q $revname"
+cvs checkout -Q $revname
+chmod +w $cm_workfile 2> /dev/null
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/$cm_afterget ] ; then
+  $cm_optscripts/cm_afterget &
+fi
+exit 0

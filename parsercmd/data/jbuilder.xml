@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>JBuilder</compilername>
+java -w --jdk
+<translate>
+  <!-- The following option description is tentative.
+       Possibly not even necessary. -->
+  <option name="classpath" separg="1">--classpath %</option>  <!-- sets effective CLASSPATH -->
+</translate>
+</cmdline>

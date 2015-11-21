@@ -1,0 +1,14 @@
+CXXROOTS = \
+	bitMEM \
+        dirFSet \
+        pdudir \
+        pdufile \
+	pduio \
+        pdumem \
+        pdupath \
+	pduproc \
+        pdustring \
+        pdutime \
+        raFile 
+
+

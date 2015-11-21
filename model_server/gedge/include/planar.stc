@@ -1,0 +1,83 @@
+
+/******************************************************************************/
+/*                                                                            */
+/* PLANARISATIONSALGORITHMUS                                                  */
+/*                                                                            */
+/*   									      */
+/* Autor		Martin Schmidt, Martin-Luther-Str. 1, 7630 Lahr       */
+/*			Tel.: 07821 / 41748				      */
+/*									      */
+/* Letzte Aenderung     20.01.88					      */
+/*									      */
+/*									      */
+/* Datenstruktur        PLANAR_GRAPH                                          */
+/*                      Diese Struktur beschreibt das Ergebnis des            */
+/*                      Planarisierungsalgorithmus.                           */
+/*                                                                            */
+/*       PG->V          Anzahl der Knoten insgesamt            		      */
+/*	 PG->E          Anzahl der Kanten insgesamt			      */
+/*       PG->DEL_FROND  Liste der geloeschten Fronds.                         */
+/*       PG->AL[ 1..n ] Adjazenlisten                                         */
+/*                      Wobei in der Liste x[0] alle Kanten stehen, die nach  */
+/*                      links gehen. (Sie sind von links nach rechts geord-   */
+/*                      net.) In der Liste x[1] stehen die Kanten, die nach   */
+/*                      rechts gehen. (Sie sind ebenfalls von links nach      */
+/*                      rechts geordnet.)                                     */
+/*                      swap   : wird nicht mehr benoetigt.                   */
+/*                      father : gibt an, welcher Knoten Vaterknoten ist.     */
+/* 	 PG->trans      Umsetzungstabelle der Knotennummern        	      */
+/*                      (*PG->trans)[ Tiefennummer ] = echte Knotennummer     */
+/*                                                                            */
+/******************************************************************************/
+
+
+typedef
+struct DELETED_FROND			/* Eine geloeschte Frond              */
+{
+  int			x,y;		/* Anfangs- und Endknoten             */
+  struct DELETED_FROND	*next;          /* Verkettung		              */
+} DELETED_FROND;
+
+
+typedef
+struct P_NODE				/* Knoten einer Adjazenzliste         */
+{
+  int			name;		/* Name des Knoten		      */
+  struct P_NODE		*next;		/* Verkettung		              */
+} P_NODE;
+
+
+typedef
+struct AL_LISTE           		/* Adjazenzliste                      */
+{
+  P_NODE       *x[2];       		/* Linke und rechte Kantenliste       */
+  int          swap;                    /* Ist der Unterbaum vertauscht ?     */
+  int          father;                  /* Nummer des Vaterknoten             */
+} AL_LISTE;
+
+
+#ifdef csource
+  typedef
+  struct PLANAR_GRAPH			/* Planarer Graph		      */
+  {
+    int		  V;			/* Anzahl der Knoten                  */
+    int           E;			/* Anzahl der Kanten                  */
+    AL_LISTE      (*AL)[];              /* Array von Adjazenzlisten           */
+    int           (*trans)[];		/* Umsetzungstabelle                  */
+    DELETED_FROND *DEL_FROND;		/* Liste der geloeschten Fronds       */
+  } PLANAR_GRAPH;
+#else
+  typedef
+  struct PLANAR_GRAPH			/* Planarer Graph		      */
+  {
+    int		  V;			/* Anzahl der Knoten                  */
+    int           E;			/* Anzahl der Kanten                  */
+    AL_LISTE      **AL;                 /* Array von Adjazenzlisten           */
+    int           (*trans)[];		/* Umsetzungstabelle                  */
+    DELETED_FROND *DEL_FROND;		/* Liste der geloeschten Fronds       */
+  } PLANAR_GRAPH;
+#endif
+
+
+/* end of PLANAR.STC */
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Include File Naming Conventions</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 2.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p3 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Include File Naming Conventions</b></p>
+<p class="p2">set all_files [defines -files /]</p>
+<p class="p2">1 (module) /extract/src/sys2.c</p>
+<p class="p2">2 (module) /extract/src/sys1.c</p>
+<p class="p2">...</p>
+<p class="p2">311 (module) /sysinclude/ctype.h</p>
+<p class="p2">set included_files [get_include_files $all_files]</p>
+<p class="p2">1 (module) /extract/src/global_vars.h</p>
+<p class="p2">2 (module) /extract/src/proto.h</p>
+<p class="p2">...</p>
+<p class="p2">237 (module) /sysinclude/bytesex.h</p>
+<p class="p3">These two commands may be too simple to appear interesting. However, you can filter the result to identify header files that have non-standard extensions:</p>
+<p class="p2">set hfiles [filter {match("*.h")} $included_files]</p>
+<p class="p2">1 (module) /extract/src/global_vars.h</p>
+<p class="p2">2 (module) /extract/src/proto.h</p>
+<p class="p2">...</p>
+<p class="p2">202 (module) /sysinclude/bytesex.h</p>
+<p class="p2">set unusual_header_files [set_subtract $included_files $hfiles]</p>
+<p class="p2">1 (module) /ttt/include/square.H</p>
+<p class="p2">2 (module) /ttt/include/player.H</p>
+<p class="p2">...</p>
+<p class="p2">34 (module) /xcalentool/src/std_icon.xbm</p>
+<p class="p2">35 (module) /xcalentool/src/month.cursor</p>
+</body>
+</html>

@@ -1,0 +1,35 @@
+CXXROOTS=\
+    smtChange
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/api/include \
+-I$(BUILD_SRC_ROOT)/model_server/api/include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt_metric/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt_metric/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/dis_tcl8.3/generic \
+-I$(BUILD_SRC_ROOT)/dis_tcl8.3/generic \
+-I$(LOCAL_SRC_ROOT)/dis_tk8.3/generic \
+-I$(BUILD_SRC_ROOT)/dis_tk8.3/generic \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \

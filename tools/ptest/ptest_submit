@@ -1,0 +1,68 @@
+#!/bin/sh
+
+script="`basename $0`"
+
+from_dir=$PTEST_LOCAL
+to_dir=$PTEST_PENDING/submit
+
+help ()
+{
+  echo
+  echo "$script"
+  echo
+  echo "Description: Wrapper for ptest_process_list. Looks for your test"
+  echo "             and sends bug list to ptest_process_list."
+  echo
+  echo "Usage: $script <buglist>"
+  echo 
+  echo "       <bugfile> - file containing string with bug numbers separated by spaces"
+  echo
+  echo "Exit Codes: 0 - successful"
+  echo "	    1 - a test dir did not exist or there were no bug numbers "
+  echo "            2 - child script ptest_process_list failed"
+  echo
+}
+
+error ()
+{
+  echo "$script: Error: $1" >&2 
+  if [ "$2" != "-nohelp" ] ; then
+    help >&2
+  fi
+  exit 1
+}
+
+if [ $# -lt 1 ] ; then
+  error "Too few arguments."
+fi
+
+exit_status="0"
+
+buglist="`sed 's/[^0-9][^0-9]*/ /g' $1| sed 's/^[ ]*//'`"
+for bugno in $buglist; do
+  if [ ! -d $from_dir/bug$bugno ] ; then
+    echo "$script: Error: Directory for bug $bugno [$from_dir/bug$bugno] does not exist." >&2
+    exit_status=1;
+  fi
+done
+
+if [ "$exit_status" = "1" ] ; then
+  exit 1
+fi
+
+if [ -n "$buglist" ] ; then
+  echo "$script: Status: Attempting to submit the following bugs: $buglist" >&2
+  echo "$buglist" | ptest_process_list submit $from_dir $to_dir 
+  if [ "$?" != "0" ] ; then
+    exit 2
+  fi
+else
+  echo "$script: Warning: Submitting no bugs to the bugtool." >&2
+  exit 1
+fi
+
+exit 0
+
+
+
+

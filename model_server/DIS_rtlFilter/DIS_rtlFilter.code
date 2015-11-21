@@ -1,0 +1,887 @@
+/*************************************************************************
+* Copyright (c) 2015, Synopsys, Inc.                                     *
+* All rights reserved.                                                   *
+*                                                                        *
+* Redistribution and use in source and binary forms, with or without     *
+* modification, are permitted provided that the following conditions are *
+* met:                                                                   *
+*                                                                        *
+* 1. Redistributions of source code must retain the above copyright      *
+* notice, this list of conditions and the following disclaimer.          *
+*                                                                        *
+* 2. Redistributions in binary form must reproduce the above copyright   *
+* notice, this list of conditions and the following disclaimer in the    *
+* documentation and/or other materials provided with the distribution.   *
+*                                                                        *
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    *
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      *
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  *
+* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   *
+* HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, *
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       *
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  *
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  *
+* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    *
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
+*************************************************************************/
+#include <vport.h>
+ 
+#include vstartupHEADER
+#include vstdlibHEADER
+#include vsessionHEADER
+#include vserviceHEADER
+#include vscrapHEADER
+#include vdasservHEADER
+#include vstdioHEADER
+
+#include <signal.h>
+#include "Application.h"
+
+#ifdef SERVER
+#include <tcl.h>
+#endif /* SERVER */
+ 
+#ifndef _WIN32
+#ifndef SIG_TYP
+#ifdef sun4
+typedef void (*SIGHANDLER)(int,...);
+#else
+typedef void (*SIGHANDLER)(int);
+#endif
+#define SIG_TYP SIGHANDLER
+#endif
+#endif
+
+static int Block(vsessionStatement *statement)
+{
+#ifndef _WIN32
+    SIG_TYP old = signal(SIGALRM,SIG_IGN);
+#endif
+    int retval = statement->Block(NULL);
+#ifndef _WIN32
+    signal(SIGALRM,old);
+#endif
+    return retval;
+}
+
+typedef void async;
+typedef char* _charptr;
+typedef vstr* _vstrptr;
+
+#define g_push(s) {vscrapSetArrayCount(real_result,array_index2+1);vscrapSetElementAt(real_result,array_index2,s);array_index2++;}
+#define g_take() sarg? vscrapGetElementAt(sarg,array_index++): 0
+ 
+static vscrap*  marshall_char(char x){return vscrapFromCharacter(x);}
+static vscrap*  marshall_short(short x){return vscrapFromInteger((int)x);}
+static vscrap*  marshall_int(int x){return vscrapFromInteger(x);}
+static vscrap*  marshall_float(float x){return vscrapFromFloat(x);}
+static vscrap*  marshall_double(double x){return vscrapFromFloat(x);}
+static vscrap*  marshall__charptr(_charptr x){if (!x)x="";vstr*_x=vstrClone((vchar*)x);vscrap* s=vscrapFromString(_x);vstrDestroy(_x);return s;}
+static vscrap*  marshall__vstrptr(_vstrptr x){if (!x)x=(_vstrptr)"";return vscrapFromString(x);}
+ 
+static void demarshall_char(char* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetCharacter(s);delete s;
+    } else { 
+        *x = '\0'; 
+    } 
+} 
+ 
+static void demarshall_short(short* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_int(int* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetInteger(s);delete s;
+    } else { 
+        *x = 0; 
+    } 
+} 
+ 
+static void demarshall_float(float* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+static void demarshall_double(double* x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vscrapGetFloat(s);delete s;
+    } else { 
+        *x = 0.0; 
+    } 
+} 
+ 
+extern "C" char* strdup(const char*);
+static void demarshall__charptr(char** x, vscrap* s) 
+{ 
+    if (s) { 
+        vstr*y = vstrCloneScribed(vscrapScribeString(s));delete s;
+        *x = strdup((char*)y);
+        vstrDestroy(y);
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static void demarshall__vstrptr(vstr** x, vscrap* s) 
+{ 
+    if (s) { 
+        *x = vstrCloneScribed(vscrapScribeString(s));delete s;
+    } else { 
+        *x = 0;
+    } 
+} 
+ 
+static vscrap *answer_scrap;
+
+
+static void errmsg(char*msg){fprintf(stderr,msg);}
+static void std_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+    vscrap *sync_answer_scrap = NULL;
+
+    switch (vsessionStatement::GetEventCode (event)) {
+        case vsessionStatementEVENT_COMPLETED:
+	    statement->GetReturnValue(statement, &sync_answer_scrap);
+	    statement->SetData(sync_answer_scrap);
+	    break;
+	case vsessionStatementEVENT_CANNOT_SEND:
+	    errmsg("*** cannot send!\n");
+	    Application::SetCannotSend(vTRUE);
+	    break;
+	case vsessionStatementEVENT_END_SESSION:
+	    errmsg("*** end session!\n");
+	    break;
+	case vsessionStatementEVENT_FAILED:
+	    errmsg("*** failed!\n");
+	    break;
+    }
+}
+
+static void std_async_notify (vsessionStatement* statement, vsessionStatementEvent* event)
+{
+
+    Application::DecrementCount();
+}
+
+static Application* DISrtlFilter_app;
+#ifdef SERVER
+#include "DIS_ui/interface.h"
+#include "gRTListServer.h"
+#include "include/rtlFilter.h"
+#include "filterButtonTable.h"
+#include <string.h>
+extern Application* DISui_app;
+rtlFilter *myRtlFilter;
+#endif
+
+/*----------------------------- dis_filterCreate ------------------------------*/
+
+#ifdef SERVER
+int dis_filterCreate (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+
+    char *newName = argv[1];
+    char *dialogID = argv[2];
+    struct rtlFilterSortInfo *s_info;
+    struct rtlFilterFormatInfo *f_info;
+    char *formatExpression;
+    char *filter;
+    char *hide;
+    char *CLIExpression;
+
+    if (!myRtlFilter) myRtlFilter = new rtlFilter;
+
+    myRtlFilter->genFilterInfo (&argv[3], 
+				&s_info, 
+				&f_info, 
+				&formatExpression,
+				&filter, 
+				&hide,
+				&CLIExpression);
+    myRtlFilter->Create (newName, 
+                       rtlFilter::compute_sort_spec (s_info), 
+                       rtlFilter::compute_format_spec (f_info, formatExpression), 
+                       rtlFilter::compute_filter_spec (filter, CLIExpression), 
+                       hide);
+
+    genString command;
+    command.printf ("dis_gdDialogIDEval {%s} {setFilterList}", dialogID);
+    rcall_dis_DISui_eval_async (DISui_app, (vstr *)command.str());
+
+    delete s_info;
+    delete f_info;
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetShow ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetShow (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    genString sort;
+    genString format;
+    genString show;
+    genString hide;
+
+    genString show_filt, cli_filt, fexpr;
+
+    rtlFilterFormatInfo *f_info = NULL;
+    rtlFilterSortInfo *s_info = NULL;
+
+    char *dialogID = argv[1];
+    int id = atoi (argv[2]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+    
+    list->getFilter (sort, format, show, hide);
+    rtlFilter::RTL_parse_specs (&f_info, &s_info, format.str(), sort.str(), show.str(), show_filt, cli_filt, fexpr);
+
+    Tcl_SetResult( interp, (char *)(show_filt.str() ? show_filt.str() : ""), TCL_VOLATILE );
+    return TCL_OK;
+    
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetHide ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetHide (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    genString sort;
+    genString format;
+    genString show;
+    genString hide;
+
+    genString show_filt, cli_filt, fexpr;
+
+    rtlFilterFormatInfo *f_info = NULL;
+    rtlFilterSortInfo *s_info = NULL;
+
+    char *dialogID = argv[1];
+    int id = atoi (argv[2]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+    
+    list->getFilter (sort, format, show, hide);
+    rtlFilter::RTL_parse_specs (&f_info, &s_info, format.str(), sort.str(), show.str(), show_filt, cli_filt, fexpr);
+
+
+    Tcl_SetResult (interp, (char *)(hide.str() ? hide.str() : ""), TCL_VOLATILE);
+    return TCL_OK;
+    
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetCLI ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetCLI (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    genString sort;
+    genString format;
+    genString show;
+    genString hide;
+
+    genString show_filt, cli_filt, fexpr;
+
+    rtlFilterFormatInfo *f_info = NULL;
+    rtlFilterSortInfo *s_info = NULL;
+
+    char *dialogID = argv[1];
+    int id = atoi (argv[2]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+    
+    list->getFilter (sort, format, show, hide);
+    rtlFilter::RTL_parse_specs (&f_info, &s_info, format.str(), sort.str(), show.str(), show_filt, cli_filt, fexpr);
+
+
+    Tcl_SetResult(interp, (char *)(cli_filt.str() ? cli_filt.str() : ""), TCL_VOLATILE);
+    return TCL_OK;
+    
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetFormatSpec ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetFormatSpec (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    genString sort;
+    genString format;
+    genString show;
+    genString hide;
+
+    genString show_filt, cli_filt, fexpr;
+
+    rtlFilterFormatInfo *f_info = NULL;
+    rtlFilterSortInfo *s_info = NULL;
+
+    char *dialogID = argv[1];
+    int id = atoi (argv[2]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+    
+    list->getFilter (sort, format, show, hide);
+    rtlFilter::RTL_parse_specs (&f_info, &s_info, format.str(), sort.str(), show.str(), show_filt, cli_filt, fexpr);
+
+
+    Tcl_SetResult(interp, (char *)(fexpr.str() ? fexpr.str() : ""), TCL_VOLATILE);
+    return TCL_OK;
+    
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetSort ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetSort (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+
+    genString sort;
+    genString format;
+    genString show;
+    genString hide;
+ 
+    genString show_filt, cli_filt, fexpr;
+
+    rtlFilterFormatInfo *f_info = NULL;
+    rtlFilterSortInfo *s_info = NULL;
+
+    char *dialogID = argv[1];
+    int id = atoi (argv[2]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+    
+    list->getFilter (sort, format, show, hide);
+    rtlFilter::RTL_parse_specs (&f_info, &s_info, format.str(), sort.str(), show.str(), show_filt, cli_filt, fexpr);
+
+    Tcl_SetResult (interp, (char *)(sort.str() ? rtlFilter::compute_sort_titles (s_info) : ""), TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetFormat ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetFormat (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    genString sort;
+    genString format;
+    genString show;
+    genString hide;
+ 
+    genString show_filt, cli_filt, fexpr;
+
+    rtlFilterFormatInfo *f_info = NULL;
+    rtlFilterSortInfo *s_info = NULL;
+
+    char *dialogID = argv[1];
+    int id = atoi (argv[2]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+    
+    list->getFilter (sort, format, show, hide);
+    rtlFilter::RTL_parse_specs (&f_info, &s_info, format.str(), sort.str(), show.str(), show_filt, cli_filt, fexpr);
+
+    Tcl_SetResult( interp, (char *)(format.str() ? rtlFilter::compute_format_titles (f_info) : ""), TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterReset ------------------------------*/
+
+#ifdef SERVER
+int dis_filterReset (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int id = atoi (argv[1]);
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+
+    list->resetFilter();
+    list->_propagate();
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterApply ------------------------------*/
+
+#ifdef SERVER
+int dis_filterApply (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int id = atoi (argv[1]);
+    struct rtlFilterSortInfo *s_info;
+    struct rtlFilterFormatInfo *f_info;
+    char *filter;
+    char *hide;
+    char *formatExpression;
+    char *CLIExpression;
+
+    RTListServer* list = RTListServer::find (id);
+    if (!list) return TCL_OK;
+
+    myRtlFilter->genFilterInfo (&argv[2], 
+				&s_info, 
+				&f_info, 
+				&formatExpression, 
+				&filter, 
+				&hide, 
+				&CLIExpression);
+    list->setFilter (rtlFilter::compute_sort_spec (s_info), 
+                     rtlFilter::compute_format_spec (f_info, formatExpression), 
+                     rtlFilter::compute_filter_spec (filter, CLIExpression), 
+                     hide);
+    list->_propagate();
+
+    delete s_info;
+    delete f_info;
+
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterDelete ------------------------------*/
+
+#ifdef SERVER
+int dis_filterDelete (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int index = atoi (argv[1]);
+    if (!myRtlFilter) myRtlFilter = new rtlFilter;
+    myRtlFilter->Delete (index);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterRename ------------------------------*/
+
+#ifdef SERVER
+int dis_filterRename (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int index = atoi (argv[1]);
+    char *newName = argv[2];
+    if (!myRtlFilter) myRtlFilter = new rtlFilter;
+    myRtlFilter->Rename (index, newName);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterSave ------------------------------*/
+
+#ifdef SERVER
+int dis_filterSave (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int index = atoi (argv[1]);
+    if (!myRtlFilter) myRtlFilter = new rtlFilter;
+    myRtlFilter->Save (index);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetCount ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetCount (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    if (!myRtlFilter) myRtlFilter = new rtlFilter;
+    sprintf (interp->result, "%d", myRtlFilter->getFilterCount());
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+
+/*----------------------------- dis_filterGetName ------------------------------*/
+
+#ifdef SERVER
+int dis_filterGetName (ClientData, Tcl_Interp* interp, int argc, char *argv[])
+{
+    int index = atoi (argv[1]);
+    if (!myRtlFilter) myRtlFilter = new rtlFilter;
+    Tcl_SetResult (interp, (char *)myRtlFilter->getFilterName (index), TCL_VOLATILE);
+    return TCL_OK;
+}
+#endif /* SERVER */
+
+/*----------------------------- dis_servereval ------------------------------*/
+
+#ifdef CLIENT
+static _vstrptr rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISrtlFilter_app = app;
+    static _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval in DISrtlFilter - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static _vstrptr dis_servereval (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    static vstr* myresult = NULL;
+    if (!myapp) 
+	myapp = DISrtlFilter_app;
+    int e = myapp->eval((vchar*)str);
+    myresult = NULL;
+    myresult = myapp->getEvalResult();
+    return myresult;
+}
+
+
+static void dis_servereval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_servereval (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval (Application* app, _vstrptr service, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_servereval_async ------------------------------*/
+
+#ifdef CLIENT
+static async rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)
+{
+    DISrtlFilter_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_servereval_async in DISrtlFilter - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_servereval_async"));
+          g_push(marshall__vstrptr(service));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+static async dis_servereval_async (_vstrptr service, _vstrptr str)
+{
+    Application* myapp = Application::findApplication (service);
+    if (!myapp) 
+	myapp = DISrtlFilter_app;
+    int e = myapp->eval((vchar*)str);
+    return;
+}
+
+
+static void dis_servereval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr service;
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+    demarshall__vstrptr (&service, g_take());
+    demarshall__vstrptr (&str, g_take());
+
+    dis_servereval_async (service,str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_servereval_async (Application* app, _vstrptr service, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISrtlFilter_eval ------------------------------*/
+
+#ifdef CLIENT
+_vstrptr rcall_dis_DISrtlFilter_eval (Application* app, _vstrptr str)
+{
+    DISrtlFilter_app = app;
+    _vstrptr return_val;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISrtlFilter_eval in DISrtlFilter - not connected\n");
+        return 0;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISrtlFilter_eval (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISrtlFilter_eval"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_notify);
+        statement->Send();
+        answer_scrap = NULL;
+        Block(statement);
+        vscrap *sarg = (vscrap *)statement->GetData();
+        statement->DeleteLater();
+        array_index  = 0;
+
+
+        demarshall__vstrptr (&return_val, g_take());
+        Application::DecrementCount();
+
+        if (sarg){ sarg->DeleteLater(); }
+        if (Application::traceMode)
+            printf ("---> rcall_dis_DISrtlFilter_eval (Application* app, _vstrptr str)\n");
+        return return_val;
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+_vstrptr dis_DISrtlFilter_eval (_vstrptr str)
+{
+    int e = DISrtlFilter_app->eval((vchar*)str);
+    static vstr* result = NULL;
+    result = DISrtlFilter_app->getEvalResult();
+    return result;
+}
+
+
+void dis_DISrtlFilter_eval_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISrtlFilter_eval (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    _vstrptr return_val = dis_DISrtlFilter_eval (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISrtlFilter_eval (Application* app, _vstrptr str)\n");
+    g_push(marshall__vstrptr(return_val));
+}
+
+#endif /* SERVER */
+
+
+/*----------------------------- dis_DISrtlFilter_eval_async ------------------------------*/
+
+#ifdef CLIENT
+async rcall_dis_DISrtlFilter_eval_async (Application* app, _vstrptr str)
+{
+    DISrtlFilter_app = app;
+    if (app && !app->mySession()) 
+        app->connect (0, (char*)app->getName());
+    if (!app || !app->mySession()) {
+        if (Application::traceMode)
+                fprintf (stderr, "Cannot call dis_DISrtlFilter_eval_async in DISrtlFilter - not connected\n");
+        return;
+    } else {
+        if (Application::traceMode)
+            printf ("+++> rcall_dis_DISrtlFilter_eval_async (Application* app, _vstrptr str)\n");
+        Application::IncrementCount();
+        vsessionStatement *statement = new vsessionStatement;
+        statement->SetSession(app->mySession());
+        statement->SetSignature(app->getSignature());
+        vscrap *real_result=vscrapCreateArray();
+        int array_index=0;
+        int array_index2=0;
+        g_push(marshall__charptr("dis_DISrtlFilter_eval_async"));
+          g_push(marshall__vstrptr(str));
+        statement->SetArgs(statement,real_result);
+        if (real_result)delete real_result;
+        statement->SetObserveStatementProc(std_async_notify);
+        statement->SetDestroyWhenFinished(TRUE);
+        statement->Send();
+        answer_scrap = NULL;
+        vscrap * sarg=answer_scrap;
+
+
+    }
+}
+#endif /* CLIENT */
+
+#ifdef SERVER
+async dis_DISrtlFilter_eval_async (_vstrptr str)
+{
+   int e = DISrtlFilter_app->eval((vchar*)str);
+}
+
+
+void dis_DISrtlFilter_eval_async_fn (vscrap* sarg, vscrap* real_result, int& array_index, int& array_index2)
+{
+    _vstrptr str;
+
+    if (Application::traceMode)
+        printf ("+++< rcall_dis_DISrtlFilter_eval_async (Application* app, _vstrptr str)\n");
+    demarshall__vstrptr (&str, g_take());
+
+    dis_DISrtlFilter_eval_async (str);
+
+
+    if (Application::traceMode)
+        printf ("---< rcall_dis_DISrtlFilter_eval_async (Application* app, _vstrptr str)\n");
+}
+
+#endif /* SERVER */
+
+#ifdef SERVER
+
+    static int serverInited = 0;
+
+void DISrtlFilterServerInit(){
+    DISrtlFilter_app = Application::findApplication("DISrtlFilter");
+    if (!serverInited) {
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterCreate", dis_filterCreate, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetShow", dis_filterGetShow, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetHide", dis_filterGetHide, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetCLI", dis_filterGetCLI, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetFormatSpec", dis_filterGetFormatSpec, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetSort", dis_filterGetSort, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetFormat", dis_filterGetFormat, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterReset", dis_filterReset, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterApply", dis_filterApply, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterDelete", dis_filterDelete, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterRename", dis_filterRename, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterSave", dis_filterSave, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetCount", dis_filterGetCount, NULL, NULL);
+        Tcl_CreateCommand (DISrtlFilter_app->interp(), "dis_filterGetName", dis_filterGetName, NULL, NULL);
+	serverInited = 1;
+    }
+}
+
+
+vscrap* DISrtlFilterServer(    vservicePrimitive *primitive,
+    vsession          *session,
+    vscrap            *scrapArgs)
+{
+    DISrtlFilterServerInit();
+
+    DISrtlFilter_app = Application::findApplication(session);
+    vscrapArray *sarg=0;
+    int array_index,max_index,array_index2;
+    vstr *command;
+    primitive->GetArgs(scrapArgs,&sarg);
+    array_index=0;array_index2=0;
+    max_index=vscrapGetArrayCount(sarg);
+    demarshall__vstrptr (&command, g_take());
+    vscrap *real_result=vscrapCreateArray();
+
+    if (strcmp((char*)command, "dis_servereval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_servereval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISrtlFilter_eval") == 0) dis_DISrtlFilter_eval_fn(sarg,real_result,array_index,array_index2);
+       else
+    if (strcmp((char*)command, "dis_DISrtlFilter_eval_async") == 0) dis_DISrtlFilter_eval_async_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval") == 0) dis_servereval_fn(sarg,real_result,array_index,array_index2);
+    else if (strcmp((char*)command, "server_eval_async") == 0) dis_servereval_async_fn(sarg,real_result,array_index,array_index2);
+
+    vscrap *temp= primitive->MakeReturnScrap(session,real_result);
+    if (real_result) delete real_result;
+    if (command) vstrDestroy (command);
+    if (sarg) delete sarg;
+    return temp;
+}
+
+#endif /* SERVER */

@@ -1,0 +1,9 @@
+CROOTS=\
+
+
+CPROOTS=\
+    HyperTextUI.h \
+
+CPP_INCLUDES=\
+-I../include \
+

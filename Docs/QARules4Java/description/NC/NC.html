@@ -1,0 +1,42 @@
+<html>
+<body>
+
+<p><b>NC - Naming Conventions</b></p>
+
+<p>Takes a regular expression and item name and reports all occurrences
+where the pattern does not match the declaration.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package <font color='red'>_metric</font>; <br>
+class <font color='red'>_MetricNC</font> {<br>
+&nbsp; &nbsp; void operation1 (int <font color='red'>Parameter</font>) {<br>
+&nbsp; &nbsp; void <font color='red'>Operation2</font> (int parameter) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int <font color='red'>_variable</font>;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; int <font color='red'>my_attribute</font>;<br>
+&nbsp; &nbsp; final static int <font color='red'>constant</font>;<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+ Rename packages, classes, members etc. in a proper way.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package <font color='blue'>metric</font>; <br>
+class <font color='blue'>MetricNC</font> {<br>
+&nbsp; &nbsp; void operation1 (int <font color='blue'>parameter</font>) {<br>
+&nbsp; &nbsp; void <font color='blue'>operation2</font> (int parameter) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; int <font color='blue'>variable</font>;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; int <font color='blue'>myAttribute</font>;<br>
+&nbsp; &nbsp; final static int <font color='blue'>CONSTANT</font>;<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

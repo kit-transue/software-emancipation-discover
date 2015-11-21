@@ -1,0 +1,95 @@
+// QueryResults.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (QueryResults.tlb) that will become a resource in
+// QueryResults.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(26C03860-0D33-11D2-AEE9-00A0C9B71DC4), version(1.0),
+  helpstring("QueryResults OLE Control module"), control ]
+library QUERYRESULTSLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CQueryResultsCtrl
+
+	[ uuid(26C03861-0D33-11D2-AEE9-00A0C9B71DC4),
+	  helpstring("Dispatch interface for QueryResults Control"), hidden ]
+	dispinterface _DQueryResults
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CQueryResultsCtrl)
+			[id(1)] BSTR       FullListName;
+			[id(2)] BSTR       FilterListName;
+			[id(3)] IDispatch* DataSource;
+			[id(4)] BSTR       Query;
+			[id(5)] BSTR       Filter;
+			[id(6)] BSTR       Sort;
+			[id(7)] long       Element;
+			[id(8)] BSTR       SelectionName;
+			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+			[id(9)] boolean ShortNames;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CQueryResultsCtrl)
+			[id(10)] void Push();
+			[id(11)] boolean Pop();
+			[id(12)] void Update();
+			[id(13)] long AmountSelected();
+			[id(14)] void Clear();
+			[id(15)] long RowAmount();
+			[id(16)] long FilteredAmount();
+			[id(17)] void ApplyAttributeChanges();
+			[id(18)] void CancelAttributeChanges();
+			[id(19)] void AddAttribute(BSTR logname, BSTR option);
+			[id(20)] void RemoveAttribute(BSTR logname, BSTR option);
+			[id(21)] short CheckAttribute(BSTR logname, BSTR option);
+			[id(22)] void Calculate();
+			[id(23)] boolean SaveSelectionTo(BSTR szFileName, short cDelimiter);
+			[id(24)] BSTR GetPrintformat();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CQueryResultsCtrl
+
+	[ uuid(26C03862-0D33-11D2-AEE9-00A0C9B71DC4),
+	  helpstring("Event interface for QueryResults Control") ]
+	dispinterface _DQueryResultsEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CQueryResultsCtrl)
+			[id(1)] void ElementsSorted(short column);
+			[id(2)] void RButtonClicked(short x, short y);
+			[id(3)] void ElementDoubleclicked(BSTR parmstring);
+			[id(4)] void SelectionChanged(BSTR curinfo);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CQueryResultsCtrl
+
+	[ uuid(26C03863-0D33-11D2-AEE9-00A0C9B71DC4),
+	  helpstring("QueryResults Control"), control ]
+	coclass QueryResults
+	{
+		[default] dispinterface _DQueryResults;
+		[default, source] dispinterface _DQueryResultsEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

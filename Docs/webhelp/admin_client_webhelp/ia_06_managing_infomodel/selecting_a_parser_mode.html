@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Selecting a Parser Mode</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 65.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 143.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 167.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 65.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td5 {width: 143.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td6 {width: 167.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Selecting a Parser Mode</b></p>
+<p class="p2">Typically, you do not need to apply parser-specific information. By default, the DIScover C/C++ parser operates in Microsoft mode, which emulates the Microsoft Visual C++ version 6.0 compiler. However, your model building results can vary substantially depending on the parser mode that you use. The following section details parser mode changes should you need to make them to accommodate your build.</p>
+<p class="p2">Select the parser mode with a model-building flag. There are three categories of parser modes. The following table shows the model-building flags that correspond to each parser mode.</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3"><b>Language</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p3"><b>Mode</b></p>
+      </td>
+      <td valign="middle" class="td3">
+        <p class="p3"><b>Flag</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="4" valign="middle" class="td4">
+        <p class="p4">C</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p4">ANSI/ISO</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--c or -m</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">K &amp; R / pcc-compatible</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--old_c or -K</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">Strict-ANSI</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--strict_warnings or -a</p>
+        <p class="p5">--strict or -A</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">SVR4-compatible (for ANSI C)</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--svr4</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="3" valign="middle" class="td4">
+        <p class="p4">C++</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p4">C++</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--c++ or -p</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">cfront 2.1-compatible</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--cfront_2.1 or -b</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">cfront 3.0-compatible</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--cfront_3.0</p>
+      </td>
+    </tr>
+    <tr>
+      <td rowspan="3" valign="middle" class="td4">
+        <p class="p4">C &amp; C++</p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p4">Microsoft 16-bit</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--microsoft_16</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">Microsoft 32-bit (the default)</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--microsoft</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td5">
+        <p class="p4">Microsoft “bugs” (supports known Microsoft bugs)</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--microsoft_bugs</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p4"> </p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p4">Sun</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--sun</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td4">
+        <p class="p4"> </p>
+      </td>
+      <td valign="middle" class="td5">
+        <p class="p4">gcc</p>
+      </td>
+      <td valign="middle" class="td6">
+        <p class="p5">--gcc</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p6"><br></p>
+</body>
+</html>

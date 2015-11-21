@@ -1,0 +1,14 @@
+
+FilterStageInit(DAwid,i)
+Widget DAwid;
+int i;
+{
+   GPL.stage_color[i] =
+     (Pixel) DtAllocateColor(G_dpy, "maroon");
+
+   GPL.stage[i] =
+     CreateStage(FilterInit,
+                 DAwid, "Filter",
+                 GPL.stage_color[i]);
+}
+

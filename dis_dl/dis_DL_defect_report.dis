@@ -1,0 +1,482 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+################################################################################
+#
+# The Defect Report Dialog Box
+#
+################################################################################
+
+proc DL_defects_report_ui { } {
+    global _DL_day_entry
+    global _DL_defects_report_result
+    global _DL_defects_report_tablist
+    global _DL_dr_report_filename
+    global _DL_duration_entry
+    global _DL_year_entry
+    global _DL_years_list
+    global _DL_unrestricted
+    global _DL_dr_report_filename
+    global _DL_dr_show_results
+
+    set _DL_defects_report_result {}
+    set w .dl_d_report
+    set t $w.top
+    set b $w.bot
+    catch {destroy $w}
+    toplevel $w -class Dialog
+    wm minsize $w 250 100
+    wm title $w "DefectLink: Defects Report"
+    frame $t -relief raised -bd 1
+
+    catch {destroy .durTypePop_menu}
+    catch {destroy .durationPop_menu}
+    catch {destroy .monthPop_menu}
+    catch {destroy .dayPop_menu}
+    catch {destroy .yearPop_menu}
+
+    bind $w <Return> "_DL_defects_report_OK $w"
+
+    set t1 $t.section1
+    set t2 $t.section2
+    set t3 $t.section3
+    set t4 $t.section4
+    set t5 $t.section5
+    frame $t1 
+    frame $t2  -relief sunken -bd 1
+    frame $t3 -relief sunken -bd 1
+    frame $t4  -relief sunken -bd 1
+    frame $t5  -relief sunken -bd 1
+    pack $t1 -side top -fill both -padx 2m -in $t -expand true -fill x
+    pack $t2 $t3 $t4 $t5 -side top -fill both -padx 2m -in $t -expand true -fill x -pady 1m
+
+
+    frame $b -relief raised -bd 1 -height 1
+    
+    pack $t $b -side top -fill both -expand true
+
+
+    ####################
+    # $t1 : Initial Text
+    ####################
+    message $t1.msg1 -justify left -width 6i -text "Defects Report: Show attributes of defects associated with selected entities."
+    pack $t1.msg1 -side left -fill x
+
+
+
+    ##################
+    # $t2 : Date Range
+    ##################
+    set d_range1 $t2.row1
+    set d_range2 $t2.row2
+    set d_range3 $t2.row3
+    frame $d_range1
+    frame $d_range2
+    frame $d_range3
+    pack $d_range1 -side top -expand true -fill x
+    pack $d_range2 $d_range3 -side top -expand true -fill x -padx 5m -pady 1m
+
+    message $d_range1.title -justify left -width 3i -text "Date Range:"
+    checkbutton $d_range1.unres -text "Unrestricted" -variable _DL_unrestricted
+    pack $d_range1.title $d_range1.unres -side left -expand false 
+
+    message $d_range2.m1 -justify right -width 3i -text "Duration: "
+    set durs "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"
+    set dur_pop [createPopup $d_range2 durationPop _DL_duration 3 5 $durs 0]
+    set dur_types "Months Years"
+    set dur_type_pop [createPopup $d_range2 durTypePop _DL_dur_type 7 3 $dur_types 1]
+    pack $d_range2.m1 $dur_pop $dur_type_pop -side left -expand false -padx 3
+
+    message $d_range3.m1 -justify right -width 3i -text "End Date: "
+
+    set months "January February March April May June July August September October November December"
+    set days   "1 2 3 4 5 6 7 8 9 10 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31"
+    set years  $_DL_years_list
+
+    set mm [createPopup $d_range3 monthPop _DL_month 11 5 $months 1]
+    set dd [createPopup $d_range3 dayPop _DL_day     3  8 $days 0]
+    set yy [createPopup $d_range3 yearPop _DL_year   5  5 $years 0]
+    pack $d_range3.m1 $mm $dd $yy  -side left -expand false -padx 3
+
+    set _DL_duration_entry $d_range2.durationPop_e
+    set _DL_day_entry      $d_range3.dayPop_e
+    set _DL_year_entry     $d_range3.yearPop_e
+
+
+    $d_range1.unres config -command "global _DL_unrestricted
+                                     if \{ \$_DL_unrestricted \} \{ 
+	                                pack forget $d_range2.m1 $dur_pop $dur_type_pop  
+	                                pack forget $d_range3.m1 $mm $dd $yy  
+	                             \} else \{ 
+	                                pack $d_range2.m1 $dur_pop $dur_type_pop -side left -expand false -padx 3 
+	                                pack $d_range3.m1 $mm $dd $yy  -side left -expand false -padx 3 
+	                             \}"
+    if { $_DL_unrestricted } { 
+	pack forget $d_range2.m1 $dur_pop $dur_type_pop  
+	pack forget $d_range3.m1 $mm $dd $yy  
+    } else { 
+	pack $d_range2.m1 $dur_pop $dur_type_pop -side left -expand false -padx 3 
+	pack $d_range3.m1 $mm $dd $yy  -side left -expand false -padx 3 
+    } 
+    
+    ##########################
+    # $t3 : Display Attributes
+    ##########################
+    frame $t3.title
+    frame $t3.columns
+    pack $t3.title -side top -expand true -fill x
+    pack $t3.columns -side top -expand true -fill x -padx 5m
+    
+    message $t3.title.msg -justify left -width 6i -text "Display Attributes:"
+    pack $t3.title.msg -side left -fill x
+    
+    set att_col1 $t3.columns.col1
+    set att_col2 $t3.columns.col2
+    set att_col3 $t3.columns.col3
+    frame $att_col1
+    frame $att_col2
+    frame $att_col3
+    pack $att_col1 $att_col2 $att_col3 -side left -expand false -anchor n
+    
+    checkbutton $att_col1.fdate -text "Fix Date" -variable _DL_fix_date
+    checkbutton $att_col1.odate -text "Open Date" -variable _DL_open_date
+    checkbutton $att_col1.sever -text "Severity" -variable _DL_severity
+    pack $att_col1.fdate $att_col1.odate $att_col1.sever -side top -expand false -anchor w
+    
+    checkbutton $att_col2.asgn -text "Assignee" -variable _DL_assignee
+    checkbutton $att_col2.rep_by -text "Reported By" -variable _DL_reported_by
+    checkbutton $att_col2.prior -text "Priority" -variable _DL_priority
+    pack $att_col2.asgn $att_col2.rep_by $att_col2.prior -side top -expand false -anchor w
+    
+    checkbutton $att_col3.status -text "Status" -variable _DL_status
+    checkbutton $att_col3.num_ents -text "Number of entities modified" -variable _DL_num_ents
+    pack $att_col3.status $att_col3.num_ents -side top -expand false -anchor w
+       
+    #######################
+    # $t4 : Write to file
+    #######################
+    message     $t4.msg1 -width 3i -justify left -text "Save report to file:" 
+    pack        $t4.msg1 -side top -anchor w 
+    frame       $t4.fileframe 
+    pack        $t4.fileframe -side top -anchor w
+    entry       $t4.fileframe.filename -width 45 -textvariable _DL_dr_report_filename
+    pack        $t4.fileframe.filename -side left -anchor w -expand true -padx 2m -fill x
+    button      $t4.fileframe.browse -text "Browse..." -command "set _DL_dr_report_filename \[DL_get_valid_file \"Defect Report\"\]" 
+    pack        $t4.fileframe.browse -side left -expand false -fill x -anchor e -padx 2m
+    checkbutton $t4.tobrowser -text "Show results in browser" -variable _DL_dr_show_results
+    pack        $t4.tobrowser -side top -expand false -anchor w -padx 1m
+    
+    ############################
+    # $b : OK and Cancel Buttons
+    ############################
+    button $b.b1 -text OK -width 8 -command "_DL_defects_report_OK $w"
+    pack $b.b1 -side left -expand 1 -pady 2m
+    button $b.b2 -text Cancel -width 8 -command "_DL_defects_report_cancel $w"
+    pack $b.b2 -side right -expand 1 -pady 2m
+
+
+    if {! [is_newui]} {
+	if { "[info commands set_discover_colors]" == "set_discover_colors" } {
+	    catch { set_discover_colors $w }
+	}
+    }
+
+    set old_focus [focus]
+
+    set _DL_defects_report_tablist " $_DL_duration_entry $_DL_day_entry $_DL_year_entry "
+    foreach ww $_DL_defects_report_tablist {
+	bind $ww <Tab> {DL_tab $_DL_defects_report_tablist}
+    }    
+
+    bind all <Tab> {}
+
+    grab set $w
+    focus $dur_pop
+
+    # set window mamager properties
+    wm focusmodel $w active
+    wm protocol   $w WM_DELETE_WINDOW "_DL_defect_report_cancel $w"
+    wm protocol   $w WM_SAVE_YOURSELF "_DL_defect_report_cancel $w"
+    wm protocol   $w WM_TAKE_FOCUS    "_DL_defect_report_focus"
+
+    # set refresh
+    bind $w <Enter> +refresh_ui
+    bind $w <Leave> +refresh_ui
+
+    # figure out where to place the dialog
+    set rootheight [winfo vrootheight .]
+    set rootwidth  [winfo vrootwidth  .]
+    set myheight  350
+    set mywidth   450
+    set ypos [expr [expr  $rootheight - $myheight] / 2]
+    set xpos [expr [expr  $rootwidth  - $mywidth]  / 2]
+    set geom "+${xpos}+${ypos}"
+    wm geometry $w $geom
+    raise $w
+
+    refresh_ui
+    update
+
+    tkwait window $w
+    focus $old_focus
+    return $_DL_defects_report_result
+}
+
+################################################################################
+#
+# UI Callbacks
+#
+################################################################################
+
+proc _DL_defect_report_focus {} {
+    refresh_ui
+    update
+}
+
+proc _DL_defects_report_cancel { w } {
+    global _DL_defects_report_result 
+    set _DL_defects_report_result 0
+    destroy $w
+    refresh_ui
+    update
+}
+
+proc _DL_defects_report_OK { w } {
+    if { [DL_defects_report_check_inputs] } { 
+	global _DL_defects_report_result 
+	set _DL_defects_report_result 1
+	destroy $w
+	refresh_ui
+	update
+    }
+}
+
+proc DL_defects_report_check_inputs {} {
+    global _DL_unrestricted
+    global _DL_month
+    global _DL_day
+    global _DL_year
+    global _DL_duration
+    global _DL_dur_type
+    global _DL_day_entry
+    global _DL_year_entry
+    global _DL_duration_entry
+
+    set result 0
+    if {    
+	$_DL_unrestricted || (
+	[DL_check_number _DL_day 1 31 "Day" $_DL_day_entry] && 
+	[DL_check_number _DL_year 1000 9999 "Year" $_DL_year_entry] && 
+	[DL_check_number _DL_duration 1 1000 "Duration" $_DL_duration_entry] 
+	)
+    } {
+	set result 1
+    } 
+    return $result
+}
+
+################################################################################
+#
+# Report implementation
+#
+################################################################################
+
+proc run_DL_defects_report { sel } {
+    global _DL_month
+    global _DL_day
+    global _DL_year
+    global _DL_unrestricted
+    global _DL_duration
+    global _DL_dur_type
+
+    # set defaults:
+    if {(! [info exists _DL_month]) || ($_DL_month == "")} {
+	set _DL_month [clock format [clock seconds] -format "%B"]
+    }
+    if {(! [info exists _DL_day]) || ($_DL_day == "")} {
+	set _DL_day [clock format [clock seconds] -format "%d"]
+    }
+    if {(! [info exists _DL_year]) || ($_DL_year == "")} {
+	set _DL_year [clock format [clock seconds] -format "%Y"]
+    }  
+    if {(! [info exists _DL_duration]) || ($_DL_duration == "")} {
+	set _DL_duration 1
+    }
+    if {(! [info exists _DL_dur_type]) || ($_DL_dur_type == "")} {
+	set _DL_dur_type "Years"
+    }
+    
+    set result 0
+    if {[DL_defects_report_ui] == 1} {
+
+	set from_date 0
+	set to_date 0
+
+	if {! $_DL_unrestricted } {
+
+	    set month [DL_convert_month $_DL_month]
+	    set day   $_DL_day
+	    set year  $_DL_year
+
+	    set to_date "${year}[dis_DL_convert_to_two_digits ${month}][dis_DL_convert_to_two_digits ${day}]"
+
+	    if {$_DL_dur_type == "Years"} {set year [expr $year - $_DL_duration]}
+	    if {$_DL_dur_type == "Months"} {
+		set year [expr $year - ( int($_DL_duration) / 12) ]
+		set dur  [expr int($_DL_duration) % 12 ]
+		if {$dur < $month} {
+		    set month [expr $month - $dur]
+		} else {
+		    set year [expr $year - 1]
+		    set month [expr $month + 12 - $dur]
+		}
+	    }
+
+	    set from_date "${year}[dis_DL_convert_to_two_digits ${month}][dis_DL_convert_to_two_digits ${day}]"
+
+	}
+	
+	set result [DL_defects_report $from_date $to_date $sel]
+    }
+    return $result
+}
+
+
+proc DL_defects_report {date1 date2 entities} {
+    global _DL_assignee
+    global _DL_dr_show_results
+    global _DL_fix_date
+    global _DL_num_ents
+    global _DL_open_date
+    global _DL_priority
+    global _DL_reported_by
+    global _DL_dr_report_filename
+    global _DL_severity
+    global _DL_status
+    
+    set defects [filter defect $entities] 
+    set defects [set_union $defects [entity_get_defects $entities] ]
+    
+    # filter defects by date
+    if {$date1 > 0} {
+	set defects [filter "(Defect_Close_Date_Integer >= $date1)" $defects]
+    }
+    if {$date2 > $date1} {
+	set defects [filter "(Defect_Close_Date_Integer <= $date2)" $defects]
+    }
+    
+    set header "Defect ID"
+    set format_string "%s"
+    set format_list "name"
+    
+    if {$_DL_fix_date == 1} {
+	set header        "$header\tClose Date"
+	set format_string "$format_string  Closed:%s"
+	set format_list   "$format_list  Defect_Close_Date"
+    }
+    if {$_DL_open_date == 1} {
+	set header        "$header\tOpen Date"
+	set format_string "$format_string  Opened:%s"
+	set format_list   "$format_list  Defect_Open_Date"
+    }
+    if {$_DL_severity == 1} {
+	set header        "$header\tSeverity"
+	set format_string "$format_string  Severity:%s"
+	set format_list   "$format_list  Defect_Severity"
+    }
+    if {$_DL_priority == 1} {
+	set header        "$header\tPriority"
+	set format_string "$format_string  Priority:%s"
+	set format_list   "$format_list  Defect_Priority"
+    }
+    if {$_DL_assignee == 1} {
+	set header        "$header\tAssignee"
+	set format_string "$format_string  Assignee:%s"
+	set format_list   "$format_list Defect_Assignee"
+    }
+    if {$_DL_reported_by == 1} {
+	set header        "$header\tReported By"
+	set format_string "$format_string  Reported By:%s"
+	set format_list   "$format_list  Defect_Entered_By"
+    }
+    if {$_DL_status == 1} {
+	set header        "$header\tStatus"
+	set format_string "$format_string  Status:%s"
+	set format_list   "$format_list  Defect_Status"
+    }
+    if {$_DL_num_ents == 1} {
+	set header        "$header\tNumber of Modified Entities"
+	set format_string "$format_string  Number of Entities:%s"
+	set format_list   "$format_list  Defect_Number_of_Entities"
+    }
+    
+    if { [info exists _DL_dr_report_filename] && ($_DL_dr_report_filename != "") } {
+	if {[catch {> $_DL_dr_report_filename {puts "DefectLink: Defects Report\n" } }]} {
+	    msg -error "Cannot write to file $_DL_dr_report_filename."
+	} else {
+	    >> $_DL_dr_report_filename {puts $header}
+	    set fmt ""
+	    foreach temp $format_list {set fmt "$fmt\t%s"}
+	    set fmt [string range $fmt 1 end]
+	    set cmd "printformat [list $fmt]"
+	    set cmd [concat $cmd $format_list]
+	    eval $cmd
+	    >> $_DL_dr_report_filename "print $defects" 
+	}
+    }
+    
+    if { "$_DL_dr_show_results" == "1" } {
+	return $defects
+    } else {
+	return {}
+    }
+    
+}
+
+################################################################################
+#
+# Running the report without a UI (usu. for debugging)
+#
+################################################################################
+
+proc DL_defects_report_no_ui {date1 date2 args} {
+
+    set entities [set_copy $args]
+    set defects [filter defect $entities] 
+    set defects [set_union $defects [entity_get_defects $entities] ]
+    
+    
+    # filter defects by date
+    if {$date1 > 0} {
+	set defects [filter "(Defect_Close_Date_Integer >= $date1)" $defects]
+    }
+    if {$date2 > $date1} {
+	set defects [filter "(Defect_Close_Date_Integer <= $date2)" $defects]
+    }
+    set defects [sort -a Defect_Close_Date_Integer -a name $defects ]
+    return $defects
+}

@@ -1,0 +1,12 @@
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/yourBuildEnvironment.pdf
+*psetPrefs.pdfFileBuild:		$ADMINDIR/pdf/yourBuildEnvironment.pdf
+
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src/yourBuildEnvironment/src
+
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED/yourBuildEnvironment
+
+*psetPrefs.projectList:			ProjectSeven
+
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileNameFixed:		yes
+*psetPrefs.logFileMonitor:		yes

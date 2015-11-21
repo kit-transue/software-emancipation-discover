@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Useful Attributes</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 5.3px 48.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Useful Attributes</b></p>
+<p class="p2">A description of all attributes is presented later in this chapter. Following are notes on attributes of interest:</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">kind</span> returns the type of the element for any given element. For symbols, the more specific subtype is returned.</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">name</span> returns the name of the element. This name is fully qualified: in the case functions with C++ linkage, it includes the classname of the enclosing class and the types of the arguments the function takes.</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">cname</span> returns the name stripped of any scope, class scope, and argument types:</p>
+<p class="p4">apply cname Board::save(char*)<br>
+Board::save(char*)<br>
+apply name Board::save(char*)<br>
+save</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">regexp(<i>expression</i>[, <i>attribute</i>])</span> returns true if <span class="s2">attribute</span> matches the regular expression, <span class="s2">expression.</span> If <span class="s2">expression</span> is omitted, the regular expression is applied to the attribute <span class="s2">name</span>:</p>
+<p class="p5">apply regexp("a.*n") main<br>
+1<br>
+apply regexp("^a.*n") main<br>
+0<br>
+apply {regexp("in", type)} main<br>
+1</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">match(<i>pattern</i>[, <i>attribute</i>])</span> returns true if <span class="s2"><i>attribute</i></span> matches the glob-style pattern <span class="s2"><i>pattern</i></span>. The glob style pattern matching used is the same as the Tcl <span class="s2"><b>match</b></span> command; it derives from many command interpreters’ filename pattern matching: an asterisk, <span class="s2">*</span>, matches zero or more characters; a question mark, <span class="s2">?</span>, matches a single character; and the expression<span class="s2"> [<i>a</i>-<i>n</i>] </span>matches characters between <span class="s2"><i>a</i></span> and <span class="s2"><i>n</i></span>—for example:</p>
+<p class="p4">apply {match(“in*”, type)} main<br>
+1<br>
+apply {match(“in”, type)} main<br>
+0</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">args</span> returns the argument list for a function. The arguments are returned for C functions, even though the arguments are not part of the function signature:</p>
+<p class="p4">args main<br>
+(int,char**)</p>
+<p class="p3">•<span class="s1">   </span><span class="s2">type</span> returns the type of a variable, or the return type of a function:</p>
+<p class="p4">type main<br>
+int<br>
+# grabbing a variable named “x” at random:<br>
+kind x<br>
+var<br>
+type x<br>
+double</p>
+</body>
+</html>

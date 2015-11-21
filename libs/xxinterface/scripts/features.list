@@ -1,0 +1,65 @@
+7.300  PACKAGE    Developer_Xpress_Center ModelClient:20 ProjectLeader
+
+7.300  PACKAGE    RampUp_Center Developer:9 ProjectLeader
+
+7.300  PACKAGE    Process_Improvement_Center QA_Cockpit Developer:4 Engineer:4 ProjectLeader
+
+7.300  PACKAGE    Structure_Center Engineer:6 ProjectLeaderPlus:2 Architect:2
+
+7.300  PACKAGE    Quality_Center QA_Cockpit QA_Analyst:8 ProjectLeaderPlus
+
+7.300  PACKAGE    Y2K_Center QA_Cockpit Engineer:5 ProjectLeaderPlus
+
+7.300  PACKAGE    Architect Engineer Dormant Simplify
+
+7.300  PACKAGE    ProjectLeaderPlus ProjectLeader C_CPP:4
+
+7.300  PACKAGE    ProjectLeader Engineer QAC QA_Global QA_Port QA_Stand QA_Stats QA_Struct QA_TestCov
+
+7.300  PACKAGE    Engineer Developer TPM_CP
+
+7.300  PACKAGE    Developer ModelClient C_CPP DISCOVER
+
+7.300  PACKAGE    QA_Analyst DISCOVER QAC QA_Global QA_Port QA_Stand QA_Stats QA_Struct QA_TestCov
+
+7.300  PACKAGE    QA_Cockpit QAC QA_Global QA_Port QA_Stand QA_Stats QA_Struct QA_TestCov QA_Report QA_Run
+
+7.300  PACKAGE    CodeRover_Browser CR_Build ModelClient C_CPP Java
+
+7.300  PACKAGE    DeveloperXPress DevXPress CodeRover_Browser
+
+7.300  PACKAGE    CodeRover_Integrity Integrity DISCOVER CodeRover_Browser
+
+7.300  PACKAGE    CodeRover_Caliper Caliper CodeRover_Integrity
+
+7.300  PACKAGE    CodeRover_Trends Trends CodeRover_Caliper
+
+7.300  PACKAGE    CodeRover_TPM CR_TPM CodeRover_Browser
+
+7.300  PACKAGE    CodeRover_Impact Impact CodeRover_Browser
+
+7.300  OVERDRAFT  C_CPP
+7.300  OVERDRAFT  DISCOVER
+7.300  ENFORCED   Dormant
+7.300  OVERDRAFT  Java
+7.300  OVERDRAFT  ModelClient
+7.300  CHECKED    QAC
+7.300  ENFORCED   QA_Report
+7.300  ENFORCED   QA_Run
+7.300  CHECKED    QA_Global
+7.300  CHECKED    QA_Port
+7.300  CHECKED    QA_Stand
+7.300  CHECKED    QA_Stats
+7.300  CHECKED    QA_Struct
+7.300  CHECKED    QA_TestCov
+7.300  OVERDRAFT  SQL
+7.300  ENFORCED   Simplify
+7.300  ENFORCED   TPM_CP
+7.300  ENFORCED   CR_Build
+7.300  ENFORCED   Caliper
+7.300  ENFORCED   Integrity
+7.300  ENFORCED   DevXPress
+7.300  ENFORCED   Trends
+7.300  ENFORCED   CR_TPM
+7.300  ENFORCED   Impact
+

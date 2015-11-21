@@ -1,0 +1,17 @@
+<!-- Test of flag, together with name. -->
+<!-- Test with
+        x.c -ABC --abc -Iincl
+     result
+        -A -B -C --Xabc
+     This result is not really what's intended, but since we
+     don't support any compilers with flags currently, it'll do.
+-->
+<cmdline nameintro="--" flagintro="-">
+ <translate>
+  <option name="abc" noarg="1">--Xabc</option>
+  <option flag="A" noarg="1">-A</option>
+  <option flag="B" noarg="1">-B</option>
+  <option flag="C" noarg="1">-C</option>
+  <option flag="I" immarg="1">-I%</option>
+ </translate>
+</cmdline>

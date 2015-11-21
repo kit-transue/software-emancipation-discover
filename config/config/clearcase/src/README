@@ -1,0 +1,8 @@
+pipe to transform file.pdf into extended-file.pdf:
+     pdf  pset_cs  
+
+pipe to transform atria config-spec into pset config-spec:
+     atria_cs
+
+script to generate extended pdf for atria
+     cm_configspec

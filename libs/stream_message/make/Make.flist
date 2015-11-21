@@ -1,0 +1,20 @@
+CROOTS=\
+ 
+CXXROOTS=\
+    msg_format \
+    msg_comms \
+    aconnectn \
+    mbmsgser \
+    mbuildmsg \
+    minidom \
+    minixml \
+    minisax \
+    service \
+    startprocess \
+    transport 
+   
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/nameserver/include \
+-I$(BUILD_SRC_ROOT)/nameserver/include \
+

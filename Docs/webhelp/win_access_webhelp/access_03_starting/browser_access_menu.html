@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Browser Access Menu</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #fff2f9}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {text-decoration: underline ; color: #ff6262}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 11.0px 'Courier New'}
+    span.s4 {font: 9.0px 'Times New Roman'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Browser Access Menu</b></p>
+<p class="p2">The DIScover Browser provides an <b>Access</b> menu as a shortcut to some of the most common Access-driven features and functionality. It is not necessary to establish an interactive Access session prior to invoking these commands—you can use them while working in the Browser alone, or you can launch an interactive session from the menu itself and toggle between the Browser and an Access shell.</p>
+<p class="p3"><b>Important: </b>Access is a powerful tool. It is important to understand the features you are using before using <b>Access</b> menu options such as <b>Actions</b> and <b>TPM</b> while in the Browser.</p>
+<p class="p2">As described in <a href="../access_03_starting/user_interface_customization_on_unix.html#XREF_User_Interface"><span class="s1">User Interface Customization on UNIX</span></a>, you can customize the <b>Access</b> menu and its submenus to arrange items in a specific order, and include custom queries and actions. Customizable menu options are described in more detail the following books.</p>
+<p class="p2">Any changes you make are saved for the current session only. If you want to make permanent changes to these submenus that persist from session to session, you must modify the appropriate <span class="s2">_menu.dis</span> script contained in the <span class="s3">$PSETHOME/lib</span> directory. All these files contain commands for the Access submenu items.</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">action_menu.dis</span> contains actions for the <b>Action</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">util_menu.dis</span> for the <b>Util</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">convert_menu.dis</span> for the <b>Convert</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">ast_menu.dis</span> for the <b>AST</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">tpm_menu.dis</span> for the <b>TPM</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">category_menu.dis</span> for the <b>Category</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">query_menu.dis</span> for the <b>Query</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">filter_menu.dis</span> for the <b>Filter</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">project_menu.dis</span> for the <b>Project</b> submenu</p>
+<p class="p4">•<span class="s4">   </span><span class="s3">report_menu.dis</span> for the <b>Report</b> submenu</p>
+<p class="p2">If you want to modify the order of the Access menu submenus, for example, look at the <span class="s3">load_menus.dis</span> file. This file loads all submenus, and you can change the default behavior there. You can add your own submenus there also (in order to load them automatically at the start, for example).</p>
+<p class="p3"><b>Important: </b>You should write your custom changes to a file named <span class="s3">discover.user.dis</span> and store it in your home directory instead of modifying the original <span class="s3">_menu.dis</span> files. DIScover then automatically creates a <b>User</b> submenu in the <b>Access</b> menu and your script will be called when you select the <b>User</b> menu item.</p>
+</body>
+</html>

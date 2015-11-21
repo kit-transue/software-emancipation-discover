@@ -1,0 +1,69 @@
+#!/bin/sh
+
+script="`basename $0`"
+
+submit_dir=${PTEST_PENDING=/users/ptest/pending}/submit
+PSETHOME="`/ParaSET/tools/newest`"
+
+export PTEST_PENDING PSETHOME
+
+safe_mkdir ()
+{
+  mkdir -p $1 || { echo "$script: Error: Failed to create directory $1."; exit 1; }
+}
+
+date="`date '+%h-%d'`"
+
+verify_dir=${PTEST_VERIFY=/users/ptest/verify}
+
+i=0
+while [ -f "$verify_dir/$date.$i" -o -d "$verify_dir/$date.$i" ] ; do
+  i="`expr $i + 1`"
+done
+
+verify_dir="$verify_dir/$date.$i" ; safe_mkdir $verify_dir
+outdir="$verify_dir/outdir"
+results="$verify_dir/verify.`date '+%m-%d-%y'`"
+PSETTEST="$verify_dir/current_test"
+PTEST_TMPDIR="$verify_dir/tmp"
+
+export PSETTEST PTEST_TMPDIR outdir
+
+safe_mkdir $PSETTEST ; safe_mkdir $PTEST_TMPDIR ; safe_mkdir $outdir
+
+{
+  echo ">>> Begin: `date`"
+  echo
+  echo "Submit Dir: $submit_dir"
+  echo "Verify Dir: $verify_dir"
+  echo "Results: $results"  
+  echo
+  echo "PSETHOME: $PSETHOME"
+  echo 
+} | tee -a $results
+
+subdirs="`ls -d $submit_dir/bug* |egrep -v '~'`"
+for bug in $subdirs ; do
+  i=`echo $bug | sed "s!$submit_dir/bug!!"`
+  if [ -d $bug -a $i -gt 100 ]; then
+    echo "Verifying $bug..." ; echo "$script: Status: Executing ptest_one_run $bug $outdir" ; echo
+    echo "n" | ptest_one_run $bug $outdir
+    if grep -s failed $outdir/test.log ; then
+      status="Failed"
+      mkdir "$PTEST_PENDING/reject/`basename $bug`"
+      cd $bug; tar cf - . | (cd "$PTEST_PENDING/reject/`basename $bug`"; tar xf -)
+      mv $bug ${bug}~
+    else
+      status="Succeeded"
+    fi
+    echo "$i - $status" | tee -a $results
+    rm $outdir/test.log 2> /dev/null
+    rm -rf $PSETTEST/* 2> /dev/null
+  fi
+done 
+
+grep Succeeded $results | ptest_close
+
+{ echo ; echo ">>> End: `date`" ; } | tee -a $results
+
+exit 0

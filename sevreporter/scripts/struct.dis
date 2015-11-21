@@ -1,0 +1,281 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+##############################################################################
+
+#
+# Common helper procedures:
+#
+
+proc _metget { src kind expr } {
+  set elems [ filter $kind "$src" ]
+  set defs [ defines -${kind} "$src" ]
+  set res [ filter $expr [ set_unique [ set_union $elems $defs ] ] ]
+  return $res
+}
+
+##############################################################################
+
+#
+# File-based metrics:
+#
+
+proc met:file_tloc { src args } {
+  set lim [ getqlim $args 1000 ]
+  set res [ _metget "$src" module met_LOC>$lim ]
+  foreach el $res {
+    qdiag $el "File `[ name -ignore $el ]' has [ met_LOC -ignore $el ]\
+      lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:file_uloc { src args } {
+  set lim [ getqlim $args 800 ]
+  set res [ _metget "$src" module met_ULOC>$lim ]
+  foreach el $res {
+    qdiag $el "File `[ name -ignore $el ]' has [ met_ULOC -ignore $el ]\
+      uncommented lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:file_xloc { src args } {
+  set lim [ getqlim $args 800 ]
+  set res [ _metget "$src" module met_XLOC>$lim ]
+  foreach el $res {
+    qdiag $el "File `[ name -ignore $el ]' has [ met_XLOC -ignore $el ]\
+      executable lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:file_incl { src args } {
+  set lim [ getqlim $args 25 ]
+  set res [ nil_set ]
+  set modules [ _metget "$src" module !nil ]
+  foreach m $modules {
+    set nincl [ size [ get_include_files $m ] ]
+    if { $nincl > $lim } {
+      sappend $res $m
+      qdiag $m "File `[ name -ignore $m ]' includes $nincl header files (limit is $lim)"
+    }
+  }
+  return $res
+}
+
+##############################################################################
+
+#
+# Function-based metrics:
+#
+
+proc met:fun_tloc { src args } {
+  set lim [ getqlim $args 150 ]
+  set res [ _metget "$src" function met_LOC>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ met_LOC -ignore $el ]\
+      lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_uloc { src args } {
+  set lim [ getqlim $args 120 ]
+  set res [ _metget "$src" function met_ULOC>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ met_ULOC -ignore $el ]\
+      uncommented lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_xloc { src args } {
+  set lim [ getqlim $args 120 ]
+  set res [ _metget "$src" function met_XLOC>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ met_XLOC -ignore $el ]\
+      executable lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_inline_xloc { src args } {
+  set lim [ getqlim $args 3 ]
+  set res [ _metget "$src" function inline&&met_XLOC>$lim ]
+  foreach el $res {
+    qdiag $el "Inline function `[ name -ignore $el ]' has [ met_XLOC -ignore $el ]\
+      executable lines of code (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_cc { src args } {
+  set lim [ getqlim $args 20 ]
+  set res [ _metget "$src" function met_CC>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has a cyclomatic complexity\
+      of [ met_CC -ignore $el ] (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_mc { src args } {
+  set lim [ getqlim $args 20 ]
+  set res [ _metget "$src" function met_MYERS>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has a Myers' complexity\
+      of [ met_MYERS -ignore $el ] (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_nest { src args } {
+  set lim [ getqlim $args 5 ]
+  set res [ _metget "$src" function met_DEPTH>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has a depth of\
+      [ met_DEPTH -ignore $el ] (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_ret { src args } {
+  set lim [ getqlim $args 2 ]
+  set res [ _metget "$src" function met_RETURNS>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ met_RETURNS -ignore $el ]\
+      return statements (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_loop { src args } {
+  set lim [ getqlim $args 10 ]
+  set res [ _metget "$src" function met_LOOPS>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ met_LOOPS -ignore $el ]\
+      iteration statements (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_sw { src args } {
+  set lim [ getqlim $args 10 ]
+  set res [ _metget "$src" function met_SWITCHES>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ met_SWITCHES -ignore $el ]\
+      switch statements (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:fun_params { src args } {
+  set lim [ getqlim $args 6 ]
+  set res [ _metget "$src" function numargs>$lim ]
+  foreach el $res {
+    qdiag $el "Function `[ name -ignore $el ]' has [ numargs -ignore $el ]\
+      parameters (limit is $lim)"
+  }
+  return $res
+}
+
+##############################################################################
+
+#
+# Class-based metrics:
+#
+
+proc met:class_subs { src args } {
+  set lim [ getqlim $args 20 ]
+  set res [ _metget "$src" class met_FANOUT>$lim ]
+  foreach el $res {
+    qdiag $el "Class `[ name -ignore $el ]' has [ met_FANOUT -ignore $el ]\
+      sub-classes (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:class_supers { src args } {
+  set lim [ getqlim $args 1 ]
+  set res [ _metget "$src" class met_FANIN>$lim ]
+  foreach el $res {
+    qdiag $el "Class `[ name -ignore $el ]' has [ met_FANIN -ignore $el ]\
+      super-classes (limit is $lim)"
+  }
+  return $res
+}
+
+proc met:class_funs { src args } {
+  set lim [ getqlim $args 50 ]
+  set res [ nil_set ]
+  set classes [ defines -class "$src" ]
+  foreach class $classes {
+    set n [ size [ get_member_functions $class ] ]
+    if { $n > $lim } {
+      sappend $res $class
+      qdiag $class "Class `[ name -ignore $class ]' defines $n member functions\
+        (limit is $lim)"
+    }
+  }
+  return $res
+}
+
+proc met:class_vars { src args } {
+  set lim [ getqlim $args 25 ]
+  set res [ nil_set ]
+  set classes [ defines -class "$src" ]
+  foreach class $classes {
+    set n [ size [ get_member_data $class ] ]
+    if { $n > $lim } {
+      sappend $res $class
+      qdiag $class "Class `[ name -ignore $class ]' contains $n member variables\
+        (limit is $lim)"
+    }
+  }
+  return $res
+}
+
+proc met:class_ctor_xloc { src args } {
+  set lim [ getqlim $args 50 ]
+  set res [ filter "constructor && met_XLOC>$lim" [ defines -function "$src" ] ]
+  foreach ctor $res {
+    qdiag $ctor "Constructor `[ name -ignore $ctor ]' has [ met_XLOC -ignore $ctor ]\
+      lines of code (limit is $lim)"
+  }
+  return $res  
+}
+
+proc met:class_dtor_xloc { src args } {
+  set lim [ getqlim $args 50 ]
+  set res [ filter "destructor && met_XLOC>$lim" [ defines -function "$src" ] ]
+  foreach dtor $res {
+    qdiag $dtor "Destructor `[ name -ignore $dtor ]' has [ met_XLOC -ignore $dtor ]\
+      lines of code (limit is $lim)"
+  }
+  return $res
+}

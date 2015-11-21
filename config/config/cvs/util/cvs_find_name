@@ -1,0 +1,10 @@
+#!/bin/sh -f
+
+dn=`dirname $cm_sysfile`
+bn=`basename $cm_sysfile`
+
+cr=`$PSETCFG/util/cvs_find_root`
+
+if [ "$cr" != "-" ]; then
+    cat $dn/CVS/Repository | echo `sed "s%$cr/%%"`/$bn
+fi

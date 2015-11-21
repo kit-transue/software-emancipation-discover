@@ -1,0 +1,30 @@
+CXXROOTS=\
+	IntegratorSocket\
+	Integrator\
+	CMIntegrator\
+	CMCommand\
+	CMIntegratorCtrlr\
+	CMAttributesDlg
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/api/include \
+-I$(BUILD_SRC_ROOT)/model_server/api/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/impact/include \
+-I$(BUILD_SRC_ROOT)/impact/include \
+-I$(LOCAL_SRC_ROOT)/nameserver/include \
+-I$(BUILD_SRC_ROOT)/nameserver/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \

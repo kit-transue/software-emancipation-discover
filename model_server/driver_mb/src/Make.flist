@@ -1,0 +1,8 @@
+CXXROOTS=\
+    disbuild.h \
+    disbuild_cache.h \
+    disbuild_analysis.h \
+    disbuild_flags.h \
+    disbuild_update.h
+
+

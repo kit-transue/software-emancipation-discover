@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Converting Entities</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {text-decoration: underline ; color: #ff6262}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 12.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Converting Entities</b></p>
+<p class="p2"><span class="s1"><a href="../access_04_fundamentals/access_fundamentals.html#XREF_Access_Fundamentals">Access Fundamentals</a></span> introduces four basic Access data types: symbols, instances, ast_nodes, and data_cells.</p>
+<p class="p2">The <span class="s2"><b>data</b></span> command attempts to convert entities from one type to another. Its syntax is:</p>
+<p class="p3">data [symbol|instance|node|cell] <span class="s3"><i>entity</i></span></p>
+<p class="p2">For a file, <span class="s2"><b>data node file</b> </span>returns an ast_root node that serves as a parent for all the otherwise-independent roots (like function definitions or top-level declarations) in a file.</p>
+<p class="p2">For a function, <span class="s2"><b>data node function</b></span> returns the root node of that function definition.</p>
+<p class="p2"><span class="s2"><b>data node</b></span> may, under some circumstances, also be applied to an instance. In this case, the AST node that spans the instance’s source text region is returned. For example, <span class="s2"><b>data node instance-of-function</b></span> should return the AST node that represents the call to the function.</p>
+<p class="p2">Conversion of instances to nodes is efficient if not completely reliable.</p>
+<p class="p2">AST nodes may be converted to their corresponding symbol using the <span class="s2"><b>data symbol</b></span> command.</p>
+<p class="p2">See also the <span class="s2">s.symbol_attribute</span> syntax in an attribute expression.</p>
+</body>
+</html>

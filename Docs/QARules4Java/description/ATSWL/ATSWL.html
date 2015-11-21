@@ -1,0 +1,43 @@
+<html>
+<body>
+
+<p><b>ATSWL - Append To String Within a Loop</b></p>
+
+<p>Performance enhancements can be obtained by replacing
+String operations with StringBuffer operations if a
+String object is appended to within a loop.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class ATSWL {<br>
+&nbsp; &nbsp; public String func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; String var = "var";<br>
+&nbsp; &nbsp; &nbsp; &nbsp; for (int i = 0; i &lt; 10; i++) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>var += (" " + i); </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return var;<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Use StringBuffer class instead of String
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class ATSWL {<br>
+&nbsp; &nbsp; public String func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; StringBuffer var = new StringBuffer("var");<br>
+&nbsp; &nbsp; &nbsp; &nbsp; for (int i = 0; i &lt; 10; i++) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>var.append(" " + i); </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return var.toString();<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

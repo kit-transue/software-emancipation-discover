@@ -1,0 +1,1 @@
+echo `finger $USER | grep real | sed 's/.*://g' |uniq`'\c'

@@ -1,0 +1,17 @@
+CPROOTS = \
+	idfDict \
+	idfMain \
+	idfSmt \
+	idfSymbol \
+	idfAst \
+	idfLocation \
+	if_diff_CBS \
+	idfMatchSmt \
+	idfMatchSymbol \
+	idfMatchAst \
+	idfReport \
+	idfModel
+
+
+
+

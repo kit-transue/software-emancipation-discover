@@ -1,0 +1,10 @@
+#!/bin/sh
+# cm_fast_put_src (ClearCase) - Check in the source file
+
+# exit script if we get any errors
+set -e
+
+echo "cleartool checkin -nc $cm_workfile"
+      cleartool checkin -nc $cm_workfile
+
+exit 0

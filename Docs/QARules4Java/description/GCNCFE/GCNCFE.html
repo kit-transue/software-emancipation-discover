@@ -1,0 +1,56 @@
+<html>
+<body>
+
+<p><b>GCNCFE - GC - Never Call <i>finalize()</i> method explicitly.</b></p>
+
+<p>Calling <i>finalize()</i> method explicitly insures that <i>finalize()</i> is called,
+but the Garbage Collection during runtime will call the <i>finalize()</i> method
+again when the object is collected.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.gctest;<br>
+<br>
+class GCNCFE {<br>
+&nbsp; public void finalize() throws Throwable {<br>
+&nbsp; &nbsp; super.finalize();<br>
+&nbsp; }<br>
+}<br>
+class Test {<br>
+&nbsp; void closeTest () throws Throwable {<br>
+&nbsp; &nbsp; <font color='red'> _test.finalize(); // this may get called again by Java Virtual Machine</font><br>
+&nbsp; &nbsp; _test = null;<br>
+&nbsp; }<br>
+&nbsp; private GCNCFE _test = new GCNCFE ();<br>
+}</nobr></code></p>
+
+<p><b>Tip:</b>
+Create a method to handle release of the memory then call this method from
+a <i>finalize()</i> method before the calling of the <i>super.finalize()</i> method.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package com.swemancipation.gctest;<br>
+<br>
+class GCNCFE {<br>
+<font color='blue'> 
+public void release() {<br>
+&nbsp; if (!closed) {<br>
+&nbsp; &nbsp; _test.finalize ();<br>
+&nbsp; &nbsp; closed = true;<br>
+&nbsp; }<br>
+}<br></font>
+public void finalize () throws Throwable {<br>
+&nbsp; <font color='blue'> release (); </font><br>
+&nbsp; super.finalize();<br>
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Nigel Warren, Philip Bishop: "Java in Practice - Design Styles and Idioms
+for Effective Java".  Addison-Wesley, 1999. pp.110-111</p>
+
+</body>
+</html>

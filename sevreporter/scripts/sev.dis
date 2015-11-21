@@ -1,0 +1,1632 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+#
+# Initialize:
+#
+
+proc sev_clear {} {
+  sev_init_node_types
+  sev_init_input_types
+  sev_init_report_formats
+  sev_init_result_filter
+  sev_clear_tree
+  sev_clear_cache
+
+  global SEV_CURRENT_SESSION
+  global SEV_UNITS
+  global SEV_POOL
+
+  catch { unset SEV_CURRENT_SESSION }
+  catch { unset SEV_UNITS }
+  catch { unset SEV_POOL }
+
+  return ""
+}
+
+proc sev_load_mru {} {
+
+  sev_init
+
+}
+
+proc sev_load_mru_session {} {
+
+  set good 0
+
+  catch { puts_verbose "sev: load_mru_session" }
+
+  catch {
+    set lasttime 0
+    set lastfile ""
+    set modules [ extfile list sev ]
+    foreach m $modules {
+      set fname [ fname $m ]
+      set mtime [ file mtime $fname ]
+      if { $mtime > $lasttime } {
+        set lastfile $fname
+      }
+    }
+    if { $lastfile != "" } {
+      set base [ file rootname [ file tail $lastfile ] ]
+      set output ""
+      if { [ catch { sev_load $base } output ] != 0 } {
+        set error "Error loading session: \"$base\""
+        global errorInfo
+        if { $errorInfo != "" } {
+          append error ":\n\n$errorInfo"
+        }
+        msg -error $error
+      } elseif { $output == "0" } {
+        set good 1
+      }
+    }
+  }
+
+  if { $good != "1" } {
+    sev_init
+  }
+}
+
+proc sev_base_lib {} {
+
+  set lib [ get_pref_value QACockpit.BaseLibrary ]
+
+  if { $lib == "" } {
+    global env
+    if { [ info exists env(PSETHOME) ] } {
+      set lib $env(PSETHOME)/lib/baselib.sc
+    }
+  }
+
+  return $lib
+}
+
+proc sev_import_init {} {
+
+  global SEV_IMPORT_INFO
+
+  if { [ info exists SEV_IMPORT_INFO ] } {
+    unset SEV_IMPORT_INFO
+  }
+
+  array set SEV_IMPORT_INFO {			\
+    gen,feature      VI6			\
+    port,feature     VI5			\
+    glob,feature     VIA			\
+    struct,feature   VI9			\
+    tcov,feature     VIB			\
+    nv_dtor,unit     class			\
+    ass_op_ret,unit  function			\
+    init_order,unit  class			\
+    ret_by_val,unit  function			\
+    pass_by_val,unit function			\
+    stackret,unit    function			\
+    file_tloc,unit   file			\
+    file_uloc,unit   file			\
+    file_xloc,unit   file			\
+    file_incl,unit   file			\
+    fun_tloc,unit    function			\
+    fun_uloc,unit    function			\
+    fun_xloc,unit    function			\
+    fun_cc,unit      function			\
+    fun_mc,unit      function			\
+    fun_nest,unit    function			\
+    fun_ret,unit     function			\
+    fun_loop,unit    function			\
+    fun_sw,unit      function			\
+    cov_file,unit    file			\
+    cov_fun,unit     function			\
+    cov_class,unit   class			\
+    cov_var,unit     xloc			\
+    file_tloc,lim    1000			\
+    file_uloc,lim    800			\
+    file_xloc,lim    800			\
+    file_incl,lim    25				\
+    fun_tloc,lim     150			\
+    fun_uloc,lim     120			\
+    fun_xloc,lim     120			\
+    fun_cc,lim       20				\
+    fun_mc,lim       20				\
+    fun_nest,lim     5				\
+    fun_ret,lim      2				\
+    fun_loop,lim     10				\
+    fun_sw,lim       10				\
+    fun_params,lim   6				\
+    class_subs,lim   20				\
+    class_supers,lim     1			\
+    class_funs,lim       50			\
+    class_vars,lim       25			\
+    class_ctor_xloc,lim  50			\
+    class_dtor_xloc,lim  50 }
+
+}
+
+proc sev_import_info { tag field } {
+
+  set ret ""
+
+  global SEV_IMPORT_INFO
+
+  if { [ info exists SEV_IMPORT_INFO($tag,$field) ] } {
+    set ret $SEV_IMPORT_INFO($tag,$field)
+  } elseif { $field == "unit" } {
+    return xloc
+  }
+
+  return $ret
+
+}
+
+proc sev_import_tree { node } {
+
+  set tree ""
+
+  set info(0) ""
+
+  foreach item [ querytree getall $node 1 ] {
+    set key [ lindex $item 0 ]
+    set val [ lindex $item 3 ]
+    set info($key) $val
+  }
+
+  if { [ info exists info(tag) ] } {
+    set itag "@@$info(tag)"
+  } else {
+    set itag @@
+  }
+
+  set type [ querytree type $node ]
+
+  if { $type == "folder" } {
+    set feature [ sev_import_info $info(tag) feature ]
+    set weight 10
+    set contents ""
+    set queries [ querytree find $node query 1 ]
+    set folders [ querytree find $node folder 1 ]
+    foreach child [ concat $queries $folders ] {
+      if { $child != $node } {
+        lappend contents [ sev_import_tree $child ]
+      }
+    }
+    set tree [ list folder $info(name) $itag $weight $info(enabled) $contents ]
+  } elseif { $type == "query" } {
+    set weight 10
+    set unit [ sev_import_info $info(tag) unit ]
+    set base [ list $info(name) $itag $info(cmd) $weight $info(enabled) $unit ]
+    set threshold [ sev_import_info $info(tag) lim ]
+    if { $threshold == "" } {
+      set tree [ concat query_0 $base ]
+    } else {
+      set tree [ concat query_1 $base $threshold ]
+    }
+  } elseif { $type == "root" } {
+    set queries [ querytree find $node query 1 ]
+    set folders [ querytree find $node folder 1 ]
+    foreach child [ concat $queries $folders ] {
+      if { $child != $node } {
+        set subtree [ sev_import_tree $child ]
+        if { $subtree != "" } {
+          sev_add_tree / $subtree
+        }
+      }
+    }
+  } else {
+    # do nothing
+  }
+
+  return $tree
+
+}
+
+proc sev_add_stats {} {
+  set tree											\
+    {folder		".Statistics"				@@stats 0 1 {			\
+      {folder		"File statistics"			@@file_stat 0 1 {		\
+        {query_2	"Total lines"				@@ stat:file_tloc 1}		\
+        {query_2	"Uncommented lines"			@@ stat:file_uloc 1}		\
+        {query_2	"Executable lines"			@@ stat:file_xloc 1}		\
+        {query_2	"Include directives"		@@ stat:file_incl 1}}}		\
+      {folder		"Function statistics"		@@fun_stat 0 1 {		\
+        {query_2	"Total lines"				@@ stat:func_tloc 1}		\
+        {query_2	"Uncommented lines"			@@ stat:func_uloc 1}		\
+        {query_2	"Executable lines"			@@ stat:func_xloc 1}		\
+        {query_2	"Cyclomatic complexity"		@@ stat:func_cc 1}		\
+        {query_2	"Myers' complexity"			@@ stat:func_myers 1}		\
+        {query_2	"Nested control statements"	@@ stat:func_depth 1}		\
+        {query_2	"Return statements"			@@ stat:func_ret 1}		\
+        {query_2	"Dangling else-ifs"			@@ stat:func_dei 1}		\
+        {query_2	"If statements"				@@ stat:func_ifs 1}		\
+        {query_2	"Loop statements"			@@ stat:func_loops 1}		\
+        {query_2	"Switch statements"			@@ stat:func_sw 1}		\
+        {query_2	"Defaultless switches"		@@ stat:func_sw_dang 1}}}	\
+      {folder		"Class statistics"			@@class_stat 0 1 {		\
+		{query_2	"Direct sub-classes"	    @@ stat:class_fanout 1}		\
+        {query_2	"Direct super-classes"	    @@ stat:class_fanin 1}}}}}
+  sev_add_tree / $tree
+}
+
+proc sev_init {} {
+
+  catch { puts_verbose "sev: init" }
+
+  sev_init_scripts
+  sev_clear
+
+  set lib [ sev_base_lib ]
+  if { ! ([ file isfile $lib ] && [ file readable $lib ]) } {
+    msg -error "File does not exist or is not readable: \"$lib\"."
+  } else {
+    set tree [ querytree read $lib ]
+    sev_import_init
+    sev_import_tree $tree
+    sev_add_stats
+  }
+
+  sev_clear_result /
+  sev_calc_score /
+
+  set nil [ nil_set ]
+  sev_init_pool $nil $nil
+
+  global SEV_CURRENT_SESSION
+  set SEV_CURRENT_SESSION ""
+
+  return ""
+
+}
+
+proc sev_reset {} {
+
+  catch { puts_verbose "sev: reset" }
+
+  global SEV_CURRENT_SESSION
+  set    old ""
+
+  if { [ info exists SEV_CURRENT_SESSION ] } {
+    set old $SEV_CURRENT_SESSION
+  }
+
+  sev_init
+
+  if { [ info exists SEV_CURRENT_SESSION ] } {
+    set SEV_CURRENT_SESSION $old
+  }
+  
+  return ""
+}
+
+proc sev_init_node_types {} {
+  global SEV_NODE_TYPES
+  set SEV_NODE_TYPES(folder)  { type name tag weight on children            adj score iscore }
+  set SEV_NODE_TYPES(query_0) { type name tag proc weight on unit           adj score iscore hitno total retval }
+  set SEV_NODE_TYPES(query_1) { type name tag proc weight on unit threshold adj score iscore hitno total retval }
+  set SEV_NODE_TYPES(query_2) { type name tag proc on                       highest lowest avg stddev retval }
+
+  global SEV_NODE_TYPES_DYN
+  set SEV_NODE_TYPES_DYN(folder)  6
+  set SEV_NODE_TYPES_DYN(query_0) 7
+  set SEV_NODE_TYPES_DYN(query_1) 8
+  set SEV_NODE_TYPES_DYN(query_2) 5
+}
+
+proc sev_init_input_types {} {
+  global SEV_INPUT_TYPES
+  if { [ info exists SEV_INPUT_TYPES ] } { unset SEV_INPUT_TYPES }
+  set {SEV_INPUT_TYPES(Browser Selection)} selection
+  set {SEV_INPUT_TYPES(Current Scope)} scope
+  set {SEV_INPUT_TYPES(Group Selection)} group
+}
+
+proc sev_get_input_types {} {
+  global SEV_INPUT_TYPES
+  return [ array names SEV_INPUT_TYPES ]
+}
+
+proc sev_init_report_formats {} {
+  global SEV_REPORT_FORMATS
+  set SEV_REPORT_FORMATS { HTML "SUMMARY TEXT" "DETAILED TEXT"}
+}
+
+proc sev_get_report_formats {} {
+  global SEV_REPORT_FORMATS
+  return $SEV_REPORT_FORMATS
+}
+
+proc sev_init_result_filter {} {
+
+  global SEV_ATTRIBUTE_NAME
+  global SEV_ATTRIBUTE_FILTER_EXPRESSION
+  global SEV_ATTRIBUTE_HIDE_LIST
+
+  if { [ get_bool_pref QACockpit.AttributeFilter ] == "1" } {
+    set SEV_ATTRIBUTE_NAME Severity
+    set SEV_ATTRIBUTE_FILTER_EXPRESSION "$SEV_ATTRIBUTE_NAME != \"0\""
+    set SEV_ATTRIBUTE_HIDE_LIST "Status"
+
+    if { [ attribute exists $SEV_ATTRIBUTE_NAME ] != "1" } {
+      attribute enum $SEV_ATTRIBUTE_NAME { 0 1 2 3 }
+    }
+  } else {
+    foreach var [ list SEV_ATTRIBUTE_NAME \
+                       SEV_ATTRIBUTE_FILTER_EXPRESSION \
+                       SEV_ATTRIBUTE_HIDE_LIST ] {
+      catch { unset $var }
+    }
+  }
+}
+
+proc sev_trim_hits { syms } {
+  set res [ nil_set ]
+  if { [ size -ignore $syms ] > 0 } {
+    set res $syms
+    global SEV_ATTRIBUTE_FILTER_EXPRESSION
+    if { [ info exists SEV_ATTRIBUTE_FILTER_EXPRESSION ] } {
+      set res [ filter $SEV_ATTRIBUTE_FILTER_EXPRESSION $syms ]
+    }
+  }
+  return $res
+}
+
+proc sev_init_scripts {} {
+  set code [ catch {
+    source_dis java.dis
+    source_dis lang.dis
+    source_dis port.dis
+    source_dis glob.dis
+    source_dis struct.dis
+    source_dis stat.dis
+    source_dis sevutil.dis
+    source_dis misc.dis
+    source_dis workflow_aux.dis
+    source_dis closure.dis
+    source_dis attview.dis
+  } errmsg ]
+
+  if { $code != 0 } {
+    if { $errmsg == "" } {
+      global errorInfo
+      if { [ info exists errorInfo ] } {
+        set errmsg $errorInfo
+      }
+    }
+    msg -error "Error during initialization:\n\n$errmsg"
+  }
+}
+
+proc sev_clear_tree {} {
+  global SEV_TREE
+  if { [ info exists SEV_TREE ] } { unset SEV_TREE }
+  set SEV_TREE(/) {folder ROOT @@intro 1 1 {} 0 0 0}
+  if { [ info exists SEV_IMPORT_INFO ] } { unset SEV_IMPORT_INFO }
+}
+
+proc sev_add_tree { path tree } {
+
+  set name [ lindex $tree 1 ]
+  if { $name == "ROOT" } {
+    set path /
+  } else {
+    sev_add $path children $name
+    set path [ file join $path $name ]
+  }
+
+  set type [ lindex $tree 0 ]
+
+  if { $type == "folder" } {
+    set len [ llength $tree ]
+    sev_set_item $path [ concat [ lrange $tree 0 4 ] "{}" ]
+    set children [ lindex $tree 5 ]
+    foreach child $children {
+      sev_add_tree $path $child
+    }
+  } else {
+    sev_set_item $path $tree
+  }
+
+  global SEV_NODE_TYPES
+  set nfield [ llength $SEV_NODE_TYPES($type) ]
+  set len [ llength [ sev_get_item $path ] ]
+  while { $len < $nfield } {
+    sev_append_to_item $path 0
+    incr len
+  }
+
+  if { $type == "query_0" || $type == "query_1" } {
+    set retval [ sev_get $path retval ]
+    if { $retval != 0 && [ group exists $retval ] != 0 } {
+      set retval [ group get $retval ]
+      sev_set $path retval $retval
+      sev_set $path hitno [ size -ignore $retval ]
+    } else {
+      sev_set $path retval [ nil_set ]
+      sev_set $path hitno 0
+    }
+  }
+}
+
+proc sev_set_item { path val } {
+  global SEV_TREE
+  set SEV_TREE($path) $val
+}
+
+proc sev_get_item { path } {
+  global SEV_TREE
+  return $SEV_TREE($path)
+}
+
+proc sev_append_to_item { path val } {
+  global SEV_TREE
+  lappend SEV_TREE($path) $val
+}
+
+proc sev_set { path field val } {
+  global SEV_NODE_TYPES
+  set type [ sev_get $path type ]
+  set pos [ lsearch $SEV_NODE_TYPES($type) $field ]
+  if { $pos < 0 } { set pos $field }
+  if { [ regexp {^[0-9]+$} $pos ] == 1 } {
+    sev_set_item $path [ lreplace [ sev_get_item $path ] $pos $pos $val ]
+  }
+}
+
+proc sev_get { path field } {
+  global SEV_NODE_TYPES
+  set item [ sev_get_item $path ]
+  set type [ lindex $item 0 ]
+
+  set val ""
+
+  set pos [ lsearch $SEV_NODE_TYPES($type) $field ]
+
+  if { $pos < 0 } { set pos $field }
+
+  if { $val == "" } {
+    if { [ regexp {^[0-9]+$} $pos ] == 1 } {
+      set val [ lindex $item $pos ]
+      if { $field == "hitno" } {
+        catch {
+          set hits [ sev_get $path retval ]
+          set val [ size [ sev_trim_hits $hits ] ]
+        }
+      }
+    } else {
+      set val 0
+    }
+  }
+
+  return $val
+}
+
+proc sev_add { path field val } {
+  set new [ sev_get $path $field ]
+  lappend new $val
+  sev_set $path $field $new
+}
+
+proc sev_total_attr { elements attr } {
+
+  set total 0
+
+  # apply uniques its output and so cannot be used:
+  # set vals [ apply $attr $elements ]
+
+  foreach el $elements {
+    set val [ apply $attr $el ]
+    if { $val != -1 } {
+      set t -1
+      catch { set t [ expr $total + $val ] }
+      if { $t != "-1" } {
+        set total $t
+      }
+    }
+  }
+
+  return $total
+}
+
+proc sev_init_units {} {
+  global SEV_UNITS SEV_UNITS_DESC SEV_POOL
+  if { [ info exists SEV_UNITS ] } { unset SEV_UNITS }
+
+  set defines $SEV_POOL(defines)
+  set uses $SEV_POOL(uses)
+
+  set SEV_UNITS(file) [ size [ filter file $defines ] ]
+  set SEV_UNITS(function) [ size [ filter function $defines ] ]
+  set SEV_UNITS(var) [ size [ filter var $defines ] ]
+  set SEV_UNITS(class) [ size [ filter class $defines ] ]
+  set SEV_UNITS(struct) [ size [ filter struct $defines ] ]
+  set SEV_UNITS(union) [ size [ filter union $defines ] ]
+  set SEV_UNITS(enum) [ size [ filter enum $defines ] ]
+  set SEV_UNITS(typedef) [ size [ filter typedef $defines ] ]
+  set SEV_UNITS(macro) [ size [ filter macro $defines ] ]
+  set SEV_UNITS(template) [ size [ filter template $defines ] ]
+  set SEV_UNITS(string) [ size [ filter string $uses ] ]
+  set SEV_UNITS(local) [ size [ filter local $uses ] ]
+
+  set SEV_UNITS(tloc) [ sev_total_attr $SEV_POOL(scope) met_LOC ]
+  set SEV_UNITS(xloc) [ sev_total_attr $SEV_POOL(scope) met_XLOC ]
+  set uloc [ sev_total_attr $SEV_POOL(scope) met_ULOC ]
+  set SEV_UNITS(cloc) [ expr $SEV_UNITS(tloc) - $uloc ]
+}
+
+proc sev_init_pool { scope orig } {
+
+  global SEV_POOL
+  set usecache 0
+  if { [ info exists SEV_POOL(orig) ] } {
+    set old $SEV_POOL(orig)
+    if { [ seteq $old $orig ] } {
+      set usecache 1
+      puts_verbose "sev: using cache: sev_init_pool"
+    }
+  }
+
+  if { $usecache != "1" } {
+    if { [ info exists SEV_POOL ] } { unset SEV_POOL }
+
+    sev_elem_pool $scope
+
+    global _SEV_CACHE_POOL
+
+    set SEV_POOL(defines) $_SEV_CACHE_POOL(defines)
+    set SEV_POOL(uses)    $_SEV_CACHE_POOL(uses)
+    set SEV_POOL(all)     $_SEV_CACHE_POOL(all)
+    set SEV_POOL(scope)   [ set_copy $scope ]
+    set SEV_POOL(orig)    [ set_copy $orig ]
+
+    sev_init_units
+  }
+}
+
+proc sev_clear_result { path } {
+  global SEV_NODE_TYPES SEV_NODE_TYPES_DYN
+  set type [ sev_get $path type ]
+  set last [ expr [ llength $SEV_NODE_TYPES($type) ] - 1 ]
+  set index $SEV_NODE_TYPES_DYN($type)
+  while { $index <= $last } {
+    set field [ lindex $SEV_NODE_TYPES($type) $index ]
+    if { $field == "score" } {
+      sev_set $path $index 100.00
+    } else {
+      sev_set $path $index 0
+    }
+    incr index
+  }
+
+  if { $type == "folder" } {
+    set children [ sev_get $path children ]
+    foreach child $children {
+      set subpath [ file join $path $child ]
+      sev_clear_result $subpath
+    }
+  }
+}
+
+proc fp { num } {
+  if { [ string match "*.*" $num ] } {
+    return $num
+  } else {
+    return ${num}.
+  }
+}
+
+proc sev_record_result { path retval } {
+  set type [ sev_get $path type ]
+  if { "$type" == "query_0" || "$type" == "query_1" } {
+    set oldret [ sev_get $path retval ]
+    if { [ size -ignore $oldret ] > 0 } {
+      if { [ size -ignore $retval ] > 0 } {
+        set new [ set_subtract $retval $oldret ]
+        sappend $oldret $new
+      }
+      set hitno [ size $oldret ]
+    } else {
+      sev_set $path retval $retval
+      set hitno [ size $retval ]
+    }
+    sev_set $path hitno $hitno
+
+    global SEV_UNITS
+    set unit [ sev_get $path unit ]
+    set total 0
+    if { [ info exists SEV_UNITS($unit) ] } { set total $SEV_UNITS($unit) }
+    sev_set $path total $total
+
+  } else {
+
+    sev_set $path retval $retval
+
+    set lowest  [ lindex $retval 0 ]
+    set highest [ lindex $retval 1 ]
+    set avg     [ lindex $retval 2 ]
+    set stddev  [ lindex $retval 3 ]
+
+    if { $highest == "" } { set highest -1 }
+    if { $lowest == "" }  { set lowest -1 }
+    if { $avg == "" }     {set avg -1}
+    if { $stddev == "" }  { set stddev -1 }
+
+    sev_set $path highest [ format "%.2f" [ expr $highest ] ]
+    sev_set $path lowest  [ format "%.2f" [ expr $lowest ] ]
+    sev_set $path avg     [ format "%.2f" [ expr $avg ] ]
+    sev_set $path stddev  [ format "%.2f" [ expr $stddev ] ]
+  }
+}
+
+proc sev_get_active_queries { path } {
+
+  set ret ""
+
+  set on [ sev_get $path on ]
+  if { $on == 1 } {
+    set type [ sev_get $path type ]
+    if { $type == "folder" } {
+      set children [ sev_get $path children ]
+      foreach child $children {
+        set subpath [ file join $path $child ]
+        set active [ sev_get_active_queries $subpath ]
+        if { $active != "" } {
+          foreach query $active {
+            lappend ret $query
+	  }
+        }
+      }
+    } else {
+      set ret \{$path\}
+    }
+  }
+
+  return $ret
+}
+
+proc sev_get_active_children { path } {
+  set ret ""
+  set children [ sev_get $path children ]
+  foreach child $children {
+    set subpath [ file join $path $child ]
+    set on [ sev_get $subpath on ]
+    if { $on == 1 } {
+      lappend ret $subpath
+    }
+  }
+  return $ret
+}
+
+# used for profiling:
+#
+# proc _sev_run_query { path input fname } {
+#
+#   set time [ lindex [ time {_sev_run_query_internal $path $input} ] 0 ]
+#   global PROFILE_LOG
+#   puts $PROFILE_LOG "0 $time $fffname [ sev_get $path proc ]"
+#
+# }
+
+proc _sev_run_query { path input } {
+
+  set msg ""
+
+  set name [ sev_get $path name ]
+  set cmd [ sev_get $path proc ]
+  set type [ sev_get $path type ]
+  lappend cmd $input
+  if { $type == "query_1" } { append cmd " [ sev_get $path threshold ]" }
+  puts_verbose "sev: running command: \"$cmd\""
+  global QUERYDIAG
+  if { [ info exists QUERYDIAG ] } { unset QUERYDIAG }
+  # object storage is not handled when passing through catch:
+  if { [ catch { set retval [ eval $cmd ] ; sev_record_result $path $retval } errmsg ] != 0 } {
+    if { $errmsg == "" } {
+      global errorInfo
+      if { [ info exists errorInfo ] } {
+        set errmsg $errorInfo
+      }
+    }
+    set items ""
+    foreach sym $input { append items "\"[ name $sym ]\" " }
+    append msg "QUERY FAILED: \"$name\"\n"
+    append msg "INPUT: $items\n"
+    append msg "ERROR: $errmsg\n"
+  }
+
+  return $msg
+}
+
+proc sev_run { path input } {
+  # used for profiling:
+  #
+  # global env
+  # if { [ info exists env(SEV_PROFILE_LOG) ] } {
+  #   set fname $env(SEV_PROFILE_LOG)
+  # } else {
+  #   set fname sev_profile.log
+  # }
+  # global PROFILE_LOG
+  # set PROFILE_LOG [ open $fname w+ ]
+
+  set START_DATE ""
+  catch { set START_DATE [ echo_date ] }
+
+  #
+  # Coerce the input:
+  #
+
+  global SEV_INPUT_TYPES
+  if { [ info exists SEV_INPUT_TYPES($input) ] } {
+    set input $SEV_INPUT_TYPES($input)
+  }
+  if { [ catch { set input [ sel2sym $input "" ] } err ] != 0 } {
+    msg -error "Error getting input:\n\n$err"
+    return
+  }
+  set orig_input [ set_unique [ set_copy $input ] ]
+  set input [ set_unique [ defines -module $input ] ]
+  if { [ size $input ] <= 0 } {
+    msg -error "Your selection must contain at least one project or module."
+    return
+  }
+
+  # Check for AST information
+  set localVars_val [ get_pref_value DIS_model.LocalVars_Enabled ]
+  set y2k_val [ get_pref_value DIS_model.GenerateY2KInfo ]
+  set dfa_val [ get_pref_value doBuildDFA ]
+  if { ( $localVars_val == "0" || $localVars_val == "no") &&
+       ( $y2k_val < 1 ) &&
+       ( $dfa_val == "0" || $dfa_val == "no") } {
+  	set msg "Model does not have AST information.\nFor better results please set DIS_model.GenerateY2KInfo preference to 2 \nand build the model.\n"
+	msg -warning $msg
+  }
+
+  #
+  # Get the queries:
+  #
+
+  set queries [ sev_get_active_queries $path ]
+  if { [ llength $queries ] < 1 } {
+    msg -error "No queries to run."
+    return
+  }
+  set hitq ""
+  set statq ""
+
+  foreach query $queries {
+    sev_clear_result $query
+    set type [ sev_get $query type ]
+    if { $type == "query_0" || $type == "query_1" } {
+      lappend hitq $query
+    } elseif { $type == "query_2" } {
+      lappend statq $query
+    }
+  }
+
+  ## (files * queries) + statistical queries + initialization + score + groups
+  ## set total [ expr ([ size $input ] * [ llength $hitq ]) + [ llength $statq ] + 1 + 1 + 1 ]
+
+  # files + statistical queries + initialization + score + groups
+  set total [ expr [ size $input ] + 4 ]
+
+  catch {
+    status start -ok -title "Caliper" \
+    "                                    Initializing...                                    " \
+    $total
+  }
+
+  sev_init_pool $input $orig_input
+
+  sev_calc_score /
+
+  # init is complete; count reflects this
+  set count 1
+  set msgs ""
+  set cancelled 0
+
+  if { [ llength $hitq ] > 0 } {
+    set nfiles [ size $input ]
+    foreach module $input {
+      set mod [ set_copy -warn $module ]
+      set lname [ lname $mod ]
+      ##set fname [ fname $mod ]
+      set progress " Processing file: $lname "
+      catch { status query $progress $count } cancelled
+      if { $cancelled == "1" } { break }
+      set was_loaded [ is_loaded $mod ]
+      set stop 0
+      set tog 0
+      foreach query $hitq {
+        if { $nfiles < 25 } {
+          if { $tog } { set _progress " $progress "; set tog 0 } \
+          else { set _progress $progress; set tog 1 }
+          catch { status query $_progress $count } cancelled
+          if { $cancelled == "1" } { set stop 1 ; break }
+        }
+        set msg [ _sev_run_query $query $mod ]  ;## $fname
+        if { $msg != "" } { append msgs "$msg\n" }
+      }
+      # unload the file:
+      if { ! $was_loaded } {
+        if { [ is_loaded $mod ] } {
+          src_unload $mod
+        }
+      }
+      if { $stop == 1 } { break }
+      incr count
+    }
+  }
+
+  catch { status query "Gathering statistical data..." $count } cancelled
+
+  if { $cancelled != "1" } {
+    foreach query $statq {
+      set msg [ _sev_run_query $query $input]  ;## %%%
+      if { $msg != "" } { append msgs "$msg\n" }
+    }
+    incr count
+    catch { status query "Calculating score..." $count } cancelled
+    if { $cancelled != "1" } {
+      sev_calc_score /
+      incr count
+      catch { status query "Storing results..." $count } cancelled
+      if { $cancelled != 1 } {
+        global SEV_CURRENT_SESSION
+        set old ""
+        if { [ info exists SEV_CURRENT_SESSION ] } {
+          set old $SEV_CURRENT_SESSION
+        }
+        #catch { sev_save default_run }
+        set SEV_CURRENT_SESSION $old
+      }
+    }
+  }
+
+  catch { status end }
+  set END_DATE ""
+  catch { set END_DATE [ echo_date ] }
+
+  if { $START_DATE != "" && $END_DATE != "" } {
+    regsub "\n" $START_DATE {} START_DATE
+    regsub "\n" $END_DATE {} END_DATE
+    puts_verbose "sev: start: $START_DATE"
+    puts_verbose "sev: end:   $END_DATE"
+  }
+
+  # used for profiling:
+  #
+  # flush $PROFILE_LOG
+  # close $PROFILE_LOG
+
+  return $msgs
+}
+
+proc sev_set_adj { path } {
+  # special case:
+  if { $path == "/" } { sev_set $path adj 1 }
+  set type [ sev_get $path type ]
+  if { "$type" == "folder" } {
+    set total 0
+    set children [ sev_get_active_children $path ]
+    foreach child $children {
+      set subpath [ file join $path $child ]
+      set weight [ sev_get $subpath weight ]
+      set total [ expr $total + $weight ]
+    }
+    foreach child $children {
+      set subpath [ file join $path $child ]
+      set weight [ sev_get $subpath weight ]
+      set weight [ fp $weight ]
+      set total [ fp $total ]
+      set adj [ expr $weight / ($total ? $total : 1.0) ]
+      sev_set $subpath adj $adj
+      sev_set_adj $subpath
+    }
+  }
+}
+
+proc round_off { x precision } {
+  global tcl_precision
+  set old_precision $tcl_precision
+  set tcl_precision $precision
+  set ret [ expr $x ]
+  set tcl_precision $old_precision
+  return $ret
+}
+
+proc sev_calc_score { path } {
+  sev_set_adj [ file dirname $path ]
+  _sev_calc_score $path
+}
+
+proc _sev_calc_score { path } {
+  set type [ sev_get $path type ]
+  if { "$type" == "folder" } {
+    set children [ sev_get_active_children $path ]
+    foreach child $children {
+      set subpath [ file join $path $child ]
+      _sev_calc_score $subpath
+    }
+    set total 0
+    foreach child $children {
+      set subpath [ file join $path $child ]
+      set iscore [ sev_get $subpath iscore ]
+      set iscore [ fp $iscore ]
+      set adj [ sev_get $subpath adj ]
+      set adj [ fp $adj ]
+      set wscore [ expr $adj * $iscore ]
+      set total [ expr $total + $wscore ]
+      ##set total [ expr $total + $iscore ]
+    }
+    set total [ fp $total ]
+    ##set adj [ sev_get $path adj ]
+    ##set adj [ fp $adj ]
+    ##set iscore [ expr $adj * $total ]
+    set iscore $total
+    if { $iscore > 1 } { set iscore 1.0 }
+    ##set score [ round_off [ expr (1.0 - $iscore) * 1000 ] 6 ]
+    set score [ expr $iscore * 3.0 ]
+    if { $score > 1.0 } { set score 1.0 }
+    set score [ expr (1 - $score) * 100.0 ]
+    set score [ format "%.2f" $score ]
+    sev_set $path iscore $iscore
+    sev_set $path score $score
+  } elseif { $type == "query_0" || $type == "query_1" } {
+    set total [ sev_get $path total ]
+    set hitno [ sev_get $path hitno ]
+    if { $hitno > $total } {
+      set hitno $total
+      sev_set $path hitno $hitno
+    }
+    set hitno [ fp $hitno ]
+    set total [ fp $total ]
+    set ratio [ expr $total ? $hitno / $total : 0.0 ]
+    set ratio [ fp $ratio ]
+    ##set adj [ sev_get $path adj ]
+    ##set adj [ fp $adj ]
+    ##set iscore [ expr $adj * $ratio ]
+    set iscore $ratio
+    if { $iscore > 1 } { set iscore 1.0 }
+    ##set score [ round_off [ expr (1.0 - $iscore) * 1000 ] 6 ]
+    set score [ expr $iscore * 3.0 ]
+    if { $score > 1.0 } { set score 1.0 }
+    set score [ expr (1 - $score) * 100.0 ]
+    set score [ format "%.2f" $score ]
+    sev_set $path iscore $iscore
+    sev_set $path score $score
+  }
+}
+
+proc sev_browse_results { path } {
+  set elems [ sev_get_results $path ]
+  set elems [ set_copy -ignore $elems ]
+  set_result $elems
+  if { [ info commands vcr ] != "" } {
+    global SEV_ATTRIBUTE_HIDE_LIST
+    global dis_attr_hide_list
+    if { [ info exists SEV_ATTRIBUTE_HIDE_LIST ] } {
+      set dis_attr_hide_list $SEV_ATTRIBUTE_HIDE_LIST 
+    }
+
+    # uncomment this to filter out hits that don't
+    # pass the attribute expression:
+    #
+    # set elems [ sev_trim_hits $elems ]
+
+    set name [ sev_get $path name ]
+    if { $name == "" } { set name [ file tail $path ] }
+    vcr $elems -title $name
+  } elseif { [ info commands set_mini ] != "" } {
+    set_mini $elems
+  }
+}
+
+proc sev_get_results { path } {
+
+  set elems [ nil_set ]
+
+  set type [ sev_get $path type ]
+  if { $type == "folder" } {
+    set children [ sev_get $path children ]
+    foreach child $children {
+      set subpath [ file join $path $child ]
+      sappend $elems [ sev_get_results $subpath ]
+    }
+  } elseif { $type == "query_0" || $type == "query_1" } {
+    set retval [ sev_get $path retval ]
+    if { $retval != 0 } {
+      set retval [ set_copy -warn $retval ]
+      sappend $elems $retval
+    }
+  }
+
+  return $elems
+}
+
+proc sev_hit_report { filename path } {
+  set file [open $filename a]
+  puts $file "DISCOVER Quality Assessment Report"
+  puts $file "----------------------------------"
+
+  global SEV_HIT_REPORT_LOADED
+  set SEV_HIT_REPORT_LOADED [ nil_set ]
+
+  _sev_hit_report $file $path 1
+
+  foreach mod $SEV_HIT_REPORT_LOADED { catch { src_unload $mod } }
+  unset SEV_HIT_REPORT_LOADED
+  close $file
+}
+
+proc incridx { index } {
+
+  set ret ""
+
+  if { [ regexp {\.} $index ] } {
+    regsub {\.[^\.]*$} $index {} major
+    regsub {.*\.([^\.]*$)} $index {\1} minor
+    if { $major == "" } { set major $index }
+    if { $minor == "" } { set minor 0 }
+    set minor [ expr $minor + 1 ]
+    set ret "$major.$minor"
+  } else {
+    set ret [ expr $index + 1 ]
+  }
+
+  return $ret
+}
+
+proc _sev_hit_report { file path index } {
+
+  set on [ sev_get $path on ]
+
+  if { $on == 1 } {
+
+    set type [ sev_get $path type ]
+    set name [ sev_get $path name ]
+
+    if { $type == "folder" && [ string index $name 0 ] != "." } {
+      if { $path == "/" } {
+        set index 0
+      } else {
+        > $file { puts $file [ format "%s %s\n" "\[$index\]" "$name" ] }
+        set index $index.0
+      }
+      set children [ sev_get $path children ]
+      foreach child $children {
+        set subpath [ file join $path $child ]
+        set on [ sev_get $subpath on ]
+        if { $on == 1 } {
+          set index [ incridx $index ]
+          _sev_hit_report $file $subpath $index
+        }
+      }
+    } elseif { $type == "query_0" || $type == "query_1" } {
+      if { $type == "query_1" } {
+        set title "[ sev_get $path name ] > [ sev_get $path threshold ]"
+      } else {
+        set title $name
+      }
+      set elems [ sev_get_results $path ]
+      # filter out mis-hits according to the attribute expression:
+      # set elems [ sev_trim_hits $elems ]
+      set elems [ sort lname $elems ]
+      set size [ size $elems ]
+      set title "$title ($size)"
+      > $file { puts $file [ format "%s %s\n" "\[$index\]" $title ] }
+      set count 1
+      while { $count <= $size } {
+        set el [ set_copy $elems $count ]
+        set kind [ kind $el ]
+        set lname [ lname $el ]
+        set module [ where defined $el ]
+        set was_loaded 0
+        if { ([ size $module ] > 0) && ([ is_loaded $module ]) } {
+          set was_loaded 1
+        }
+
+        set line [ line $el ]
+        set name [ name $el ]
+        if { $name == "" } {
+          set name [ ast_text [ data node $el ] ]
+        }
+        regsub -all "\n+" $name " " name
+        regsub -all " +" $name " " name
+
+        if { $line != "-1" } {
+          set pos "$lname:$line"
+        } else {
+          set pos "$lname"
+        }
+
+        set attribute ""
+        global SEV_ATTRIBUTE_NAME
+        if { [ info exists SEV_ATTRIBUTE_NAME ] } {
+          set attribute [ apply $SEV_ATTRIBUTE_NAME $el ]
+          if { $attribute == {{}} } {
+            set attribute ""
+          }
+          if { $attribute != "" } {
+            set attribute "<$attribute>"
+          }
+        }
+
+        set text [ format "%-5.5s %-12.12s %-30s %-10.10s %.95s"   \
+                          "$count."                                \
+                          "($kind)"                                \
+                          "\[$pos\]"                               \
+                          "$attribute"                             \
+                          "$name" ]
+        > $file { puts $file "$text" }
+        incr count
+
+        if { ! $was_loaded } {
+          global SEV_HIT_REPORT_LOADED
+          set mod [ set_copy -ignore $lname ]
+          if { [ size $mod ] > 0 } {
+            sappend $SEV_HIT_REPORT_LOADED $mod
+            if { [ size $SEV_HIT_REPORT_LOADED ] > 100 } {
+              foreach mod $SEV_HIT_REPORT_LOADED { catch { src_unload $mod } }
+              set SEV_HIT_REPORT_LOADED [ nil_set ]
+            }
+          }
+        }
+      }
+      if { $size > 0 } {
+        > $file { puts $file "" }
+      }
+    }
+  }
+
+}
+
+proc sev_create_report { format orig_file verbose } {
+
+## convert to platform-specific value (does ~ substitution, "\" and "/" 
+## issues, etc
+  set file [ file nativename $orig_file ]
+
+  set wok [ catch { > $file {} } err ]
+  if { $wok != 0 } {
+    msg -error "File not writable: \"$orig_file\""
+    return ""
+  }
+
+  sev_calc_score /
+
+  if { $format == "DETAILED TEXT" } {
+    sev_hit_report $file /
+    return ""
+  }
+
+  if { $format == "SUMMARY TEXT" } {
+    set format TEXT
+  }
+
+  set code [ catch {
+    global env
+    if { [ info exists env(TMPDIR) ] } {
+      set repdump [ tempnam $env(TMPDIR) sev ]
+    } else {
+      set repdump [ tempnam "" sev ]
+    }
+    > $repdump { puts [ sev_dump / ] }
+    set format [ string tolower $format ]
+    set psethome "$env(PSETHOME)"
+    set exec [ file join $psethome bin sevreporter ]
+    set template [ file join $psethome lib sevreport.tmpl ]
+    set cmd "\{$exec\} \{-in=$repdump\} \{-type=$format\} \{-out=$file\} \{-template=$template\}"
+    if { $verbose != "1" } { append cmd " -suppress-queries=1" }
+    puts_verbose "sev: executing command: $cmd"
+    eval exec $cmd
+  } msg ]
+
+  if { $code != 0 } {
+    msg -error "Error generating report:\n\n$msg"
+  }
+
+  return ""
+}
+
+proc cstr { str } {
+  if { [ regexp "\[ \n\t\"\\\\]" $str ] } {
+    regsub -all {\\} "$str" {\\\\} str
+    regsub -all {"} "$str" {\"} str
+    return \"$str\"
+  } else {
+    return $str
+  }
+}
+
+proc sev_dump_header {} {
+
+  set ret ""
+
+  global SEV_POOL
+  global SEV_UNITS
+
+  append ret "BEGIN INPUTS\n"
+  append ret "    "
+  set inputs $SEV_POOL(orig) 
+  foreach in $inputs {
+    set pname [ pname $in ]
+    if { $pname != "" } {
+      set pname [ cstr $pname ]
+      append ret "$pname "
+    }
+  }
+  append ret "\nEND\n"
+
+  set lang CPP
+  foreach el [ set_copy $SEV_POOL(scope) ] {
+    set lang [ language $el ]
+    if { $lang == "CPP" } {
+      break
+    }
+  }
+
+  append ret "BEGIN INVENTORY\n"
+  append ret "    Files                              $SEV_UNITS(file)\n"
+  append ret "    \"Total lines of code\"              $SEV_UNITS(tloc)\n"
+  append ret "    \"Executable lines of code\"         $SEV_UNITS(xloc)\n"
+  append ret "    \"Commented/blank lines of code\"    $SEV_UNITS(cloc)\n"
+  append ret "    Functions                          $SEV_UNITS(function)\n"
+
+  if { $lang != "C" } {
+    append ret "    Classes/structs                    $SEV_UNITS(class)\n"
+  } else {
+    append ret "    Structs                            $SEV_UNITS(struct)\n"
+  }
+  append ret "    Unions                             $SEV_UNITS(union)\n"
+  append ret "    \"Global variables\"                 $SEV_UNITS(var)\n"
+  #append ret "    \"Local variables\"                  $SEV_UNITS(local)\n"
+  append ret "    \"String literals\"                  $SEV_UNITS(string)\n"
+  append ret "    Typedefs                           $SEV_UNITS(typedef)\n"
+  append ret "    Enums                              $SEV_UNITS(enum)\n"
+  append ret "    Macros                             $SEV_UNITS(macro)\n"
+  if { $lang != "C" } {
+    append ret "    Templates                          $SEV_UNITS(template)\n"
+  }
+  append ret "END\n"
+
+  return $ret
+}
+
+proc sev_dump { path } {
+  set ret ""
+  append ret [ sev_dump_header ]
+  append ret [ _sev_dump $path 0 ]
+  return $ret
+}
+
+proc _sev_dump { path lev } {
+
+  set ret ""
+
+  set on [ sev_get $path on ]
+  if { $on == 1 } {
+
+    if { "[ sev_get $path type ]" == "folder" && \
+         [ llength [ sev_get_active_children $path ] ] <= 0 } {
+      return $ret
+    }
+
+    set indent ""
+    set x 0
+    while { $x < $lev } {
+      append indent "    "
+      incr x
+    }
+
+    set ret $indent
+    append ret BEGIN
+
+    set type [ sev_get $path type ]
+    append ret " [ string toupper $type ]"
+
+    if { $type == "query_0" } {
+      set fields {name weight hitno total unit score tag}
+    } elseif { $type == "query_1" } {
+      set fields {name weight hitno total unit score tag threshold}
+    } elseif { $type == "query_2" } {
+      set fields {name highest lowest avg stddev tag}
+    } else {
+      set fields {name weight score tag}
+    }
+
+    foreach field $fields {
+      set val [ cstr [ sev_get $path $field ] ]
+      append ret " $val"
+    }
+    append ret "\n"
+   
+    if { $type == "folder" } {
+      incr lev
+      set children [ sev_get $path children ]
+      foreach child $children {
+        set subpath [ file join $path $child ]
+        append ret [ _sev_dump $subpath $lev ]
+      }
+    }
+    append ret "${indent}END\n"
+  }
+
+  return $ret
+}
+
+proc sev_ext_find { name } {
+
+  set ext [ nil_set ]
+
+  set modules [ extfile list sev ]
+  foreach m $modules {
+    set fname [ fname $m ]
+    set base [ file rootname [ file tail $fname ] ] 
+    if { $base == $name } {
+      set ext [ set_copy $m ]
+      break
+    }
+  }
+
+  return $ext
+}
+
+proc sev_save { name } {
+
+  set ret 1
+
+  global SEV_TREE
+
+  if { ! [ info exists SEV_TREE ] } {
+
+    msg -error "Error: No active session."
+
+  } else {
+
+    set ext [ sev_ext_find $name ]
+    if { [ size $ext ] <= 0 } {
+      set ext [ extfile new sev $name ]
+    }
+
+    if { [ size $ext ] > 0 } {
+      set fname [ fname $ext ]
+      if { $fname != "" } {
+        set text [ sev_snapshot $name ]
+        if { $text != "" } {
+          > $fname { puts $text }
+          global SEV_CURRENT_SESSION
+          set SEV_CURRENT_SESSION $name
+          set ret 0
+        }
+      }
+    }
+  }
+
+  return $ret
+}
+
+proc sev_restore_session { text } {
+
+  sev_init_scripts
+  sev_clear
+
+  global SEV_UNITS
+  global SEV_POOL
+
+  set lines [ split $text "\n" ]
+
+  set state 0
+
+  foreach line $lines {
+    if { [ regexp "\[^\n\t \]" $line ] != 0 && [ regexp "^\[\n\t \]*#" $line ] == 0 } {
+      if { [ regsub  {^\[(.*)\]$} $line {\1} _state ] != 1 } {
+        if { $state == "units" } {
+          set var [ lindex $line 0 ]
+          set val [ lindex $line 1 ]
+          set SEV_UNITS($var) $val
+        } elseif { $state == "pool" } {
+          set var [ lindex $line 0 ]
+          set val [ lindex $line 1 ]
+          if { [ group exists $val ] } {
+            set val [ group get $val ]
+            set SEV_POOL($var) $val
+          }
+        } elseif { $state == "tree" } {
+          sev_add_tree / $line
+        }
+      } else {
+        set state $_state
+      }
+    }
+  }
+
+  sev_calc_score /
+}
+
+
+proc sev_current_session {} {
+  global SEV_CURRENT_SESSION
+  if { [ info exists SEV_CURRENT_SESSION ] } {
+    return $SEV_CURRENT_SESSION
+  } else {
+    return ""
+  }
+}
+
+proc sev_load { name } {
+
+  set ret 1
+
+  set ext [ sev_ext_find $name ]
+
+  if { [ size $ext ] > 0 } {
+    set fname [ fname $ext ]
+    if { [ catch { set fd [ open $fname r ] } ] == 0 } {
+      set text [ read $fd ]
+      close $fd
+      if { $text != "" } {
+        sev_restore_session $text
+        global SEV_CURRENT_SESSION
+        set SEV_CURRENT_SESSION $name
+        puts_verbose "sev: loaded session: \"$name\""
+        set ret 0
+      } else {
+        msg -error "File is empty: \"$fname\"."
+      }
+    } else {
+      msg -error "Cannot open file: \"$fname\"."
+    }
+  } else {
+    msg -error "No such session: \"$name\"."
+  }
+
+  return $ret
+}
+
+proc sev_list {} {
+
+  set ret ""
+
+  set modules [ extfile list sev ]
+  foreach m $modules {
+    set fname [ fname $m ]
+    set base [ file rootname [ file tail $fname ] ]
+    lappend ret $base
+  }
+
+  return $ret
+}
+
+proc sev_delete { name } {
+
+  set ext [ sev_ext_find $name ]
+
+  if { [ size $ext ] > 0 } {
+    set groups [ group info ]
+    foreach group $groups {
+      if { [ string match sev_${name}_* $group ] == 1 } {
+        puts_verbose "sev: deleting group: \"$group\""
+        group delete $group
+      }
+    }
+    extfile delete sev $name
+  } else {
+    msg -error "No such session: \"$name\"."
+  }
+}
+
+
+proc sev_mkgroup { session item elems } {
+
+  set gname "sev_${session},${item}"
+
+  if { [ group exists $gname ] == "0" } {
+    group new $gname
+  }
+
+  puts_verbose "sev: group: \"$gname\""
+
+  group set $gname $elems
+  #group save $gname
+
+  return $gname
+}
+
+proc sev_snapshot { session } {
+  
+  set ret ""
+
+  append ret {$sev-1.0 (Software Evaluator Session File)}
+  append ret "\n\n"
+
+  append ret "\[units\]\n"
+  global SEV_UNITS
+  if { [ info exists SEV_UNITS ] } {
+    append ret "\n"
+    foreach unit [ lsort [ array names SEV_UNITS ] ] {
+      append ret [ list $unit $SEV_UNITS($unit) ]
+      append ret "\n"
+    }
+  }
+
+  append ret "\n"
+
+  append ret "\[pool\]\n"
+  global SEV_POOL
+  if { [ info exists SEV_POOL ] } {
+    append ret "\n"
+    foreach item {orig scope} {
+      if { [ info exists SEV_POOL($item) ] } {
+        set elems $SEV_POOL($item)
+        set group [ sev_mkgroup $session pool_$item $elems ]
+        if { $group != "" } {
+          append ret [ list $item $group ]
+          append ret "\n"
+        }
+      }
+    }
+  }
+
+  append ret "\n"
+
+  append ret "\[tree\]\n"
+  append ret "\n"
+  append ret [ sev_snapshot_tree $session / ]
+
+  return $ret
+}
+
+proc sev_snapshot_tree { session path } {
+  
+  set ret ""
+
+  global SEV_NODE_TYPES
+
+  set type [ sev_get $path type ]
+  set fields $SEV_NODE_TYPES($type)
+  
+  foreach field $fields {
+    if { $field == "children" && $type == "folder" } {
+      set val ""
+      set children [ sev_get $path children ]
+      foreach child $children {
+        set subpath [ file join $path $child ]
+        lappend val [ sev_snapshot_tree $session $subpath ]
+      }
+    } elseif { $field == "retval" && ($type == "query_0" || $type == "query_1") } {
+      set retval [ sev_get $path retval ]
+      if { ($retval != 0) && ([ size -ignore $retval ] > 0) } {
+        set val [ sev_mkgroup $session $path $retval ]
+      } else {
+        set val 0
+      }
+    } else {
+      set val [ sev_get $path $field ]
+    }
+    lappend ret $val
+  }
+  
+  return $ret
+}

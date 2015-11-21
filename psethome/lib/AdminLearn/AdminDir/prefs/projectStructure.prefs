@@ -1,0 +1,18 @@
+*psetPrefs.cPlusSuffix:			.C .cpp .H .hpp
+*psetPrefs.cPlusHdrSuffix:		.H .hpp
+
+*psetPrefs.cSuffix:			.c .h
+*psetPrefs.cHdrSuffix:			.h
+
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileNameFixed:		yes
+*psetPrefs.logFileMonitor:		no
+
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/projectStructure.pdf $ADMINDIR/pdf/quickBuildRules.pdf
+
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src/projectStructure
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED/projectStructure
+*psetPrefs.privateSrcRoot:		$ADMINDIR/tmp
+*psetPrefs.privateModelRoot:		$ADMINDIR/model/$USER
+
+*psetPrefs.projectList:			ProjectTwo

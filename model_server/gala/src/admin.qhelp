@@ -1,0 +1,46 @@
+																		   
+#
+# File (master)
+#
+
+ dis_MenuAddMenuArgument AppFileMenu 			"qhelp="
+ 
+ dis_MenuAddItemArgument   FileQuit              "qhelp=Exit Model Administrator"
+
+#
+# Settings
+# 
+
+dis_MenuAddMenuArgument SettingsMenu  "qhelp="
+dis_MenuAddItemArgument SettingsOpen  "qhelp=Open an existing settings file"
+dis_MenuAddItemArgument SettingsNew   "qhelp=Create a new settings file"
+dis_MenuAddItemArgument SettingsSave  "qhelp=Save settings file"
+dis_MenuAddItemArgument SettingsSaveAs "qhelp=Save settings with different name"
+
+
+
+#
+# Window
+# 
+
+dis_MenuAddMenuArgument WindowMenu               "qhelp="
+dis_MenuAddItemArgument ActivateMSItem           "qhelp=Switch to Start Model Server"
+
+dis_MenuAddItemArgument ActivateMBItem           "qhelp=Switch to Build Information Model"
+
+
+
+#
+# Help
+#
+ 
+ dis_MenuAddMenuArgument HelpMenu				"qhelp="
+
+  dis_MenuAddItemArgument   HelpContentsItem	"qhelp=Display the main help file." 
+  dis_MenuAddItemArgument   HelpMSItem          "qhelp=Display help on Start Model Server"
+     
+  dis_MenuAddItemArgument   HelpMBItem          "qhelp=Display help on Build Information Model"
+  
+  dis_MenuAddItemArgument   HelpAboutDiscover	"qhelp=Display the About Discover dialog"
+
+	

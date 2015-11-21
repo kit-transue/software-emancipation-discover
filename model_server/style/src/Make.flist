@@ -1,0 +1,20 @@
+CROOTS=\
+
+
+CPROOTS=\
+    styAppCategory.h \
+    styAppStyle.h \
+    styCategory.h \
+    stySlot.h \
+    stySlotTable.h \
+    styStyle.h \
+    sty_category_handler \
+    sty_category_interface \
+    sty_default_tables \
+    sty_style_handler \
+    style_copy_member \
+    style_hooks \
+    style_restore \
+    style_test \
+
+

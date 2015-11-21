@@ -1,0 +1,42 @@
+#!/bin/sh
+
+wf=$2 # working file
+wd=$1 # working dir
+sf=$4
+sd=$3
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_pendfilt ] ; then
+  pd=`echo $sd | $cm_optscripts/cm_pendfilt`
+  if [ $? != 0 ] ; then
+    echo "error in filter: $cm_optscripts/cm_pendfilt" >&2
+    exit 1
+  fi
+else
+  pd=$sd
+fi
+
+echo $pd/$sf >&1
+
+if [ "$5" != "delete_src" -a "$cm_uselinks" = "Y" ] ; then
+  if [ ! -d $wd/RCS ] ; then
+
+    rcs="$pd/RCS"
+
+    if [ -d $rcs ] ; then
+      ln -s $rcs $wd/RCS
+      if [ $? -ne 0 ] ; then
+        echo "error setup: Could not create link: ln -s $rcs $wd/RCS" >&2
+        exit 1
+      fi
+    else
+      echo "error setup: $rcs does not exist" >&2
+      exit 1
+    fi
+  fi
+fi
+
+$PSETHOME/bin/rlog -R $pd/$sf 2> /dev/null
+if [ $? -ne 0 ] ; then
+  $PSETHOME/bin/rlog -R $pd/$sf 2>&1 | tr ":" " " | awk '{print $3}'
+  exit 99
+fi

@@ -1,0 +1,55 @@
+<html>
+<body>
+
+<p><b>Servlet API - Avoid using <i>java.beans.Beans.instantiate ()</i>.</b></p>
+
+<p>The method, <i>java.beans.Beans.instantiate ()</i>, will create a new bean instance
+either by retrieving a serialized version of the bean from disk or creating
+a new bean if the serialized form does not exist.  The problem, from a
+performance perspective, is that each time java.beans.Beans.instantiate is
+called the file system is checked for a serialized version of the bean.
+As usual, such disk activity in the critical path of your web request can be
+costly.  To avoid this overhead, simply use <i>new</i> to create the instance.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.http.*;<br>
+import java.beans.*;<br>
+<br>
+public class DemoBeansServlet extends HttpServlet {<br>
+&nbsp; public void doGet (HttpServletRequest rquest)<br>
+&nbsp; &nbsp; throws ClassNotFoundException, java.io.IOException {<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> Beans ab = (Beans) Beans.instantiate (<br>
+&nbsp; &nbsp; &nbsp; &nbsp; this.getClass ().getClassLoader (), "web_prmtv.Bean");</font><br>
+&nbsp; &nbsp; // do something...<br>
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Use <i>new someClass ()</i> to create a new object instance.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.http.*;<br>
+import java.beans.*;<br>
+<br>
+&nbsp; public void doGet (HttpServletRequest rquest)<br>
+&nbsp; &nbsp; throws ClassNotFoundException, java.io.IOException {<br>
+&nbsp; &nbsp; &nbsp; <font color='blue'> Beans ab = new Beans ();</font><br>
+&nbsp; &nbsp; &nbsp; // do something...<br>
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

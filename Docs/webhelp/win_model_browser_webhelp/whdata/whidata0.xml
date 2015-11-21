@@ -1,0 +1,1809 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<indexdata>
+<key name="-" >
+  <topic name="Working With a Group" url="ciee_user_win_appa_devxpress/working_with_a_group.htm#IX__1" />
+</key>
+<key name="*" >
+  <topic name="Working With a Group" url="ciee_user_win_appa_devxpress/working_with_a_group.htm#IX__2" />
+</key>
+<key name="+" >
+  <topic name="Working With a Group" url="ciee_user_win_appa_devxpress/working_with_a_group.htm#IX_" />
+</key>
+<key name="=" >
+  <topic name="Working With a Group" url="ciee_user_win_appa_devxpress/working_with_a_group.htm#IX__3" />
+</key>
+<key name="about this guide" >
+  <topic name="About This Online Help" url="ciee_user_win_01_welcome/about_this_online_help.htm#IX_about_this_guide" />
+</key>
+<key name="Access" >
+  <key name="described" >
+    <topic name="Access" url="ciee_user_win_02_introduction/access.htm#IX_described_12" />
+  </key>
+</key>
+<key name="add/remove" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_add_remove" />
+</key>
+<key name="adding" >
+  <key name="entities to a group" >
+    <topic name="Adding Entities to a Group" url="ciee_user_win_05_querying/adding_entities_to_a_group.htm#IX_entities_to_a_group" />
+  </key>
+</key>
+<key name="administrator" >
+  <key name="described" >
+    <topic name="Roles" url="ciee_user_win_01_welcome/roles.htm#IX_described" />
+  </key>
+</key>
+<key name="advanced filtering" >
+  <topic name="Advanced Filtering" url="ciee_user_win_05_querying/advanced_filtering.htm#IX_advanced_filtering" />
+</key>
+<key name="aliased entities" >
+  <key name="dialog box" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_dialog_box" />
+  </key>
+</key>
+<key name="aliases" >
+  <key name="entities" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_entities" />
+  </key>
+</key>
+<key name="analysis" >
+  <key name="impact" >
+    <topic name="Why Use Impact Analysis?" url="ciee_user_win_08_impact/why_use_impact_analysis_.htm#IX_impact" />
+  </key>
+</key>
+<key name="analyzing source code" >
+  <key name="dormant-code-auto-nnn-group" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_dormant_code_auto_nnn_2" />
+  </key>
+</key>
+<key name="applying" >
+  <key name="a saved filter" >
+    <topic name="Applying a Saved Filter" url="ciee_user_win_05_querying/applying_a_saved_filter.htm#IX_a_saved_filter" />
+  </key>
+</key>
+<key name="arguments" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_arguments" />
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_arguments_1" />
+</key>
+<key name="assumptions" >
+  <topic name="Assumptions" url="ciee_user_win_01_welcome/assumptions.htm#IX_assumptions" />
+</key>
+<key name="attributes" >
+  <key name="entity" >
+    <key name="displaying" >
+      <topic name="Displaying Entity Attributes" url="ciee_user_win_05_querying/displaying_entity_attributes.htm#IX_displaying_2" />
+    </key>
+    <key name="sorting" >
+      <topic name="Sorting Entity Attributes" url="ciee_user_win_05_querying/sorting_entity_attributes.htm#IX_sorting_1" />
+    </key>
+  </key>
+</key>
+<key name="before starting a session" >
+  <topic name="Before Starting a Session" url="ciee_user_win_03_starting/before_starting_a_session.htm#IX_before_starting_a_session" />
+</key>
+<key name="body" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_body" />
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_body_3" />
+</key>
+<key name="Borland JBuilder" >
+  <key name="choosing" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_choosing_4" />
+  </key>
+</key>
+<key name="browse symbol" >
+  <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_browse_symbol" />
+</key>
+<key name="Browser" >
+  <topic name="To connect to an information model" url="ciee_user_win_03_starting/to_connect_to_an_information_model.htm#IX_Browser_1" />
+  <key name="left pane" >
+    <topic name="The Query Tree" url="ciee_user_win_09_caliper/the_query_tree.htm#IX_left_pane" />
+  </key>
+</key>
+<key name="build server" >
+  <key name="described" >
+    <topic name="Build Server" url="ciee_user_win_02_introduction/build_server.htm#IX_described_6" />
+  </key>
+</key>
+<key name="C/C++ language" >
+  <key name="impact analysis options" >
+    <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_impact_analysis_options" />
+  </key>
+</key>
+<key name="Caliper" >
+  <key name="described" >
+    <topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm#IX_described_25" />
+  </key>
+  <key name="filter set scores" >
+    <topic name="Filter Set Scores" url="ciee_user_win_09_caliper/filter_set_scores.htm#IX_filter_set_scores_1" />
+  </key>
+  <key name="getting started" >
+    <topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm#IX_getting_started" />
+  </key>
+  <key name="quality assessment reports" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_quality_assessment_2" />
+  </key>
+  <key name="quality scores" >
+    <topic name="Quality Scores" url="ciee_user_win_09_caliper/quality_scores.htm#IX_quality_scores_1" />
+  </key>
+  <key name="query scores" >
+    <topic name="Query Scores" url="ciee_user_win_09_caliper/query_scores.htm#IX_query_scores" />
+  </key>
+  <key name="query tree" >
+    <topic name="The Query Tree" url="ciee_user_win_09_caliper/the_query_tree.htm#IX_query_tree" />
+  </key>
+  <key name="reports" >
+    <topic name="Report Tab" url="ciee_user_win_09_caliper/report_tab.htm#IX_reports_1" />
+  </key>
+  <key name="saving a session" >
+    <topic name="To save your work in a stored session" url="ciee_user_win_09_caliper/to_save_your_work_in_a_stored_session.htm#IX_saving_a_session" />
+  </key>
+  <key name="session" >
+    <topic name="Caliper Sessions" url="ciee_user_win_09_caliper/caliper_sessions.htm#IX_session" />
+  </key>
+  <key name="settings" >
+    <topic name="Settings and Reports" url="ciee_user_win_09_caliper/settings_and_reports.htm#IX_settings" />
+  </key>
+  <key name="starting" >
+    <topic name="Caliper Sessions" url="ciee_user_win_09_caliper/caliper_sessions.htm#IX_starting_1" />
+  </key>
+  <key name="total quality score" >
+    <topic name="Total Quality Score" url="ciee_user_win_09_caliper/total_quality_score.htm#IX_total_quality_score" />
+  </key>
+  <key name="violations" >
+    <key name="viewing" >
+      <topic name="To view a query that has violations" url="ciee_user_win_09_caliper/to_view_a_query_that_has_violations.htm#IX_viewing_2" />
+    </key>
+  </key>
+  <key name="window" >
+    <topic name="Caliper Window Components" url="ciee_user_win_09_caliper/caliper_window_components.htm#IX_window" />
+  </key>
+</key>
+<key name="call graph" >
+  <topic name="Call Graph" url="ciee_user_win_06_views/call_graph.htm#IX_call_graph" />
+  <key name="opening" >
+    <topic name="Opening a Call Graph" url="ciee_user_win_06_views/opening_a_call_graph.htm#IX_opening_6" />
+  </key>
+</key>
+<key name="call tree" >
+  <key name="color codes" >
+    <topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm#IX_color_codes" />
+  </key>
+  <key name="graphic symbols" >
+    <topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm#IX_graphic_symbols" />
+  </key>
+</key>
+<key name="cardinality of edges" >
+  <topic name="Opening a Call Graph" url="ciee_user_win_06_views/opening_a_call_graph.htm#IX_cardinality_of_edges" />
+</key>
+<key name="Categories pane" >
+  <key name="described" >
+    <topic name="Categories Pane" url="ciee_user_win_04_interfaces/categories_pane.htm#IX_described_17" />
+  </key>
+</key>
+<key name="choosing" >
+  <key name="a configuration management system" >
+    <topic name="Choosing a Configuration Management System" url="ciee_user_win_03_starting/choosing_a_configuration_management_system.htm#IX_a_configuration" />
+  </key>
+  <key name="an IDE" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_an_IDE" />
+  </key>
+</key>
+<key name="class" >
+  <key name="impact options" >
+    <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_impact_options" />
+    <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_impact_options_4" />
+  </key>
+  <key name="member status" >
+    <topic name="Opening an Inheritance View" url="ciee_user_win_06_views/opening_an_inheritance_view.htm#IX_member_status" />
+  </key>
+</key>
+<key name="class inheritance view" >
+  <topic name="Inheritance View" url="ciee_user_win_06_views/inheritance_view.htm#IX_class_inheritance_view" />
+</key>
+<key name="class variable impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_class_variable_impact" />
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_class_variable_impact_1" />
+</key>
+<key name="closing" >
+  <key name="Developer Xpress" >
+    <topic name="Exiting Developer Xpress" url="ciee_user_win_appa_devxpress/exiting_developer_xpress.htm#IX_Developer_Xpress_5" />
+  </key>
+</key>
+<key name="closure" >
+  <key name="applying" >
+    <topic name="Applying Closure" url="ciee_user_win_05_querying/applying_closure.htm#IX_applying" />
+  </key>
+</key>
+<key name="CM" >
+  <topic name="Using Configuration Management Systems" url="ciee_user_win_appa_devxpress/using_configuration_management_systems.htm#IX_CM" />
+</key>
+<key name="DIScover" >
+  <key name="and editors" >
+    <topic name="Launching Your Integrated IDE" url="ciee_user_win_07_working_with_source/launching_your_integrated_ide.htm#IX_and_editors" />
+  </key>
+  <key name="benefits" >
+    <topic name="Welcome to DIScover" url="ciee_user_win_01_welcome/welcome_to_code_integrity_enterprise_edition.htm#IX_benefits" />
+  </key>
+  <key name="Browser" >
+    <topic name="To connect to an information model" url="ciee_user_win_03_starting/to_connect_to_an_information_model.htm#IX_Browser" />
+  </key>
+  <key name="components" >
+    <topic name="DIScover Components" url="ciee_user_win_02_introduction/code_integrity_components.htm#IX_components" />
+  </key>
+  <key name="concepts" >
+    <topic name="Core Concepts" url="ciee_user_win_02_introduction/core_concepts.htm#IX_concepts" />
+  </key>
+  <key name="explained" >
+    <topic name="DIScover in the Enterprise Environment" url="ciee_user_win_02_introduction/code_integrity_in_the_enterprise_environment.htm#IX_explained" />
+  </key>
+  <key name="features and benefits" >
+    <topic name="Features and Benefits" url="ciee_user_win_02_introduction/features_and_benefits.htm#IX_features_and_benefits" />
+  </key>
+  <key name="overview" >
+    <topic name="DIScover Overview" url="ciee_user_win_02_introduction/code_integrity_overview.htm#IX_overview" />
+  </key>
+  <key name="quitting" >
+    <topic name="Closing a DIScover Session" url="ciee_user_win_03_starting/closing_a_code_integrity_session.htm#IX_quitting" />
+  </key>
+  <key name="startup" >
+    <topic name="Starting the Model Browser" url="ciee_user_win_03_starting/starting_the_model_browser.htm#IX_startup" />
+  </key>
+  <key name="uninstalling" >
+    <topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm#IX_uninstalling" />
+  </key>
+  <key name="working with source" >
+    <topic name="Working With Source Code" url="ciee_user_win_07_working_with_source/working_with_source_code.htm#IX_working_with_source" />
+  </key>
+</key>
+<key name="color codes" >
+  <key name="call tree" >
+    <topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm#IX_call_tree" />
+  </key>
+  <key name="inheritance view" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_inheritance_view_4" />
+  </key>
+</key>
+<key name="complex metric query" >
+  <key name="creating" >
+    <topic name="Creating a Complex Query" url="ciee_user_win_10_metrics/creating_a_complex_query.htm#IX_creating_2" />
+  </key>
+</key>
+<key name="components" >
+  <key name="DIScover" >
+    <topic name="DIScover Components" url="ciee_user_win_02_introduction/code_integrity_components.htm#IX_Code_Integrity_2" />
+  </key>
+</key>
+<key name="concepts" >
+  <key name="DIScover" >
+    <topic name="Core Concepts" url="ciee_user_win_02_introduction/core_concepts.htm#IX_Code_Integrity_1" />
+  </key>
+</key>
+<key name="configuration management" >
+  <key name="selecting a system" >
+    <topic name="To choose your configuration management system" url="ciee_user_win_03_starting/to_choose_your_configuration_management_system.htm#IX_selecting_a_system" />
+  </key>
+</key>
+<key name="configuration management system" >
+  <key name="choosing" >
+    <topic name="Choosing a Configuration Management System" url="ciee_user_win_03_starting/choosing_a_configuration_management_system.htm#IX_choosing" />
+  </key>
+  <key name="Developer Xpress" >
+    <key name="choosing" >
+      <topic name="Choosing a Configuration Management System" url="ciee_user_win_appa_devxpress/choosing_a_configuration_management_system1.htm#IX_choosing_8" />
+    </key>
+  </key>
+</key>
+<key name="configuration management systems" >
+  <key name="managing source code changes" >
+    <topic name="Working With Source Code" url="ciee_user_win_07_working_with_source/working_with_source_code.htm#IX_managing_source_code_1" />
+  </key>
+  <key name="Rational ClearCase" >
+    <key name="using" >
+      <topic name="Using Rational ClearCase" url="ciee_user_win_07_working_with_source/using_rational_clearcase.htm#IX_using_9" />
+    </key>
+  </key>
+  <key name="Source Integrity" >
+    <key name="using" >
+      <topic name="Using MKS Source Integrity Enterprise Edition" url="ciee_user_win_07_working_with_source/using_mks_source_integrity_enterprise_edition.htm#IX_using_7" />
+    </key>
+  </key>
+  <key name="using with Developer Xpress" >
+    <topic name="Using Configuration Management Systems" url="ciee_user_win_appa_devxpress/using_configuration_management_systems.htm#IX_using_with_Developer" />
+  </key>
+</key>
+<key name="configuring" >
+  <key name="Developer Xpress" >
+    <topic name="Configuring Developer Xpress" url="ciee_user_win_appa_devxpress/configuring_developer_xpress.htm#IX_Developer_Xpress_2" />
+  </key>
+</key>
+<key name="connecting" >
+  <key name="to an information model" >
+    <topic name="Connecting to an Information Model" url="ciee_user_win_03_starting/connecting_to_an_information_model.htm#IX_to_an_information_model" />
+  </key>
+</key>
+<key name="creating" >
+  <key name="a group" >
+    <topic name="Creating a Group" url="ciee_user_win_05_querying/creating_a_group.htm#IX_a_group" />
+  </key>
+</key>
+<key name="customizing" >
+  <key name="Developer Xpress" >
+    <topic name="Customizing Developer Xpress" url="ciee_user_win_appa_devxpress/customizing_developer_xpress.htm#IX_Developer_Xpress_7" />
+  </key>
+</key>
+<key name="Customizing the Menu Bar" >
+  <topic name="Customizing the Menu Bar" url="ciee_user_win_appa_devxpress/customizing_the_menu_bar.htm#IX_Customizing_the_Menu_Bar" />
+</key>
+<key name="data chart" >
+  <topic name="Data Chart" url="ciee_user_win_06_views/data_chart.htm#IX_data_chart" />
+  <key name="menu options" >
+    <topic name="Data Chart Menu Options" url="ciee_user_win_06_views/data_chart_menu_options.htm#IX_menu_options_3" />
+  </key>
+  <key name="opening" >
+    <topic name="Opening a Data Chart" url="ciee_user_win_06_views/opening_a_data_chart.htm#IX_opening_4" />
+  </key>
+</key>
+<key name="Declares query" >
+  <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Declares_query" />
+</key>
+<key name="Defines query" >
+  <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Defines_query" />
+</key>
+<key name="deleting" >
+  <key name="a group" >
+    <topic name="Deleting a Group" url="ciee_user_win_05_querying/deleting_a_group.htm#IX_a_group_1" />
+  </key>
+</key>
+<key name="describe" >
+  <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_describe" />
+</key>
+<key name="Developer Xpress" >
+  <key name="basic functions" >
+    <topic name="Basic Functions" url="ciee_user_win_appa_devxpress/basic_functions.htm#IX_basic_functions" />
+  </key>
+  <key name="choosing a configuration management system" >
+    <topic name="Choosing a Configuration Management System" url="ciee_user_win_appa_devxpress/choosing_a_configuration_management_system1.htm#IX_choosing_a_configuration" />
+  </key>
+  <key name="choosing a model server" >
+    <topic name="Choosing a Model Server" url="ciee_user_win_appa_devxpress/choosing_a_model_server.htm#IX_choosing_a_model_server" />
+  </key>
+  <key name="choosing a source mode" >
+    <topic name="Choosing a Source Mode" url="ciee_user_win_appa_devxpress/choosing_a_source_mode.htm#IX_choosing_a_source_mode" />
+  </key>
+  <key name="choosing an IDE" >
+    <topic name="Choosing an IDE" url="ciee_user_win_appa_devxpress/choosing_an_ide1.htm#IX_choosing_an_IDE" />
+  </key>
+  <key name="configuring" >
+    <topic name="Configuring Developer Xpress" url="ciee_user_win_appa_devxpress/configuring_developer_xpress.htm#IX_configuring" />
+  </key>
+  <key name="customizing" >
+    <topic name="Customizing Developer Xpress" url="ciee_user_win_appa_devxpress/customizing_developer_xpress.htm#IX_customizing" />
+  </key>
+  <key name="described" >
+    <topic name="Developer Xpress" url="ciee_user_win_02_introduction/developer_xpress.htm#IX_described_11" />
+  </key>
+  <key name="exiting" >
+    <topic name="Exiting Developer Xpress" url="ciee_user_win_appa_devxpress/exiting_developer_xpress.htm#IX_exiting" />
+  </key>
+  <key name="filtering entity subsets" >
+    <topic name="Filtering Entity Subsets" url="ciee_user_win_appa_devxpress/filtering_entity_subsets.htm#IX_filtering_entity_subsets" />
+  </key>
+  <key name="finding items" >
+    <topic name="Finding Items" url="ciee_user_win_appa_devxpress/finding_items.htm#IX_finding_items" />
+  </key>
+  <key name="interface" >
+    <topic name="The Developer Xpress Interface" url="ciee_user_win_appa_devxpress/the_developer_xpress_interface.htm#IX_interface" />
+  </key>
+  <key name="navigating" >
+    <topic name="Navigating Your Source Code" url="ciee_user_win_appa_devxpress/navigating_your_source_code.htm#IX_navigating" />
+  </key>
+  <key name="querying entities" >
+    <topic name="Querying Entities In Your Source Code" url="ciee_user_win_appa_devxpress/querying_entities_in_your_source_code.htm#IX_querying_entities" />
+  </key>
+  <key name="searching a project hierarchy" >
+    <topic name="Searching a Project Hierarchy" url="ciee_user_win_appa_devxpress/searching_a_project_hierarchy.htm#IX_searching_a_project" />
+  </key>
+  <key name="Service Chooser window" >
+    <topic name="Configuring Developer Xpress" url="ciee_user_win_appa_devxpress/configuring_developer_xpress.htm#IX_Service_Chooser_window" />
+  </key>
+  <key name="starting" >
+    <topic name="Starting Developer Xpress" url="ciee_user_win_appa_devxpress/starting_developer_xpress.htm#IX_starting_2" />
+  </key>
+  <key name="troubleshooting" >
+    <topic name="Troubleshooting" url="ciee_user_win_appa_devxpress/troubleshooting.htm#IX_troubleshooting_1" />
+  </key>
+  <key name="using configuration management systems" >
+    <topic name="Using Configuration Management Systems" url="ciee_user_win_appa_devxpress/using_configuration_management_systems.htm#IX_using_configuration" />
+  </key>
+  <key name="using the runtime list" >
+    <topic name="Using the Runtime List" url="ciee_user_win_appa_devxpress/using_the_runtime_list.htm#IX_using_the_runtime_list" />
+  </key>
+  <key name="working with groups" >
+    <topic name="Groups" url="ciee_user_win_appa_devxpress/groups.htm#IX_working_with_groups" />
+  </key>
+</key>
+<key name="diagram" >
+  <key name="tree" >
+    <topic name="Tree Diagram" url="ciee_user_win_06_views/tree_diagram.htm#IX_tree" />
+  </key>
+</key>
+<key name="dialog boxes" >
+  <key name="aliased entities" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_aliased_entities" />
+  </key>
+</key>
+<key name="displaying" >
+  <key name="entity attributes" >
+    <topic name="Displaying Entity Attributes" url="ciee_user_win_05_querying/displaying_entity_attributes.htm#IX_entity_attributes" />
+  </key>
+  <key name="metrics" >
+    <topic name="Displaying Metrics" url="ciee_user_win_10_metrics/displaying_metrics.htm#IX_metrics_1" />
+  </key>
+  <key name="short names" >
+    <topic name="Displaying Short Names" url="ciee_user_win_05_querying/displaying_short_names.htm#IX_short_names" />
+  </key>
+</key>
+<key name="documentation" >
+  <key name="DIScover" >
+    <key name="Access Guide Guide" >
+      <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_Access_Guide_Guide" />
+    </key>
+    <key name="Installation and Administration Guide" >
+      <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_Installation_and" />
+    </key>
+    <key name="release notes" >
+      <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_release_notes" />
+    </key>
+    <key name="User Guide for UNIX" >
+      <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_User_Guide_for_UNIX" />
+    </key>
+  </key>
+  <key name="DIScover User Guide" >
+    <topic name="Understanding DIScover" url="ciee_user_win_02_introduction/understanding_code_integrity.htm#IX_Code_Integrity_User_Guide_1" />
+    <topic name="Welcome to DIScover" url="ciee_user_win_01_welcome/welcome_to_code_integrity_enterprise_edition.htm#IX_Code_Integrity_User_Guide" />
+  </key>
+  <key name="feedback" >
+    <topic name="Documentation Feedback" url="ciee_user_win_01_welcome/documentation_feedback.htm#IX_feedback" />
+  </key>
+  <key name="online" >
+    <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_online" />
+  </key>
+  <key name="print" >
+    <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_print" />
+  </key>
+  <key name="related" >
+    <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_related" />
+  </key>
+  <key name="release notes" >
+    <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_release_notes_1" />
+  </key>
+</key>
+<key name="Dormant" >
+  <key name="entity reference level" >
+    <topic name="Entity Reference Level" url="ciee_user_win_11_dormant/entity_reference_level.htm#IX_entity_reference_level" />
+  </key>
+  <key name="overview" >
+    <topic name="Overview of Dormant" url="ciee_user_win_11_dormant/overview_of_dormant.htm#IX_overview_1" />
+  </key>
+  <key name="performing an analysis" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_performing_an_analysis" />
+  </key>
+  <key name="project scope" >
+    <topic name="Project Scope" url="ciee_user_win_11_dormant/project_scope.htm#IX_project_scope_1" />
+  </key>
+  <key name="selecting a root entity" >
+    <topic name="Selecting a Root Entity" url="ciee_user_win_11_dormant/selecting_a_root_entity.htm#IX_selecting_a_root_entity" />
+  </key>
+</key>
+<key name="dormant-code-auto-nnn group" >
+  <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_dormant_code_auto_nnn_1" />
+</key>
+<key name="editor" >
+  <key name="choosing" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_choosing_2" />
+  </key>
+</key>
+<key name="editors" >
+  <key name="browse symbol" >
+    <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_browse_symbol_1" />
+  </key>
+  <key name="open definition" >
+    <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_open_definition_1" />
+  </key>
+  <key name="symbol info" >
+    <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_symbol_info" />
+  </key>
+</key>
+<key name="education" >
+  <topic name="Professional Services" url="ciee_user_win_01_welcome/professional_services.htm#IX_education" />
+</key>
+<key name="Emacs" >
+  <key name="choosing" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_choosing_5" />
+  </key>
+  <key name="using" >
+    <topic name="Emacs" url="ciee_user_win_07_working_with_source/emacs.htm#IX_using_2" />
+  </key>
+</key>
+<key name="entities" >
+  <key name="aliases" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_aliases" />
+  </key>
+  <key name="querying" >
+    <key name="in Developer Xpress" >
+      <topic name="Querying Entities In Your Source Code" url="ciee_user_win_appa_devxpress/querying_entities_in_your_source_code.htm#IX_in_Developer_Xpress_2" />
+    </key>
+  </key>
+  <key name="unused, locating" >
+    <topic name="Overview of Dormant" url="ciee_user_win_11_dormant/overview_of_dormant.htm#IX_unused_locating" />
+  </key>
+</key>
+<key name="entity" >
+  <key name="adding to a group" >
+    <topic name="Adding Entities to a Group" url="ciee_user_win_05_querying/adding_entities_to_a_group.htm#IX_adding_to_a_group" />
+  </key>
+  <key name="applying closure" >
+    <topic name="Applying Closure" url="ciee_user_win_05_querying/applying_closure.htm#IX_applying_closure" />
+  </key>
+  <key name="attributes" >
+    <key name="displaying" >
+      <topic name="Displaying Entity Attributes" url="ciee_user_win_05_querying/displaying_entity_attributes.htm#IX_displaying_1" />
+    </key>
+    <key name="sorting" >
+      <topic name="Sorting Entity Attributes" url="ciee_user_win_05_querying/sorting_entity_attributes.htm#IX_sorting" />
+    </key>
+  </key>
+  <key name="described" >
+    <topic name="Entities and Instances" url="ciee_user_win_02_introduction/entities_and_instances.htm#IX_described_7" />
+  </key>
+  <key name="displaying short names" >
+    <topic name="Displaying Short Names" url="ciee_user_win_05_querying/displaying_short_names.htm#IX_displaying_short_names" />
+  </key>
+  <key name="nested" >
+    <key name="types" >
+      <topic name="Notation" url="ciee_user_win_05_querying/notation.htm#IX_types" />
+    </key>
+  </key>
+  <key name="removing" >
+    <key name="from a group" >
+      <topic name="Removing Entities From a Group" url="ciee_user_win_05_querying/removing_entities_from_a_group.htm#IX_from_a_group" />
+    </key>
+  </key>
+</key>
+<key name="entity relation diagram" >
+  <topic name="Entity Relation Diagram" url="ciee_user_win_06_views/entity_relation_diagram.htm#IX_entity_relation_diagram" />
+  <topic name="Entity Relation Diagram Menu Options" url="ciee_user_win_06_views/entity_relation_diagram_menu_options.htm#IX_entity_relation_diagram_5" />
+  <key name="menu options" >
+    <topic name="Entity Relation Diagram Menu Options" url="ciee_user_win_06_views/entity_relation_diagram_menu_options.htm#IX_menu_options_2" />
+  </key>
+  <key name="opening" >
+    <topic name="Opening an Entity Relation Diagram" url="ciee_user_win_06_views/opening_an_entity_relation_diagram.htm#IX_opening_3" />
+  </key>
+</key>
+<key name="entity subsets" >
+  <key name="filtering" >
+    <topic name="Filtering Entity Subsets" url="ciee_user_win_appa_devxpress/filtering_entity_subsets.htm#IX_filtering_5" />
+  </key>
+</key>
+<key name="enum impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_enum_impact_options" />
+</key>
+<key name="ERD" >
+  <topic name="Entity Relation Diagram" url="ciee_user_win_06_views/entity_relation_diagram.htm#IX_ERD" />
+</key>
+<key name="exiting" >
+  <key name="DIScover" >
+    <topic name="Closing a DIScover Session" url="ciee_user_win_03_starting/closing_a_code_integrity_session.htm#IX_Code_Integrity_5" />
+  </key>
+  <key name="Developer Xpress" >
+    <topic name="Exiting Developer Xpress" url="ciee_user_win_appa_devxpress/exiting_developer_xpress.htm#IX_Developer_Xpress_4" />
+  </key>
+</key>
+<key name="expert mode (inheritance view)" >
+  <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_expert_mode_inheritance" />
+</key>
+<key name="exporting" >
+  <key name="group contents" >
+    <topic name="Exporting Group Contents" url="ciee_user_win_05_querying/exporting_group_contents.htm#IX_group_contents_1" />
+    <topic name="To export group contents to a text file" url="ciee_user_win_05_querying/to_export_group_contents_to_a_text_file.htm#IX_group_contents_2" />
+  </key>
+  <key name="query results" >
+    <topic name="Exporting Query Results" url="ciee_user_win_05_querying/exporting_query_results.htm#IX_query_results_2" />
+  </key>
+</key>
+<key name="features" >
+  <key name="DIScover" >
+    <topic name="Features and Benefits" url="ciee_user_win_02_introduction/features_and_benefits.htm#IX_Code_Integrity" />
+  </key>
+</key>
+<key name="files" >
+  <key name="impact options" >
+    <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_impact_options_1" />
+  </key>
+</key>
+<key name="filter" >
+  <key name="saving" >
+    <topic name="Saving a Filter" url="ciee_user_win_05_querying/saving_a_filter.htm#IX_saving" />
+  </key>
+</key>
+<key name="filter set scores" >
+  <topic name="Filter Set Scores" url="ciee_user_win_09_caliper/filter_set_scores.htm#IX_filter_set_scores" />
+</key>
+<key name="filtering" >
+  <topic name="To sort entity attributes" url="ciee_user_win_05_querying/to_sort_entity_attributes.htm#IX_filtering_4" />
+  <key name="entity subsets" >
+    <topic name="Filtering Entity Subsets" url="ciee_user_win_appa_devxpress/filtering_entity_subsets.htm#IX_entity_subsets" />
+  </key>
+  <key name="query results" >
+    <topic name="Basic Filtering" url="ciee_user_win_05_querying/basic_filtering.htm#IX_query_results_1" />
+    <topic name="Filtering Results" url="ciee_user_win_05_querying/filtering_results.htm#IX_query_results" />
+    <key name="advanced" >
+      <topic name="Advanced Filtering" url="ciee_user_win_05_querying/advanced_filtering.htm#IX_advanced" />
+    </key>
+  </key>
+</key>
+<key name="finding" >
+  <key name="a group" >
+    <topic name="Finding a Group" url="ciee_user_win_05_querying/finding_a_group.htm#IX_a_group_2" />
+  </key>
+</key>
+<key name="flow chart" >
+  <topic name="Flow Chart" url="ciee_user_win_06_views/flow_chart.htm#IX_flow_chart" />
+  <key name="opening" >
+    <topic name="Opening a Flow Chart" url="ciee_user_win_06_views/opening_a_flow_chart.htm#IX_opening_5" />
+  </key>
+</key>
+<key name="function impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_function_impact_options" />
+</key>
+<key name="generating" >
+  <key name="an impact analysis" >
+    <topic name="Performing an Impact Analysis" url="ciee_user_win_08_impact/performing_an_impact_analysis.htm#IX_an_impact_analysis" />
+  </key>
+  <key name="an impact analysis report" >
+    <topic name="Generating an Impact Analysis Report" url="ciee_user_win_08_impact/generating_an_impact_analysis_report.htm#IX_an_impact_analysis_report" />
+  </key>
+</key>
+<key name="generating impact reports" >
+  <topic name="To generate your Impact Analysis Report" url="ciee_user_win_08_impact/to_generate_your_impact_analysis_report.htm#IX_generating_impact_reports" />
+</key>
+<key name="globalization" >
+  <key name="queries" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_queries_2" />
+  </key>
+</key>
+<key name="Graph" >
+  <key name="view" >
+    <topic name="Opening a Call Graph" url="ciee_user_win_06_views/opening_a_call_graph.htm#IX_view" />
+  </key>
+</key>
+<key name="graphic symbols" >
+  <key name="call tree" >
+    <topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm#IX_call_tree_1" />
+  </key>
+  <key name="inheritance view" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_inheritance_view_5" />
+  </key>
+</key>
+<key name="graphical views" >
+  <key name="call graph" >
+    <topic name="Call Graph" url="ciee_user_win_06_views/call_graph.htm#IX_call_graph_2" />
+  </key>
+  <key name="data chart" >
+    <topic name="Data Chart" url="ciee_user_win_06_views/data_chart.htm#IX_data_chart_2" />
+  </key>
+  <key name="entity relation diagram" >
+    <topic name="Entity Relation Diagram" url="ciee_user_win_06_views/entity_relation_diagram.htm#IX_entity_relation_diagram_2" />
+  </key>
+  <key name="flow chart" >
+    <topic name="Flow Chart" url="ciee_user_win_06_views/flow_chart.htm#IX_flow_chart_2" />
+  </key>
+  <key name="general options" >
+    <topic name="General View Options" url="ciee_user_win_06_views/general_view_options.htm#IX_general_options_1" />
+  </key>
+  <key name="inheritance" >
+    <topic name="Inheritance View" url="ciee_user_win_06_views/inheritance_view.htm#IX_inheritance_1" />
+  </key>
+  <key name="outline" >
+    <topic name="Outline View" url="ciee_user_win_06_views/outline_view.htm#IX_outline_1" />
+  </key>
+  <key name="source code" >
+    <topic name="Working With Graphical Views" url="ciee_user_win_06_views/working_with_graphical_views.htm#IX_source_code_2" />
+  </key>
+  <key name="tree diagram" >
+    <topic name="Tree Diagram" url="ciee_user_win_06_views/tree_diagram.htm#IX_tree_diagram_2" />
+  </key>
+</key>
+<key name="graphics" >
+  <key name="described" >
+    <topic name="Icons and Graphics" url="ciee_user_win_04_interfaces/icons_and_graphics.htm#IX_described_22" />
+  </key>
+</key>
+<key name="group" >
+  <key name="adding entities" >
+    <topic name="Adding Entities to a Group" url="ciee_user_win_05_querying/adding_entities_to_a_group.htm#IX_adding_entities" />
+  </key>
+  <key name="creating" >
+    <topic name="Creating a Group" url="ciee_user_win_05_querying/creating_a_group.htm#IX_creating" />
+  </key>
+  <key name="deleting" >
+    <topic name="Deleting a Group" url="ciee_user_win_05_querying/deleting_a_group.htm#IX_deleting" />
+  </key>
+  <key name="described" >
+    <topic name="Working With Groups" url="ciee_user_win_05_querying/working_with_groups.htm#IX_described_23" />
+  </key>
+  <key name="exporting contents" >
+    <topic name="Exporting Group Contents" url="ciee_user_win_05_querying/exporting_group_contents.htm#IX_exporting_contents" />
+  </key>
+  <key name="finding" >
+    <topic name="Finding a Group" url="ciee_user_win_05_querying/finding_a_group.htm#IX_finding" />
+  </key>
+  <key name="operations" >
+    <topic name="Group Operations" url="ciee_user_win_05_querying/group_operations.htm#IX_operations" />
+  </key>
+  <key name="removing entities" >
+    <topic name="Removing Entities From a Group" url="ciee_user_win_05_querying/removing_entities_from_a_group.htm#IX_removing_entities" />
+  </key>
+  <key name="searching" >
+    <topic name="Finding a Group" url="ciee_user_win_05_querying/finding_a_group.htm#IX_searching" />
+  </key>
+  <key name="viewing contents" >
+    <topic name="Viewing Group Contents" url="ciee_user_win_05_querying/viewing_group_contents.htm#IX_viewing_contents" />
+  </key>
+  <key name="working with" >
+    <topic name="Working With Groups" url="ciee_user_win_05_querying/working_with_groups.htm#IX_working_with" />
+  </key>
+</key>
+<key name="groups" >
+  <topic name="Groups" url="ciee_user_win_appa_devxpress/groups.htm#IX_Groups_1" />
+  <key name="dormant-code-auto-nnn" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_dormant_code_auto_nnn" />
+  </key>
+  <key name="working with in Developer Xpress" >
+    <topic name="Groups" url="ciee_user_win_appa_devxpress/groups.htm#IX_working_with_in" />
+  </key>
+</key>
+<key name="Groups pane" >
+  <key name="described" >
+    <topic name="Groups Pane" url="ciee_user_win_04_interfaces/groups_pane.htm#IX_described_19" />
+  </key>
+</key>
+<key name="gVim" >
+  <key name="choosing" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_choosing_6" />
+  </key>
+  <key name="using" >
+    <topic name="gVim" url="ciee_user_win_07_working_with_source/gvim.htm#IX_using_4" />
+  </key>
+</key>
+<key name="header files" >
+  <key name="simplifying" >
+    <topic name="Simplifying a Source Files Header Files" url="ciee_user_win_12_simplify/simplifying_a_source_file_s_header_files.htm#IX_simplifying_1" />
+  </key>
+</key>
+<key name="hits" >
+  <key name="described" >
+    <topic name="Violations" url="ciee_user_win_09_caliper/violations.htm#IX_described_27" />
+  </key>
+</key>
+<key name="icons" >
+  <key name="described" >
+    <topic name="Icons and Graphics" url="ciee_user_win_04_interfaces/icons_and_graphics.htm#IX_described_21" />
+  </key>
+</key>
+<key name="IDE" >
+  <key name="choosing" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_choosing_1" />
+  </key>
+  <key name="managing source code changes" >
+    <topic name="Working With Source Code" url="ciee_user_win_07_working_with_source/working_with_source_code.htm#IX_managing_source_code" />
+  </key>
+  <key name="post-installation" >
+    <topic name="Post-Installation Integration" url="ciee_user_win_03_starting/post-installation_integration.htm#IX_post_installation" />
+  </key>
+</key>
+<key name="IDEs" >
+  <key name="Developer Xpress" >
+    <key name="choosing" >
+      <topic name="Choosing an IDE" url="ciee_user_win_appa_devxpress/choosing_an_ide1.htm#IX_choosing_10" />
+    </key>
+  </key>
+  <key name="Emacs" >
+    <key name="using" >
+      <topic name="Emacs" url="ciee_user_win_07_working_with_source/emacs.htm#IX_using_3" />
+    </key>
+  </key>
+  <key name="gVim" >
+    <key name="using" >
+      <topic name="gVim" url="ciee_user_win_07_working_with_source/gvim.htm#IX_using_5" />
+    </key>
+  </key>
+  <key name="launching" >
+    <topic name="Launching Your Integrated IDE" url="ciee_user_win_07_working_with_source/launching_your_integrated_ide.htm#IX_launching" />
+  </key>
+  <key name="Microsoft Visual Studio" >
+    <key name="using" >
+      <topic name="Microsoft Visual Studio" url="ciee_user_win_07_working_with_source/microsoft_visual_studio.htm#IX_using_1" />
+    </key>
+  </key>
+</key>
+<key name="impact analysis" >
+  <key name="benefits" >
+    <topic name="Why Use Impact Analysis?" url="ciee_user_win_08_impact/why_use_impact_analysis_.htm#IX_benefits_1" />
+  </key>
+  <key name="described" >
+    <topic name="Why Use Impact Analysis?" url="ciee_user_win_08_impact/why_use_impact_analysis_.htm#IX_described_24" />
+  </key>
+  <key name="Java language options" >
+    <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_Java_language_options" />
+  </key>
+  <key name="options" >
+    <key name="C/C++" >
+      <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_C_C" />
+    </key>
+    <key name="Java" >
+      <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_Java" />
+    </key>
+  </key>
+  <key name="performing" >
+    <topic name="Performing an Impact Analysis" url="ciee_user_win_08_impact/performing_an_impact_analysis.htm#IX_performing" />
+  </key>
+  <key name="report" >
+    <key name="attaching to issues" >
+      <topic name="Attaching Impact Analysis Reports to Integrity Manager Issues" url="ciee_user_win_08_impact/attaching_impact_analysis_reports_to_integrity_manager_issues.htm#IX_attaching_to_issues" />
+    </key>
+    <key name="generating" >
+      <topic name="Generating an Impact Analysis Report" url="ciee_user_win_08_impact/generating_an_impact_analysis_report.htm#IX_generating" />
+    </key>
+    <key name="printing" >
+      <topic name="Printing an Impact Analysis Report" url="ciee_user_win_08_impact/printing_an_impact_analysis_report.htm#IX_printing" />
+    </key>
+    <key name="saving" >
+      <topic name="Saving an Impact Analysis Report" url="ciee_user_win_08_impact/saving_an_impact_analysis_report.htm#IX_saving_1" />
+    </key>
+  </key>
+  <key name="reports" >
+    <topic name="The Impact Analysis Report" url="ciee_user_win_08_impact/the_impact_analysis_report.htm#IX_reports" />
+  </key>
+</key>
+<key name="information model" >
+  <key name="connecting to" >
+    <topic name="Connecting to an Information Model" url="ciee_user_win_03_starting/connecting_to_an_information_model.htm#IX_connecting_to" />
+  </key>
+  <key name="described" >
+    <topic name="Information Model" url="ciee_user_win_02_introduction/information_model.htm#IX_described_3" />
+  </key>
+</key>
+<key name="inheritance view" >
+  <topic name="Inheritance View" url="ciee_user_win_06_views/inheritance_view.htm#IX_inheritance_view" />
+  <key name="color codes" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_color_codes_1" />
+  </key>
+  <key name="expert mode" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_expert_mode_1" />
+  </key>
+  <key name="graphic symbols" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_graphic_symbols_1" />
+  </key>
+  <key name="menu options" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_menu_options_1" />
+  </key>
+  <key name="opening" >
+    <topic name="Opening an Inheritance View" url="ciee_user_win_06_views/opening_an_inheritance_view.htm#IX_opening_1" />
+  </key>
+</key>
+<key name="installing DIScover" >
+  <key name="uninstalling" >
+    <topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm#IX_uninstalling_1" />
+  </key>
+</key>
+<key name="instance" >
+  <key name="described" >
+    <topic name="Entities and Instances" url="ciee_user_win_02_introduction/entities_and_instances.htm#IX_described_8" />
+  </key>
+</key>
+<key name="instances" >
+  <key name="viewing" >
+    <topic name="Viewing Instances" url="ciee_user_win_05_querying/viewing_instances.htm#IX_viewing" />
+  </key>
+</key>
+<key name="Integrity Manager integration" >
+  <key name="described" >
+    <topic name="Setting Up the Integrity Manager Integration" url="ciee_user_win_03_starting/setting_up_the_integrity_manager_integration.htm#IX_described_14" />
+  </key>
+  <key name="setting up" >
+    <topic name="Setting Up the Integrity Manager Integration" url="ciee_user_win_03_starting/setting_up_the_integrity_manager_integration.htm#IX_setting_up" />
+  </key>
+</key>
+<key name="interface" >
+  <key name="model browser" >
+    <topic name="The Model Browser Interface" url="ciee_user_win_04_interfaces/the_model_browser_interface.htm#IX_model_browser" />
+  </key>
+</key>
+<key name="interface impact options" >
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_interface_impact_options" />
+</key>
+<key name="issues" >
+  <key name="attaching impact analysis reports to" >
+    <topic name="Attaching Impact Analysis Reports to Integrity Manager Issues" url="ciee_user_win_08_impact/attaching_impact_analysis_reports_to_integrity_manager_issues.htm#IX_attaching_impact" />
+  </key>
+  <key name="attaching quality assessment reports" >
+    <topic name="Attaching Quality Assessment Reports to Integrity Manager Issues" url="ciee_user_win_09_caliper/attaching_quality_assessment_reports_to_integrity_manager_issues.htm#IX_attaching_quality" />
+  </key>
+</key>
+<key name="Java" >
+  <key name="impact analysis options" >
+    <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_impact_analysis_options_1" />
+  </key>
+</key>
+<key name="JBuilder" >
+  <topic name="Borland JBuilder" url="ciee_user_win_07_working_with_source/borland_jbuilder.htm#IX_JBuilder" />
+</key>
+<key name="launching" >
+  <key name="an IDE" >
+    <topic name="Launching Your Integrated IDE" url="ciee_user_win_07_working_with_source/launching_your_integrated_ide.htm#IX_an_IDE_1" />
+  </key>
+  <key name="Developer Xpress" >
+    <topic name="Starting Developer Xpress" url="ciee_user_win_appa_devxpress/starting_developer_xpress.htm#IX_Developer_Xpress_1" />
+  </key>
+</key>
+<key name="list filtering" >
+  <topic name="To sort entity attributes" url="ciee_user_win_05_querying/to_sort_entity_attributes.htm#IX_list_filtering" />
+</key>
+<key name="local variable impact options" >
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_local_variable_impact" />
+</key>
+<key name="locating" >
+  <key name="unused entities" >
+    <topic name="Overview of Dormant" url="ciee_user_win_11_dormant/overview_of_dormant.htm#IX_unused_entities" />
+  </key>
+</key>
+<key name="logical symbols" >
+  <key name="entity relation diagram" >
+    <topic name="Entity Relation Diagram Menu Options" url="ciee_user_win_06_views/entity_relation_diagram_menu_options.htm#IX_entity_relation_diagram_4" />
+  </key>
+</key>
+<key name="macro impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_macro_impact_options" />
+</key>
+<key name="making queries" >
+  <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_making_queries" />
+</key>
+<key name="member status (classes)" >
+  <topic name="Opening an Inheritance View" url="ciee_user_win_06_views/opening_an_inheritance_view.htm#IX_member_status_classes" />
+</key>
+<key name="methods" >
+  <key name="impact options" >
+    <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_impact_options_3" />
+  </key>
+</key>
+<key name="metric queries" >
+  <topic name="Available Metrics" url="ciee_user_win_10_metrics/available_metrics.htm#IX_metric_queries" />
+</key>
+<key name="metrics" >
+  <topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm#IX_metrics" />
+  <key name="creating a complex query" >
+    <topic name="Creating a Complex Query" url="ciee_user_win_10_metrics/creating_a_complex_query.htm#IX_creating_a_complex_query" />
+  </key>
+  <key name="described" >
+    <topic name="Metrics" url="ciee_user_win_10_metrics/metrics.htm#IX_described_29" />
+  </key>
+  <key name="displaying" >
+    <topic name="Displaying Metrics" url="ciee_user_win_10_metrics/displaying_metrics.htm#IX_displaying_3" />
+    <topic name="To display metrics with an entity in a column" url="ciee_user_win_10_metrics/to_display_metrics_with_an_entity_in_a_column.htm#IX_displaying_4" />
+  </key>
+  <key name="Filter Setup dialog box" >
+    <topic name="To display metrics with an entity in a column" url="ciee_user_win_10_metrics/to_display_metrics_with_an_entity_in_a_column.htm#IX_Filter_Setup_dialog_box" />
+  </key>
+  <key name="list of" >
+    <topic name="Available Metrics" url="ciee_user_win_10_metrics/available_metrics.htm#IX_list_of" />
+  </key>
+</key>
+<key name="Microsoft Visual Studio" >
+  <key name="choosing" >
+    <topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm#IX_choosing_3" />
+  </key>
+  <key name="using" >
+    <topic name="Microsoft Visual Studio" url="ciee_user_win_07_working_with_source/microsoft_visual_studio.htm#IX_using" />
+  </key>
+</key>
+<key name="mini-buffer" >
+  <topic name="Emacs" url="ciee_user_win_07_working_with_source/emacs.htm#IX_mini_buffer" />
+</key>
+<key name="model browser" >
+  <key name="Categories pane" >
+    <topic name="Categories Pane" url="ciee_user_win_04_interfaces/categories_pane.htm#IX_Categories_pane" />
+  </key>
+  <key name="described" >
+    <topic name="Model Browser" url="ciee_user_win_02_introduction/model_browser.htm#IX_described_10" />
+  </key>
+  <key name="graphics" >
+    <topic name="Icons and Graphics" url="ciee_user_win_04_interfaces/icons_and_graphics.htm#IX_graphics" />
+  </key>
+  <key name="Groups pane" >
+    <topic name="Groups Pane" url="ciee_user_win_04_interfaces/groups_pane.htm#IX_Groups_pane" />
+  </key>
+  <key name="icons" >
+    <topic name="Icons and Graphics" url="ciee_user_win_04_interfaces/icons_and_graphics.htm#IX_icons" />
+  </key>
+  <key name="interface" >
+    <key name="described" >
+      <topic name="The Model Browser Interface" url="ciee_user_win_04_interfaces/the_model_browser_interface.htm#IX_described_15" />
+    </key>
+  </key>
+  <key name="mouse operations" >
+    <topic name="Mouse Operations" url="ciee_user_win_04_interfaces/mouse_operations.htm#IX_mouse_operations" />
+  </key>
+  <key name="Projects pane" >
+    <topic name="Projects Pane" url="ciee_user_win_04_interfaces/projects_pane.htm#IX_Projects_pane" />
+  </key>
+  <key name="Queries pane" >
+    <topic name="Queries Pane" url="ciee_user_win_04_interfaces/queries_pane.htm#IX_Queries_pane" />
+  </key>
+  <key name="Results window" >
+    <topic name="Results Window" url="ciee_user_win_04_interfaces/results_window.htm#IX_Results_window" />
+  </key>
+  <key name="starting" >
+    <topic name="Starting the Model Browser" url="ciee_user_win_03_starting/starting_the_model_browser.htm#IX_starting" />
+  </key>
+</key>
+<key name="model environment" >
+  <key name="described" >
+    <topic name="Your Model Environment" url="ciee_user_win_03_starting/your_model_environment.htm#IX_described_13" />
+  </key>
+</key>
+<key name="model server" >
+  <key name="described" >
+    <topic name="Model Server" url="ciee_user_win_02_introduction/model_server.htm#IX_described_5" />
+  </key>
+  <key name="Developer Xpress" >
+    <key name="choosing" >
+      <topic name="Choosing a Model Server" url="ciee_user_win_appa_devxpress/choosing_a_model_server.htm#IX_choosing_7" />
+    </key>
+  </key>
+</key>
+<key name="model version" >
+  <key name="connecting to" >
+    <topic name="Connecting to an Information Model" url="ciee_user_win_03_starting/connecting_to_an_information_model.htm#IX_connecting_to_1" />
+  </key>
+</key>
+<key name="mouse operations" >
+  <topic name="Mouse Operations" url="ciee_user_win_04_interfaces/mouse_operations.htm#IX_mouse_operations_1" />
+</key>
+<key name="navigating" >
+  <key name="source code" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_source_code_1" />
+    <key name="in Developer Xpress" >
+      <topic name="Navigating Your Source Code" url="ciee_user_win_appa_devxpress/navigating_your_source_code.htm#IX_in_Developer_Xpress_1" />
+    </key>
+  </key>
+</key>
+<key name="nested entity types" >
+  <topic name="Notation" url="ciee_user_win_05_querying/notation.htm#IX_nested_entity_types" />
+</key>
+<key name="nested structures" >
+  <key name="entity types" >
+    <topic name="Notation" url="ciee_user_win_05_querying/notation.htm#IX_entity_types" />
+  </key>
+  <key name="notation" >
+    <topic name="Nested Structure Notation" url="ciee_user_win_05_querying/nested_structure_notation.htm#IX_notation_1" />
+  </key>
+</key>
+<key name="No Transform" >
+  <key name="source mode option" >
+    <topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm#IX_source_mode_option" />
+  </key>
+</key>
+<key name="notation" >
+  <topic name="Notation" url="ciee_user_win_05_querying/notation.htm#IX_notation" />
+  <key name="nested structures" >
+    <topic name="Nested Structure Notation" url="ciee_user_win_05_querying/nested_structure_notation.htm#IX_nested_structures" />
+  </key>
+</key>
+<key name="open definition" >
+  <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_open_definition" />
+</key>
+<key name="opening" >
+  <key name="a call graph" >
+    <topic name="Opening a Call Graph" url="ciee_user_win_06_views/opening_a_call_graph.htm#IX_a_call_graph" />
+  </key>
+  <key name="a data chart" >
+    <topic name="Opening a Data Chart" url="ciee_user_win_06_views/opening_a_data_chart.htm#IX_a_data_chart" />
+  </key>
+  <key name="a flow chart" >
+    <topic name="Opening a Flow Chart" url="ciee_user_win_06_views/opening_a_flow_chart.htm#IX_a_flow_chart" />
+  </key>
+  <key name="a tree diagram" >
+    <topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm#IX_a_tree_diagram" />
+  </key>
+  <key name="an entity relation diagram" >
+    <topic name="Opening an Entity Relation Diagram" url="ciee_user_win_06_views/opening_an_entity_relation_diagram.htm#IX_an_entity_relation" />
+  </key>
+  <key name="an IDE" >
+    <topic name="Launching Your Integrated IDE" url="ciee_user_win_07_working_with_source/launching_your_integrated_ide.htm#IX_an_IDE_2" />
+  </key>
+  <key name="an inheritance view" >
+    <topic name="Opening an Inheritance View" url="ciee_user_win_06_views/opening_an_inheritance_view.htm#IX_an_inheritance_view" />
+  </key>
+  <key name="an outline view" >
+    <topic name="Opening an Outline View" url="ciee_user_win_06_views/opening_an_outline_view.htm#IX_an_outline_view" />
+  </key>
+</key>
+<key name="options" >
+  <key name="data chart" >
+    <topic name="Data Chart Menu Options" url="ciee_user_win_06_views/data_chart_menu_options.htm#IX_data_chart_3" />
+  </key>
+  <key name="entity relation diagram" >
+    <topic name="Entity Relation Diagram Menu Options" url="ciee_user_win_06_views/entity_relation_diagram_menu_options.htm#IX_entity_relation_diagram_3" />
+  </key>
+  <key name="inheritance view" >
+    <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_inheritance_view_3" />
+  </key>
+  <key name="tree diagram" >
+    <topic name="Tree Diagram Menu Options" url="ciee_user_win_06_views/tree_diagram_menu_options.htm#IX_tree_diagram_4" />
+  </key>
+</key>
+<key name="outline view" >
+  <topic name="Outline View" url="ciee_user_win_06_views/outline_view.htm#IX_outline_view" />
+  <key name="opening" >
+    <topic name="Opening an Outline View" url="ciee_user_win_06_views/opening_an_outline_view.htm#IX_opening_2" />
+  </key>
+</key>
+<key name="performing" >
+  <key name="a Dormant analysis" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_a_Dormant_analysis" />
+  </key>
+</key>
+<key name="permissions" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_permissions" />
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_permissions_1" />
+</key>
+<key name="portability" >
+  <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_portability" />
+  <key name="queries" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_queries_1" />
+  </key>
+</key>
+<key name="post-installation" >
+  <key name="IDEs" >
+    <topic name="Post-Installation Integration" url="ciee_user_win_03_starting/post-installation_integration.htm#IX_IDEs" />
+  </key>
+</key>
+<key name="printing" >
+  <key name="a quality assessment report" >
+    <topic name="Printing a Quality Assessment Report" url="ciee_user_win_09_caliper/printing_a_quality_assessment_report.htm#IX_a_quality_assessment_2" />
+  </key>
+  <key name="an impact analysis report" >
+    <topic name="Printing an Impact Analysis Report" url="ciee_user_win_08_impact/printing_an_impact_analysis_report.htm#IX_an_impact_analysis_report_2" />
+  </key>
+</key>
+<key name="professional services" >
+  <topic name="Professional Services" url="ciee_user_win_01_welcome/professional_services.htm#IX_professional_services" />
+</key>
+<key name="programming standards" >
+  <key name="queries" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_queries" />
+  </key>
+</key>
+<key name="project" >
+  <key name="described" >
+    <topic name="Project" url="ciee_user_win_02_introduction/project.htm#IX_described_4" />
+  </key>
+</key>
+<key name="project hierarchy" >
+  <key name="searching" >
+    <topic name="Searching a Project Hierarchy" url="ciee_user_win_appa_devxpress/searching_a_project_hierarchy.htm#IX_searching_1" />
+  </key>
+</key>
+<key name="project scope" >
+  <key name="Dormant" >
+    <topic name="Project Scope" url="ciee_user_win_11_dormant/project_scope.htm#IX_Dormant" />
+  </key>
+</key>
+<key name="Projects pane" >
+  <key name="described" >
+    <topic name="Projects Pane" url="ciee_user_win_04_interfaces/projects_pane.htm#IX_described_16" />
+  </key>
+</key>
+<key name="QAR" >
+  <topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm#IX_QAR" />
+  <key name="attaching to an issue" >
+    <topic name="Attaching Quality Assessment Reports to Integrity Manager Issues" url="ciee_user_win_09_caliper/attaching_quality_assessment_reports_to_integrity_manager_issues.htm#IX_attaching_to_an_issue" />
+  </key>
+  <key name="described" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_described_28" />
+  </key>
+  <key name="printing" >
+    <topic name="Printing a Quality Assessment Report" url="ciee_user_win_09_caliper/printing_a_quality_assessment_report.htm#IX_printing_1" />
+  </key>
+  <key name="saving" >
+    <topic name="Saving a Quality Assessment Report" url="ciee_user_win_09_caliper/saving_a_quality_assessment_report.htm#IX_saving_4" />
+  </key>
+</key>
+<key name="QARs" >
+  <key name="viewing" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_viewing_5" />
+  </key>
+</key>
+<key name="quality" >
+  <key name="filter sets" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_filter_sets" />
+  </key>
+  <key name="standards" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_standards" />
+  </key>
+</key>
+<key name="quality assessement reports" >
+  <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_quality_assessement" />
+</key>
+<key name="quality assessment report" >
+  <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_quality_assessment_report_2" />
+  <topic name="Report Tab" url="ciee_user_win_09_caliper/report_tab.htm#IX_quality_assessment_report_1" />
+  <topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm#IX_quality_assessment_report" />
+  <key name="printing" >
+    <topic name="Printing a Quality Assessment Report" url="ciee_user_win_09_caliper/printing_a_quality_assessment_report.htm#IX_printing_2" />
+  </key>
+  <key name="saving" >
+    <topic name="Saving a Quality Assessment Report" url="ciee_user_win_09_caliper/saving_a_quality_assessment_report.htm#IX_saving_3" />
+  </key>
+  <key name="viewing" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_viewing_3" />
+  </key>
+</key>
+<key name="quality assessment reports" >
+  <key name="attaching to issues" >
+    <topic name="Attaching Quality Assessment Reports to Integrity Manager Issues" url="ciee_user_win_09_caliper/attaching_quality_assessment_reports_to_integrity_manager_issues.htm#IX_attaching_to_issues_1" />
+  </key>
+  <key name="viewing" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_viewing_4" />
+  </key>
+</key>
+<key name="quality rule queries" >
+  <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_quality_rule_queries" />
+</key>
+<key name="quality scores" >
+  <topic name="Quality Scores" url="ciee_user_win_09_caliper/quality_scores.htm#IX_quality_scores" />
+  <key name="Caliper" >
+    <topic name="Quality Scores" url="ciee_user_win_09_caliper/quality_scores.htm#IX_Caliper_5" />
+  </key>
+  <key name="filter sets" >
+    <topic name="Filter Set Scores" url="ciee_user_win_09_caliper/filter_set_scores.htm#IX_filter_sets_1" />
+  </key>
+</key>
+<key name="queries" >
+  <key name="Caliper" >
+    <key name="quality rule" >
+      <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_quality_rule" />
+    </key>
+  </key>
+  <key name="Declares" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Declares" />
+  </key>
+  <key name="Defines" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Defines" />
+  </key>
+  <key name="making" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_making" />
+  </key>
+  <key name="metric" >
+    <topic name="Available Metrics" url="ciee_user_win_10_metrics/available_metrics.htm#IX_metric" />
+  </key>
+  <key name="Show" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Show" />
+  </key>
+  <key name="submission check" >
+    <topic name="Using Submission Check" url="ciee_user_win_appa_devxpress/using_submission_check.htm#IX_submission_check" />
+  </key>
+  <key name="Uses" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Uses" />
+  </key>
+  <key name="Where" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Where" />
+  </key>
+</key>
+<key name="Queries pane" >
+  <key name="described" >
+    <topic name="Queries Pane" url="ciee_user_win_04_interfaces/queries_pane.htm#IX_described_18" />
+  </key>
+</key>
+<key name="query" >
+  <key name="described" >
+    <topic name="Queries" url="ciee_user_win_02_introduction/queries.htm#IX_described_9" />
+  </key>
+  <key name="metrics" >
+    <key name="creating" >
+      <topic name="Creating a Complex Query" url="ciee_user_win_10_metrics/creating_a_complex_query.htm#IX_creating_1" />
+    </key>
+  </key>
+  <key name="results" >
+    <key name="exporting" >
+      <topic name="Exporting Query Results" url="ciee_user_win_05_querying/exporting_query_results.htm#IX_exporting_1" />
+    </key>
+  </key>
+  <key name="statistics" >
+    <topic name="Settings Tab" url="ciee_user_win_09_caliper/settings_tab.htm#IX_statistics" />
+  </key>
+</key>
+<key name="query results" >
+  <key name="advanced filtering" >
+    <topic name="Advanced Filtering" url="ciee_user_win_05_querying/advanced_filtering.htm#IX_advanced_filtering_1" />
+  </key>
+  <key name="exporting" >
+    <topic name="Exporting Query Results" url="ciee_user_win_05_querying/exporting_query_results.htm#IX_exporting" />
+  </key>
+  <key name="filtering" >
+    <topic name="Basic Filtering" url="ciee_user_win_05_querying/basic_filtering.htm#IX_filtering_2" />
+    <topic name="Filtering Results" url="ciee_user_win_05_querying/filtering_results.htm#IX_filtering" />
+  </key>
+</key>
+<key name="query scores" >
+  <key name="Caliper" >
+    <topic name="Query Scores" url="ciee_user_win_09_caliper/query_scores.htm#IX_Caliper_6" />
+  </key>
+</key>
+<key name="query tree" >
+  <key name="Caliper" >
+    <topic name="The Query Tree" url="ciee_user_win_09_caliper/the_query_tree.htm#IX_Caliper_2" />
+  </key>
+</key>
+<key name="querying" >
+  <key name="source code" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_source_code" />
+  </key>
+</key>
+<key name="quitting" >
+  <key name="DIScover" >
+    <topic name="Closing a DIScover Session" url="ciee_user_win_03_starting/closing_a_code_integrity_session.htm#IX_Code_Integrity_4" />
+  </key>
+</key>
+<key name="Rational ClearCase" >
+  <key name="selecting" >
+    <topic name="Choosing a Configuration Management System" url="ciee_user_win_03_starting/choosing_a_configuration_management_system.htm#IX_selecting_1" />
+  </key>
+  <key name="using" >
+    <topic name="Using Rational ClearCase" url="ciee_user_win_07_working_with_source/using_rational_clearcase.htm#IX_using_8" />
+  </key>
+</key>
+<key name="refining a source analysis" >
+  <topic name="Refining Your Source Analysis" url="ciee_user_win_07_working_with_source/refining_your_source_analysis.htm#IX_refining_a_source" />
+</key>
+<key name="related documentation" >
+  <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_related_documentation" />
+</key>
+<key name="release notes" >
+  <topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm#IX_release_notes_2" />
+</key>
+<key name="removing" >
+  <key name="entities from a group" >
+    <topic name="Removing Entities From a Group" url="ciee_user_win_05_querying/removing_entities_from_a_group.htm#IX_entities_from_a_group" />
+  </key>
+</key>
+<key name="rename" >
+  <topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm#IX_rename" />
+</key>
+<key name="report" >
+  <key name="impact analysis" >
+    <key name="generating" >
+      <topic name="Generating an Impact Analysis Report" url="ciee_user_win_08_impact/generating_an_impact_analysis_report.htm#IX_generating_1" />
+    </key>
+  </key>
+  <key name="quality assessment" >
+    <topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm#IX_quality_assessment" />
+  </key>
+</key>
+<key name="reports" >
+  <key name="Caliper" >
+    <topic name="Report Tab" url="ciee_user_win_09_caliper/report_tab.htm#IX_Caliper_4" />
+  </key>
+  <key name="impact" >
+    <topic name="The Impact Analysis Report" url="ciee_user_win_08_impact/the_impact_analysis_report.htm#IX_impact_1" />
+  </key>
+  <key name="quality assessment" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_quality_assessment_1" />
+  </key>
+  <key name="tab" >
+    <topic name="Report Tab" url="ciee_user_win_09_caliper/report_tab.htm#IX_tab" />
+  </key>
+</key>
+<key name="repository" >
+  <key name="described" >
+    <topic name="Repository" url="ciee_user_win_02_introduction/repository.htm#IX_described_2" />
+  </key>
+</key>
+<key name="results" >
+  <key name="filtering" >
+    <topic name="Basic Filtering" url="ciee_user_win_05_querying/basic_filtering.htm#IX_filtering_3" />
+  </key>
+  <key name="query" >
+    <key name="exporting to a file" >
+      <topic name="Exporting Query Results" url="ciee_user_win_05_querying/exporting_query_results.htm#IX_exporting_to_a_file" />
+    </key>
+    <key name="filtering" >
+      <topic name="Filtering Results" url="ciee_user_win_05_querying/filtering_results.htm#IX_filtering_1" />
+    </key>
+  </key>
+</key>
+<key name="Results window" >
+  <key name="described" >
+    <topic name="Results Window" url="ciee_user_win_04_interfaces/results_window.htm#IX_described_20" />
+  </key>
+</key>
+<key name="roles" >
+  <key name="administrator" >
+    <topic name="Roles" url="ciee_user_win_01_welcome/roles.htm#IX_administrator" />
+  </key>
+  <key name="user" >
+    <topic name="Roles" url="ciee_user_win_01_welcome/roles.htm#IX_user" />
+  </key>
+</key>
+<key name="root entity" >
+  <key name="project scope" >
+    <topic name="Project Scope" url="ciee_user_win_11_dormant/project_scope.htm#IX_project_scope" />
+  </key>
+  <key name="reference level" >
+    <topic name="Entity Reference Level" url="ciee_user_win_11_dormant/entity_reference_level.htm#IX_reference_level" />
+  </key>
+</key>
+<key name="running" >
+  <key name="uninstall program" >
+    <topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm#IX_uninstall_program" />
+  </key>
+</key>
+<key name="runtime list" >
+  <key name="Developer Xpress" >
+    <topic name="Using the Runtime List" url="ciee_user_win_appa_devxpress/using_the_runtime_list.htm#IX_Developer_Xpress_6" />
+  </key>
+</key>
+<key name="saved filter" >
+  <key name="applying" >
+    <topic name="Applying a Saved Filter" url="ciee_user_win_05_querying/applying_a_saved_filter.htm#IX_applying_1" />
+  </key>
+</key>
+<key name="saving" >
+  <key name="a filter" >
+    <topic name="Saving a Filter" url="ciee_user_win_05_querying/saving_a_filter.htm#IX_a_filter" />
+  </key>
+  <key name="a quality assessment report" >
+    <topic name="Saving a Quality Assessment Report" url="ciee_user_win_09_caliper/saving_a_quality_assessment_report.htm#IX_a_quality_assessment_1" />
+  </key>
+  <key name="an impact analysis report" >
+    <topic name="Saving an Impact Analysis Report" url="ciee_user_win_08_impact/saving_an_impact_analysis_report.htm#IX_an_impact_analysis_report_1" />
+  </key>
+  <key name="group contents to a text file" >
+    <topic name="To export group contents to a text file" url="ciee_user_win_05_querying/to_export_group_contents_to_a_text_file.htm#IX_group_contents_to_a_text" />
+  </key>
+  <key name="query results to a file" >
+    <topic name="Exporting Query Results" url="ciee_user_win_05_querying/exporting_query_results.htm#IX_query_results_to_a_file" />
+  </key>
+</key>
+<key name="scope" >
+  <key name="Dormant" >
+    <topic name="Project Scope" url="ciee_user_win_11_dormant/project_scope.htm#IX_Dormant_1" />
+  </key>
+</key>
+<key name="scores" >
+  <key name="filter set" >
+    <topic name="Filter Set Scores" url="ciee_user_win_09_caliper/filter_set_scores.htm#IX_filter_set" />
+  </key>
+</key>
+<key name="searching" >
+  <key name="a project hierarchy" >
+    <topic name="Searching a Project Hierarchy" url="ciee_user_win_appa_devxpress/searching_a_project_hierarchy.htm#IX_a_project_hierarchy" />
+  </key>
+  <key name="groups" >
+    <topic name="Finding a Group" url="ciee_user_win_05_querying/finding_a_group.htm#IX_groups" />
+  </key>
+</key>
+<key name="selecting" >
+  <key name="a CM system" >
+    <topic name="To choose your configuration management system" url="ciee_user_win_03_starting/to_choose_your_configuration_management_system.htm#IX_a_CM_system" />
+  </key>
+  <key name="a configuration management system" >
+    <topic name="Choosing a Configuration Management System" url="ciee_user_win_03_starting/choosing_a_configuration_management_system.htm#IX_a_configuration_1" />
+  </key>
+  <key name="a root entity" >
+    <topic name="Selecting a Root Entity" url="ciee_user_win_11_dormant/selecting_a_root_entity.htm#IX_a_root_entity" />
+  </key>
+</key>
+<key name="Server Source" >
+  <key name="source mode option" >
+    <topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm#IX_source_mode_option_2" />
+  </key>
+</key>
+<key name="Service Chooser window" >
+  <key name="Developer Xpress" >
+    <topic name="Configuring Developer Xpress" url="ciee_user_win_appa_devxpress/configuring_developer_xpress.htm#IX_Developer_Xpress_3" />
+  </key>
+</key>
+<key name="services" >
+  <key name="offered" >
+    <topic name="Professional Services" url="ciee_user_win_01_welcome/professional_services.htm#IX_offered" />
+  </key>
+</key>
+<key name="session" >
+  <key name="before starting" >
+    <topic name="Before Starting a Session" url="ciee_user_win_03_starting/before_starting_a_session.htm#IX_before_starting" />
+  </key>
+  <key name="Caliper" >
+    <topic name="Caliper Sessions" url="ciee_user_win_09_caliper/caliper_sessions.htm#IX_Caliper" />
+    <key name="saving" >
+      <topic name="To save your work in a stored session" url="ciee_user_win_09_caliper/to_save_your_work_in_a_stored_session.htm#IX_saving_2" />
+    </key>
+  </key>
+  <key name="closing" >
+    <topic name="Closing a DIScover Session" url="ciee_user_win_03_starting/closing_a_code_integrity_session.htm#IX_closing" />
+  </key>
+</key>
+<key name="setting up" >
+  <key name="Integrity Manager integration" >
+    <topic name="Setting Up the Integrity Manager Integration" url="ciee_user_win_03_starting/setting_up_the_integrity_manager_integration.htm#IX_Integrity_Manager" />
+  </key>
+</key>
+<key name="settings" >
+  <key name="Caliper" >
+    <topic name="Settings and Reports" url="ciee_user_win_09_caliper/settings_and_reports.htm#IX_Caliper_3" />
+  </key>
+</key>
+<key name="short names" >
+  <key name="displaying" >
+    <topic name="Displaying Short Names" url="ciee_user_win_05_querying/displaying_short_names.htm#IX_displaying" />
+  </key>
+</key>
+<key name="Show query" >
+  <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Show_query" />
+</key>
+<key name="showing" >
+  <key name="entity attributes" >
+    <topic name="Displaying Entity Attributes" url="ciee_user_win_05_querying/displaying_entity_attributes.htm#IX_entity_attributes_1" />
+  </key>
+</key>
+<key name="Simplify" >
+  <key name="described" >
+    <topic name="Overview of Simplify.h" url="ciee_user_win_12_simplify/overview_of_simplify.h.htm#IX_described_30" />
+  </key>
+</key>
+<key name="simplifying" >
+  <key name="header files" >
+    <topic name="Simplifying a Source Files Header Files" url="ciee_user_win_12_simplify/simplifying_a_source_file_s_header_files.htm#IX_header_files" />
+  </key>
+</key>
+<key name="sorting" >
+  <key name="entity attributes" >
+    <topic name="Sorting Entity Attributes" url="ciee_user_win_05_querying/sorting_entity_attributes.htm#IX_entity_attributes_2" />
+  </key>
+</key>
+<key name="source code" >
+  <key name="graphical views" >
+    <topic name="Working With Graphical Views" url="ciee_user_win_06_views/working_with_graphical_views.htm#IX_graphical_views" />
+  </key>
+  <key name="header files" >
+    <key name="simplifying" >
+      <topic name="Simplifying a Source Files Header Files" url="ciee_user_win_12_simplify/simplifying_a_source_file_s_header_files.htm#IX_simplifying" />
+    </key>
+  </key>
+  <key name="managing changes" >
+    <topic name="Working With Source Code" url="ciee_user_win_07_working_with_source/working_with_source_code.htm#IX_managing_changes" />
+  </key>
+  <key name="navigating" >
+    <key name="in Developer Xpress" >
+      <topic name="Navigating Your Source Code" url="ciee_user_win_appa_devxpress/navigating_your_source_code.htm#IX_in_Developer_Xpress" />
+    </key>
+  </key>
+  <key name="querying" >
+    <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_querying" />
+  </key>
+  <key name="working with editors" >
+    <topic name="Launching Your Integrated IDE" url="ciee_user_win_07_working_with_source/launching_your_integrated_ide.htm#IX_working_with_editors" />
+  </key>
+</key>
+<key name="Source Integrity" >
+  <key name="selecting" >
+    <topic name="Choosing a Configuration Management System" url="ciee_user_win_03_starting/choosing_a_configuration_management_system.htm#IX_selecting" />
+  </key>
+  <key name="using" >
+    <topic name="Using MKS Source Integrity Enterprise Edition" url="ciee_user_win_07_working_with_source/using_mks_source_integrity_enterprise_edition.htm#IX_using_6" />
+  </key>
+</key>
+<key name="source mode" >
+  <key name="choosing" >
+    <topic name="Choosing a Source Mode" url="ciee_user_win_appa_devxpress/choosing_a_source_mode.htm#IX_choosing_9" />
+  </key>
+  <key name="No Transform" >
+    <topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm#IX_No_Transform" />
+  </key>
+  <key name="Server Source" >
+    <topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm#IX_Server_Source" />
+  </key>
+  <key name="Transform" >
+    <topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm#IX_Transform" />
+  </key>
+</key>
+<key name="standards" >
+  <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_standards_1" />
+</key>
+<key name="starting" >
+  <key name="a Dormant analysis" >
+    <topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm#IX_a_Dormant_analysis_1" />
+  </key>
+  <key name="Caliper" >
+    <topic name="Caliper Sessions" url="ciee_user_win_09_caliper/caliper_sessions.htm#IX_Caliper_1" />
+  </key>
+  <key name="DIScover" >
+    <topic name="Starting the Model Browser" url="ciee_user_win_03_starting/starting_the_model_browser.htm#IX_Code_Integrity_3" />
+  </key>
+  <key name="Developer Xpress" >
+    <topic name="Starting Developer Xpress" url="ciee_user_win_appa_devxpress/starting_developer_xpress.htm#IX_Developer_Xpress" />
+  </key>
+  <key name="uninstall program" >
+    <topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm#IX_uninstall_program_1" />
+  </key>
+</key>
+<key name="statistics" >
+  <key name="queries" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_queries_5" />
+  </key>
+</key>
+<key name="structure" >
+  <key name="queries" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_queries_3" />
+  </key>
+</key>
+<key name="submission check" >
+  <key name="queries" >
+    <topic name="Using Submission Check" url="ciee_user_win_appa_devxpress/using_submission_check.htm#IX_queries_6" />
+  </key>
+  <key name="using" >
+    <topic name="Using Submission Check" url="ciee_user_win_appa_devxpress/using_submission_check.htm#IX_using_10" />
+  </key>
+</key>
+<key name="Submission Check window" >
+  <key name="described" >
+    <topic name="To use submission check" url="ciee_user_win_appa_devxpress/to_use_submission_check.htm#IX_described_31" />
+  </key>
+</key>
+<key name="symbols" >
+  <key name="entity relation diagram" >
+    <topic name="Entity Relation Diagram Menu Options" url="ciee_user_win_06_views/entity_relation_diagram_menu_options.htm#IX_entity_relation_diagram_6" />
+  </key>
+  <key name="info" >
+    <topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm#IX_info" />
+  </key>
+</key>
+<key name="template impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_template_impact_options" />
+</key>
+<key name="test coverage" >
+  <key name="queries" >
+    <topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm#IX_queries_4" />
+  </key>
+</key>
+<key name="toolbar" >
+  <topic name="Select Options" url="ciee_user_win_appa_devxpress/select_options.htm#IX_toolbar" />
+</key>
+<key name="total quality score" >
+  <key name="Caliper" >
+    <topic name="Total Quality Score" url="ciee_user_win_09_caliper/total_quality_score.htm#IX_Caliper_7" />
+  </key>
+</key>
+<key name="training" >
+  <topic name="Professional Services" url="ciee_user_win_01_welcome/professional_services.htm#IX_training" />
+</key>
+<key name="Transform" >
+  <key name="source mode option" >
+    <topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm#IX_source_mode_option_1" />
+  </key>
+</key>
+<key name="tree diagram" >
+  <topic name="Tree Diagram" url="ciee_user_win_06_views/tree_diagram.htm#IX_tree_diagram" />
+  <key name="menu options" >
+    <topic name="Tree Diagram Menu Options" url="ciee_user_win_06_views/tree_diagram_menu_options.htm#IX_menu_options" />
+  </key>
+  <key name="opening" >
+    <topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm#IX_opening" />
+  </key>
+</key>
+<key name="Troubleshooting" >
+  <topic name="Troubleshooting" url="ciee_user_win_appa_devxpress/troubleshooting.htm#IX_Troubleshooting" />
+  <key name="Developer Xpress" >
+    <topic name="Troubleshooting" url="ciee_user_win_appa_devxpress/troubleshooting.htm#IX_Developer_Xpress_8" />
+  </key>
+</key>
+<key name="typographical conventions" >
+  <topic name="Typographical Conventions" url="ciee_user_win_01_welcome/typographical_conventions.htm#IX_typographical_conventions" />
+</key>
+<key name="uninstall program" >
+  <topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm#IX_uninstall_program_2" />
+</key>
+<key name="uninstalling DIScover" >
+  <topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm#IX_uninstalling_Code" />
+</key>
+<key name="union impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_union_impact_options" />
+</key>
+<key name="Unparsed files" >
+  <topic name="Troubleshooting" url="ciee_user_win_appa_devxpress/troubleshooting.htm#IX_Unparsed_files" />
+</key>
+<key name="upgrade services" >
+  <topic name="Professional Services" url="ciee_user_win_01_welcome/professional_services.htm#IX_upgrade_services" />
+</key>
+<key name="user" >
+  <key name="described" >
+    <topic name="Roles" url="ciee_user_win_01_welcome/roles.htm#IX_described_1" />
+  </key>
+</key>
+<key name="Uses query" >
+  <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Uses_query" />
+</key>
+<key name="variable impact options" >
+  <topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm#IX_variable_impact_options" />
+</key>
+<key name="view" >
+  <key name="inheritance view" >
+    <topic name="Inheritance View" url="ciee_user_win_06_views/inheritance_view.htm#IX_inheritance_view_1" />
+    <key name="expert mode" >
+      <topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm#IX_expert_mode" />
+    </key>
+  </key>
+  <key name="tree diagram" >
+    <topic name="Tree Diagram" url="ciee_user_win_06_views/tree_diagram.htm#IX_tree_diagram_1" />
+  </key>
+</key>
+<key name="viewing" >
+  <key name="a quality assessment report" >
+    <topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm#IX_a_quality_assessment" />
+  </key>
+  <key name="group contents" >
+    <topic name="Viewing Group Contents" url="ciee_user_win_05_querying/viewing_group_contents.htm#IX_group_contents" />
+  </key>
+  <key name="instances" >
+    <topic name="Viewing Instances" url="ciee_user_win_05_querying/viewing_instances.htm#IX_instances" />
+  </key>
+  <key name="metrics" >
+    <topic name="Displaying Metrics" url="ciee_user_win_10_metrics/displaying_metrics.htm#IX_metrics_2" />
+  </key>
+  <key name="source code in graphical views" >
+    <topic name="Working With Graphical Views" url="ciee_user_win_06_views/working_with_graphical_views.htm#IX_source_code_in_graphical" />
+  </key>
+</key>
+<key name="views" >
+  <key name="call graph" >
+    <topic name="Call Graph" url="ciee_user_win_06_views/call_graph.htm#IX_call_graph_1" />
+  </key>
+  <key name="data chart" >
+    <topic name="Data Chart" url="ciee_user_win_06_views/data_chart.htm#IX_data_chart_1" />
+  </key>
+  <key name="entity relation diagram" >
+    <topic name="Entity Relation Diagram" url="ciee_user_win_06_views/entity_relation_diagram.htm#IX_entity_relation_diagram_1" />
+  </key>
+  <key name="flow chart" >
+    <topic name="Flow Chart" url="ciee_user_win_06_views/flow_chart.htm#IX_flow_chart_1" />
+  </key>
+  <key name="general options" >
+    <topic name="General View Options" url="ciee_user_win_06_views/general_view_options.htm#IX_general_options" />
+  </key>
+  <key name="inheritance" >
+    <topic name="Inheritance View" url="ciee_user_win_06_views/inheritance_view.htm#IX_inheritance" />
+  </key>
+  <key name="outline" >
+    <topic name="Outline View" url="ciee_user_win_06_views/outline_view.htm#IX_outline" />
+  </key>
+  <key name="source code" >
+    <topic name="Working With Graphical Views" url="ciee_user_win_06_views/working_with_graphical_views.htm#IX_source_code_3" />
+  </key>
+  <key name="tree diagram" >
+    <topic name="Tree Diagram" url="ciee_user_win_06_views/tree_diagram.htm#IX_tree_diagram_3" />
+  </key>
+</key>
+<key name="violations" >
+  <key name="described" >
+    <topic name="Violations" url="ciee_user_win_09_caliper/violations.htm#IX_described_26" />
+  </key>
+  <key name="viewing" >
+    <topic name="To view a query that has violations" url="ciee_user_win_09_caliper/to_view_a_query_that_has_violations.htm#IX_viewing_1" />
+  </key>
+</key>
+<key name="Where query" >
+  <topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm#IX_Where_query" />
+</key>
+
+</indexdata>

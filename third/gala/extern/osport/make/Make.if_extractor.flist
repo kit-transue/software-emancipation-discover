@@ -1,0 +1,18 @@
+CPROOTS=\
+	pdufile\
+	pduio\
+	pdumem\
+	pdupath\
+	pduproc\
+	pdustring\
+	pdutime\
+	pdutype\
+	raFile\
+        bufFile \
+     	bitMEM \
+	dirFSet \
+        pdudir \
+	endian
+
+
+CROOTS=\

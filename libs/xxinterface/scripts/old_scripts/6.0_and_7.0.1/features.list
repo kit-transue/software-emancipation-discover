@@ -1,0 +1,33 @@
+7.000	Developer DISCOVERPack DebugPack ModelClientPack MetricsPack AccessPack CPack SubCheck
+7.000	Engineer DISCOVERPack DebugPack MetricsPack ModelClientPack AccessPack CPack Y2KPack TaskFlowPack TPMPack DormantPack DFAPack DocLinkPack TestLinkPack SubCheck
+7.000	Project_Leader AdminPack ModularityPack ModelClientPack AutoDocPack StatisticsPack DefectLinkPack DISCOVERPack DebugPack MetricsPack AccessPack CPack Y2KPack TaskFlowPack TPMPack DormantPack DFAPack DocLinkPack TestLinkPack SubCheck
+7.000	Project_Leader_Plus AdminPack ModularityPack AutoDocPack StatisticsPack DefectLinkPack DISCOVERPack DebugPack MetricsPack AccessPack CPack Y2KPack TaskFlowPack TPMPack DormantPack DFAPack DocLinkPack TestLinkPack AdminPack AdminPack AdminPack AdminPack SubCheck ModelClientPack
+7.000	Architect DISCOVERPack DebugPack ModelClientPack MetricsPack AccessPack CPack Y2KPack TaskFlowPack TPMPack DormantPack DFAPack DocLinkPack TestLinkPack ExtractPack SimplifyPack PartitionPack PackagePack SubCheck
+7.000	QA_Analyst DISCOVERPack DebugPack MetricsPack AccessPack CPack Y2KPack TaskFlowPack TPMPack DormantPack DFAPack DocLinkPack TestLinkPack ModularityPack TestLinkPack DefectLinkPack DFAPack
+7.000	QA_Cockpit DISCOVERPack DebugPack MetricsPack AccessPack CPack Y2KPack TaskFlowPack TPMPack DormantPack DFAPack DocLinkPack TestLinkPack QARPack
+7.000	SET.Program/sw DISCOVERPack
+7.000	SET.AutoDoc/sw AutoDocPack
+7.000	SET.Debug/sw DebugPack
+7.000	SET.Summary/sw StatisticsPack
+7.000	SET.DocLink/sw.Frame DocLinkPack
+7.000	SET.Extract/sw ExtractPack
+7.000	SET.Admin/sw AdminPack
+7.000	SET.DFA/sw DFAPack
+7.000	SET.QAR/sw QARPack
+7.000	SET.Model/sw.Java JavaPack
+7.000	SET.Model/sw.C CPack
+7.000	SET.Partition/sw PartitionPack
+7.000	SET.Package/sw PackagePack
+7.000	SET.Simplify.h/sw SimplifyPack
+7.000	SET.Y2K/sw Y2KPack
+7.000	SET.Y2K/TaskFlow TaskFlowPack
+7.000	SET.TPM/sw TPM RemediationPack
+7.000	SET.Metrics/sw MetricsPack
+7.000	SET.Access/sw AccessPack
+7.000	SET.TestLink/sw TestLinkPack
+7.000	SET.Compliance/sw ModularityPack
+7.000	SET.Model/sw.ESQL SQLPack
+7.000	SET.Dormant/sw DormantPack
+7.000	SET.DefectLink/sw DefectLinkPack
+7.000	SET.ModelClient ModelClientPack
+7.000	SubCheck

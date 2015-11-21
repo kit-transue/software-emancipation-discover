@@ -1,0 +1,27 @@
+#### Environment Variables (not all variables are used by all scripts)
+# Environment variables setup by DISCOVER for ALL config scripts:
+#	$PSETCFG	  - path to directory containing the config scripts
+#	$PSETHOME	  - path to the DISCOVER installation
+#	$cm_uselinks	  - set to "Y" if the user has set Create Soft Links in
+#			    the Configurator preferences dialog box
+#	$cm_optscripts    - Points to the directory of optional scripts
+# Additional environment variables setup for this script by the configurator:
+#	$cm_sysfile	  - path to system (public) copy of file to be processed
+#			    (already processed by the pending filter at this point)
+#	$cm_workfile	  - path to local (private) copy of file to be processed
+#	$cm_revision_file - path to file where revisions are stored (,v for RCS)
+#	$cm_version	  - name of version to check out (e.g. "1.343" or "/main/1")
+#	$cm_options       - user defined options as configured in Configurator
+#			    preferences dialog box
+#	$cm_description   - path pointing to file containing users comments
+# 	$cm_date	  - date to cut off history information (cm_version_date only)
+
+# The cm_put_src script also defines:
+#	$cm_elementtype_option - used to specify a specific element type for cm_create
+
+#### Optional Scripts
+#	cm_pendfilt	  - Filter to transform source and pset filenames before ci/co
+#	cm_beforeget	  - Run before checking out (or copying) the source file
+#	cm_afterget	  - Run in the background if the check out succeeds
+#	cm_beforeput	  - Run before checking in the source file
+#	cm_afterput	  - Run in the background if the check out (or delete) succeeds

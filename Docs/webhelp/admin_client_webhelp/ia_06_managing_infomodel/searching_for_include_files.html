@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Searching for #include Files</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 6.7px 48.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 6.7px 48.0px; font: 11.0px 'Courier New'}
+    p.p7 {margin: 0.0px 1.0px 6.7px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+    span.s3 {font: 9.0px 'Times New Roman'}
+    span.s4 {font: 12.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Searching for #include Files</b></p>
+<p class="p2">Your software may depend on the specific way that your compiler handles <span class="s1">#include</span> directives in the source files. It is not unusual if a <span class="s1">-I</span> flag needs to be added to the Code<br>
+Integrity parser's command line so that all include files will be found. More subtle differences among compilers can require a detailed understanding of and control over the search for <span class="s1">#include</span> files. The following is a summary of the way the Code<br>
+Integrity parser handles <span class="s1">#includes</span>, and how you can adjust its behavior.</p>
+<p class="p3"><b>Note: </b>Predefined symbols specified using <span class="s1">-D</span> also determine the appropriate set of <span class="s2">#include</span> file references.</p>
+<p class="p4">•<span class="s3">   </span>Files with names enclosed in <span class="s1">"..."</span> are searched for as follows:</p>
+<p class="p5">•<span class="s3">   </span>in the directory containing the referencing source file</p>
+<p class="p5">•<span class="s3">   </span>in any directories specified in <span class="s1">-I</span> flags</p>
+<p class="p6"><span class="s4">•</span><span class="s3">   </span><span class="s4">in </span>/usr/include</p>
+<p class="p4">•<span class="s3">   </span>Files with names enclosed in <span class="s1">&lt;...&gt;</span> are searched for as follows:</p>
+<p class="p5">•<span class="s3">   </span>in any directories specified in <span class="s1">-I</span> flags</p>
+<p class="p7"><span class="s4">•</span><span class="s3">   </span><span class="s4">in </span>/usr/include</p>
+<p class="p4">•<span class="s3">   </span>Adding the <span class="s1">--trace_includes</span> command line option assists diagnosis by logging a list of the file names <span class="s1">#included</span>. The <span class="s1">-E</span> option, which dumps the entire preprocessing output, is also useful because it shows from where each <span class="s1">#included</span> file came from.</p>
+<p class="p4">•<span class="s3">   </span>You can set the environment variable <span class="s1"><i>USR_INCLUDE</i></span> to specify a directory other than <span class="s2">/usr/include</span> to be used on the include file search list. You can switch <i>off</i> searching any predefined directory by setting the <span class="s1"><i>USR_INCLUDE</i></span> environment variable to blank.</p>
+<p class="p4">•<span class="s3">   </span>When a <span class="s1">#include</span> file is specified without a suffix, for example, <span class="s1">#include "multiset",</span> the search for the file is automatically augmented to also find the name with either the <span class="s1">.h</span> or <span class="s1">.hpp</span> suffix. In this example, if multiset is not present, then <span class="s2">multiset.h</span> could be used. The <span class="s1">--incl_suffixes &lt;suffix-list&gt;</span> command line option configures this search. To suppress any searching using additional suffixes, use <span class="s1">--incl_suffixes "::"</span>.</p>
+<p class="p4">•<span class="s3">   </span><span class="s1">-I-</span> is a command line option that gives further control over the distinction between <span class="s1">#include "..."</span> and <span class="s1">#include &lt;...&gt;</span>. The <span class="s1">-I- </span>flag divides <span class="s1">-I </span>directories occurring to its left from those on its right. The directories preceding it are not searched for <span class="s1">&lt;...&gt;</span> file names. In addition, <span class="s1">-I-</span> turns off the “search source directory for” includes feature.</p>
+<p class="p4">•<span class="s3">   </span>The <span class="s1">--search_source_directory_for_includes</span> and <span class="s1">--no_search_source_directory_for_includes</span> control whether <span class="s1">#include "..."</span> files are searched for in the directory containing the referencing source file.</p>
+<p class="p4">For more information on the command line options that relate to <span class="s1">#include</span> processing, see the<i> DIScover Installation and Administration Guide</i></p>
+<p class="p4">•<span class="s3">   </span>When searching for a <span class="s1">#include "..."</span> file in the directory of the referencing source file, the referencing file may be a <span class="s1">#include</span> file that resides in a different directory from the main source file. The Code<br>
+Integrity parser searches both directories: first the directory containing the immediately referencing file and last the directory containing the main source file. In general, there could be any number of files in the chain of <span class="s1">#include’</span>s that lead to the reference, and the parser keeps these on a “stack” so that all can be searched. The <br>
+<span class="s1">--no_stack_referenced_include_directories</span> eliminates the stack and causes the parser to consider only the immediately referencing file.</p>
+<p class="p4">•<span class="s3">   </span>The <span class="s1">--preinclude &lt;filename&gt;</span> command line option includes the source code of the indicated file at the beginning of the parse. This can be used to establish standard macro definitions, and so on.</p>
+</body>
+</html>

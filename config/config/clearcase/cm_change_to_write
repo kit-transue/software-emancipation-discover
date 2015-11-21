@@ -1,0 +1,2 @@
+#!/bin/sh
+cleartool co -unreserved -c "Auto co during save" $1 1>/dev/null 2>&1

@@ -1,0 +1,118 @@
+#!/bin/sh
+#08/95 by Reggie Zhu
+
+
+#Initialize
+#set -x
+echo This program creates a custom patch from existing patch levels.
+echo 
+if test "$1" = '-help'; then
+  echo 'Check detailed information in ~support/bin/README_patch .'
+  exit 0
+fi
+
+
+echo Please make sure that current directory `pwd` 
+echo is the root of release directory where you want to generate the patch.
+echo If not, please type Control-c to exit now.
+sleep 10
+echo
+echo Please specify the directory path where you want to put the custom patch:
+read CusDir
+echo
+if test ! -d $CusDir; then
+  mkdir -p $CusDir
+fi
+rm -rf "$CusDir"/*
+
+echo You have the following patch levels:
+ls patch
+echo
+
+echo Please give the two-digit patch number for the base patch level, like 02.
+echo Type base if you want to patch from base release:
+read LowPat
+echo
+if test $LowPat = base; then
+  LowPat=00
+else
+  if test ! -d patch/"$LowPat";then
+    echo No patch "$LowPat" existing. Exiting.
+  fi
+fi
+
+echo Please give the two-digit patch number for the upper patch level, like 04.
+echo Type discover if you want to patch up to the latest release:
+read HiPat
+echo
+if test ! $HiPat = discover; then
+  if test ! -d patch/"$HiPat";then
+    echo No patch "$HiPat" existing. Exiting.
+  fi
+else
+  HiPat=`ls patch|tail -1`
+fi
+
+
+#Building the patch
+Count=`expr $LowPat + 1`
+if test "$Count" -lt 10; then
+  Count=0"$Count"
+fi
+echo Merging patch level "$Count"...
+echo
+(cd patch/"$Count"; tar cf - .) | (cd "$CusDir"; tar xBf -)
+
+Count=`expr $Count + 1`
+for PatchLevel in `ls patch | tail +"$Count"`; do
+  echo Merging patch level "$PatchLevel"...
+  echo
+  for i in `cat patch/"$PatchLevel"/New`; do          #for new files
+    if grep -w ^"$i"$ "$CusDir"/Delete > /dev/null; then #deleted then new again
+      echo $i >> "$CusDir"/Replace
+      grep -w -v ^"$i"$ "$CusDir"/Delete > "$CusDir"/Tmp
+      mv "$CusDir"/Tmp "$CusDir"/Delete
+    else
+      echo $i >> "$CusDir"/New
+    fi
+    (cd patch/"$PatchLevel"; tar cf - "$i") | (cd "$CusDir"; tar xBf -)
+  done
+
+  for i in `cat patch/"$PatchLevel"/Delete`; do       #for Delete files
+    if grep -w ^"$i"$ "$CusDir"/New > /dev/null; then      #new then deleted
+      grep -w -v ^"$i"$ "$CusDir"/New > "$CusDir"/Tmp
+      mv "$CusDir"/Tmp "$CusDir"/New
+      rm -rf "$CusDir"/"$i"
+    else
+      echo $i >> "$CusDir"/Delete
+      if grep -w ^"$i"$ "$CusDir"/Replace > /dev/null; then #replace then deleted
+        grep -w -v ^"$i"$ "$CusDir"/Replace > "$CusDir"/Tmp
+        mv "$CusDir"/Tmp "$CusDir"/Replace
+        rm -rf "$CusDir"/"$i"
+      fi
+    fi
+  done
+
+  for i in `cat patch/"$PatchLevel"/Replace`; do      #for Replace files
+    (cd patch/"$PatchLevel"; tar cf - "$i") | (cd "$CusDir"; tar xBf -)
+    if grep -w ^"$i"$ "$CusDir"/New > /dev/null; then
+      :
+    else
+      if grep -w ^"$i"$ "$CusDir"/Replace > /dev/null; then
+        :
+      else
+        echo "$i" >> "$CusDir"/Replace
+      fi
+    fi
+  done
+
+  cat patch/"$PatchLevel"/README >>"$CusDir"/README   #Add to the README
+
+  if test "$PatchLevel" = "$HiPat"; then              #if reach high patch
+    break
+  fi
+
+done
+
+echo Done.
+

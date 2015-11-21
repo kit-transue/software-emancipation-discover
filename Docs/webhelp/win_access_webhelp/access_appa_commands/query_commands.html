@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Query Commands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p5 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 2.7px 12.0px; font: 11.0px Verdana}
+    p.p8 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 11.0px 'Courier New'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 168.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 207.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 168.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 207.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Query Commands</b></p>
+<p class="p2">Query commands find entities in the Information Model. The following table describes query commands and their syntax.</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td1">
+        <p class="p3"><b>Query Command</b></p>
+      </td>
+      <td rowspan="2" valign="middle" class="td2">
+        <p class="p3"><b>Description and Syntax</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">argument_of</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all functions that take the specified argument.</p>
+        <p class="p5">argument_of <i>argument</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">declarations</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all of the specified instances that are declarations.</p>
+        <p class="p5">declarations <i>instance_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">defines</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all functions that the specified file defines.</p>
+        <p class="p5">defines [function] <i>file_name</i></p>
+        <p class="p6">or</p>
+        <p class="p6">Returns all inner classes of the specified class.</p>
+        <p class="p5">defines [classes] class_name</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">friend_of</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the classes of which the specified entity is a friend.</p>
+        <p class="p5">friend_of <i>class</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_declares</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all entities declared but not defined in the specified file.</p>
+        <p class="p5">get_declares <i>logical_pathname</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_friends</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the classes and functions that have access to the private and protected members of the specified class.</p>
+        <p class="p5">get_friends <i>class_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_include_files</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the include files that the specified source file or header file includes.</p>
+        <p class="p5">get_include_files <i>logical_pathname</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_instance_scope</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the project level of the specified instance.</p>
+        <p class="p5">get_instance_scope <i>instance_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_instance_statement</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the statement containing the specified instance. This command does not work for macros.</p>
+        <p class="p5">get_instance_statement <i>instance_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_instance_symbol</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the symbol associated with the specified instance.</p>
+        <p class="p5">get_instance_symbol <i>instance_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_member_data</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the member data (or fields) of the specified class or structure.</p>
+        <p class="p5">get_member_data [<i>class_name</i> | <i>structure_name</i>]</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_member_functions</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the member functions of the specified class.</p>
+        <p class="p5">get_member_functions <i>class_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_related_classes</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all classes that are related to the specified class. DIScover Related classes are those for which a DIScover built-in relation exists (as assigned in an ERD).</p>
+        <p class="p5">get_related_classes <i>class_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_sub_classes</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the classes that inherit from the specified class.</p>
+        <p class="p5">get_sub_classes <i>class_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">get_super_classes</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the classes from which the specified class inherits.</p>
+        <p class="p5">get_super_classes <i>class_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">instances</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the instances of the specified entity.</p>
+        <p class="p5">instances <i>entity_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">modified_entities</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all the entities that have been modified since the last incremental model build for the specified file.</p>
+        <p class="p5">modified_entities <i>logical_pathname</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">modified_objects</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all the objects that have been modified since the last incremental model build for the specified file.</p>
+        <p class="p5">modified_objects <i>logical_pathname</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">uses</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns all entities that the specified entity uses. If a type of entity is specified (for example, uses -classes) then only entities of that type are returned.</p>
+        <p class="p5">uses -all -classes <i>entity_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">where</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Collective command for <span class="s1">where</span> queries.</p>
+        <p class="p5">where [declared | defined | included | referenced | used] <i>entity_name</i></p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where declared <i>entity_name</i></span> returns the class that the entity is declared in</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where defined <i>entity_name</i></span> returns the file using the entity</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where included <i>entity_name</i></span> returns files that the file is included in (C and C++ only)</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where used <i>entity_name</i></span> returns functions, structures, and packages using the entity</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where referenced <i>entity_name</i></span> returns files containing references to this function</p>
+        <p class="p6">The following limitations apply to Java entities:</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where declared</span> and <span class="s3">where included</span> do not return any results</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where referenced <i>file</i></span> returns the specified file</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where used <i>package</i></span> returns functions</p>
+        <p class="p7">•<span class="s2">   </span><span class="s3">where used <i>interface</i></span> returns the package</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<p class="p8"><br></p>
+</body>
+</html>

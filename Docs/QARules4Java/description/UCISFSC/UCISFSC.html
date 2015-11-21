@@ -1,0 +1,31 @@
+<html>
+<body>
+
+<p><b>UCISFSC - Use <i>char</i> instead of <i>String</i> for one character string concatenation.</b></p>
+
+<p>Instead of concatenating one-character String constants, replace them with
+character constants for optimization.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class UCISFSC {<br>
+&nbsp; public void oper(String s) {<br>
+&nbsp; &nbsp; <font color='red'> String string = s + "d";</font> <br> 
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Replace them with
+character constants for optimization.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class UCISFSC {<br>
+&nbsp; public void oper(String s) {<br>
+&nbsp; &nbsp; <font color='blue'> String string = s + 'd';  </font> <br>
+&nbsp; }<br>
+}</code></p></nobr>
+</body>
+</html>

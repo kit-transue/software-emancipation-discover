@@ -1,0 +1,4 @@
+#!/bin/sh
+echo no_version
+exit 0
+$PSETCFG/util/rcs_srcver < $cm_workfile | $PSETCFG/util/cm_version_string

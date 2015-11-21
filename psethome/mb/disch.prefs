@@ -1,0 +1,47 @@
+#Submission Check (disch) dismb default prefs
+*psetPrefs.MBscratch:			no
+*psetPrefs.MBflagsReuse:		yes
+
+*psetPrefs.MBparallelHosts:
+
+*psetPrefs.configuratorSystem: 		
+*psetPrefs.getModel:			no
+*psetPrefs.putModel: 			no
+
+*psetPrefs.debugShowMakeRuleOutput:	yes
+*psetPrefs.logFileCreate: 		no
+*psetPrefs.logFileMonitor: 		yes
+
+*psetPrefs.pdfFileBuild: 		$ADMINDIR/pdf/build.pdf
+*psetPrefs.DIS_model.SaveMetrics:	yes
+*psetPrefs.DIS_model.GenerateY2KInfo:	2
+*psetPrefs.DIS_model.Instances_Enabled:	yes
+*psetPrefs.DIS_model.LocalVars_Enabled:	yes
+
+*psetPrefs.MBdoPassCache:		yes
+*psetPrefs.MBdoPassAnalysis:		yes
+*psetPrefs.MBdoPassParse:		yes
+*psetPrefs.MBdoPassUpdate:		yes
+*psetPrefs.MBdoPassFinalize:		yes
+#*psetPrefs.doBuildDFA: 			yes
+*psetPrefs.doBuildDFA: 			no
+
+*psetPrefs.DIS_model.DoMergePass:	
+*psetPrefs.doPassDefectLink:
+
+*psetPrefs.MBptestRunning:		no
+*psetPrefs.MBasetExecutable:
+
+*psetPrefs.sharedSrcRoot: 		
+*psetPrefs.sharedModelRoot: 		
+*psetPrefs.privateSrcRoot: 		
+*psetPrefs.privateModelRoot: 		
+
+*psetPrefs.queryOutputFile:		$ADMINDIR/tmp/disch_query.out
+*psetPrefs.MBqueryTclScript:		$PSETHOME/lib/subchk_batch.dis
+*psetPrefs.MBparallelHosts.query:
+*psetPrefs.parserBriefDiagnostics:	yes
+*psetPrefs.MBlogStatus:			yes
+
+*psetPrefs.PreserveFilenameCase: no
+

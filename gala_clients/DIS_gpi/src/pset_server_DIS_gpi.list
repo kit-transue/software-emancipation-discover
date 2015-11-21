@@ -1,0 +1,20 @@
+
+TARGETS =
+        gpi.o
+
+VPATH =
+	/paraset/src/paraset/DIS_gpi/src
+
+CCINCLUDES =
+	/paraset/src/paraset/gala/include
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/gpi/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/communications/include
+	/paraset/src/paraset/gt/include
+	/paraset/src/paraset/process/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/frame/frame_api/include
+	/paraset/src/paraset/nihcl/include
+	/paraset/src/paraset/dd/include
+	${GALAXYHOME}/include

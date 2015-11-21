@@ -1,0 +1,10 @@
+=========== Analysis Summary ===========
+all PDF  modules:    125    all.pmod.lst
+outdated modules:    125    all.pmod.nif
+source files:         30
+parse  files:         30    all.pmod.prs
+header files:         92
+other  files:          3
+mapped files:          0
+to build modules:    125    all.pmod.nif
+========================================

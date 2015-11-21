@@ -1,0 +1,441 @@
+#!/bin/csh -f
+if ( $?pset_rerecord ) then
+  echo "rerecording $1"
+  setenv ptest_save_dir $1
+endif
+
+if ( "$1" == "$PSETTEST" ) then
+    cd "$PSETTEST"
+    set copy_flag = ""
+    echo "Current Test: $PSETTEST"
+else
+    set copy_flag = "1"
+    
+    set simple_flag = "1"
+    set t_str = ""
+    set t_flag_ex = 0
+
+    ptest_copy  "$1"
+
+    if ($status != 0) then
+       echo "ptest_one_run: exit because copy failed."
+       exit 1
+    endif
+endif
+  
+cd "$PSETTEST"
+setenv PSETTEST `pwd`
+setenv PWD $PSETTEST
+
+echo "Running Test: $1"
+
+set curr_list = "$PTEST_TMPDIR/one_run.tmp"
+set tmp = "$PTEST_TMPDIR/tmp.tmp"
+set tutor = $PTEST_TMPDIR/tutor.tmp
+
+if (-f $tmp) then
+    \rm $tmp  >&! /dev/null
+endif
+
+if (-f $curr_list) then
+    \rm $curr_list  >&! /dev/null
+endif
+
+if (-f $tutor) then
+    \rm $tutor  >&! /dev/null
+endif
+
+if ("$2" == "") then
+   set out_dir = "$HOME"
+else
+   set t_nm = `echo $1 | sed 's%^.*/\(.*\)$%\1%'`
+   set out_dir = "$2/$t_nm"
+endif
+
+set HOME = "$PSETTEST"
+
+# Output file
+set t_log = "$2/test.log"
+
+# Executable
+set t_ex = ""
+if ($3 != "") then
+   set t_ex = "-exec $3"
+   set bef_exec = "$3"
+else
+   set bef_exec = "$PSETHOME/bin/aset"
+endif
+
+if ($4 == "1") then
+    echo `basename $1` >> $tmp
+    cat $tmp >> $curr_list
+else
+    if (-d "journals") then
+        set ccc_list = `ls journals/*.ccc |& grep -v "No match"`
+    else
+        set ccc_list = `ls *.ccc |& grep -v "No match"`
+    endif
+    if ( "$6" == "" ) then
+        foreach ii ( $ccc_list )
+            echo $ii >> $tmp
+        end
+    else
+        echo "Test list $6 specified"
+        set _tbase_ = `echo "$1" | sed -e 's%^.*/%%g'`
+        foreach ii ( $ccc_list )
+            set a_test = `basename ${ii} .ccc`
+            grep "${_tbase_}-${a_test}" "$6" >&! /dev/null
+            if ( $status == 0 ) then
+                echo Test $ii in folder $_tbase_ will run.
+                echo $ii >> $tmp
+            endif
+        end
+    endif
+    unset ccc_list
+    if (-f $tmp) then
+	cat $tmp >> $curr_list
+    endif
+endif
+
+set init_continue = ""
+
+setenv NO_OPT_CHECK 1
+
+#
+# Source a prologue file:
+#
+set PROLOGUE_STATUS = 0
+
+if (-f "prologue") then
+  echo ""
+  echo === Sourcing file: \"prologue\".
+  source prologue
+endif
+
+if ("$PROLOGUE_STATUS" != "0") then
+  echo "Test $1/prologue : failed" >> $t_log
+  echo "=== prologue failed ==="
+
+  exit 0
+endif
+
+# System pref info. 
+   setenv t_sysPrefs "-sysPrefs ${PROJ_ROOT}/job1/prefs/asetTest.prefs.$Arch -noUserPrefs"
+
+unset PROLOGUE_STATUS
+
+
+if ($?PTEST_CONTINUE && $?PTEST_THE_TEST && $?PTEST_THE_SCRIPT) then
+	set init_continue = "$PTEST_THE_SCRIPT"
+else
+#   before script
+    if (-f "before_test.sh") then
+	set skip_check = 0
+	grep "#SkipLogCheck" before_test.sh >/dev/null
+	if ($status == 0) then
+	    set skip_check = 1
+	endif
+	set result_str = "succeeded"
+	echo ""
+	echo "=== Running before_test.sh $bef_exec ==="
+	set bef_out = "$out_dir-before_test.sh.out"
+	echo "    output_file $bef_out"
+	sh before_test.sh $bef_exec >& $bef_out
+	if ($status != 0) then
+	    set result_str = "failed"
+	else
+	    if ($skip_check == 0) then
+		${PROJ_ROOT}/tools/ptest/ptest_check_log.sh $bef_out
+		if ($status != 0) then
+		    set result_str = "failed"
+		endif
+	    endif
+	endif
+	echo "=== before_test.sh $result_str ==="
+	echo "Test $1/before_test.sh : $result_str" >> $t_log
+	if ("$result_str" == "failed") then
+	    exit 0
+	endif
+    else
+	echo "No before shell script specified"
+    endif
+endif
+
+setenv PSET_LOGFILE $PSETTEST/$USER.log
+
+set script_list = ""
+if (-f $curr_list) then
+    set script_list = `cat $curr_list`
+endif
+
+foreach ii ( $script_list ) 
+   if ("$init_continue" != "") then
+	echo "    CONTINUE: skip script $ii"
+	if ("$init_continue" == "$ii") then
+		if ($?PTEST_NEXT_SCRIPT) then
+			set init_continue = ""
+			continue
+		endif
+        else
+		continue
+        endif
+   endif
+
+   unsetenv PTEST_THE_SCRIPT
+   set init_continue = ""
+
+   set t_flag_ex = 0
+   foreach jj ($5)
+	set t_str = ""
+	grep "Bugsubsys:" $ii >/dev/null
+     	if ($status == 0) then
+            set t_str = `grep "Bugsubsys:" $ii | sed 's/^.*: //' | sed 's/ .*\///'`
+            set t_str = `eval "echo $t_str"`
+     	endif
+
+        if ("`echo $t_str`" == "`echo $jj`") then
+	     set t_flag_ex = 1
+        endif
+   end
+
+   if ($t_flag_ex) then
+	continue
+   endif
+
+   grep "SkipPlatforms:" $ii >/dev/null
+   if ($status == 0) then
+       set t_str = `grep "SkipPlatforms:" $ii | sed -e 's/^.*: //' -e 's/ \*\/$//'`
+       if ( "$t_str" != "") then
+	   set found = 0
+           foreach pl ( `echo $t_str` )
+		if ( "$Arch" == "$pl" ) then
+			set found = 1
+			break
+	        endif
+ 	   end
+	   if ($found == 1) then
+		echo "  SKIP Journal $ii on the platform: $Arch"
+		continue
+           endif
+       endif
+   endif
+
+   echo "Journal: $ii"
+   echo "$ii" > $PTEST_TMPDIR/the_script  
+   set outfile = $out_dir-$ii.out
+   echo "    Output file: $outfile"
+   \rm $outfile >&! /dev/null
+   if ($?PTEST_NO_TIMEOUT) then
+      echo "    No timeout ..."
+      setenv PTEST_TIMEOUT ""
+   else
+      grep "Timeout:" $ii > /dev/null
+      if ($status) then
+	 echo "    No Timeout specified, use 20 minutes."
+	 setenv PTEST_TIMEOUT "20"
+      else
+	 setenv PTEST_TIMEOUT `grep "Timeout:" $ii | sed 's/^.*: //' | sed 's/ .*\///'`
+	 echo "    Specified Timeout $PTEST_TIMEOUT"
+      endif
+   endif
+
+#  Home Project => t_home
+   grep "Home Project:" $ii > /dev/null
+   if ($status) then
+      echo "    There is no Home Project specified in $cwd/$ii. Use /junk ..."
+      set t_home = "-x /junk"
+      set simple_flag = "1"
+   else
+      set simple_flag = ""
+      set t_home = `grep "Home Project:" $ii | sed 's/^.*: //' | sed 's/ .*\///'`
+      echo "    Home Project (from journal): $t_home"
+      set t_home = "-x $t_home"
+   endif
+
+# PDF file => t_pdf
+   grep "PDF file:" $ii > /dev/null
+   if ($status == 0) then
+      set t_pdf = `grep "PDF file:" $ii | sed 's/^.*: //' | sed 's/ .*\///'`
+      set t_pdf = `eval "echo $t_pdf"`
+      echo "    PDF file (from journal): $t_pdf"
+   else if (-r $PSETTEST/test.pdf) then
+      set t_pdf = "$PSETTEST/test.pdf"
+      echo "    PDF file (from PSETTEST): $t_pdf"
+   else if ( $?PSET_PROJECT_FILE ) then
+      if (-r "$PSET_PROJECT_FILE") then
+         set t_pdf = "$PSET_PROJECT_FILE"
+         echo "    PDF file (from PSET_PROJECT_FILE): $t_pdf"
+      endif
+   else
+      set t_pdf = ""
+   endif
+
+   if ("$t_pdf" != "" && -r $t_pdf) then
+      set t_pdf = "-P $t_pdf"
+   else
+      echo "    $t_pdf PDF file is not found"
+      set t_pdf = ""
+   endif
+
+# test.emacs => $PSET_DOT_EMACS for future Epoch use
+   if (-f "$PSETTEST/test.emacs") then
+	echo "    .emacs from PSETTEST/test.emacs"
+	setenv PTEST_DOT_EMACS $PSETTEST/test.emacs
+   else
+	unsetenv PTEST_DOT_EMACS
+   endif
+
+   set t_prefs = "-prefs $PSETTEST/test.prefs"
+
+   if($?PTEST_EXEC_OPTION) then
+     echo "running -e"
+     set ee = "-e"
+   else
+     set ee = "-ee"
+   endif
+   set what_to_run = "discover $t_pdf $t_prefs $t_sysPrefs $t_ex $t_home $ee $PSETTEST/$ii -stderr -core -parasync"
+
+   set timeout_flag = ""
+   if ($?PTEST_TIMEOUT) then 
+	if ("$PTEST_TIMEOUT" != "") then
+		set timeout_flag = "1"
+	endif
+   endif
+
+   echo ""
+   if ($timeout_flag == "") then
+	echo "    $what_to_run"
+   else
+	echo "    ptest_monitor $PTEST_TIMEOUT $what_to_run"
+   endif
+   echo ""
+
+   find . -name '#*' -exec \rm -f {} \;
+
+   \rm -f $PSET_LOGFILE >&! /dev/null
+
+   if($?PTEST_EXEC_OPTION) then
+ 
+   	$what_to_run
+
+   else if ($timeout_flag == "1") then
+	ptest_monitor.$Arch $PTEST_TIMEOUT "$what_to_run"  >& $outfile
+	if ($status == 1) then
+		echo "catastrophe: Timeout $PTEST_TIMEOUT"
+		sleep 2
+	        echo "catastrophe: Timeout $PTEST_TIMEOUT" >> $outfile
+	endif
+   else
+      	$what_to_run >& $outfile
+   endif  
+
+#
+# Source an epilogue file:
+#
+   set EPILOGUE_STATUS = 0
+
+   if (-f "epilogue") then
+     echo ""
+     echo === Sourcing file: \"epilogue\".
+     source epilogue
+   endif
+
+   if ("$EPILOGUE_STATUS" != "0") then
+     echo "Test $1/$ii : failed. Error in epilogue" >> $t_log
+     echo "=== epilogue failed ==="
+     exit 0
+   endif
+
+   unset EPILOGUE_STATUS
+
+# Checking  if the script succeeded
+   set out_fl = 1 
+   if (! -r $outfile) then
+      set out_fl = 0
+   else
+      fgrep -s "cmd_journal" $outfile 
+      if ($status) then
+	set out_fl = 0
+      else
+	 cat $PSET_LOGFILE >> $outfile
+
+	 ${PROJ_ROOT}/tools/ptest/ptest_check_log.sh $outfile
+         if ($status == 1) then
+            set out_fl = 0
+         endif
+      endif
+   endif
+
+   if ($out_fl) then
+       echo "$ii : succeeded"
+       echo "Test $1/$ii : succeeded" >> $t_log
+       if (-f "after_test.sh") then
+	    set result_str = "succeeded"
+	    echo ""
+	    echo "=== Running after_test.sh $bef_exec ==="
+	    echo $PWD
+	    set bef_out = "$out_dir-after_test.out"
+	    echo "   output_file $bef_out"
+	    sh ./after_test.sh $bef_exec >& $bef_out
+	    if ($status != 0) then
+		set result_str = "failed"
+	    else
+		${PROJ_ROOT}/tools/ptest/ptest_check_log.sh $outfile
+		if ($status == 1) then
+		    set result_str = "failed"
+		endif
+	    endif
+	    echo "=== after_test.sh $result_str ==="
+            echo "Test $1/after_test.sh : $result_str" >> $t_log
+	    if ("$result_str" == "failed") then
+		exit 0
+	    endif
+        endif
+   else
+      echo "  $ii : failed" 
+      echo "Test $1/$ii : failed" >> $t_log
+   endif
+
+# added by bfrederi 10/27/93
+# Handle if this is a Purify run
+
+   echo "$t_ex" | grep "pure" > /dev/null
+   if ($status == 0) then
+      if (-r $PURIFYLOGFILE) then
+         echo "Moving Purify log file to outdir"
+         echo "+++++++++++++++++++++" >>  $out_dir-pure_log
+         echo $PSETTEST/$ii >> $out_dir-pure_log
+         cat $PURIFYLOGFILE >> $out_dir-pure_log
+         \rm $PURIFYLOGFILE  >&! /dev/null
+      else
+         echo "Could not find Purify log file."
+      endif
+   endif
+ 
+   echo ""
+
+   echo `ls $PSETTEST` >> $tutor
+   fgrep 'ParaTutor' $tutor >/dev/null
+   if ($status == 0) then
+      cd ParaTutor/local/anlzr
+      \rm -f *pmod* *.pset  >&! /dev/null
+      cd $PSETTEST
+   endif
+   
+end
+
+\rm $curr_list $tutor >&! /dev/null
+
+if (-r $tmp) then
+    \rm $tmp  >&! /dev/null
+endif
+
+#
+# kill vestigial processes
+#
+
+if (-d $PSETTEST/junk && "$copy_flag" == "1" && "$simple_flag" == "1") then
+    echo "  Project /junk is cleared"
+    \rm -rf $PSETTEST/junk/* >&! /dev/null
+endif
+

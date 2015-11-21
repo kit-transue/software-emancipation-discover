@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+$PSETCFG/cm_create_dir
+touch $cm_workfile

@@ -1,0 +1,67 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+proc filter_def { fil sel } {
+    set InputProjects [filter project $sel]
+    if {[size $InputProjects] > 0} {
+	filter $fil [defines $InputProjects]
+    } else {
+	msg -error "This operation requires selection of at least one project."
+	return "No projects selected."
+    }
+}
+
+proc gen_category {} {
+    set fff [prompt -title "Create Category" "Enter Filter, e.g\n macro||(func&&!member)"]
+    if { "$fff" != "" } {
+	add_item Access.Category $fff "filter_def $fff"
+	return "Created category $fff"
+    }
+    return "no category created"
+}
+
+proc add_cat_fil { fil } {
+    add_item Access.Category $fil "filter_def  $fil"
+}
+
+proc fun_lookup { sel } {
+    set nm [prompt -title "Cname Pattern" "Enter pattern:"]
+    if { "$nm" != "" } {
+	set ls [defines -functions $sel]
+	return [filter "match(@$nm,cname)" $ls]
+    } else {
+	return [nil_set]
+    }
+}
+
+add_menu Access.Category
+add_item Access.Category "Create..." gen_category -none
+add_item Access.Category Operators    "filter_def  operator"
+add_item Access.Category Constructors "filter_def  constructor"
+add_item Access.Category "Cname Match..."  fun_lookup
+

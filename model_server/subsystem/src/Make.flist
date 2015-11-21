@@ -1,0 +1,14 @@
+CROOTS=\
+
+
+CPROOTS=\
+    Entity.h \
+    autosubsys.h \
+    bit_array \
+    groupHdr \
+    groupTree \
+    refs_and_weights \
+    subsys.h \
+    subsys_decomposition \
+
+

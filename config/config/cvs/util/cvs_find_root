@@ -1,0 +1,16 @@
+#!/bin/csh  -f
+
+set dn = `dirname $cm_sysfile`
+set od = `pwd`
+cd `cat $dn/CVS/Repository`
+
+while ( "`pwd`" != "/" )
+    if ( -d CVSROOT ) break;
+    cd ..	
+end
+
+if ( -d CVSROOT ) then
+    echo `pwd`
+else
+    echo "-"
+endif

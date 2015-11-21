@@ -1,0 +1,42 @@
+#!/bin/csh -f
+#
+# NOTE :: this file is maintained through the vob /paraset .
+#         It is copied to /ParaSET as a convenience for times when
+#         access outside of a clearcase view is needed.
+#
+#         DO NOT MAKE CHANGES to /ParaSET contents, they will be lost.
+#
+
+set OS=`uname -s`
+set REV=`uname -r` 
+
+if ("$OS" == "SunOS") then
+    if ( "`echo $REV | cut -c1-1`" == 5 ) then
+	echo sun5
+    else
+	echo "OS $OS : version $REV not supported."
+	exit 1
+    endif
+else if ("$OS" == "HP-UX") then
+    set OSREL="`echo $REV | cut -f2 -d.`"
+    if ( "$OSREL" >= "10" ) then
+	echo hp10
+    else
+	echo "OS $OS : version $REV not supported."
+	exit 1
+    endif
+else if ("$OS" == "IRIX" || "$OS" == "IRIX64") then
+    if ( "`echo $REV | cut -c1`" == "6" ) then
+	echo irix6
+    else
+	echo "OS $OS : version $REV not supported."
+	exit 1
+    endif
+else if ("$OS" == "Linux") then
+    echo linux`echo $REV | cut -d. -f1`
+else
+    echo "Unknown OS $OS"
+    exit 1
+endif
+
+exit 0

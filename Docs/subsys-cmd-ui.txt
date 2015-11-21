@@ -1,0 +1,157 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+Subsystem Commands and User Interface; Rev. 1: 95-04-08, WMM
+
+    The following descriptions assume the information contained in Subsystem Requirements for ParaPartition (Rev. 3: 95-04-08).
+
+    Subsystem Map/Subsystem Tree
+
+        The current "inheritance" connectors will represent client/server relationships between groups. In the Subsystem Map view, connectors analogous to the built-in relation connectors used in ERDs and DCs will be used to represent peer relationships (unrelated groups, i.e., groups whose members do not reference each other at all, are technically peer groups but will have no connectors joining them).
+
+        Private members of groups will be shown in red.
+
+        New symbols will be provided for file, typedef, and macro members of subsystems, and the filtering and sorting dialogs will be upgraded to allow for all the new display elements.
+
+        Menu choices (both pull-down, applying to items selected in the diagram, and pop-up, applying to the item under the cursor) will be provided for the following operations: convert group to subsystem and vice versa; make member public or private; validate compliance with modularity rules; split; merge; edit/view logical wildcards; create PDF; reduce contents to files; and populate directories.
+
+        The drag and drop operation on members within a single group/subsystem tree will be redefined as a move operation instead of creating duplicate membership. Drag and drop on subsystems in a subsystem map will use the same mechanism as in an ERD or DC to establish client/server and peer relationships.
+
+    Subsystem Extraction
+
+        The current subsystem extraction dialog will be augmented with two additional weighting sliders, one for file name prefix matches and one for (logical) directory matches. Each will have an associated numeric field (distinct from the weighting factor). The numeric field for file name prefixes is used to indicate the number of initial characters from the file names that must match in order for the contained entities to be considered related by file naming conventions; a value of 0 disables the check. The numeric field for logical directory matches indicates the number of containing directories above the file at which a match will trigger the presumed relationship. For example, consider an application with files whose logical names are /a/b/x.c and /a/c/y.c. A value of 0 disables the check for the relationship; a value of 1 causes the files to be considered unrelated (because the first level of containing directories -- "b" and "c" -- do not match) while a value of 2 would cause the files to be considered related (because the second level of containing directories -- "a" and "a" -- do match).
+
+        In addition, there will be Save and Restore buttons on the dialog that allow particular settings of weights and thresholds to be saved and restored. Settings saved by the user will be stored in the ~/.paraset directory. Settings presented by the Restore button for selection by the user will consist of the union of settings stored in the ~/.paraset directory and those provided by default in the installation directory.
+
+        Subsystem extraction will be restricted to apply only to partitioning existing groups or subsystems; hence the current mechanism of selecting the project(s) to which the extraction applies will be abandoned. It will still be possible to combine extraction and dormant code detection, so the ability to identify "roots" will still be provided.
+
+    Group Manager
+
+        The group manager will be the primary focus of actions involving groups and subsystems. Consequently, a number of menu operations will be added to the dialog and the display will be enhanced to deal with hierarchy and to distinguish between subsystems and groups.
+
+        Icons will be used to distinguish between subsystems and groups. The listing of groups will be in one of three formats: flattened, in which all subsystems and groups are displayed (by default) in ASCII order; hierarchical, in which root subsystems and groups are displayed (by default) in ASCII order, with their server subsystems nested beneath analogously to the outline display; and root-only, in which only root subsystems and groups are shown (in this case, the semantics of the various queries and operations are redefined to apply to the root and its entire hierarchy, not just the root group alone).
+
+        A filter button, similar to that used in Scan mode and the Impact Analyzer, will be provided to control the contents of the display (in the three formats described previously, replacing the "Field and Width" section of the current filter dialog) and the sorting order.
+
+        The group manager will also have a "Project" line like the Browser. The groups and subsystems shown will be only those defined in the project(s) shown in the "Project" line. This value can be edited at will; it will be initialized to reflect the "Project" line in the Browser at the time the group manager is started.
+
+        The Group=>Create menu selection will be renamed to "Create..." and will result in a dialog with two sets of radio buttons and a check box. The first set of radio buttons will control whether a group or a subsystem will be created. The check box will control whether all currently-selected entities will be added to the newly-created group or subsystem or whether it will be created empty. If selections are to be added and if one or more projects is among those selections, the second set of radio buttons will be sensitive and will control whether only direct project members are to be added, all project members (including those in subprojects recursively through the project tree) are to be added as direct group/subsystem members, or a parallel group/subsystem tree is to be built reflecting the project structure (with client/server relationships reflecting parent/child project relationships).
+
+        The "Group" menu will be enhanced with the following new selections:
+
+        Validation
+
+            This selection will have two cascaded choices: 
+
+            View/Edit Wildcards 
+
+                This command will bring up a dialog with an editable text pane of wildcards (similar to the list of make targets in the current Configurator dialog), in which the wildcards for the selected group will be displayed and can be edited.
+
+            Find Violations
+
+                This command will create an STE document with a report on modularity violations detected while analyzing the hierarchy of which the selected group is a part. The document will have live links from all the references to the groups and entities mentioned in the report, analogous to the STE version of ParaREPORT. If a project is selected in the Browser and matches the name of one of the groups in the hierarchy being analyzed, the correspondence between the project and group hierarchies will be verified; otherwise, the group hierarchy will not be checked for correspondence with a project hierarchy.
+
+        Convert to subsystem/Convert to group
+
+            The text of this menu selection will toggle appropriately depending on the items selected. If items of both kinds are selected, the menu selection will be insensitive.
+
+        Split
+
+            If the items selected in the Browser are members of the group/subsystem selected in the group manager, those items will be moved from the original group to the newly-created group and the kind of relationship (peer or client/server) will be determined automatically based on the relationships among the members of the groups. Otherwise, the new group/subsystem will be created empty and in a peer relationship with the original group/subsystem. In either case, however, if the original group is a root group, the newly-created group will be a server, as it is not permitted for root groups to have peers. The name will be taken from the "Name" field.
+
+        Merge...
+
+            The selected groups/subsystems will be merged; the user will be prompted to select the surviving entity.
+
+        Relate...
+
+            This action will bring up a dialog containing two scrolling lists and a mechanism to transfer selections between the lists (similar to the Project Scope and Noun Selection dialogs), along with a four-button radio box. The radio selection will have choices for Client, Server, Peer, and Unrelated. The left pane will be initialized with all the groups selected in the group manager. The user will move some of the groups to the right pane and select the relationship from the radio box in order to relate the group(s) in the left pane to the group(s) in the right pane in the specified fashion.
+
+        Realize
+
+            This selection will have three cascaded choices: Reduce to Files, Create PDF, and Populate Directories.
+
+        The Elements menu item will be extended with five options:
+
+        Move
+
+            This option is only sensitive if there is exactly one group (the target of the move) selected in the group manager, there are entities selected in the Browser, and they are members of the same hierarchy as the target group. In this case, the selected entities will be moved from their current group to the target group.
+
+        Make Public/Make Private
+
+            These options are only sensitive if there are entities selected in the Browser and they are members of the group(s) selected in the group manager. In this case, the access category of the selected entities will be adjusted within the selected group(s) as specified.
+
+        Make Visible/Make Invisible
+
+            These options are only sensitive if there are entities selected in the Browser and they are members of servers of the group(s) selected in the group manager. In this case, the transparency of the selected groups with respect to the selected members will be adjusted accordingly.
+
+        The following new menu selection  will be added to the group manager:
+
+        Browse
+
+            The Browse menu will allow the user to ask questions about the members of a group, the groups to which it is related, the entities to which a group's members are related, and the groups containing those entities. The menu contains options for Members, Clients, Servers, Peers, Used, and Users, as well as an option to enable/disable filtering (with a toggle button so the user can tell from the menu whether filtering is enabled or not). The query applies to all groups currently selected in the group manager. All the results of the queries are displayed in the Elements column of the Browser, just as is done currently with the set-theoretic operations; this approach also facilitates the previously-described actions that operate on a group selected in the group manager and on members selected in the Browser.
+
+            In the absence of filtering, the Members query results in all the direct members (files and entities, but not entities that are simply defined in file members) of the selected group(s); the Clients, Servers, and Peers queries result in all the groups so related to the selected group(s); and the Users and Used queries result in all the groups whose members either reference or are referenced by the members of the selected group(s).
+
+            Selecting the Filter option on the Browse menu brings up a dialog with five groupings of check boxes that modify the query actions. 
+
+            Targets
+
+                The grouping contains check boxes for Groups, Members, and Nonmembers. The settings in this box are ignored for the Members query. The Nonmembers selection is useful only for Used and Users queries, to detect referenced and referencing entities that are not members of groups in the same hierarchy as those selected in the group manager for the query.
+
+            Members
+
+                This grouping contains check boxes for File Members, Direct Entity Members, and Indirect Entity Members. For the Members query or if the Members box is checked in the Targets grouping, at least one of these boxes must be checked. The Direct and Indirect Entity Members boxes distinguish between those program entities that are members in their own right versus those that are members because the file in which they are defined is a member.
+
+            Group Relationships
+
+                This grouping contains check boxes for Peers, Clients, Servers, and Unrelated. This grouping is ignored for all but Used and Users queries; for those, at least one of the boxes must be selected, restricting the results to groups and/or members of groups that are related in the specified way to those selected in the browser.
+
+            Access
+
+                This grouping contains check boxes for Public and Private. For the Members query or if the Members box is checked in the Targets grouping, at least one of these boxes must be checked.
+
+            Transparency
+
+                This grouping contains check boxes for Local, Allowed Transitive, and Disallowed Transitive. This grouping is ignored for all but the Used query; for it, at least one of these boxes must be checked if any of the Peers, Clients, or Servers boxes is checked and the Members box is also checked. This setting distinguishes between references to entities that are members of the related group, entities that are members of servers of the related group that are visible through the client group, and members of servers of the related group that have been made invisible through the client group.
+
+    Browser
+
+        Because of the unification of groups and subsystems and the consequent increase in the number of such entities, it will no longer be practical to show all groups in the Categories column of the Scan-mode Browser. Instead, the only groups shown there will be the anonymous groups created by the GROUP button on the Browser during the current session (i.e., not including saved groups). All groups created using the group manager(including subsystems) can only be manipulated using the group manager. This change continues the ability to use the GROUP button as a quick extension to the Scan columns without having to interact with another dialog, while minimizing the degree of clutter resulting from subsystems, saved groups, etc. It will also improve the performance of ParaSET startup by not requiring that saved groups be processed before going into Scan mode for the first time.
+
+        The current Subsystems category will be renamed to Named Groups and will show both groups and subsystems. These will respond to a new Members query in the Ask column to show all the direct members (this query used with classes will show both data members and member functions). Subsystems will also respond to the various Defines queries for their members, but non-subsystem groups will not.
+
+    Forward Engineering
+
+        The various file-creating activities in ParaSET will all be augmented to check if they are creating a file that, based on its logical name, should be part of a group or subsystem; if so, they will present a dialog that will enable the group(s) to be checked out and updated to reflect the existence of the new file(s) in a single operation. (Because of the expense involved in examining all existing subsystems, this check will be performed only if the user explicitly requests it.)
+
+        Similar considerations apply to deleting a file -- subsystems containing the file can either be updated immediately or later as a response to a validation failure.
+
+    Batch processing
+
+        The paraset -batch command will be augmented with a -validate_groups that will produce the same report described above under the group manager's Validation=>Find Violations menu command.

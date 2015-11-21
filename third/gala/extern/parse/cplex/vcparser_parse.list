@@ -1,0 +1,11 @@
+
+TARGETS =
+    	flexScanner.o
+    	lexToken.o
+    	regexp.o
+
+VPATH =
+	/paraset/src/extern/parse/cplex
+
+CCINCLUDES =
+	/paraset/src/extern/parse/include

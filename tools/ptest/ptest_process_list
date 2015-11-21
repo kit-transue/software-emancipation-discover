@@ -1,0 +1,140 @@
+#!/bin/sh 
+
+script="`basename $0`"
+
+help () 
+{
+ echo
+ echo "$script"
+ echo
+ echo "Description: Move test and send request to bugtool."
+ echo
+ echo "Usage: $script <operation> <from> <to>"
+ echo
+ echo "       <operation> - {close|submit}"
+ echo "       <from>      - from directory"
+ echo "       <to>        - to directory"
+ echo 
+}
+
+error () 
+{
+  echo "$script: Error: $1" >&2  
+  if [ "$2" != "-nohelp" ] ; then
+    help >&2
+  fi 
+  exit 1
+}
+
+if [ $# -lt 3 ] ; then
+  error "Too few arguments."
+fi
+
+oper="$1"
+from_dir="$2"
+to_dir="$3"
+
+if [ $oper != close -a $oper != submit ] ; then
+  error "Invalid operator encountered ($oper)." -nohelp
+elif [ ! -d $from_dir ] ; then
+  error "$from_dir does not exist." -nohelp
+elif [ ! -d $to_dir ] ; then
+  error "$to_dir does not exist." -nohelp
+fi
+
+check_failed () 
+{
+  $1
+  if [ "$failed" = "yes" ] ; then
+    failed_list="$bug $failed_list"      
+  fi
+}
+
+prepare ()
+{
+  failed="yes"
+
+  if [ ! -d $from_dir/$bug ] ; then
+    echo "$script: Error: Test $bug does not exist in $from_dir." >&2 
+  elif [ -d $to_dir/$bug ] ; then
+    echo "$script: Error: Test $bug already exists in $to_dir." >&2
+  elif mkdir $to_dir/$bug ; [ $? -ne 0 ] ; then
+    echo "$script: Error: Cannot create $to_dir/$bug." >&2   
+  else
+    failed="no"
+  fi  
+  
+  check_failed
+}
+
+copy ()
+{
+  failed="yes"
+  
+  cd $from_dir/$bug ; tar cf - . | (cd $to_dir/$bug ;  tar xf -) 
+  if [ "$?" != 0 ] ; then
+    echo "$script: Error: Failed to copy test $bug." >&2    
+  else
+    rm -rf $from_dir/${bug}~
+    mv -f $from_dir/$bug  $from_dir/${bug}~
+    echo "$script: Status: Test $bug successfully copied from $from_dir/$bug to $to_dir/$bug." >&2 
+    failed="no"
+  fi
+  
+  check_failed
+}
+
+bugtool ()
+{
+  go="yes"
+  
+  bugcmdout=$from_dir/.bugcmd.out.tmp
+  bugcmd print $bugno > $bugcmdout 2>&1
+  
+  grep -s ": bug does not exist" $bugcmdout
+  if [ $? -eq 0 -a "$go" != "no" ]; then 
+    go=no; echo "$script: Warning: Bug $bugno does not exist in bugtool." >&2; fi 
+  grep -s "^   ClosedDate " $bugcmdout 
+  if [ $? -eq 0 -a "$go" != "no" ]; then 
+    go=no; echo "$script: Warning: Bug $bugno is already closed in bugtool." >&2; fi 
+  grep -s "^   SubmitDateR&D " $bugcmdout
+  if [ $? -eq 0 -a "$oper" = "submit" -a "$go" != "no" ]; then 
+    go=no; echo "$script: Warning: Bug $bugno is already submitted in bugtool." >&2; fi   
+
+  if [ "$go" = "yes" ]; then
+    echo "$script: Status: Updating bug $bugno in bugtool." >&2 
+    bugcmd $oper $bugno > $bugcmdout 2>&1
+    failed="no"
+  fi
+  
+  rm $bugcmdout
+}
+
+failed_list=""
+
+while read bugs ; do
+  for bugno in $bugs ; do
+    bug=bug$bugno
+    prepare
+      if [ "$failed" = "no" ] ; then
+        copy
+        if [ "$failed" = "no" ] ; then
+          bugtool     
+        fi
+      fi  
+  done
+done
+
+if [ "$failed_list" != "" ] ; then
+  echo "$script: Warning: The following tests could not be copied: $failed_list" >&2
+  exit 1
+fi 
+
+exit 0
+
+
+
+
+
+
+

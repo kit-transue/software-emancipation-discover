@@ -1,0 +1,74 @@
+// ProjectTree.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (ProjectTree.tlb) that will become a resource in
+// ProjectTree.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(077B20D4-0934-11D2-AEE6-00A0C9B71DC4), version(1.0),
+  helpstring("ProjectTree OLE Control module"), control ]
+library PROJECTTREELib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CProjectTreeCtrl
+
+	[ uuid(077B20D5-0934-11D2-AEE6-00A0C9B71DC4),
+	  helpstring("Dispatch interface for ProjectTree Control"), hidden ]
+	dispinterface _DProjectTree
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CProjectTreeCtrl)
+			[id(1)] IDispatch* DataSource;
+			[id(2)] BSTR SelectedNode;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CProjectTreeCtrl)
+			[id(3)] void Query();
+			[id(4)] void Clean();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CProjectTreeCtrl
+
+	[ uuid(077B20D6-0934-11D2-AEE6-00A0C9B71DC4),
+	  helpstring("Event interface for ProjectTree Control") ]
+	dispinterface _DProjectTreeEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CProjectTreeCtrl)
+			[id(1)] void NodeChanged(BSTR projectName);
+			[id(2)] void NodeDoubleclicked(BSTR projname);
+			[id(3)] void NodeExpanded(BSTR projname);
+			[id(4)] void NodeCollapsed(BSTR projname);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CProjectTreeCtrl
+
+	[ uuid(B888ED83-0911-11D2-AEE6-00A0C9B71DC4),
+	  helpstring("ProjectTree Control"), control ]
+	coclass ProjectTree
+	{
+		[default] dispinterface _DProjectTree;
+		[default, source] dispinterface _DProjectTreeEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

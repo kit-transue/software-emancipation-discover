@@ -1,0 +1,13 @@
+#!/bin/sh
+echo "rm -f $cm_workfile"
+rm -f $cm_workfile
+if [ -f $cm_revision_file ] ; then
+  rlog -l $cm_revision_file | grep "locked by: $USER"
+  if [ $? -eq 0 ] ; then
+    echo n | rcs -I -u$cm_version $cm_revision_file 2>&1
+  fi
+fi
+if [ "$cm_afterput" != "" ] ; then
+  $cm_afterput &
+fi
+exit 0

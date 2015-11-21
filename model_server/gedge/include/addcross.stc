@@ -1,0 +1,53 @@
+/******************************************************************************/
+/*                                                                            */
+/* ADDCROSSING                                                                */
+/*                                                                            */
+/*   									      */
+/* Autor		Martin Schmidt, Martin-Luther-Str. 1, 7630 Lahr       */
+/*			Tel.: 07821 / 41748				      */
+/*									      */
+/* Letzte Aenderung     02.02.88					      */
+/*									      */
+/*									      */
+/* Datenstruktur        DYN_GRAPH 					      */
+/*			Diese Datenstruktur beschreibt einen dynamischen      */
+/*  			Graphen, d.h. die Anzahl der Knoten kann erweitert    */
+/*			werden.						      */
+/*									      */
+/*			old_V = Anzahl der Knoten vor der Erweiterung.        */
+/*			new_V = Anzahl der Knoten nach der Erweiterung.       */
+/*			        d.h. ADDCROSSINGS hat new_V - old_V kuenst-   */
+/*				liche Schnittpunkte erzeugt.                  */
+/*                                                                            */
+/******************************************************************************/
+
+
+typedef
+struct DYN_NODE				/* Ein Knoten einer Adjazenzliste     */
+{
+  struct AL		*name;		/* Name des Knoten		      */
+  int			flag;		/* Flag zur Markierung von Kanten     */
+  struct DYN_NODE	*next;		/* Verkettung		   	      */
+} DYN_NODE;
+
+
+typedef
+struct AL				/* Adjazenzliste fuer einen Knoten    */
+{
+  int			name;        	/* Name des Knoten		      */
+  int			flag;		/* Flag zur Markierung eines Knoten   */
+  DYN_NODE		*first;   	/* Liste der Nachbarn eines Knoten    */
+  struct AL       	*next_AL;	/* Verkettung			      */
+} AL;
+
+
+typedef
+struct DYN_GRAPH			/* Beschreibung des Dyn. Graphen      */
+{
+  int			old_V, new_V;   /* Anzahl der Knoten (siehe oben)     */
+  AL 			*first_AL;      /* Liste der Adjazenzlisten           */
+} DYN_GRAPH;
+
+
+/* end of ADDCROSS.STC */
+

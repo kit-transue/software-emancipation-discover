@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Find PSETHOME if it's not already in the environment.
+if test "$PSETHOME" != ""
+then
+	"$PSETHOME/bin/ci_environment"
+	if test $? -ne 0
+	then
+		echo DIScover is not installed in \$PSETHOME.
+		exit 1
+	fi
+else
+	ci_environment
+	if test $? -ne 0
+	then
+		echo DIScover is not installed in \$PATH.
+		exit 1
+	fi
+	PSETHOME=`ci_environment --psethome`
+	if test $? -ne 0
+	then
+		exit 1
+	fi
+fi
+export PSETHOME
+
+"$PSETHOME/bin/disperl" "$PSETHOME/mb/CreateModel.pl" $*
+result=$?
+exit $result

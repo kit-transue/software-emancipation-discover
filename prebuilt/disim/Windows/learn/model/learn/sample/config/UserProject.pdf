@@ -1,0 +1,11 @@
+Home : $privateModelRoot [[ W ]] <-> /src
+{
+
+#private Rules
+#""		: $privateSrcRoot/(**).([cChH])/%/.pset		=> $privateModelRoot/pset/(1).(2).pset
+#""		: $privateSrcRoot/(**).(cxx|hxx)/%/.pset	=> $privateModelRoot/pset/(1).(2).pset
+#""		: $privateSrcRoot/(**).(cpp|hpp)/%/.pset	=> $privateModelRoot/pset/(1).(2).pset
+#""		: $privateSrcRoot/(**).(cc|hh)/%/.pset		=> $privateModelRoot/pset/(1).(2).pset
+""		: $privateModelRoot/(**).pmod/%/.pmoddir	=> $privateModelRoot/pmod/(1).pmod
+}
+

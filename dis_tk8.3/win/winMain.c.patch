@@ -1,0 +1,108 @@
+12c12
+<  * RCS: @(#) $Id: winMain.c,v 1.10 2000/04/19 23:12:56 hobbs Exp $
+---
+>  * RCS: @(#) $Id: winMain.c 1.2 2001/10/30 10:24:32EST Sudha Kallem (sudha) Exp  $
+22a23,26
+> #include "tkWin.h"
+> #include <io.h>
+> #include <stdio.h>
+> #include <process.h>
+36a41,50
+> int			MyPutsCmd _ANSI_ARGS_((ClientData dummy,
+> 			    Tcl_Interp *interp, int argc, char **argv)); 
+> DWORD WINAPI            thread_control_func(LPVOID interp);
+> static int		StartReadThreadCmd _ANSI_ARGS_((ClientData dummy,
+> 			    Tcl_Interp *interp, int argc, char **argv));
+> static int		ExitReadThreadCmd _ANSI_ARGS_((ClientData dummy,
+> 			    Tcl_Interp *interp, int argc, char **argv));
+> static int 		ActivateCmd _ANSI_ARGS_((ClientData dummy,
+> 			    Tcl_Interp *interp, int argc, char **argv));
+> 
+191a206,214
+>     Tcl_CreateCommand(interp, "myputs", MyPutsCmd, (ClientData) 0,
+>                       (Tcl_CmdDeleteProc *) NULL);
+>     Tcl_CreateCommand(interp, "start_readthread", StartReadThreadCmd, 
+>                       (ClientData) 0, (Tcl_CmdDeleteProc *) NULL);
+>     Tcl_CreateCommand(interp, "exit_readthread", ExitReadThreadCmd, 
+>                       (ClientData) 0, (Tcl_CmdDeleteProc *) NULL);
+>     Tcl_CreateCommand(interp, "activate", ActivateCmd, (ClientData) 0,
+>                       (Tcl_CmdDeleteProc *) NULL);
+> 
+373a397,473
+> 
+> int MyPutsCmd(dummy, interp, argc, argv)
+>     ClientData dummy;			/* Not used. */
+>     Tcl_Interp *interp;			/* Current interpreter. */
+>     int argc;				/* Number of arguments. */
+>     char **argv;			/* Argument strings. */
+> { 
+>   printf("%s\n", argv[1]);
+>   fflush(stdout);
+>   return TCL_OK;
+> }
+> 
+> 
+> //void thread_control_func (void *interp) 
+> DWORD WINAPI thread_control_func(LPVOID interp)
+> {
+>   DWORD dwResult = 0;
+>   HANDLE hFd =  GetStdHandle(STD_INPUT_HANDLE);
+>   Tk_Window main = Tk_MainWindow(interp);
+>   HWND hWnd =  Tk_GetHWND(Tk_WindowId(main));
+>   HANDLE read_event;
+>   read_event = CreateEvent(NULL, TRUE, FALSE, NULL );
+>   while( 1 ) {
+> 	Sleep(500);
+>     SendMessage(hWnd, PIPE_READY, (WPARAM)read_event, (LPARAM)interp);
+>     WaitForSingleObject(read_event , INFINITE );
+> 	ResetEvent(read_event );
+>   }
+>   return(dwResult);
+> }
+> 
+> static HANDLE readthread = NULL;
+> static int
+> StartReadThreadCmd(dummy, interp, argc, argv)
+>     ClientData dummy;			/* Not used. */
+>     Tcl_Interp *interp;			/* Current interpreter. */
+>     int argc;				/* Number of arguments. */
+>     char **argv;			/* Argument strings. */
+> { 
+>   DWORD dwThreadID;
+>   readthread = (HANDLE)_beginthreadex(NULL, 0, thread_control_func, (LPVOID)interp, 0, &dwThreadID );
+>   return TCL_OK;
+> }
+> 
+> static int
+> ExitReadThreadCmd(dummy, interp, argc, argv)
+>     ClientData dummy;			/* Not used. */
+>     Tcl_Interp *interp;			/* Current interpreter. */
+>     int argc;				/* Number of arguments. */
+>     char **argv;			/* Argument strings. */
+> { 
+>   DWORD code = 0;
+>   if(readthread) {
+>     if( GetExitCodeThread( readthread, &code ) && code == STILL_ACTIVE ) {
+>       TerminateThread( readthread, 0 );
+>       WaitForSingleObject(readthread, INFINITE);
+>       CloseHandle( readthread );
+>     }
+>     readthread = NULL;
+>   }
+>   return TCL_OK;
+> }
+> 
+> static int
+> ActivateCmd(dummy, interp, argc, argv)
+>     ClientData dummy;			/* Not used. */
+>     Tcl_Interp *interp;			/* Current interpreter. */
+>     int argc;				/* Number of arguments. */
+>     char **argv;			/* Argument strings. */
+> { 
+>   Tk_Window main = Tk_MainWindow(interp);
+>   HWND hWnd =  Tk_GetHWND(Tk_WindowId(main));
+>   SetForegroundWindow(hWnd);
+>   return TCL_OK;
+> }
+> 
+> 

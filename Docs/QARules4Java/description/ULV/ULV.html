@@ -1,0 +1,59 @@
+<html>
+<body>
+
+<p><b>ULV - 'Use Local Variables whenever possible.</b></p>
+
+<p>When variables are accessed frequently, consider where these variables are
+accessed from.  Is the variable static, local, or an field of class variable?
+static and field of class variables takes about two to three times
+longer to access than local variables.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class ULV {<br>
+&nbsp; void oper1 (int[] values) {<br>
+&nbsp; &nbsp; for (int i=0; i &lt; value.length; i++) {<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> _sum += value[i];</font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+&nbsp; void oper2 (int[] values) {<br>
+&nbsp; &nbsp; for (int i=0; i &lt; value.length; i++) {<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> _staticSum += value[i];</font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+&nbsp; private int _sum;<br>
+&nbsp; private static int _staticSum;<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+If possible, use local variables when accessing variables frequently.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class ULV {<br>
+&nbsp; void oper1 (int[] values) {<br>
+&nbsp; &nbsp; <font color='blue'> int sum = _sum;</font><br>
+&nbsp; &nbsp; for (int i=0; i &lt; value.length; i++) {<br>
+&nbsp; &nbsp; &nbsp; <font color='blue'> sum += value[i];</font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; <font color='blue'> _sum = sum;</font><br>
+&nbsp; }<br>
+&nbsp; void oper2 (int[] values) {<br>
+&nbsp; &nbsp; <font color='blue'> int sum = _staticSum;</font><br>
+&nbsp; &nbsp; for (int i=0; i &lt; value.length; i++) {<br>
+&nbsp; &nbsp; &nbsp; <font color='blue'> _staticSum += value[i];</font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; <font color='blue'> _staticSum = sum;</font><br>
+&nbsp; }<br>
+&nbsp; private int _sum;<br>
+&nbsp; private static int _staticSum;<br>
+}</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Peter Haggar: "Practical Java - Programming Language Guide".
+Addison Wesley, 2000, pp.122 - 125</p>
+
+</body>
+</html>

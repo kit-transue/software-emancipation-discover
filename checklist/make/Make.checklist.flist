@@ -1,0 +1,9 @@
+CXXROOTS=\
+	psetmem \
+	checklist
+
+CPP_INCLUDES=\
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \

@@ -1,0 +1,122 @@
+# File for all configs
+
+# This file is called ONLY from Makefile_minor
+
+###########################################################
+############# options for all platforms ###################
+###########################################################
+
+ASETINCLUDES = \
+        -I$(LOCAL_SRC_ROOT)/gcc/src/cp \
+        -I$(LOCAL_SRC_ROOT)/gcc/src/config \
+        -I$(BUILD_SRC_ROOT)/gcc/src/cp \
+        -I$(BUILD_SRC_ROOT)/gcc/src/config
+
+X11LIB = -lX11
+
+###########################################################
+############# sun5 options ################################
+###########################################################
+ifeq "$(Arch)" "sun5"
+
+SIMPLE_MAKE=/usr/ccs/bin/make
+
+EXTRA_FLAGS = -lw -lintl -ldl
+
+# sun5 compiler
+CC = ${OS_ROOTDIR}/bin/cc
+CCC = ${OS_ROOTDIR}/bin/CC
+
+SOCKETLIB = -lsocket -lnsl
+
+# X stuff
+XINCLUDES = \
+        -I/usr/openwin/include \
+        -I$(LOCAL_SRC_ROOT)/xinclude/uimx \
+        -I$(BUILD_SRC_ROOT)/xinclude/uimx
+
+# Dynamic and shared linkage
+DL = -Bdynamic
+SL = -Bstatic
+
+#CC_COMP_INCLUDE = -I/solar/opt/SUNWspro/SC2.0.1/include/CC
+
+# C Defines and Includes
+CDEFINES = -DGCC2 -D_NO_PROTO
+CINCLUDES = -I.
+CFLAGS = $(DEBUG) $(CDEFINES) $(ASETINCLUDES) $(CINCLUDES) $(XINCLUDES) $(FRAMEINCLUDES)
+
+# C++ Defines and Includes
+CCDEFINES = -DGCC2 -Dcplusplus_3_0_1 -Div2_6_compatible -DNEWCPP -DSOLARIS
+CCINCLUDES = \
+        -I/usr/local/include
+
+CCFLAGS = $(DEBUG) $(CCDEFINES) $(ASETINCLUDES) $(CCINCLUDES) $(XINCLUDES) $(DEFINES)
+
+endif
+
+###########################################################
+############ hp10 options #################################
+###########################################################
+ifeq "$(Arch)" "hp10"
+
+EMACS_CONFIGURE=--with-gcc=no
+SIMPLE_MAKE=/bin/make
+
+# hp10 compiler
+CC = /bin/cc
+CCC = /opt/aCC/bin/aCC
+
+SOCKETLIB =
+
+# X stuff
+XINCLUDES = \
+        -I/usr/include/Motif1.2 \
+        -I/usr/include/X11R5 \
+        -I$(LOCAL_SRC_ROOT)/xincludes/uimx \
+        -I$(BUILD_SRC_ROOT)/xincludes/uimx
+ 
+DEFINES = -Dhp10 -D_HPUX_SOURCE
+ 
+# C macros
+CDEFINES = -DGCC2 -D_NO_PROTO -DONLY_INT_FIELDS
+CINCLUDES = $(ASETINCLUDES) $(XINCLUDES)
+CFLAGS = $(CDEFINES) +DAportable +DS2.0 $(CINCLUDES) $(DEFINES) $(FRAMEINCLUDES)
+ 
+# C++ macros
+CCDEFINES = -DGCC2 -Dcplusplus_3_0_1 -Div2_6_compatible -DNEWCPP -Dalloca \
+	-DONLY_INT_FIELDS
+CCFLAGS = $(DEBUG) +DAportable +DS2.0 $(CCDEFINES) $(ASETINCLUDES) \
+	$(CCINCLUDES) $(XINCLUDES) $(DEFINES)
+CCINCLUDES = \
+        -I/usr/local/CC/include \
+        -I/usr/local/include \
+ 
+LFLAGS = -L/usr/lib/X11R5 -Wl,-a,archive
+
+endif
+
+###########################################################
+############# irix6 options ###############################
+###########################################################
+ifeq "$(Arch)" "irix6"
+
+EMACS_CONFIGURE=--with-gcc=no
+SIMPLE_MAKE=/bin/make CFLAGS=-O2
+
+# irix6 compiler
+CC = /usr/bin/cc -n32 -xgot -cckr -signed
+CCC = /usr/bin/CC -n32
+
+SOCKETLIB =
+
+DEFINES = -Dirix6
+
+XINCLUDES = \
+        -I/usr/include/Xm \
+        -I/usr/include/X11 \
+        -I$(LOCAL_SRC_ROOT)/xincludes/uimx \
+        -I$(BUILD_SRC_ROOT)/xincludes/uimx \
+
+endif
+

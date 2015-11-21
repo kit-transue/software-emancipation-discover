@@ -1,0 +1,31 @@
+##########
+#
+# A quick description of how to build galgen.
+#
+##########
+
+# Sun4 compile:
+yacc -d galgen.y
+lex galgen.l
+/share/opt-sparc/SWorks3.0.1/SC3.0.1patch/bin/acc *.c -ll -ly
+cp a.out $GALAXYHOME/bin/galgen
+
+# Sun5 compile *** Must Be Done On power. ***
+yacc -d galgen.y
+lex galgen.l
+cc *.c -ll -ly
+cp a.out $GALAXYHOME/bin/galgen
+
+# hp700 compile *** Must Be Done On helios. ***
+yacc -d galgen.y
+lex galgen.l
+cc *.c -ll -ly -Aa
+cp a.out $GALAXYHOME/bin/galgen
+
+
+### On NT:
+cd /nt-bin/galgen
+omake -v -EN -f galgen.mak
+ct co /nt-bin/bin/galgen.exe
+cp /nt-bin/galagen/Debug/galgen.exe /nt-bin/bin/galgen.exe
+ct ci /nt-bin/bin/galgen.exe

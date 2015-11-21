@@ -1,0 +1,36 @@
+#
+# 2/3/98
+#
+# See comments on testlink_source.list in /paraset/src/tests/testlink/src.
+#
+
+TARGETS =
+	pdufile.o
+	pduio.o
+	pdumem.o
+	pdupath.o
+	pduproc.o
+	pdustring.o
+	pdutime.o
+	pdutype.o
+	raFile.o
+     	bitMEM.o
+	dirFSet.o
+        pdudir.o
+
+NT_TARGETS +=
+	endian.o
+	perfStat.o
+
+VPATH =
+	/paraset/src/extern/osport/source
+
+NT_CCFLAGS +=
+	/Ob1
+
+CCINCLUDES =
+	/paraset/src/extern/osport/include
+	/paraset/src/extern/ads/include
+
+NT_CCINCLUDES +=
+	${MSDEV_INCLUDE}

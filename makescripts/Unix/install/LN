@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# usage: LN real_file new_link
+# creates a symbolic link from new_link pointing to real_file
+# Paths are relative to current directory; duplicate path components are removed.
+# Assumes PSETHOME is the directory LN is called from
+
+
+if [ $# -ne 2 ] ; then
+	echo "LN: must supply two arguments" 1>&2
+	exit 1
+fi
+
+real=$1
+link=$2
+real_unique=${real}
+link_unique=${link}
+
+realbase=`echo ${real_unique} | sed 's@/.*@@'`
+linkbase=`echo ${link_unique} | sed 's@/.*@@'`
+while [ $linkbase = $realbase ] ; do
+	real_unique=`echo ${real_unique} | sed 's@[^/]*/@@'`
+	link_unique=`echo ${link_unique} | sed 's@[^/]*/@@'`
+	
+	realbase=`echo ${real_unique} | sed 's@/.*@@'`
+	linkbase=`echo ${link_unique} | sed 's@/.*@@'`
+done
+
+path_link2common=`dirname ${link_unique} | sed 's@[a-zA-z0-9][^/]*@..@g'`
+
+echo ln -s ${path_link2common}/${real_unique} ${link}
+ln -s ${path_link2common}/${real_unique} ${link}

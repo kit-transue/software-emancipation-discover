@@ -1,0 +1,8 @@
+CXXROOTS = \
+	parray \
+	argParam \
+	argPrmAssign \
+	cstring
+
+
+

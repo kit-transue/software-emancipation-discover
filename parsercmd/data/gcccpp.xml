@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="warning">
+<compilername>GNU C++</compilername>
+<!-- Requires parameters:
+      %0%  install directory
+      %1%  target
+      %2%  version number (full)
+      %3%  major gcc version (e.g. 2, 3, ...)
+      %4%  major OS category (e.g. WIN32, SunOS, ...)
+  -->
+CPP
+    -D"__attribute__()="
+    -D"__null=((void*)0)"
+    -D_LIBC_LIMITS_H_
+    -D"__inline__="
+    -D__PTRDIFF_TYPE__=int
+    -D__GCC_NEW_VARARGS__
+    --c++
+    --no_warnings
+    -D__STDC__=1
+    "-D__WCHAR_TYPE__=long int"
+    "-D__SIZE_TYPE__=unsigned int"
+    --static_array_tentative_defs
+    --gnu_asm
+    --allow_multiline_string
+    --allow_implicit_enum_conv
+    --allow_empty_macro_arg
+    --allow_conv_from_void_star
+    --suppress_trigraphs
+    --bool
+  <switch enable="unix"/>
+  <switch when="&quot;%4%&quot;==&quot;WIN32&quot;" disable="unix"/>
+  <switch when="unix">
+    --preinclude $PSETHOME/include/gcc.h
+  </switch>
+  <switch when="!unix">
+    --preinclude %%PSETHOME%%/include/gcc.h
+  </switch>
+  <translate>
+    <option name="D" immarg="1" separg="1">-D%</option>      <!-- Define preprocessor symbol X -->
+    <option name="I" immarg="1" separg="1">-I%</option>      <!-- Add directory dir to INCLUDE and #include file search path -->
+    <option name="E" noarg="1">-E</option>                   <!-- Compile source through preprocessor only, output to stdout -->
+    <option name="U" immarg="1">-U%</option>                 <!-- Undefine preprocessor symbol X -->
+    <option name="ansi" noarg="1">--strict</option>          <!-- no $identifer, enables trigraphs -->
+    <option name="trigraphs" noarg="1"></option>             <!-- We have -=suppress_trigraphs only. -->
+    <option name="traditional" noarg="1">--old_c</option>
+    <option name="traditional-cpp" noarg="1">--old_style_preprocessing</option>
+    <option name="fdollars-in-identifiers" noarg="1">--dollar</option>
+    <option name="funsigned-char" noarg="1">--unsigned_chars</option>
+    <option name="fsigned-char" noarg="1">--signed_chars</option>
+    <option name="include" separg="1">--include_directory %</option>
+    <option name="imacros" separg="1">--preinclude %</option>
+
+    <!-- The following command line options generally do not affect
+         how aset_CCcc needs to parse the code. 
+	 Hardware-dependent options are not included. -->
+    <option name="A" immarg="1" separg="1"/>
+    <option name="B" immarg="1" separg="1"/>
+    <option name="C" noarg="1"/>
+    <option name="H" noarg="1"/>
+    <option name="L" immarg="1" separg="1"/>
+    <option name="M" noarg="1"/>
+    <option name="MD" noarg="1"/>
+    <option name="MG" noarg="1"/>
+    <option name="MM" noarg="1"/>
+    <option name="MMD" noarg="1"/>
+    <option name="O" noarg="1"/>
+    <option name="O0" noarg="1"/>
+    <option name="O1" noarg="1"/>
+    <option name="O2" noarg="1"/>
+    <option name="O3" noarg="1"/>
+    <option name="Os" noarg="1"/>
+    <option name="P" noarg="1"/>
+    <option name="Q" noarg="1"/>
+    <option name="S" noarg="1"/>
+    <option name="V" immarg="1" separg="1"/>
+    <option name="W" noarg="1"/>
+    <option name="Wa," immarg="1" separg="1"/>
+    <option name="Waggregate-return" noarg="1"/>
+    <option name="Wall" noarg="1"/>
+    <option name="Wbad-function-cast" noarg="1"/>
+    <option name="Wcast-align" noarg="1"/>
+    <option name="Wcast-qual" noarg="1"/>
+    <option name="Wchar-subscripts" noarg="1"/>
+    <option name="Wcomment" noarg="1"/>
+    <option name="Wconversion" noarg="1"/>
+    <option name="Wctor-dtor-privacy" noarg="1"/>
+    <option name="Weffc++" noarg="1"/>
+    <option name="Werror" noarg="1"/>
+    <option name="Werror-implicit-function-declaration" noarg="1"/>
+    <option name="Wfloat-equal" noarg="1"/>
+    <option name="Wformat" noarg="1"/>
+    <option name="Wid-clash-" immarg="1"/>
+    <option name="Wimplicit" noarg="1"/>
+    <option name="Wimplicit-function-declaration" noarg="1"/>
+    <option name="Wimplicit-int" noarg="1"/>
+    <option name="Winline" noarg="1"/>
+    <option name="Wl," immarg="1" separg="1"/>
+    <option name="Wlarger-than-" immarg="1"/>
+    <option name="Wlong-long" noarg="1"/>
+    <option name="Wmain" noarg="1"/>
+    <option name="Wmissing-declarations" noarg="1"/>
+    <option name="Wmissing-noreturn" noarg="1"/>
+    <option name="Wmissing-prototypes" noarg="1"/>
+    <option name="Wmultichar" noarg="1"/>
+    <option name="Wnested-externs" noarg="1"/>
+    <option name="Wno-deprecated" noarg="1"/>
+    <option name="Wno-implicit" noarg="1"/>
+    <option name="Wno-import" noarg="1"/>
+    <option name="Wno-long-long" noarg="1"/>
+    <option name="Wno-non-template-friend" noarg="1"/>
+    <option name="Wno-pmf-conversions" noarg="1"/>
+    <option name="Wno-sign-compare." noarg="1"/>
+    <option name="Wnon-virtual-dtor" noarg="1"/>
+    <option name="Wold-style-cast" noarg="1"/>
+    <option name="Woverloaded-virtual" noarg="1"/>
+    <option name="Wp," immarg="1" separg="1"/>
+    <option name="Wpacked" noarg="1"/>
+    <option name="Wpadded" noarg="1"/>
+    <option name="Wparentheses" noarg="1"/>
+    <option name="Wpointer-arith" noarg="1"/>
+    <option name="Wredundant-decls" noarg="1"/>
+    <option name="Wreorder" noarg="1"/>
+    <option name="Wreturn-type" noarg="1"/>
+    <option name="Wshadow" noarg="1"/>
+    <option name="Wsign-compare" noarg="1"/>
+    <option name="Wsign-promo" noarg="1"/>
+    <option name="Wstrict-prototypes" noarg="1"/>
+    <option name="Wswitch" noarg="1"/>
+    <option name="Wsynth" noarg="1"/>
+    <option name="Wtemplate-debugging" noarg="1"/>
+    <option name="Wtraditional" noarg="1"/>
+    <option name="Wtrigraphs" noarg="1"/>
+    <option name="Wundef" noarg="1"/>
+    <option name="Wuninitialized" noarg="1"/>
+    <option name="Wunknown-pragmas" noarg="1"/>
+    <option name="Wunreachable-code" noarg="1"/>
+    <option name="Wunused" noarg="1"/>
+    <option name="Wunused-function" noarg="1"/>
+    <option name="Wunused-label" noarg="1"/>
+    <option name="Wunused-parameter" noarg="1"/>
+    <option name="Wunused-value" noarg="1"/>
+    <option name="Wunused-variable" noarg="1"/>
+    <option name="Wwrite-strings" noarg="1"/>
+    <option name="Xlinker" immarg="1" separg="1"/>
+    <option name="a" noarg="1"/>
+    <option name="align-functions" noarg="1"/>
+    <option name="ax" noarg="1"/>
+    <option name="b" immarg="1" separg="1"/>
+    <option name="c" noarg="1"/>
+    <option name="c-save-temps" noarg="1"/>
+    <option name="d" immarg="1"/>
+    <option name="dD" noarg="1"/>
+    <option name="dM" noarg="1"/>
+    <option name="dN" noarg="1"/>
+    <option name="fPIC" noarg="1"/>
+    <option name="falign-functions" noarg="1"/>
+    <option name="falign-functions=" immarg="1"/>
+    <option name="falign-jumps" noarg="1"/>
+    <option name="falign-jumps=" immarg="1"/>
+    <option name="falign-labels" noarg="1"/>
+    <option name="falign-labels=" immarg="1"/>
+    <option name="falign-loops" noarg="1"/>
+    <option name="falign-loops=" immarg="1"/>
+    <option name="fallow-single-precision" noarg="1"/>
+    <option name="falt-external-templates" noarg="1"/>
+    <option name="fargument-alias" noarg="1"/>
+    <option name="fargument-noalias" noarg="1"/>
+    <option name="fargument-noalias-global" noarg="1"/>
+    <option name="fbranch-probabilities" noarg="1"/>
+    <option name="fbuiltin" noarg="1"/>
+    <option name="fcall-saved-" immarg="1"/>
+    <option name="fcall-used-" immarg="1"/>
+    <option name="fcaller-saves" noarg="1"/>
+    <option name="fcheck-memory-usage" noarg="1"/>
+    <option name="fcheck-new" noarg="1"/>
+    <option name="fcommon" noarg="1"/>
+    <option name="fcond-mismatch" noarg="1"/>
+    <option name="fconserve-space" noarg="1"/>
+    <option name="fcse-follow-jumps" noarg="1"/>
+    <option name="fcse-skip-blocks" noarg="1"/>
+    <option name="fdata-sections" noarg="1"/>
+    <option name="fdefer-pop" noarg="1"/>
+    <option name="fdelayed-branch" noarg="1"/>
+    <option name="fdelete-null-pointer-checks" noarg="1"/>
+    <option name="fdump-translation-unit-" immarg="1"/>
+    <option name="fdump-unnumbered" noarg="1"/>
+    <option name="fembedded-cxx" noarg="1"/>
+    <option name="fexceptions" noarg="1"/>
+    <option name="fexpensive-optimizations" noarg="1"/>
+    <option name="fexternal-templates" noarg="1"/>
+    <option name="ffast-math" noarg="1"/>
+    <option name="ffixed-" immarg="1"/>
+    <option name="ffloat-store" noarg="1"/>
+    <option name="ffor-scope" noarg="1"/>
+    <option name="fforce-addr" noarg="1"/>
+    <option name="fforce-mem" noarg="1"/>
+    <option name="ffreestanding" noarg="1"/>
+    <option name="ffunction-sections" noarg="1"/>
+    <option name="fgcse" noarg="1"/>
+    <option name="fgnu-linker" noarg="1"/>
+    <option name="fguiding-decls" noarg="1"/>
+    <option name="fhandle-signatures" noarg="1"/>
+    <option name="fhonor-std" noarg="1"/>
+    <option name="fhosted" noarg="1"/>
+    <option name="fhuge-objects" noarg="1"/>
+    <option name="fident" noarg="1"/>
+    <option name="finhibit-size-directive" noarg="1"/>
+    <option name="finit-priority" noarg="1"/>
+    <option name="finline-functions" noarg="1"/>
+    <option name="finline-limit=" immarg="1"/>
+    <option name="fkeep-inline-functions" noarg="1"/>
+    <option name="fkeep-static-consts" noarg="1"/>
+    <option name="flang-isoc9x" noarg="1"/>
+    <option name="fleading-underscore" noarg="1"/>
+    <option name="flive-range" noarg="1"/>
+    <option name="fmove-all-movables" noarg="1"/>
+    <option name="fname-mangling-version-" immarg="1"/>
+    <option name="fno-PIC" noarg="1"/>
+    <option name="fno-access-control" noarg="1"/>
+    <option name="fno-align-functions" noarg="1"/>
+    <option name="fno-argument-alias" noarg="1"/>
+    <option name="fno-argument-noalias" noarg="1"/>
+    <option name="fno-argument-noalias-global" noarg="1"/>
+    <option name="fno-asm" noarg="1"/>
+    <option name="fno-builtin" noarg="1"/>
+    <option name="fno-check-memory-usage" noarg="1"/>
+    <option name="fno-common" noarg="1"/>
+    <option name="fno-default-inline" noarg="1"/>
+    <option name="fno-defer-pop" noarg="1"/>
+    <option name="fno-elide-constructors" noarg="1"/>
+    <option name="fno-exceptions" noarg="1"/>
+    <option name="fno-for-scope" noarg="1"/>
+    <option name="fno-function-cse" noarg="1"/>
+    <option name="fno-gnu-keywords" noarg="1"/>
+    <option name="fno-gnu-linker" noarg="1"/>
+    <option name="fno-ident" noarg="1"/>
+    <option name="fno-implement-inlines" noarg="1"/>
+    <option name="fno-implicit-templates" noarg="1"/>
+    <option name="fno-inhibit-size-directive" noarg="1"/>
+    <option name="fno-inline" noarg="1"/>
+    <option name="fno-leading-underscore" noarg="1"/>
+    <option name="fno-math-errno" noarg="1"/>
+    <option name="fno-nonnull-objects" noarg="1"/>
+    <option name="fno-optimize-comparisons" noarg="1"/>
+    <option name="fno-optional-diags" noarg="1"/>
+    <option name="fno-pack-struct" noarg="1"/>
+    <option name="fno-pcc-struct-return" noarg="1"/>
+    <option name="fno-peephole" noarg="1"/>
+    <option name="fno-pic" noarg="1"/>
+    <option name="fno-prefix-function-name" noarg="1"/>
+    <option name="fno-reg-struct-return" noarg="1"/>
+    <option name="fno-shared-data" noarg="1"/>
+    <option name="fno-short-double" noarg="1"/>
+    <option name="fno-short-enums" noarg="1"/>
+    <option name="fno-signed-bitfields" noarg="1"/>
+    <option name="fno-signed-char" noarg="1"/>
+    <option name="fno-squangle" noarg="1"/>
+    <option name="fno-stack-check" noarg="1"/>
+    <option name="fno-stack-limit" noarg="1"/>
+    <option name="fno-unaligned-pointers" noarg="1"/>
+    <option name="fno-unaligned-struct-hack" noarg="1"/>
+    <option name="fno-unsigned-bitfields" noarg="1"/>
+    <option name="fno-unwind-tables" noarg="1"/>
+    <option name="fno-verbose-asm" noarg="1"/>
+    <option name="fno-volatile" noarg="1"/>
+    <option name="fno-volatile-global" noarg="1"/>
+    <option name="fno-volatile-static" noarg="1"/>
+    <option name="fomit-frame-pointer" noarg="1"/>
+    <option name="foperator-names" noarg="1"/>
+    <option name="foptimize-comparisons" noarg="1"/>
+    <option name="foptimize-register-moves" noarg="1"/>
+    <option name="foptimize-sibling-calls" noarg="1"/>
+    <option name="fpack-struct" noarg="1"/>
+    <option name="fpcc-struct-return" noarg="1"/>
+    <option name="fpermissive" noarg="1"/>
+    <option name="fpic" noarg="1"/>
+    <option name="fprefix-function-name" noarg="1"/>
+    <option name="fpretend-float" noarg="1"/>
+    <option name="fprofile-arcs" noarg="1"/>
+    <option name="freduce-all-givs" noarg="1"/>
+    <option name="freg-struct-return" noarg="1"/>
+    <option name="fregmove" noarg="1"/>
+    <option name="frepo" noarg="1"/>
+    <option name="frerun-cse-after-loop" noarg="1"/>
+    <option name="frerun-loop-opt" noarg="1"/>
+    <option name="fschedule-insns" noarg="1"/>
+    <option name="fschedule-insns2" noarg="1"/>
+    <option name="fshared-data" noarg="1"/>
+    <option name="fshort-double" noarg="1"/>
+    <option name="fshort-enums" noarg="1"/>
+    <option name="fsigned-bitfields" noarg="1"/>
+    <option name="fsquangle" noarg="1"/>
+    <option name="fssa" noarg="1"/>
+    <option name="fstack-check" noarg="1"/>
+    <option name="fstack-limit-register=" immarg="1"/>
+    <option name="fstack-limit-symbol=" immarg="1"/>
+    <option name="fstd" noarg="1"/>
+    <option name="fstrength-reduce" noarg="1"/>
+    <option name="fstrict-aliasing" noarg="1"/>
+    <option name="fstrict-prototype" noarg="1"/>
+    <option name="fsyntax-only" noarg="1"/>
+    <option name="ftemplate-depth-" immarg="1"/>
+    <option name="ftest-coverage" noarg="1"/>
+    <option name="fthis-is-variable" noarg="1"/>
+    <option name="fthread-jumps" noarg="1"/>
+    <option name="funaligned-pointers" noarg="1"/>
+    <option name="funaligned-struct-hack" noarg="1"/>
+    <option name="funroll-all-loops" noarg="1"/>
+    <option name="funroll-loops" noarg="1"/>
+    <option name="funsigned-bitfields" noarg="1"/>
+    <option name="funwind-tables" noarg="1"/>
+    <option name="fuse-cxa-atexit" noarg="1"/>
+    <option name="fverbose-asm" noarg="1"/>
+    <option name="fvolatile" noarg="1"/>
+    <option name="fvolatile-global" noarg="1"/>
+    <option name="fvolatile-static" noarg="1"/>
+    <option name="fvtable-thunks" noarg="1"/>
+    <option name="fwritable-strings" noarg="1"/>
+    <option name="g" noarg="1" immarg="1"/>
+    <option name="gcoff" noarg="1" immarg="1"/>
+    <option name="gdwarf" noarg="1" immarg="1"/>
+    <option name="ggdb" noarg="1" immarg="1"/>
+    <option name="gstabs" noarg="1" immarg="1"/>
+    <option name="gxcoff" noarg="1" immarg="1"/>
+    <option name="iprefix" immarg="1" separg="1"/>
+    <option name="isystem" immarg="1" separg="1"/>
+    <option name="isystem-c++" immarg="1" separg="1"/>
+    <option name="iwithprefix" immarg="1" separg="1"/>
+    <option name="iwithprefixbefore" immarg="1" separg="1"/>
+    <option name="l" immarg="1" noarg="1"/>
+    <option name="lobjc" noarg="1"/>
+    <option name="nodefaultlibs" noarg="1"/>
+    <option name="nostartfiles" noarg="1"/>
+    <option name="nostdinc" noarg="1"/>
+    <option name="nostdlib" noarg="1"/>
+    <option name="o" immarg="1" separg="1"/>
+    <option name="offset-info" immarg="1" separg="1"/>
+    <option name="p" noarg="1"/>
+    <option name="pedantic" noarg="1"/>
+    <option name="pedantic-errors" noarg="1"/>
+    <option name="pg" noarg="1"/>
+    <option name="pipe" noarg="1"/>
+    <option name="print-file-name=" immarg="1"/>
+    <option name="print-libgcc-file-name" noarg="1"/>
+    <option name="print-prog-name=" immarg="1"/>
+    <option name="print-search-dirs" noarg="1"/>
+    <option name="s" noarg="1"/>
+    <option name="save-temps" noarg="1"/>
+    <option name="shared" noarg="1"/>
+    <option name="specs=" immarg="1"/>
+    <option name="static" noarg="1"/>
+    <option name="symbolic" noarg="1"/>
+    <option name="u" immarg="1" separg="1"/>
+    <option name="undef" noarg="1"/>
+    <option name="v" noarg="1"/>
+    <option name="w" noarg="1"/>
+  </translate>
+    -I%0%/lib/g++-include
+    -I%0%/include
+    -I%0%/%1%/include
+    -I%0%/lib/gcc-lib/%1%/%2%/include
+  <translate>
+    <!-- second include path -->
+    <option name="idirafter" separg="1">--include_directory %</option>
+  </translate>
+  <switch when="(&quot;%3%&quot;==&quot;1&quot;)|(&quot;%3%&quot;==&quot;2&quot;)" enable="prethree">
+    -D__GNUC__=2
+    -D__GNUC_MINOR__=7
+    -D"inline="
+    --no_wchar_t
+    --ignore_std
+  </switch>
+  <switch when="!prethree">
+    -D__GNUC__=3
+    -D__GNUG__=3
+    -D__GNUC_MINOR__=2
+    -D__CHAR_UNSIGNED__
+    -D"__attribute()="
+    -D"__const=const"
+    -D"__restrict="
+    -D"__extension__="
+    --variadic_macros
+  </switch>
+  <switch when="&quot;%4%&quot;==&quot;SunOS&quot;">
+    -Dsun -Dsparc -Dunix -D__svr4__ -D__SVR4 -D__sun__ -D__sparc__ -D__unix__ -D__sun -D__sparc -D__unix
+  </switch>
+</cmdline>

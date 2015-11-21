@@ -1,0 +1,33 @@
+YLROOTS= \
+	sql \
+	sybase
+
+CXXROOTS= \
+	esql \
+	esqlsym \
+	sql_ast \
+	sql_ast_enum \
+	sql_ast_map \
+	sql_builtin \
+	sql_driver \
+	sql_host \
+	sql_iff \
+	sql_keytable \
+	sql_keyword \
+	sql_resolve \
+	sql_sym_enum \
+	sql_symbol \
+	sym_hash
+
+
+CPP_INCLUDES:= \
+-I${LOCAL_SRC_ROOT}/gen/include \
+-I${BUILD_SRC_ROOT}/gen/include \
+-I${LOCAL_SRC_ROOT}/machine/include \
+-I${BUILD_SRC_ROOT}/machine/include \
+-I${LOCAL_SRC_ROOT}/nihcl/include \
+-I${BUILD_SRC_ROOT}/nihcl/include \
+-I/usr/local/include \
+-I.
+
+

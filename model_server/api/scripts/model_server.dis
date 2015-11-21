@@ -1,0 +1,172 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc prepare_tempdir {} {
+    global env cli_service service_tmpdir
+    set service_dir $cli_service
+    regsub -all {:} $service_dir _ service_dir
+
+    if [info exists env(DIS_SHARED_TMP)] {
+	set Tempdir $env(DIS_SHARED_TMP)
+    } else {
+	if [isunix] {
+	    if [info exists env(TMPDIR)] {
+		set Tempdir $env(TMPDIR)
+	    } elseif [info exists env(TMP)] {
+		set Tempdir $env(TMP)
+	    } else {
+		set Tempdir "/usr/tmp"
+	    }
+	} else {
+	    if [info exists env(TEMP)] {
+		set Tempdir $env(TEMP)
+	    } elseif [info exists env(TMP)] {
+		set Tempdir $env(TMP)
+	    } else {
+		set Tempdir "C:/Temp"
+	    }
+	    regsub -all {\\} $Tempdir / Tempdir
+	}
+    }
+    if ![file exists $Tempdir/dislite] {
+	if [catch {file mkdir $Tempdir/dislite}] {
+	    return "dislite_error $Tempdir/dislite"
+	}
+	if [isunix] {
+	    file attributes $Tempdir/dislite -permissions 0777
+	} 
+    }
+    set service_tmpdir $Tempdir/dislite/$service_dir
+    if ![file exists $service_tmpdir] {
+	if [catch {file mkdir $service_tmpdir}] {
+	    return "dislite_error $service_tmpdir"
+	} 
+    }
+    setvar disTempdir $Tempdir
+    return dislite_ok
+}
+
+proc collect_all_symbols {scope ref_kinds fn} {
+    if {$scope == "/"} {
+	set scope_name "/"
+    } else {
+	set scope_name [name $scope]
+    }
+    puts -nonewline "start caching $scope_name ..."
+# we do not need to do flush here because model_server's redefined puts command for default channel do flash 
+# at the end of the command
+#    flush stdout
+    set all [eval defines_or_uses $ref_kinds $scope]
+
+    puts -nonewline  " sorting ..."
+# we do not need to do flush here because model_server's redefined puts command for default channel do flash 
+# at the end of the command
+#    flush stdout
+
+    set all [sort cname $all]
+
+    puts -nonewline  " dumping ..."
+# we do not need to do flush here because model_server's redefined puts command for default channel do flash 
+# at the end of the command
+#   flush stdout
+
+    > $fn {print_attribute cname $all}
+    puts " done: [size $all] symbols"
+    return $all
+}
+
+proc init_symbol_cache {} {
+    global cli_service env service_tmpdir
+    set fn $service_tmpdir/symbol_cache
+
+    setvar symCacheFile $fn
+    puts "Creating symbol cache $fn"
+    set def_kinds  "-functions -vars -classes -typedefs -macro -evalue  -modules"
+    set ref_kinds "$def_kinds -local -strings"
+    
+    set all_syms [collect_all_symbols / $ref_kinds $fn]
+    set_global_symbol_cache $all_syms
+    if {[size $all_syms] == 0} {
+	puts "Empty Model; check environment variables:
+     sharedSrcRoot    $env(sharedSrcRoot)
+     sharedModelRoot  $env(sharedModelRoot)"
+	error "" "Exitting ..." ""
+    }
+
+    if {[set_mode] != "off"} {
+	set execs [root_scopes]
+	set old_mode [set_mode ]
+	set_mode deep
+
+	foreach s $execs {
+	    set n [string range [name $s] 1 end]
+	    set all [collect_all_symbols $s $ref_kinds $fn.$n]
+	    set_scope_symbol_cache $s $all
+	}
+	set_mode $old_mode
+    }
+    puts "Symbol cache is created"
+}
+
+
+# initialization
+# unix - 1 , windows - 0
+set unix_platform 0
+if [info exists tcl_platform(platform)] {
+    if {$tcl_platform(platform)=="unix"} {
+	set unix_platform 1
+	proc myputs msg {
+		puts $msg; 
+# we do not need to do flush here because model_server's redefined puts command for default channel do flash 
+# at the end of the command
+#		flush stdout
+	}
+    }
+}
+proc isunix {} {global unix_platform; return $unix_platform}
+
+if {[info attribute dis_play] == ""}  {
+    add_attribute dis_play { instance ? inst_info : name }
+}
+
+# source_dis dislite.dis
+set res [prepare_tempdir]
+if {$res != "dislite_ok"} {
+    puts $res
+    return -code error -errorcode $res
+}
+
+init_symbol_cache
+if {![isunix]} {
+   puts -nonewline "Caching real OS file names ..."
+# we do not need to do flush here because model_server's redefined puts command for default channel do flash 
+# at the end of the command
+#   flush stdout;
+   set mods [modules /]
+   apply fname $mods
+   puts " done: [size $mods] files"
+}

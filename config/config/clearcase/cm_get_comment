@@ -1,0 +1,17 @@
+#!/bin/sh
+# cm_get_comment (ClearCase) - Extract comment from source file
+
+# exit script if we get any errors
+set -e
+
+# Report comment via stdout
+cleartool lsco -cvi $cm_workfile | tail +2
+
+
+exit 0
+
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = comment for file
+		   : stderr = ignored(?)

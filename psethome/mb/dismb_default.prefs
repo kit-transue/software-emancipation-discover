@@ -1,0 +1,87 @@
+#MB prefs
+*psetPrefs.MBscratch:			no
+*psetPrefs.MBflagsReuse:		no
+
+*psetPrefs.MBparallelHosts:
+*psetPrefs.MBremoteEnvVarList:
+*psetPrefs.MBremoteEval:
+*psetPrefs.MBheartBeat:			15
+
+*psetPrefs.MBiffCompressExe:
+*psetPrefs.MBiffUnCompressExe:
+*psetPrefs.MBiffCompressExt:
+
+*psetPrefs.MBavoidFork:			no
+*psetPrefs.MBsyncTimeCheck:		yes
+*psetPrefs.MBproceedAfterCrash:		no
+
+#MB debugging prefs
+*psetPrefs.MBverbose:			no
+*psetPrefs.MBcontinue:			no
+*psetPrefs.MBstopAfter:
+*psetPrefs.MBforceIFCleanup:		no
+*psetPrefs.MBforceCleanup:		yes
+*psetPrefs.MBdebugSizes:		no
+*psetPrefs.MBcountLines:		no
+
+#regular prefs used by dismb
+*psetPrefs.configuratorSystem: 		
+
+*psetPrefs.getModel:			no
+*psetPrefs.putModel: 			no
+*psetPrefs.doBuildDFA: 			no
+*psetPrefs.DIS_model.DoMergePass:
+*psetPrefs.doPassDefectLink:
+
+*psetPrefs.acceptSyntaxErrors:		yes
+*psetPrefs.debugShowMakeRuleOutput:	yes
+*psetPrefs.logFileCreate: 		yes
+*psetPrefs.logFileDir: 			$ADMINDIR/log
+*psetPrefs.logFileUserDelete: 		no
+*psetPrefs.logFileMonitor: 		yes
+*psetPrefs.logFileNameFixed:
+
+*psetPrefs.sharedSrcRoot: 		
+*psetPrefs.sharedModelRoot: 		
+*psetPrefs.privateSrcRoot: 		
+*psetPrefs.privateModelRoot: 		
+
+*psetPrefs.pdfFileBuild: 		
+*psetPrefs.DIS_model.SaveMetrics:
+*psetPrefs.DIS_model.GenerateY2KInfo:
+*psetPrefs.DIS_model.Instances_Enabled:
+*psetPrefs.DIS_model.LocalVars_Enabled:
+*psetPrefs.cDfltSrcSuffix:		.c
+*psetPrefs.cPlusDfltSrcSuffix:		.C
+
+*psetPrefs.ELS.MBuserEvalFile:
+*psetPrefs.ELS.sql.Suffix:	.sql .spb .sps .ff .fp .fpp .sf .sp .spp
+*psetPrefs.ELS.sql.Flags:
+*psetPrefs.ELS.java.Suffix:	.java .class .zip .jar .jproxy
+*psetPrefs.ELS.java.Flags:
+
+*psetPrefs.MBdoPassCache:		yes
+*psetPrefs.MBdoPassAnalysis:		yes
+*psetPrefs.MBdoPassParse:		yes
+*psetPrefs.MBdoPassUpdate:		yes
+*psetPrefs.MBdoPassFinalize:		yes
+
+*psetPrefs.MBptestRunning:		no
+*psetPrefs.MBasetExecutable:
+
+*psetPrefs.MBqueryTclScript:
+*psetPrefs.queryOutputFile:		$ADMINDIR/tmp/query.out
+*psetPrefs.parserBriefDiagnostics:	no
+
+*psetPrefs.MBlogStatus:			no
+*psetPrefs.MBcleartool:
+
+*psetPrefs.MBavoidFork:
+*psetPrefs.MBQarTclScript:
+
+*psetPrefs.MBincludeAllHdrs: no
+*psetPrefs.MBgeneratePdf: no
+*psetPrefs.MBmultipleIFFs: no
+*psetPrefs.MBanalysisMethod: TS
+*psetPrefs.MBmaximumJavaGroupSize: 500
+

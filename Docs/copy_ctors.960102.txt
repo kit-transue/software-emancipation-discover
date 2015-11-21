@@ -1,0 +1,181 @@
+Since I've just fixed a couple of problems with copy constructors, I
+thought it might be a good idea to write up a small tutorial on the
+subject so people could avoid such problems in the future.
+
+The tutorial is in two parts.  The first gives a basic introduction to
+the concepts and terminology of copy constructors; the second offers
+some stylistic guidelines for writing them.  Even if you understand
+copy constructors reasonably well and don't need the overview, please
+read the guidelines at the end.
+
+Please feel free to ask me about anything that's not clear, and I'll
+incorporate clarifications in a future revision of this document.
+Thanks.
+
+-- wmm
+
+
+OVERVIEW OF COPY CONSTRUCTORS
+
+A copy constructor is a constructor that is invoked whenever a class
+object is initialized with another class object of the same type.  The
+contexts in which a copy constructor is called include:
+
+	- explicitly declaring a new object, e.g., "foo x = y;" or
+	  "foo x(y);" to create an object of type foo with the initial
+	  value of y (which is also of type foo)
+
+	- passing an argument by value to a function, e.g., to a
+	  function declared as "void f(foo);" (but NOT to one declared
+	  as "void f(foo&)")
+
+	- returning a value (not a reference or pointer) from a
+	  function
+
+The copy constructor is NOT invoked in an assignment; that "copy" is
+done using the class's operator=(), not the copy constructor.
+
+A copy constructor is declared as a constructor whose first argument
+is a reference or const-reference to the class itself.  If the
+constructor has more than one argument, all except the first must have
+default values.  For example, any of the following would be a copy
+constructor for class X:
+
+		X(const X&);
+
+		X(X&);
+
+		X(const X&, int=0, const char*="default value");
+
+Unless there are good reasons otherwise, the preferred form of the
+copy constructor is the first one, taking a single argument whose type
+is "const reference to classname."
+
+According to the language specification, if you do not explicitly
+provide a copy constructor, the compiler will create one for you.
+This automatically-generated copy constructor will copy base class and
+data member subobjects using their copy constructors, if present, and
+will do a bitwise copy for all data that does not have a copy
+constructor.  The result is simply a bitwise copy of the entire object
+if no explicit copy constructors have been provided; this default
+action is often called a "shallow copy."
+
+Often a shallow copy is not desirable in a copy constructor.  For
+instance, if the class contains pointers to allocated memory that will
+be freed by the destructor, you *must* provide a copy constructor that
+makes a separate instance of that data; otherwise, the memory will be
+freed twice (by the destructor of both the original and the copy).
+
+Another reason for providing an explicit copy constructor, even if the
+default action would be acceptable, is that both cfront 2.1 and g++
+have bugs in this area.  The cfront bugs often result in obscure error
+messages during the "cc" (C compiler) phase of the compilation (like
+"op STASGN not found", redeclaration of constructors ("__ct__..."
+names), etc.).  G++ will (erroneously) complain about incorrect
+arguments supplied to constructors.
+
+In general, then, I would strongly suggest that every new class that
+is written should have an explicit copy constructor.
+
+
+GUIDELINES FOR WRITING COPY CONSTRUCTORS
+
+Like all other constructors, copy constructor definitions consist of
+three parts: the declaration, the initialization section, and the
+body.  As I mentioned above, the recommended form for the declaration
+is a single argument of type "const reference to classname."  For
+instance:
+
+	In foo.h:
+
+		class foo {
+		public:
+		   // regular constructors
+		   foo(const foo&);	// copy constructor
+		...
+		};
+
+	In foo.C:
+
+		//------------------------------------------
+		// foo::foo(const foo&)
+		//------------------------------------------
+
+		foo::foo(const foo& other) ...
+
+The initialization section is where the majority of the work of the
+constructor should be done.  Base classes and const and reference data
+members *must* be initialized here; as a matter of style, *all* data
+members should be initialized in the initialization section rather
+than assigned a value in the body.  The only exception to this
+guideline is if creating the initial value requires several steps that
+cannot conveniently be done in a single expression (e.g., if
+intermediate values are needed); these values should be computed and
+assigned in the constructor body.  For instance:
+
+	In X.h:
+
+		class X: public A, public B {
+		public:
+		   // regular constructors
+		   X(const X&);		// copy constructor
+		   ...
+		private:
+		   int i;
+		   char* data;
+		}
+
+	In X.C:
+
+		//------------------------------------------
+		// X::X(const X&)
+		//------------------------------------------
+
+		X::X(const X& other):
+			// invoke base class copy constructors:
+			A(other), B(other),
+			// initialize data members:
+			i(other.i) {
+		   data = new char[strlen(other.data) + 1];
+		   strcpy(data, other.data);
+		}
+
+If all initialization can be done in the initialization section, just
+specify an empty body for the constructor: "{ }".
+
+One idiom I have seen in a lot of Discover code is something like the
+following:
+
+		X::X(const X& oo) { *this = oo; }
+
+This idiom is NOT RECOMMENDED; if you are working in a file and see
+this type of code, please take a moment and change it to the
+recommended style.  There are several reasons this type of code should
+not be used:
+
+	- Efficiency: the default (i.e., no-argument) constructors for
+	  all of X's base classes and data members will be invoked
+	  needlessly before the body of the copy constructor runs.
+
+	- Correctness: this form specifies a shallow copy, and as
+	  noted above, a deep copy is often required.
+
+	- Compiler bugs: depending on the inheritance hierarchy and
+	  types of data members, cfront will occasionally generate
+	  incorrect C code, resulting in cc errors like "illegal
+	  indirection" or redeclaration of assignment operators
+	  ("__as__..." names).
+
+-----------
+
+Michael Furman has pointed out to me an omission in my tutorial on
+copy constructors.  For some classes, the copy operation just does not
+make sense because of their relationships with other objects.  Objects
+of such classes should never be copied.
+
+It is not enough in such cases simply not to define the copy
+constructor, however, since that just means that the compiler will
+create a default copy constructor.  Instead, the copy constructor
+should be made private, meaning that it can only be invoked by member
+functions and friends.  Also, the action of such a copy constructor
+should be to report a runtime error, since it should never be called.

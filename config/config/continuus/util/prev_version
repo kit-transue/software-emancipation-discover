@@ -1,0 +1,17 @@
+#!/bin/sh
+branch=`echo $1 | sed -e 's/\(.*\)\.[0-9]$/\1/'`
+version=`echo $1 | sed -e 's/.*\.\([0-9]\)$/\1/'`
+
+if [ "$branch" = "$1" ] ; then
+    branch=`expr $branch - 1`
+    if [ "$branch" != "0" ] ; then
+	echo $branch
+    fi
+else
+    version=`expr $version - 1`
+    if [ "$version" = "0" ] ; then
+	echo $branch
+    else
+	echo $branch.$version
+    fi
+fi

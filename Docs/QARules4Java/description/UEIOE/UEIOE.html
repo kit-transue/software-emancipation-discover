@@ -1,0 +1,36 @@
+<html>
+<body>
+
+<p><b>UEIOE - Use 'equals' Instead Of '=='</b></p>
+
+<p>The '==  ' operator used on strings checks if two string objects
+are identical. However, in most cases, one would like to check
+if two strings that have the same value. In these cases, the 'equals' method
+should be used.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void func (String str1, String str2) {<br>
+&nbsp; &nbsp; <font color='red'>if (str1 == str2) { </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Replace '==' operator with 'equals' method.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void func (String str1, String str2) {<br>
+&nbsp; &nbsp; <font color='blue'>if ( str1.equals(str2) ) { </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+ set `$PSETCFG/util/cm_normalize_date $*`
+
+ awk ' {if($2 > date || ($2==date && $3 >= time)) print $0} ' date=$1 time=$2

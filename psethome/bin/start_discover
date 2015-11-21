@@ -1,0 +1,45 @@
+#!/bin/csh -f
+
+if ( ! $?PSETHOME ) then
+    set DIS_dir = `echo $0 | sed 's%^\([^/]\)%./\1%'`    # Prepend "./" if necessary
+    set DIS_dir = `echo $DIS_dir | sed 's%^\(.*\)/.*$%\1%'`  # Strip trailing "/*"
+    if ( "$DIS_dir" == "" ) set DIS_dir = "."
+    setenv PSETHOME `(chdir "$DIS_dir"; pwd) | sed -n 's%/bin$%%p'`
+endif
+
+if ( "$PSETHOME" == "" ) then
+    echo 'discover: Cannot find a suitable value for $PSETHOME.'
+    exit 1
+endif
+
+if ( ! -d "$PSETHOME" ) then
+    echo 'discover: $PSETHOME = "'"$PSETHOME"'" is not a directory.'
+    exit 1
+endif
+
+# Put our dynamic path directory onto the system end
+
+if ( $?LD_LIBRARY_PATH ) then
+    setenv LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:${PSETHOME}/lib"
+else
+    setenv LD_LIBRARY_PATH "${PSETHOME}/lib"
+endif
+
+if ( $?LD_LIBRARYN32_PATH ) then
+    setenv LD_LIBRARYN32_PATH "${LD_LIBRARYN32_PATH}:${PSETHOME}/lib"
+else
+    setenv LD_LIBRARYN32_PATH "${PSETHOME}/lib"
+endif
+
+if ( $?SHLIB_PATH ) then
+    setenv SHLIB_PATH "${SHLIB_PATH}:${PSETHOME}/lib"
+else
+    setenv SHLIB_PATH "${PSETHOME}/lib"
+endif
+
+set EXE = `/usr/bin/basename "$0"`
+
+if ("X$EXE" == "Xstart_discover") then
+   echo "$PSETHOME/bin/aset" -envcheck  $*
+   "$PSETHOME/bin/aset" -envcheck  $*
+endif

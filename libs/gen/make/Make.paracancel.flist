@@ -1,0 +1,24 @@
+CXXROOTS= \
+	genString \
+	globals \
+	genWild \
+	vpopen \
+	psetmem \
+	trace \
+	regexp \
+	time_log \
+	charstream
+
+CPP_INCLUDES= \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/search/include \
+	-I$(BUILD_SRC_ROOT)/model_server/search/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+	-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+	-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/process/include \
+	-I$(BUILD_SRC_ROOT)/model_server/process/include

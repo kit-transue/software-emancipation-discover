@@ -1,0 +1,6 @@
+CROOTS=\
+
+CPROOTS=\
+    setupConfig.h \
+    setupProps.h \
+    aboutDialog

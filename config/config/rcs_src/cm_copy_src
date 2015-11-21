@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeget ] ; then
+  $cm_optscripts/cm_beforeget
+  if [ $? -ne 0 ] ; then 
+      echo "%% copy fail" >&2
+      exit 1
+  fi
+fi
+
+if [ -f $cm_workfile ] ; then
+  $PSETCFG/util/remove_file $cm_workfile
+fi
+
+echo "co $cm_options -q -r$cm_version  $cm_workfile $cm_revision_file"
+co $cm_options -q -r$cm_version  $cm_workfile $cm_revision_file
+chmod +w $cm_workfile 2> /dev/null
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterget ] ; then
+  $cm_optscripts/cm_afterget &
+fi

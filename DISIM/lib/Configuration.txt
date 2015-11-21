@@ -1,0 +1,44 @@
+##############################################################################
+# Your license path variable for DIScover
+
+VAR=LM_LICENSE_FILE:port@host
+
+##############################################################################
+# these values reflect the site's configuration
+# for the DIScover setup
+##############################################################################
+# There is a layering effect attached to the processing of
+# all variables. If the variable name is preceeded by the
+# configuration type (e.g.VAR=NT_DISIM:G:\DISIM), then 
+# that variable will override the default variable. If the
+# variable name is preceeded by the hostname of the 
+# computer that is processing the file (e.g.
+# VAR=server_TEMPBUILD:/path/TempBuild), then that variable
+# will override any other variables defined of that name
+##############################################################################
+
+VAR=TEMPBUILD:/net/server/export/home/TEST/tmp
+VAR=BUILDSERVERHOST:server
+
+##############################################################################
+# Normally the build log (which defines the scope of the information model)
+# is created on the same host where the model is to be built.
+# Using the same host enables DIScover
+# to automatically recognize file names and commands that appear in the log.
+# Otherwise, change BuildHost from 'this' to 'other'
+# to suppress reminders of this good practice.
+##############################################################################
+VAR=BuildHost:this
+
+##############################################################################
+# these values reflect the site's configuration,
+# but are usually just fine the way they are
+##############################################################################
+
+VAR=TMPDIR:/usr/tmp
+
+VAR=VFB_DISPLAY:49
+VAR=VALID_LD_LIBRARY_PATH:/usr/lib:/usr/local/lib:/usr/openwin/lib:/usr/j2se/jre/lib/sparc/motif12:/usr/j2se/jre/lib/sparc
+VAR=VALID_SHLIB_PATH:/usr/lib:/lib:/usr/lib/X11
+
+##############################################################################

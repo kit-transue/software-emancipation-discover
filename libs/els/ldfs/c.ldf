@@ -1,0 +1,7 @@
+*psetPrefs.flagFilter: $PSETHOME/bin/els/unixfilter
+*psetPrefs.gmake: /usr/local/bin/make
+*psetPrefs.headerSuffixes: .h .hpp
+*psetPrefs.makefileStub: $PSETHOME/lib/els/makestubs/make.C.stub
+*psetPrefs.parser: $PSETHOME/bin/els/aset_CCcc
+*psetPrefs.sorter: $PSETHOME/bin/els/sort
+*psetPrefs.suffixes: .C .cxx .cc .cpp

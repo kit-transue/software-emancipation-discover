@@ -1,0 +1,255 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "include/resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""GroupsCombo.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "GroupsCombo OLE Control Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "GROUPSCOMBO\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "GROUPSCOMBO.OCX\0"
+            VALUE "ProductName", "GroupsCombo OLE Control Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON    DISCARDABLE     "res/GroupsCombo.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX_GROUPSCOMBO DIALOG DISCARDABLE  34, 22, 260, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About GroupsCombo Control"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,20,20
+    LTEXT           "GroupsCombo Control, Version 1.0",IDC_STATIC,40,10,170,
+                    8
+    LTEXT           "Copyright © 1998, ",IDC_STATIC,40,25,170,8
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+END
+
+IDD_PROPPAGE_GROUPSCOMBO DIALOG DISCARDABLE  0, 0, 250, 62
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of GroupsCombo Control on this dialog.",
+                    IDC_STATIC,7,25,229,16
+END
+
+IDD_GROUPNAMEDIALOG DIALOG DISCARDABLE  0, 0, 182, 94
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Group"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_NAMEEDIT,7,22,168,12,ES_AUTOHSCROLL
+    CONTROL         "Scratch",IDC_SCRATCH,"Button",BS_AUTORADIOBUTTON | 
+                    BS_PUSHLIKE | WS_GROUP,12,50,46,12
+    CONTROL         "Persistent",IDC_PERSISTENT,"Button",BS_AUTORADIOBUTTON | 
+                    BS_PUSHLIKE,67,50,46,12
+    DEFPUSHBUTTON   "OK",IDOK,7,73,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,125,73,50,14
+    LTEXT           "Enter the new group name :",IDC_STATIC,10,10,95,9
+    GROUPBOX        "Group Type:",IDC_STATIC,7,39,112,27
+END
+
+IDD_GRPPROTOTYPE DIALOG DISCARDABLE  0, 0, 130, 46
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Find Group"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT,7,7,116,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,23,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,72,22,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX_GROUPSCOMBO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_PROPPAGE_GROUPSCOMBO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_GROUPNAMEDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 175
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
+    END
+
+    IDD_GRPPROTOTYPE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 123
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 39
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DIFF                BITMAP  DISCARDABLE     "res/difftel.bmp"
+IDB_INTERSECT           BITMAP  DISCARDABLE     "res/commel.bmp"
+IDB_ALL                 BITMAP  DISCARDABLE     "res/allelem.bmp"
+IDB_REMOVEGROUP         BITMAP  DISCARDABLE     "res/remgrup.bmp"
+IDB_REMOVESEL           BITMAP  DISCARDABLE     "res/remsel.bmp"
+IDB_NEWGROUP            BITMAP  DISCARDABLE     "res/addgrup.bmp"
+IDB_GROUP               BITMAP  DISCARDABLE     "res/groups.bmp"
+IDB_FINDFIRSTGROUP      BITMAP  DISCARDABLE     "res/findfirs.bmp"
+IDB_FINDNEXTGROUP       BITMAP  DISCARDABLE     "res/findnext.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_GROUPSCOMBO         "GroupsCombo Control"
+    IDS_GROUPSCOMBO_PPG     "GroupsCombo Property Page"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_GROUPSCOMBO_PPG_CAPTION "General"
+    IDS_ALLELEMETS          "All elements"
+    IDS_COMMONELEMENTS      "Common  elements"
+    IDS_DIFFELEMENTS        "Different elements"
+    IDS_REMOVESEL           "Remove selected elements"
+    IDS_REMOVEGROUP         "Remove group"
+    IDS_NEWGROUP            "New group"
+    IDS_INSERTSEL           "Add selected elements"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_FINDFIRSTGROUP      "Find group"
+    IDS_FINDNEXTGROUP       "Find next group"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "GroupsCombo.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

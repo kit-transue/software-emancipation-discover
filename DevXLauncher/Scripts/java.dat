@@ -1,0 +1,40 @@
+# additional menu items for Java
+# queries for nested entities omitted, consistent with other languages
+# Defines -package doesn't do anything in a Java model.
+INCLUDE "class.dat"
+MENU	Defines 0
++	Interfaces 1 "defines -interface"
++	Methods 5 "defines -function"
+    
+MENU	Uses	0
++	Packages 0 "uses -package"
++	Interfaces 1 "uses -interface"
++	Methods 5 "uses -function"
+
+MENU	Where	0
++	"Extended/Implemented" 1 "get_sub_classes"
+
+MENU    Show 0
++	Containing 0 get_containing
+
+MENU    Class 0
++	"Implements" -1 get_super_implements
++	"Extends" -1 get_super_extends
+
+MENU    Interface 0
++	"Methods" 0  get_member_functions
++       "All Methods" -1 get_accessible_methods
++       "Inherited Methods" -1 get_inherited_methods
++	"Extends" -1 get_super_classes
++       "Extends All" -1  closure_super
++	"Where Implemented" -1 get_sub_implementers
++	"Where Extended" -1 get_sub_extenders
++	"Where Extended/Implemented" -1 get_sub_classes
++       "All Where Extended/Implemented"   -1  closure_sub
+
+MENU    Method 0
+-       Class
++       "Class/Interface"         -1 get_class_of_method
+
+
+

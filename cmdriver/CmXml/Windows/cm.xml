@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<cm_root>
+<cm name="Rational ClearCase">
+    <cm_attr key="comment" display="Comment" type="text" value="Processed in DIScover">
+    </cm_attr>
+
+    <cm_attr key="autocomment" display="Comment" type="text" value="Processed in DIScover">
+    </cm_attr>
+
+    <cm_attr key="reserved" display="Reserved" type="list" value="unreserved">
+        <cm_li key="reserved" display="true"/>
+        <cm_li key="unreserved" display="false"/>
+    </cm_attr>
+
+    <cm_cmd key="autoco">
+        <cm_exec>cleartool co -c %autocomment% -unreserved %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="autoci">
+        <cm_exec>cleartool ci -c %autocomment% %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="co" display="Check Out">
+        <cm_exec>cleartool co -c %comment% -%reserved% %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="ci" display="Check In">
+        <cm_exec>cleartool ci -c %comment% %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="unco" display="Undo Check Out">
+        <cm_exec>cleartool unco -rm %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="reserve" display="Reserve">
+        <cm_exec>cleartool reserve -c %comment% %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="unreserve" display="Unreserve">
+        <cm_exec>cleartool unreserve -c %comment% %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="lsco" display="List Checked Out" return="files">
+        <cm_exec>cleartool lsco -cview -s -r %dirs%</cm_exec>
+    </cm_cmd>
+</cm>
+
+<cm name="MKS Source Integrity Enterprise">
+    <cm_attr key="sandbox" display="Sandbox" type="list">
+        <cm_exec>"${PSETHOME}/bin/si_get_sandboxes.bat"</cm_exec>
+    </cm_attr>
+
+    <cm_attr key="description" display="Revision Description" type="text" value="Processed in DIScover">
+    </cm_attr>
+
+    <cm_attr key="locked" display="Lock Revision" type="list" value="unlock">
+        <cm_li key="lock" display="true"/>
+        <cm_li key="unlock" display="false"/>
+    </cm_attr>
+
+    <cm_attr key="autocomment" display="Revision Description" type="text" value="Processed in DIScover">
+    </cm_attr>
+
+    <cm_cmd key="autoco">
+        <cm_exec>si co --unlock %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="autoci">
+        <cm_exec>si ci -g --description=%autocomment% %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="co" display="Check Out">
+        <cm_exec>si co -g %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="ci" display="Check In">
+        <cm_exec>si ci -g %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="reserve" display="Lock">
+        <cm_exec>si lock -g %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="unreserve" display="Unlock">
+        <cm_exec>si unlock -g %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="unco" display="Revert">
+        <cm_exec>si revert -g %files%</cm_exec>
+    </cm_cmd>
+
+    <cm_cmd key="resync" display="Resynchronize">
+        <cm_exec>si resync -g %files%</cm_exec>
+    </cm_cmd>
+</cm>
+</cm_root>

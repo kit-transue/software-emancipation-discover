@@ -1,0 +1,222 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+global Client
+global env
+
+############################################################################
+# proc 		foo
+# Description:	foo
+############################################################################
+proc foo {} {
+	
+}
+
+############################################################################
+# proc 		RecursiveIncludesReport
+# Description:	Creates a text file listing number of recursively included
+#		files from the parse.
+############################################################################
+proc RecursiveIncludesReport { sel } {
+	global env
+	set InputFiles [filter -file $sel]
+	if {[size $InputFiles] == 0} {
+		msg -error "No Input Files Selected!"
+	}
+        set OutFile [open "$env(OutFile)" w+]
+	foreach ParseFile $InputFiles {
+		set NumberOfRecursiveIncludes -1
+		set ListOfRecursiveIncludes [get_include_files $ParseFile]
+		while {[size $ListOfRecursiveIncludes] != $NumberOfRecursiveIncludes} {
+			set NumberOfRecursiveIncludes [size $ListOfRecursiveIncludes]
+			sappend $ListOfRecursiveIncludes [get_include_files $ListOfRecursiveIncludes]
+			set ListOfRecursiveIncludes [set_unique $ListOfRecursiveIncludes]
+		}
+		puts $OutFile "[name $ParseFile]: $NumberOfRecursiveIncludes"
+	}
+        close $OutFile
+        exec emacs $env(OutFile) &
+}
+
+############################################################################
+# proc 		FujitsuFindQueryInterfaceMismatch
+# Description:	Find smartpointers that are not released in function where
+#		created.
+############################################################################
+proc FujitsuFindQueryInterfaceMismatch { sel } {
+	set InputFiles [filter -file $sel]
+	if {[size $InputFiles] == 0} {
+		msg -error "No Input Files Selected!"
+	}
+	set FoundInstances [nil_set]
+
+	foreach CurrentFile $InputFiles {
+		src_load $CurrentFile						;# load AST
+		set FoundInCurrentFile [nil_set]
+		set FoundInCurrentFile_QueryInterface [tree filter {<-call_expr} [tree find {cname=="QueryInterface"} $CurrentFile]]
+
+		foreach QueryInterfaceNode $FoundInCurrentFile_QueryInterface {	;# for each call to QueryInterface get 2nd arg
+			set QueryInterfaceSecondArg [tree navigate {<-->,,,r(->)addr_expr->.} $QueryInterfaceNode]
+			if {[size $QueryInterfaceSecondArg] != 0} {		;# if a 2nd arg is found, find a corresponding Release
+				set CurrentScopeNode [tree navigate {r(<-)ast_block<-function_def||ast_root} $QueryInterfaceNode]
+				set FoundInCurrentscope_Release [tree filter {<-call_expr} [tree find {cname=="Release"} $CurrentScopeNode]]
+				set CorrespondingRelease [tree filter <-->,r(->)cname=="[cname $QueryInterfaceSecondArg]" $FoundInCurrentscope_Release]
+				if {[size $CorrespondingRelease] == 0} {	;# if a Release call was not found save the node
+					sappend $FoundInCurrentFile $QueryInterfaceSecondArg
+				}
+			}
+		}
+		sappend $FoundInstances $FoundInCurrentFile
+		src_unload $CurrentFile						;# unload or could have memory problems
+	}
+
+	return [data instance $FoundInstances]
+}
+
+############################################################################
+# proc 		FujitsuFindAnContIterKeyMismatch
+# Description:	Find smartpointers that are not released in function where
+#		created.
+############################################################################
+proc FujitsuFindAnContIterKeyMismatch { sel } {
+	set InputFiles [filter -file $sel]
+	if {[size $InputFiles] == 0} {
+		msg -error "No Input Files Selected!"
+	}
+	set FoundInstances [nil_set]
+
+	foreach CurrentFile $InputFiles {
+		src_load $CurrentFile						;# load AST
+		set FoundInCurrentFile [nil_set]
+		set FoundInCurrentFile_AnContIterKey [tree find {regexp("AnContIter<.*:key")<-call_expr} $CurrentFile]	;# get call
+		set AnContIterKey_Assignee [tree navigate {r(<-)(assign_expr||var_decl)->} $FoundInCurrentFile_AnContIterKey]	;# get assignee
+
+		foreach Assignee $AnContIterKey_Assignee {			;# for each call to ::key() get the function scope
+			set CurrentScopeNode [tree navigate {r(<-)ast_block<-function_def||ast_root} $Assignee]
+			set FoundInCurrentscope_Release [tree filter {<-call_expr} [tree find {cname=="Release"} $CurrentScopeNode]]
+			set CorrespondingRelease [tree filter <-->,r(->)cname=="[cname $Assignee]" $FoundInCurrentscope_Release]
+			if {[size $CorrespondingRelease] == 0} {	;# if a Release call was not found save the node
+				sappend $FoundInCurrentFile $Assignee
+			}
+		}
+		sappend $FoundInstances $FoundInCurrentFile
+		src_unload $CurrentFile						;# unload or could have memory problems
+	}
+
+	return [data instance $FoundInstances]
+}
+
+############################################################################
+# proc 		FujitsuFindAnContIterPlusPlusMismatch
+# Description:	Find smartpointers that are not released in function where
+#		created.
+############################################################################
+proc FujitsuFindAnContIterPlusPlusMismatch { sel } {
+	set InputFiles [filter -file $sel]
+	if {[size $InputFiles] == 0} {
+		msg -error "No Input Files Selected!"
+	}
+	set FoundInstances [nil_set]
+
+	foreach CurrentFile $InputFiles {
+		src_load $CurrentFile						;# load AST
+		set FoundInCurrentFile [nil_set]
+		set FoundInCurrentFile_AnContIterPlusPlus [tree find {regexp("AnContIter<.*:operator\+\+")<-call_expr} $CurrentFile]	;# get call
+		set AnContIterPlusPlus_Assignee [tree navigate {r(<-)(assign_expr||var_decl)->} $FoundInCurrentFile_AnContIterPlusPlus]	;# get assignee
+
+		foreach Assignee $AnContIterPlusPlus_Assignee {			;# for each call to ::operator++() get function scope
+			set CurrentScopeNode [tree navigate {r(<-)ast_block<-function_def||ast_root} $Assignee]
+			set FoundInCurrentscope_Release [tree filter {<-call_expr} [tree find {cname=="Release"} $CurrentScopeNode]]
+			set CorrespondingRelease [tree filter <-->,r(->)cname=="[cname $Assignee]" $FoundInCurrentscope_Release]
+			if {[size $CorrespondingRelease] == 0} {		;# if a Release call was not found save the node
+				sappend $FoundInCurrentFile $Assignee
+			}
+		}
+		sappend $FoundInstances $FoundInCurrentFile
+		src_unload $CurrentFile						;# unload or could have memory problems
+	}
+
+	return [data instance $FoundInstances]
+}
+
+####################################################################################
+# proc 		AmazonCreateInventoryList
+# Description:	Print symbols used, declared, or defined in selected files/functions
+####################################################################################
+proc AmazonCreateInventoryList { sel } {
+	set InputEntities [filter -file $sel]
+	if {[size $InputEntities] == 0} {
+		msg -error "No Input Files Selected!"
+	}
+
+	foreach CurrentFile $InputEntities {
+		puts "Entity: [kind $CurrentFile] [name $CurrentFile] [fname $CurrentFile]"
+		set EntityDeclarations [get_declares $CurrentFile]
+		if {[size $EntityDeclarations] > 0} {
+			puts "\tDeclares:"
+			foreach EntityDeclared $EntityDeclarations {
+				puts "\t\t[kind $EntityDeclared] [name $EntityDeclared]"
+			}
+		}
+		set DefinedEntities [defines -all $CurrentFile]
+		if {[size $DefinedEntities] > 0} {
+			puts "\tDefines:"
+			foreach DefinedEntity $DefinedEntities {
+				if {[kind $DefinedEntity] == "module"||[kind $DefinedEntity] == "VERSION"} {
+				} else {
+					puts "\t\t[kind $DefinedEntity] [name $DefinedEntity]"
+				}
+				if {[function $DefinedEntity]} {
+					set EntitiesDefinedInFunction [data symbol [uses_locals $DefinedEntity]]
+					if {[size $EntitiesDefinedInFunction] > 0} {
+						puts "\t\t\tDefines:"
+						foreach EntityDefinedInFunction $EntitiesDefinedInFunction {
+							puts "\t\t\t\t[kind $EntityDefinedInFunction] [name $EntityDefinedInFunction]"
+						}
+					}
+				}
+			}
+		}
+		set UsedEntities [uses -macro $CurrentFile]
+		sappend $UsedEntities [uses -string $CurrentFile]
+		if {[size $UsedEntities] > 0} {
+			puts "\tUses:"
+			foreach UsedEntity $UsedEntities {
+				puts "\t\t[kind $UsedEntity] [name $UsedEntity]"
+			}
+		}
+	}
+}
+
+add_menu "$Client.Task"
+add_item "$Client.Task"	"Unmatched QueryInterface"	FujitsuFindQueryInterfaceMismatch	-optional
+add_item "$Client.Task"	"Unmatched AnContIter:Key"	FujitsuFindAnContIterKeyMismatch	-optional
+add_item "$Client.Task"	"Unmatched AnContIter:++"	FujitsuFindAnContIterPlusPlusMismatch	-optional
+add_item "$Client.Task"	"Recursive Include Report"	RecursiveIncludesReport 		-optional
+add_item "$Client.Task"	"Create Inventory Report"	AmazonCreateInventoryList 		-optional
+
+#source /net/poplin/files/discadm/discover.Test.dis

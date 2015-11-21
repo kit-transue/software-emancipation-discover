@@ -1,0 +1,24 @@
+<html>
+<body>
+
+<p><b>CQS - Command Query Separation</b></p>
+
+<p>Prevents methods that return value from modifying state. The methods
+that you use to query the state of an object must be different from the
+methods you use to perform commands (change the state of the object).</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class CQS {<br>
+&nbsp; &nbsp; int attr;<br>
+&nbsp; &nbsp; int getAttr () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>attr += 10; </font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; return attr;<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+CROOTS=\
+    astTreeh \
+    ast_dd \
+    ast_shared_master \
+    get_id \
+
+
+CXXROOTS=\
+    astImport \
+    astTree.h \
+    ast_aset \
+    ast_xref \
+    iMaster \
+
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Attribute Iterators</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Attribute Iterators</b></p>
+<p class="p2">Sometimes when writing a TPM expression, the target tree you are trying to match may not have a fixed structure. Attribute iterators introduce a way of optionally traversing nodes of a tree. The repeat iterator provides this functionality; related to it are the two forms of the <span class="s1">int</span> iterator, which are both much less common. The semantics are as follows:</p>
+<p class="p3">•<span class="s2">   </span>repeat(navigate-expression) stop-expression<br>
+r(navigate-expression) stop-expression</p>
+<p class="p4">Start by evaluating <span class="s1">stop-expression</span>. If <span class="s1">stop-expression</span> succeeds, return success. Otherwise, evaluate <span class="s1">navigate-expression.</span> If <span class="s1">navigate-expression</span> fails, return failure. If <span class="s1">navigate-expression</span> succeeds, repeat.</p>
+<p class="p3">•<span class="s2">   </span>int(pattern)</p>
+<p class="p4">Execute <span class="s1">pattern</span> exactly <span class="s1">int</span> times. Succeeds if <span class="s1">pattern</span> never fails.</p>
+<p class="p3">•<span class="s2">   </span>int..(pattern1) pattern2</p>
+<p class="p4">Execute <span class="s1">pattern1 int</span> times. Then, while <span class="s1">pattern2</span> does not match the current node, execute <span class="s1">pattern1</span>. Succeeds if <span class="s1">pattern1</span> never fails and <span class="s1">pattern2</span> succeeds once, thus terminating the loop.</p>
+<p class="p5"><b>Note: </b>Unlike the <span class="s3">repeat</span> iterator, the <span class="s3">int</span> iterators do not introduce new capability to attribute expressions—they are merely abbreviations for longer expressions.</p>
+<p class="p2">Consider looking for uses of string constants. Strings in C are of type <span class="s1">char const []</span>, which converts readily into <span class="s1">char const *</span>—the way strings are passed in function calls. When looking for use of these string constants in a particular context, you need a way to skip over these conversions.</p>
+<p class="p2">The AST picks up this conversion as a <span class="s1">convert_expr</span>.</p>
+</body>
+</html>

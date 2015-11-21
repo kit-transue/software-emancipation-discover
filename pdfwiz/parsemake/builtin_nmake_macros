@@ -1,0 +1,10 @@
+MAKE=NMAKE
+AS=ml
+BC=bc
+CC=cl
+COBOL=cobol
+CPP=cl
+CXX=cl
+FOR=fl
+PASCAL=pl
+RC=rc

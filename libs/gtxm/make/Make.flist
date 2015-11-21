@@ -1,0 +1,97 @@
+CROOTS=\
+    gtListXm_internal \
+
+
+CPROOTS=\
+    WM_Override \
+    gtAppShellXm.h \
+    gtArrowButtonXm.h \
+    gtBaseXm.h \
+    gtBitmapXm.h \
+    gtBlankXm.h \
+    gtCallbackMgrXm.h \
+    gtCascadeBXm.h \
+    gtDialogXm.h \
+    gtDisplayXm.h \
+    gtDlgTemplateXm.h \
+    gtFileSelXm.h \
+    gtFormXm.h \
+    gtFrameXm.h \
+    gtHorzBoxXm.h \
+    gtLabelXm.h \
+    gtListXm.h \
+    gtMainWindowXm.h \
+    gtMenuBarXm.h \
+    gtMessageDlgXm.h \
+    gtNoParentXm.h \
+    gtOptionMenuXm.h \
+    gtPDMenuXm.h \
+    gtPanedFormXm.h \
+    gtPanedWindowXm.h \
+    gtPixmapXm \
+    gtPopMenuXm.h \
+    gtPrimXm.h \
+    gtPushButtonXm.h \
+    gtRadioBoxXm.h \
+    gtScaleXm.h \
+    gtScrollWinXm.h \
+    gtScrollbarXm.h \
+    gtSeparXm.h \
+    gtShellXm.h \
+    gtStringEdXm.h \
+    gtTextEdXm.h \
+    gtTimerXm.h \
+    gtTogBXm.h \
+    gtToggleBoxXm.h \
+    gtTopShellXm.h \
+    gtVertBoxXm.h \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ldr/include \
+-I$(BUILD_SRC_ROOT)/model_server/ldr/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/subsystem/include \
+-I$(BUILD_SRC_ROOT)/model_server/subsystem/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_browser/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_browser/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_viewer/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_viewer/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view/include \
+-I$(BUILD_SRC_ROOT)/model_server/view/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view_rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/view_rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/gt/include \
+-I$(BUILD_SRC_ROOT)/gt/include \
+-I$(LOCAL_SRC_ROOT)/gtxm/data \
+-I$(BUILD_SRC_ROOT)/gtxm/data \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \
+

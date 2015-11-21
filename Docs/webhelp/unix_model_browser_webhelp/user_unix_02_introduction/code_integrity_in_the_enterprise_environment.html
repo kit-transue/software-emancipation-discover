@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>DIScover in the Enterprise Environment</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 9.0px 'Times New Roman'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>DIScover in the Enterprise Environment</b></p>
+<p class="p2">DIScover deployment is flexible to suit the needs of the most complex environments, allowing you to combine the numbers of Browsers, Developer Xpress clients, and model servers that is right for your organization.</p>
+<p class="p2">While it is the responsibility of your DIScover administrator to set up the environment, create models, and configure clients, it is important to understand the basic structure of DIScover in the enterprise environment so that you are aware of how to communicate with your information model. This knowledge also helps to prepare you with the questions to ask about connection specifics in your environment once DIScover is deployed.</p>
+<p class="p3"><br></p>
+<p class="p4"><img src="./tmp08903.jpg" alt="tmp08903.jpg"></p>
+<p class="p3"><br></p>
+<p class="p2">DIScover information models are built based on projects and subprojects maintained in your organization’s SCM (software configuration management) system. Administrators build models using the administration client (previously, a series of procedures known as <i>DISIM</i> (Discover Information Model) were used). Once created, the model resides in a raw data structure on the host machine. The DIScover host machine makes DIScover data available in two ways:</p>
+<p class="p5">•<span class="s1">   </span>Directly through the information model data structure—supports Browser clients. Browser clients connect to the information model through a file system connection.</p>
+<p class="p5">•<span class="s1">   </span>Through the model server—supports Developer Xpress client and Access. Developer Xpress and Access clients connect to the model server via TCP/IP.</p>
+<p class="p2">Clients also directly access their source code files, most often through your configuration management system. Integration with common IDEs such as Emacs and gVim and your Configuration Management (CM) system itself allow them to check out, manipulate, and check files from within their DIScover clients. In addition, if a direct connection to source code is not supported (as in the case of a firewall), end users are also able to use their Developer Xpress clients to access a portable, read-only copy of an information model’s source code files available through the model server.</p>
+<p class="p2">Another host machine, usually separate from the primary host, is also used to deploy the build server, which manages Submission Check for Developer Xpress clients. The build server communicates both with source files (through the CM system) and with the model server host machine.</p>
+<p class="p2"> </p>
+<p class="p2"> </p>
+<p class="p6"> </p>
+</body>
+</html>

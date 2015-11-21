@@ -1,0 +1,425 @@
+
+/******************************************************************************/
+/*									      */
+/* Include-File         PLANAR.FL                                             */
+/*									      */
+/* Letzte Aenderung     20.01.88					      */
+/*									      */
+/* Prozeduren zur Generierung und Manipulation von 'Frond'-Listen.            */
+/*									      */
+/******************************************************************************/
+
+
+
+/* Strukturbeschreibung der Frondlisten  
+   ------------------------------------
+
+   Struktur :   f_node  +------------+
+                        ! f          !  Name des Endknotens einer Frond.
+                        ! f->first_w !  Erter w-Eintrag in der w-Liste.
+                        ! f->last_w  !  Letzter w-Eintrag in dieser w-Liste.
+                        ! f->next_f  !  Der naechste f-Eintrag.
+                        +------------+
+
+                w_node  +------------+
+                        ! w          !  f ist ueber die Kante v->w erreichbar.
+                        ! w->n       !  Wie oft ist f ueber v->w erreichbar.
+                        ! w->next_w  !  Der naechste w-Eintrag.
+                        +------------+
+
+   Fuer jeden Knoten v des Graphen G wird eine Frondliste FL(v) aufgebaut.
+
+                FL(v) -->  f1 (f_node) first_w ---> w1 (w_node)
+                           !           last_w  -+   w2 
+                           !                    +   w3
+                           !                    +-> w4
+                           V
+                           f2          ................
+
+*/
+
+
+typedef
+struct w_node				/* w-Element einer f-Liste            */
+{
+  int		w;			/* Name des w-Knoten                  */
+  int           n;                  	/* Anzahl der e-Knoten                */
+  struct w_node *next_w;                /* Weitere w-Elemente                 */
+} w_node;
+
+
+typedef
+struct f_node				/* f-Element einer Frond-Liste	      */
+{
+  int           f; 			/* Name des f-Knoten                  */
+  w_node	*first_w;     		/* Zugehoerige w-Liste                */
+  w_node	*last_w;                /* Ende der w-Liste                   */
+  struct f_node *next_f;                /* Weitere f-Elemente                 */
+} f_node;
+  
+
+typedef 
+f_node (*(*FL_LISTE)[]);		/* Frond-Listen   FL(1)..FL(n)        */
+
+
+
+
+typedef int (*ARRAY)[];          	/* Integer-Array dynamischer Laenge   */
+
+
+
+
+
+/* Generierung der Frond-Listen FL(1).. FL(n) .
+   Eine Frondliste FL(v) ist eine Liste von Tripeln (v,w,f), die nach
+   der Funktion PHI2 (siehe Literatur) sortiert ist.
+   Jedes Tripel repraesentiert eine Frond-Edge f, die ueber die Kante
+   v->w erreicht werden kann.
+*/
+
+FL_LISTE FL_GENERATION( GB, PG )
+
+  UNDIR_GRAPH	*GB;			/* Biconnected Graph                  */
+  PLANAR_GRAPH  *PG;                    /* Planarere Graph                    */
+{
+  void REKURSION_FL();                  /* Rekursive Teilfunktion             */
+
+  					/* Modul  ADTUGRAPH                   */
+  void RESET_UNODE_FLAGS();		/* Setze all Knotenflags auf 0        */
+
+  FL_LISTE	FL;			/* Frond-Listen  FL( 1 ) .. FL( n )   */
+  int           i;         		/* Laufvariable                       */
+  int           marke;                  /* Tiefennummerierung                 */
+  ARRAY		help_array;		/* Funktionstabelle                   */
+
+  /* Generierung der noch leeren Frondlisten */
+  FL = ( FL_LISTE )malloc( (1+PG->V) * sizeof( f_node * ) );
+  for ( i=1; i<=PG->V; i++ ) (*FL)[i] = nil;  
+
+  /* Funktionstabelle fuer :  help_array( Knotennummer ) = Tiefennummer . */
+  /* Diese Tabelle wird gleich wieder geloescht.                          */
+  help_array = ( ARRAY ) malloc ( (1+PG->V) * sizeof( int ) );
+
+  /* Bestimme die Frondliste FL(1).
+     ( Durch die Rekursion werden dabei alle anderen Frondlisten generiert.)
+  */
+  RESET_UNODE_FLAGS( GB );
+  marke = 1;
+  REKURSION_FL( GB, PG, FL, help_array, 1, 0, &marke );
+  free( help_array );
+
+  return( FL );
+
+} /* end of FL_GENERATION */
+
+
+
+
+/* Rekursive Teilfunktion von FL_GENERATION.
+   Generiere fuer den Knoten v die Frond-Liste FL( v ).
+*/
+
+void REKURSION_FL( GB, PG, FL, help_array, v, fatherv, marke )
+
+  UNDIR_GRAPH	*GB;			/* Biconnected Graph                  */
+  PLANAR_GRAPH  *PG;			/* Planarer Graph		      */
+  FL_LISTE	FL;			/* Frond-Listen                       */
+  ARRAY         help_array;		/* Funktionstabelle                   */
+  int 		v;			/* Knotennummer                       */
+  int		fatherv;		/* Vaterknoten des Knoten v           */
+  int           *marke;                 /* Aktuelle Tiefennummer              */
+{
+  void 		MERGE_FLv_FLw();	/* Mische FL(v) und FL(w)             */
+  void 		INSERT_IN_FL();		/* Fuege ein Tripel in FL(v) ein      */
+
+  					/* Modul  ADTUGRAPH                   */
+  void 		SET_UNODE_FLAG();	/* Setze ein Knotenflag               */
+  int  		GET_UNODE_FLAG();	/* Lese ein Knotenflag                */
+  int  		GET_FIRST_UNODE();      /* Lese den ersten Nachbarn           */
+  int  		GET_NEXT_UNDOE();       /* Lese den naechsten Nachbarn        */
+
+  NODE		*help;           	/* Hilfszeiger.                       */
+  int           w;			/* Knotennummer                       */
+  int           dfs_v, dfs_w;           /* Tiefennummer des Knoten v bzw. w   */
+
+  SET_UNODE_FLAG( GB, v, 1 );		/* Markiere Knoten v als besucht.     */
+  dfs_v = *marke; 			/* Tiefennummer des Knoten v          */
+  (*PG->trans)[ dfs_v ] = v;
+  (*help_array)[ v ] = dfs_v;
+
+  w = GET_FIRST_UNODE( GB, v, &help );
+  while ( w != 0 )
+        {
+          if ( GET_UNODE_FLAG( GB, w ) == 0 )
+             { /* v-->w ist eine Tree-Edge */
+               (*marke)++;
+               dfs_w = *marke;       	        /* Tiefennummer des Knoten w  */
+               (PG->E)++;                       /* Anzahl der Kanten erhoehen */
+               (*PG->AL)[ dfs_w ].father = dfs_v;  /* v ist Vaterknoten von w */
+               REKURSION_FL( GB, PG, FL, help_array, w, v, marke );
+
+               /* Verschmelze FL(dfs_w) und FL(dfs_v) zu einer neuen
+                  Liste FL(dfs_v).
+               */
+               MERGE_FLv_FLw( FL, dfs_v, dfs_w );
+             }
+          else
+          if ( (*help_array)[ w ] < (*help_array)[ v ]  && w != fatherv )
+             { /* v - -> w ist eine Frond-Edge */
+               dfs_w = (*help_array)[ w ];      /* Tiefennummer des Knoten w  */
+               (PG->E)++;                       /* Anzahl der Kanten erhoehen */
+               INSERT_IN_FL( FL, dfs_v, dfs_w );
+             } 
+
+          w = GET_NEXT_UNODE( &help );
+        } 
+
+} /* end of REKURSION_FL */
+
+
+
+
+
+
+/* Verschmelze die beiden Listen FL(v) und FL(w) zu einer neuen Liste
+   FL(v). ( FL(w) darf dabei nicht veraendert werden. )
+*/
+
+void MERGE_FLv_FLw( FL, v, w )
+
+  FL_LISTE	FL;			/* Frond-Listen                       */
+  int           v;                      /* Knotennummer (bzgl. Tiefensuche)   */
+  int           w;                      /* Knotennummer (bzgl. Tiefensuche)   */
+{
+  w_node	*pw;
+  f_node	*pf, *pfw, *pfv;
+  int           n;          		/* Zaehler          		      */
+
+  pfv = (*FL)[ v ]; 
+  pfw = (*FL)[ w ];
+  /* Nacheinander jede f-Liste von FL(w) in FL(v) einfuegen. */
+  while ( pfw != nil )
+        { 
+          /* Gesamte w-Liste von dieser f-Liste durch einen w-Eintrag ersetzen*/
+          n  = 0;
+          pw = pfw->first_w;
+          while ( pw != nil ) { n = n + pw->n;  pw = pw->next_w; }
+
+          pw         = (w_node *)malloc( sizeof( w_node ) );
+          pw->w      = w;
+          pw->n      = n;
+          pw->next_w = nil;
+          pf         = (f_node *)malloc( sizeof( f_node ) );
+          pf->f      = pfw->f;
+          pf->next_f = nil;
+          pf->first_w= pw;
+          pf->last_w = pw;
+
+          /* Entscheide, wo die neue w-Liste in FL(v) eingefuegt werden soll. */
+          if( (*FL)[v] == nil || (*FL)[v]->f > pf->f )
+            { /* FL(v) ist noch leer oder die erste f-Liste hat einen
+                 groesseren f-Wert als die neue f-Liste.
+                 --> f-Liste wird die erste f-Liste in FL( v ).
+              */
+              pf->next_f = (*FL)[v];
+              (*FL)[v]   = pf;
+              pfv        = pf;
+            }
+          else
+            {
+              /* Die f-Liste wird nicht die erste f-Liste in FL(v). */ 
+              while( pfv->next_f != nil && pfv->next_f->f <= pf->f )
+                   pfv = pfv->next_f; 
+
+              if ( pfv->f == pf->f )
+                 { /* In FL(v) existiert schon die gleiche f-Liste. 
+                      Entscheide nun, wo in der zugehoerigen w-Liste
+                      der neue w-Eintrag untergebracht werden muss.
+                   */
+                   pw = pf->first_w; free( pf );
+                   if ( (*FL)[w]->next_f != nil && (*FL)[w]->next_f->f < v )
+                      { /* Neuer w-Eintrag am Ende der w-Liste eintragen. */
+                        pfv->last_w->next_w = pw;
+                        pfv->last_w         = pw; 
+                      }
+                    else
+                      { /* Neuer w-Eintrag am Anfang der w-Liste eintragen. */
+                        pw->next_w   = pfv->first_w;
+                        pfv->first_w = pw;
+                      }
+                 }
+               else
+                 { /* In FL(v) existiert nocht nicht die gleiche f-Liste. */
+                   pf->next_f  = pfv->next_f;
+                   pfv->next_f = pf;
+                 }
+            }
+          pfw = pfw->next_f;           /* Naechste f-Liste aus FL( w ) holen */
+        }
+
+} /* end of MERGE_FLv_FLw */
+
+
+
+
+
+/* Fuege die Frond  v- ->w in FL(v) ein.
+*/
+
+void INSERT_IN_FL( FL, v, w )
+
+  FL_LISTE	FL;			/* Frond-Listen                       */
+  int           v;                      /* Knotennummer (bzgl. Tiefensuche)   */
+  int           w;                      /* Knotennummer (bzgl. Tiefensuche)   */
+{
+  w_node	*pw;
+  f_node	*pf, *pf1;
+
+  pw          = (w_node *)malloc( sizeof( w_node ) );
+  pw->w       = w;
+  pw->n       = 1;
+  pw->next_w  = nil;
+
+  if ( (*FL)[v] == nil || (*FL)[v]->f > w )
+     { /* FL(v) ist noch leer  oder der erste f-Eintrag ist zu gross. */
+       pf          = (f_node *)malloc( sizeof( f_node ) );
+       pf->f       = w;
+       pf->next_f  = (*FL)[v];
+       pf->first_w = pw;
+       pf->last_w  = pw;
+       (*FL)[v]    = pf;
+     }
+   else
+     { /* FL(v) ist nicht leer. */
+       pf1 = (*FL)[v];
+       while ( pf1->next_f != nil && pf1->next_f->f <= w ) pf1 = pf1->next_f;
+
+       if ( pf1->f == w )
+          { /* Es existiert schon die gleiche f-Liste. */
+            /* -> w 'vorne' in die w-Liste eintragen.  */
+ 	    pw->next_w   = pf1->first_w;
+            pf1->first_w = pw;
+          }
+        else
+          { /* Es muss eine neue f-Liste angelegt werden */
+            pf          = (f_node *)malloc( sizeof( f_node ) );
+            pf->f       = w;
+            pf->first_w = pw;
+            pf->last_w  = pw;
+            pf->next_f  = pf1->next_f;
+            pf1->next_f = pf;
+          }  
+     }
+
+} /* end of INSERT_IN_FL */
+
+
+
+
+/* Bestimme mit Hilfe der Frondlisten einen Pfad  s-> .. ->v- ->w.
+   ( Dabei wird gleichzeitig ein Teil der Frondlisten geloescht. )
+*/
+
+void GET_PATH_FROM_FL( FL, s, v, w )
+
+  FL_LISTE	FL;			/* Frond-Listen			      */
+  int		s;			/* Anfangsknoten des Pfades           */
+  int		*v, *w;          	/* Gesuchte Frond  v- ->w             */
+{
+  w_node	*pw;
+  f_node	*pf;
+
+  *w = s;
+
+  do {
+       *v = *w;
+       *w = (*FL)[ *w ]->first_w->w;
+
+       /* Loesche den ersten Eintrag in FL(v) */
+       pw = (*FL)[ *v ]->first_w;
+       ( pw->n )--; 		              /* Anzahl der Fronds verringern */
+       if ( pw->n == 0 )  
+          {
+            /* Wenn es dann in der Richtung s->w keine Fronds f mehr gibt,
+               loesche einen Teil der Frond-Liste.
+  	    */
+            (*FL)[ *v ]->first_w = pw->next_w;
+            free( pw );
+            pf = (*FL)[ *v ];
+            if ( pf->first_w == nil )
+               {
+                 (*FL)[ *v ] = pf->next_f;
+                 free( pf );
+               }
+          }
+       
+     } while ( *v < *w );
+
+} /* end of GET_PATH_FROM_FL */
+
+
+
+
+/* Loesche alle Tripel der Form (u,v,*) aus FL(u).
+*/
+
+void DELETE_TRIPLES_IN_FL( FL, u, v )
+
+  FL_LISTE	FL;			/* Frond-Listen			      */
+  int		u,v;			/* Knotennummern                      */
+{
+  w_node	*pw, *pw1, *pw2;
+  f_node	*pf, *pf1, *pf2;
+
+  /* Loesche all (u,v,*) bedeutet, dass all w-Eintraege mit dem Wert v
+     in FL( u ) geloescht werden muessen.
+  */
+  pf  = (*FL)[u];
+  pf1 = pf;
+  while ( pf != nil )    		      /* Suche in jeder f-Liste das v */
+        {
+          pw  = pf->first_w;
+          pw1 = pw;
+          while ( pw != nil )
+                if ( pw->w == v )
+                   { 
+                     /* Loesche das w aus der w-Liste */
+                     if ( pw == pf->first_w ) pf->first_w = pw->next_w;
+                     else                     pw1->next_w = pw->next_w;
+                     pw2 = pw;
+                     pw  = pw->next_w;
+                     free( pw2 );
+                   }
+                else
+                   {
+                     pw1 = pw; pw = pw->next_w;
+                   }
+
+          /* Loesche f aus der f-Liste, wenn kein w-Tripel mehr da ist. */
+          if ( pf->first_w == nil )
+             {
+               if ( pf == (*FL)[u] )
+                  {
+                    (*FL)[u] = pf->next_f;
+                    pf2 = pf;
+                    pf  = pf->next_f;
+                    free( pf2 );
+                  }
+               else
+                  {
+                    pf1->next_f = pf->next_f;
+                    free( pf );
+                    pf = pf1->next_f;
+                  }
+             }
+           else
+             { 
+               pf1 = pf; pf = pf->next_f;
+             }
+        }
+
+} /* end of DELETE_TRIPLES_IN_FL */
+
+
+/* end of Include-File  PLANAR.FL */
+

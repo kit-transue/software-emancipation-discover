@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Event Sequence</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Event Sequence</b></p>
+<p class="p2">TPM/CP begins by identifying the set of nodes you want to rewrite and the changes you want to make to these nodes. Usually there is a TPM script that identifies the nodes, but the set of nodes may be generated through other means (a simple Access script, or even user input).</p>
+<p class="p2">Changes are computed on a file-by-file basis. TPM/CP begins with the creation of a “diff file” for the source file. The TPM expression (or other script) then records the requested changes in this diff file. After all changes for the file are recorded, the diff file is closed and the cycle starts again on the next source file.</p>
+<p class="p2">Multiple diff files are allowed per source file, so if you have multiple changes to make, you have the option of making all the changes to one file in one operation, or you can make each change in a separate pass over the entire source.</p>
+<p class="p2">Once all the change requests have been recorded in the diff files, they are applied using the DIScover Browser. At this point, any conflicts that arise may be resolved by the user.</p>
+</body>
+</html>

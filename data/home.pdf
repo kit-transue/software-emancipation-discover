@@ -1,0 +1,10 @@
+# Default PDF to use if somebody runs DIScover with no
+# "real" PDF specified. This only allows the user to
+# bring up DIScover, and perform basic tasks like read 
+# the online documentation and take a look at the UI.
+# DO NOT TRY TO USE THIS PDF TO WORK ON FILES.
+
+home : ~ <-> /home
+{
+	dummy.file
+}

@@ -1,0 +1,291 @@
+<head>
+<title>Functional Specification of DISCOVER Java Support</title>
+</head>
+<body bgcolor="white">
+<table>
+<tr><td align="right">To:<td width="3"><td>Vladimir Geisberg
+<tr><td align="right">Cc:<td><td>Michael Brook, Mikhail Gurevich, W. M. Miller, Mark Avenmarg, Stephen Schmidt
+<tr><td align="right">From:<td><td>Scott Turner
+<tr><td align="right">Date:<td><td>98-07-13, revised 98-08-03 and 98-09-02 and 98-10-02
+<tr><td align="right">Subject:<td><td>Functional Specification of DISCOVER Java Support
+</table>
+<hr>
+<h3>Supported Features</h3>
+<p>
+DISCOVER will support the Java language. Below are listed the ways in which
+this will make a difference in how DISCOVER is used. The 08-03 revision adds
+support for throw and catch relations. The 09-02 revision is an update reflecting
+how the implementation eventually worked out the details. Note that 
+some user interface elements are yet unimplemented.
+</p>
+<h4>categories of scan mode &amp; model browser (kinds)</h4>
+<p>
+<ul>
+<li><p><strong>Interfaces</strong>, new category<br>
+A new kind/category is
+provided for Java interfaces, due to the distinction which Java developers make,
+and because some of the relationships have a different flavor depending on whether
+you've got a class or an interface. </p>
+<blockquote><small><p>Are interfaces no more than a restricted form of class?
+Not in Java, even though every class is an interface in the sense that it
+declares public members and can be used to declare objects.
+A Java interface can be inherited freely, whereas a Java class
+can be inherited only by classes, and classes can only inherit from one
+superclass.
+These restrictions prevent some of the ambiguities that occur with
+multiple inheritance in C++.
+</p></small></blockquote>
+<p>Interfaces show up similarly to classes in inheritance hierarchy
+diagrams.
+</p>
+<li><p><strong>Packages</strong>, like C++ namespaces, make sense in a Java model
+as a category/kind. 
+Currently DISCOVER does not support namespaces, but does support PL/SQL packages,
+which are somewhat similar to Java packages.
+Java packages will be internally implemented with the same ddKind,
+<code>DD_PACKAGE</code>.</p>
+</ul>
+</p>
+<h4>queries (ask column of scan mode &amp; model browser)</h4>
+<ul>
+<li><p>Classes get a new query, "Show Super-Interfaces".
+       Queries for interfaces are the same as those for classes, except that
+       interfaces have no "Show Super-Classes" query, but they <em>do</em> have
+       a "Show Sub-Interfaces" query. These differences are based on the inherent
+       distinction between interfaces and classes.</p>
+<li><p>Queries relating to packages will include
+       <ul><li>For a package, the "Show Nested Classes" and "Show Nested Interfaces"
+               queries list the types declared in it.
+           <li>For a class, the "Show Containing" query lists the
+               package or class containing it.
+           <li>For a package, the "Show Containing" query
+               lists the package containing it (if any).
+           <li>The "Where Used", "Uses" etc. queries are also present and
+               useful for packages.
+       </ul></p>
+<li><p>Exception-handling queries will be added, since exceptions are particularly
+       important for Java, and are overdue for support in C++. These will include
+       <ul><li>for an exception class, listing the functions that throw it
+           <li>for a function, listing the exception classes that it throws
+           <li>for an exception class, listing the functions that catch it
+           <li>for a function, listing the exception classes that it catches
+       </ul>
+	These relations will be implemented so as to be usable equally for
+        Java and C++ source code.</p>
+<li><p>Other queries unique to the Java language or environment may be needed.
+At this time, only the following possibility has been identified.
+<ul><li>Synchronization objects play a unique role, and the subset of used/user
+        relations that originate from <code>synchronized</code> statements
+        could be a useful addition to the "ask" list.
+</ul>
+</p>
+</ul>
+<small><p></p></small>
+<h4>names in packages</h4>
+<p>
+Names in packages, particularly class names, will be displayed fully-qualified. For
+example, the name of the <code>indexOf</code> method of the standard <code>String</code>
+class will appear in DISCOVER as
+<pre>
+      java.lang.String.indexOf(char ch)
+</pre>
+</p>
+<h4>graphical views</h4>
+<p>
+Several unique Java features should show up disctinctively in graphical views.
+<ul>
+<li>
+The "package" level of accessibility is the default for Java class members,
+and is distinct from public, protected, and private.
+This will be shown in the display of class members using an orange color.
+<li>
+As mentioned above, Java interfaces fill a role much like classes, 
+and will appear in the same relationships as classes in graphical views.
+The interface vs. class distinction will be evident in expert mode,
+due to displaying interfaces with a distinctive shape <em>(TBD)</em>.
+<li>
+Non-final methods will show up in expert mode with
+the same distinguishing black tab in the lower left corner as virtual methods.
+<small><em>This use of the tab is awkward, because for consistency
+of meaning with C++ virtual functions, it shows the tab when the 
+attribute is absent. 
+</em></small>
+<li>
+Abstract methods will show up in expert mode with
+the same distinguishing two black tabs in the left corners as pure virtual methods.
+<li>
+Final versus non-final fields will also be distinguished in
+expert mode by a black tab in the lower right corner,
+due to the analogous usage of "const" in C++.
+<small><em>
+Note that the meaning of "final" for fields is rather different from
+its meaning for methods.
+</em></small>
+<li>Synchronized methods will be distinguished in expert mode
+by a black tab in the upper right corner (the same as the indicator of "volatile" in C++).
+<small><em>
+I'm open to other ideas that would not be blatantly overloading the meaning
+of this tab.
+</em></small>
+</ul>
+</p>
+<h4>Access/sw</h4>
+<p>
+Access commands and attributes will be added for the following:
+<ul>
+<li>"package_prot" access of entities (as distinct from public, private, etc.)
+<li>"interface" and "package" attributes, analogous to existing "class" and "structure" attributes
+<li>"final" attribute of members and classes
+<li>"transient" attribute of fields
+<li>"synchronized" attribute of methods
+<li>"abstract" attribute of classes and methods
+<li>"native" attribute of methods
+<li>"throws_actual" and "throws_declared", and "catch" relations
+</ul>
+In addition, the destructor attribute will reflect whether a given method is
+a Java "finalize" method.
+</p>
+<h4>text</h4>
+<p>
+Different programming languages are defined using different terms,
+and Java is no exception.
+In Java, every function is preferably called a "method", even if it
+does not depend implicitly on an instance of its class.
+The browser's category list now shows functions and methods as 
+"Functions/Methods" rather than "Functions".
+</p>
+<p>
+Some text varies, depending on whether the context is Java or C/C++.
+Functions, when selected in the browser, are displayed in the status bar
+as "method".
+Classes are displayed as "struct" in C++, but Java classes will show up as "class". 
+</p>
+<p>
+The queries that are presented in the "Ask" column for any given kind of
+object depend on the set of languages included in the current project.
+They do not vary depending on the object(s) selected.
+</p>
+<h4>initialization blocks</h4>
+<p>Initialization blocks in classes consist of code that belongs to the class
+and not to any particular method or constructor.
+Initialization blocks are supported in outline views, and for the relations
+involving instances within the block.
+</p>
+<h4>prefs</h4>
+<p>
+<table border>
+<tr><th>preference<th>description
+<tr><td><code>psetPrefs.ELS.List</code><td> will add support for Java
+<tr><td><code>psetPrefs.ELS.Java.flags</code><td>new preference
+<tr><td><code>psetPrefs.ELS.Java.suffix</code><td>new preference, e.g. .java
+</table>
+</p>
+<h4>make flags extraction</h4>
+<p>
+It is expected that <code>make</code> is common enough with Java that our current
+extraction strategy remains good as a default.
+The <code>-D</code> options, however, will not be relevant to Java,
+at least in our implementation.
+The <code>-I</code> command line options are supplanted by
+<code>-classpath</code>, at least for <code>javac</code>.
+This <code>-classpath</code> will be supported in make flags extraction.
+</p>
+<p>As of 1998-10-02, the command line option is being implemented as <code>--classpath</code>
+with two hyphens because the EDG command line parser doesn't support single-hyphen
+options of the kind that javac uses.
+The following make rule works:
+<pre>
+  . : /**/(*).java/%/.make => "echo --classpath /job1/new/regression/java/classes_1.1.zip"
+</pre>
+Since other expected make rules do not work,
+extraction from make files does not work, either.
+</p>
+<h4>bulk compilation</h4>
+<p>
+EDG's jfe is capable of parsing a number of compilation units in one go.
+This provides an efficiency analogous to precompiled headers,
+without the risk of complications that occur with C and C++ preprocessing.
+We will take advantage of this.
+</p>
+<h4>Unicode names and strings</h4>
+<p>
+Java permits Unicode characters in identifiers, strings, and character literals.
+Java source can use a straight Unicode file format,
+but normally the source file is encoded using plain ASCII or an 8-bit extension of
+7-bit ASCII.
+In this form, Unicode characters are indicated in the source
+by means the <code>\u</code> escape sequence. 
+DISCOVER will display Unicode characters in the same way.
+</p>
+<p>
+Directly-encoded Unicode source files are not supported.
+</p>
+<h3>Outplan</h3>
+<p>
+Following are features which may have deserved consideration, but which
+will not be supported by DISCOVER.
+</p>
+<h4>.cab "cabinet" form</h4>
+<p>
+Cabinets are a Microsoft-promoted, compressed, authenticated form for 
+distribution of Java code on the Internet.
+This will not be supported.
+<br><small><em>Question: How proprietary is it?</em></small></p>
+<h4>the Java package hierarchy</h4>
+<p>Java provides a way to organize code hierarchically by package.
+It would be nice to support this.  (What I have in mind is that
+currently, the user of DISCOVER must go to some trouble to define
+a project hierarchy. If the user has already developed a package
+hierarchy for Java code, then he or she would prefer to avoid
+the duplication of effort.) However, investigation revealed that
+the package structure is not essential to Java, nor does it fit with
+DISCOVER's way of presenting programs.  A package plays much the same
+role as a C++ namespace.
+</p>
+<h4>documentation comments</h4>
+<p>Documentation comments use a special standard syntax
+which is recognized for extraction into external documentation. 
+Not supported.</p>
+<h4>component interfaces</h4>
+<p>Up to now, DISCOVER has exposed the structure of programs from the point of
+view of their source code.
+Component-based programming deals with
+properties, and events/messages of objects, that have a standardized capability
+for querying an interface and dynamically linking to the compiled code which supports
+the interface. A different potential project exists, with the goal of supporting COM.
+</p>
+<p>
+Java Beans are the Java version of component-based programming. "Beans" are packaged
+in <code>.jar</code> files, which have the same low-level structure as a <code>.zip</code>
+file.  Hence, DISCOVER can support interfaces of Beans in the straight Java language sense.
+In Java, the correspondence between the language interface of a class and its component
+interface is simple, in comparison to COM. However, DISCOVER will not support the component level
+interfaces as part of the Java project.</p>
+<h4>C preprocessor</h4>
+<p>Greg Bronner has reported that some people are using the C preprocessor with
+Java code. It is yet to be determined how widespread this practice is.
+The EDG parser does not incorporate a preprocessor, nor is this planned.</p>
+<p>If we need to handle Java with preprocessing, a good approach would
+be to adapt aset_CCcc.
+aset_CCcc is already able to do preprocessing without compilation.
+This has not been debugged to work with IF generation, but
+it did work for the first simple case that was attempted.
+Mike Miller estimates that the kinks could be worked out in a couple of days.
+</p>
+<p>However, this is not considered part of the plan for lack of confirmation of need among
+potential customers.</p>
+<h4>context sensitivity</h4>
+<p>
+Whether Java or C++ terminology is displayed will be controlled by a preference.
+If a project contains both Java and C++ files, and an object is selected from
+a Java file, then the query list will be formed using Java terminology.
+</p>
+<h4>names in packages</h4>
+<p>
+This complete presentation of a name is rather unwieldy, which could be a problem
+for customers because it is good practice in Java to put your code into packages.
+However, the implementation of scan mode is flexible and it will be fairly easy to
+abbreviate the displayed names if we come up with a superior way of determining
+what portion of the name to display.
+</p>
+</body>

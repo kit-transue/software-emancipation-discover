@@ -1,0 +1,19 @@
+/*******************************************************
+ * Function:	$F (logical file $L)
+ * Author:	$U ($A)
+ * Date:	$D
+ *
+ * Description:
+ *
+ * Modification history:
+ *
+ */
+
+#define _NO_PROTO
+
+#include <xip.h>
+#include <externals.h>
+#include <stage.h>
+#include <image_win.h>
+
+

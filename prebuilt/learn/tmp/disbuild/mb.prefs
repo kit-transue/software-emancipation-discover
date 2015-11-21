@@ -1,0 +1,273 @@
+#
+#  dismb preferences
+#
+*psetPrefs.MBscratch:			no
+*psetPrefs.MBflagsReuse:		no
+*psetPrefs.MBparallelHosts:		
+*psetPrefs.MBremoteEnvVarList:		
+*psetPrefs.MBremoteEval:		
+*psetPrefs.MBheartBeat:			15
+*psetPrefs.MBiffCompressExe:		
+*psetPrefs.MBiffUnCompressExe:		
+*psetPrefs.MBiffCompressExt:		
+*psetPrefs.MBavoidFork:			
+*psetPrefs.MBsyncTimeCheck:		yes
+*psetPrefs.MBproceedAfterCrash:		no
+*psetPrefs.MBverbose:			no
+*psetPrefs.MBcontinue:			no
+*psetPrefs.MBstopAfter:			
+*psetPrefs.MBforceCleanup:		yes
+*psetPrefs.MBdebugSizes:		no
+*psetPrefs.MBcountLines:		no
+*psetPrefs.configuratorSystem:		
+*psetPrefs.getModel:			no
+*psetPrefs.putModel:			no
+*psetPrefs.doBuildDFA:			no
+*psetPrefs.DIS_model.DoMergePass:	no
+*psetPrefs.doPassDefectLink:		
+*psetPrefs.acceptSyntaxErrors:		yes
+*psetPrefs.debugShowMakeRuleOutput:	yes
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileDir:			C:/DISCOVER/prebuilt/learn\log
+*psetPrefs.logFileUserDelete:		no
+*psetPrefs.logFileMonitor:		yes
+*psetPrefs.logFileNameFixed:		no
+*psetPrefs.sharedSrcRoot:		C:/DISCOVER/prebuilt/learn\source\shared
+*psetPrefs.sharedModelRoot:		C:/DISCOVER/prebuilt/learn\model\shared
+*psetPrefs.privateSrcRoot:		C:/DISCOVER/prebuilt/learn\source\private
+*psetPrefs.privateModelRoot:		C:/DISCOVER/prebuilt/learn\model\private
+*psetPrefs.pdfFileBuild:		C:/DISCOVER/prebuilt/learn\pdf\admin.pdf
+*psetPrefs.DIS_model.SaveMetrics:	1
+*psetPrefs.DIS_model.GenerateY2KInfo:	2
+*psetPrefs.DIS_model.Instances_Enabled:	1
+*psetPrefs.DIS_model.LocalVars_Enabled:	1
+*psetPrefs.cDfltSrcSuffix:		.C
+*psetPrefs.cPlusDfltSrcSuffix:		.CPP
+*psetPrefs.ELS.MBuserEvalFile:		
+*psetPrefs.ELS.sql.Suffix:		.sql .spb .sps .ff .fp .fpp .sf .sp .spp
+*psetPrefs.ELS.sql.Flags:		
+*psetPrefs.ELS.java.Suffix:		.java .class .zip .jar .jproxy
+*psetPrefs.ELS.java.Flags:		
+*psetPrefs.MBdoPassCache:		yes
+*psetPrefs.MBdoPassAnalysis:		yes
+*psetPrefs.MBdoPassParse:		yes
+*psetPrefs.MBdoPassUpdate:		yes
+*psetPrefs.MBdoPassFinalize:		yes
+*psetPrefs.MBptestRunning:		no
+*psetPrefs.MBasetExecutable:		
+*psetPrefs.MBqueryTclScript:		
+*psetPrefs.queryOutputFile:		C:/DISCOVER/prebuilt/learn/tmp/query.out
+*psetPrefs.parserBriefDiagnostics:	no
+*psetPrefs.MBlogStatus:			no
+*psetPrefs.MBcleartool:			
+*psetPrefs.MBQarTclScript:		
+*psetPrefs.MBincludeAllHdrs:		no
+*psetPrefs.MBgeneratePdf:		no
+*psetPrefs.MBmultipleIFFs:		no
+*psetPrefs.excludedDirectories:		
+*psetPrefs.makefileDir:			.
+*psetPrefs.makePath:			C:\MSDEV\BIN\NMAKE.EXE
+*psetPrefs.rtlFileStat:			0
+*psetPrefs.steEditMode:			0
+*psetPrefs.PutTrackBugs:		0
+*psetPrefs.version:			1
+*psetPrefs.gdbPath:			
+*psetPrefs.steSuffix:			.txt
+*psetPrefs.rshProjInvoker:		
+*psetPrefs.configurator:		
+*psetPrefs.configuratorLock:		
+*psetPrefs.configuratorUnlock:		
+*psetPrefs.configuratorPut:		
+*psetPrefs.configuratorGet:		
+*psetPrefs.configuratorDiff:		
+*psetPrefs.configuratorCustomDirectory:	
+*psetPrefs.configuratorOptionalScriptsDir:
+*psetPrefs.configuratorCreate:		
+*psetPrefs.configuratorCopy:		
+*psetPrefs.configuratorDelete:		
+*psetPrefs.configuratorDoBackups:	1
+*psetPrefs.configuratorObsolete:	
+*psetPrefs.configuratorPutLocks:	1
+*psetPrefs.configuratorFastPutMerge:	0
+*psetPrefs.configuratorGetWithComments:	0
+*psetPrefs.configuratorRemovePsets:	0
+*psetPrefs.configuratorStat:		
+*psetPrefs.configuratorTerse:		0
+*psetPrefs.configuratorUnget:		
+*psetPrefs.configuratorUseSoftLinks:	0
+*psetPrefs.configuratorUseLocks:	0
+*psetPrefs.PreserveFilenameCase:	0
+*psetPrefs.pdfFileUser:			C:/DISCOVER/prebuilt/learn\pdf\user.pdf
+*psetPrefs.projectParallel:		no
+*psetPrefs.defaultPDF:			C:/DISCOVER/prebuilt/learn\pdf\user.pdf
+*psetPrefs.doPassDependency:		yes
+*psetPrefs.doPassHeaders:		yes
+*psetPrefs.doPassSaveProj:		yes
+*psetPrefs.doPassSaveRoot:		yes
+*psetPrefs.debugDiscoverExecPath:	
+*psetPrefs.debugEnvSave:		no
+*psetPrefs.executableTimer:		
+*psetPrefs.logFileCompress:		no
+*psetPrefs.logPrefValues:		no
+*psetPrefs.msgLogger:			yes
+*psetPrefs.nameCompany:			Software Emancipation Technology, Inc.
+*psetPrefs.nameDiscoverAdministrator:	"Tech Support, support@setech.com, 781-359-3400"
+*psetPrefs.cPlusDfltHdrSuffix:		.H
+*psetPrefs.cPlusCompiler:		CL
+*psetPrefs.cPlusFlags:			--no_wchar_t_keyword -w
+*psetPrefs.cPlusSuffix:			.cpp .cxx .h .hpp .inl .CPP .CXX .H .HPP .INL
+*psetPrefs.cPlusHdrSuffix:		.h .hpp .inl .H .HPP .INL
+*psetPrefs.cPlusDefines:		-D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__
+*psetPrefs.cPlusIncludes:		-IC:/DISCOVER/prebuilt/learn\include
+*psetPrefs.cDfltHdrSuffix:		.H
+*psetPrefs.cCompiler:			CL
+*psetPrefs.cFlags:			-w
+*psetPrefs.cSuffix:			.c .h .C .H
+*psetPrefs.cHdrSuffix:			.h .H
+*psetPrefs.cStyle:			0
+*psetPrefs.compilerIgnoreCase:		yes
+*psetPrefs.cIncludes:			-IC:/DISCOVER/prebuilt/learn\include
+*psetPrefs.cDefines:			-D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__
+*psetPrefs.cEsqlPp:			proc
+*psetPrefs.cPlusEsqlPp:			proc
+*psetPrefs.cEsqlSuffix:			.csql
+*psetPrefs.cPlusEsqlSuffix:		.cpsql
+*psetPrefs.cEsqlArgs:			
+*psetPrefs.cPlusEsqlArgs:		
+*psetPrefs.ELS.List:			java sql
+*psetPrefs.ELS.sql.FileIcon:		156
+*psetPrefs.ELS.java.FileIcon:		158
+*psetPrefs.ELS.EDG:			yes
+*psetPrefs.ELS.nonAscii.Suffix:		.class .zip .jar .pkapl
+*psetPrefs.cPlusDisabled:		
+*psetPrefs.cDisabled:			
+*psetPrefs.DIS_build.PRJ_Backups:	
+*psetPrefs.DIS_msg.MsgLogFile:		C:/DISCOVER\lib\messages.dat
+*psetPrefs.DIS_msg.UseMsgLogger:	1
+*psetPrefs.DIS_msg.LogErrorMessages:	0
+*psetPrefs.DIS_msg.LogWarningMessages:	0
+*psetPrefs.DIS_msg.LogInformativeMessages:0
+*psetPrefs.DIS_msg.LogDiagnosticMessages:0
+*psetPrefs.DIS_msg.LogDuringImport:	1
+*psetPrefs.DIS_msg.LogDuringCompile:	1
+*psetPrefs.DIS_msg.LogDuringPropagate:	1
+*psetPrefs.DIS_misc.ProblemTracking_enabled:
+*psetPrefs.DIS_misc.PT_custom_exe:	
+*psetPrefs.DIS_misc.PT_versions_exe:	
+*psetPrefs.DL.use_ProblemTracking:	0
+*psetPrefs.DL.input_file:		
+*psetPrefs.DL.defect_info_file:		
+*psetPrefs.DL.defect_info_file_delim:	,
+*psetPrefs.DL.defect_info_file_parse_quotes:1
+*psetPrefs.DL.defect_info_user_defined:	
+*psetPrefs.DL.defect_info_id_col:	0
+*psetPrefs.DL.defect_info_severity_col:	1
+*psetPrefs.DL.defect_info_priority_col:	2
+*psetPrefs.DL.defect_info_owner_col:	3
+*psetPrefs.DL.defect_info_assignee_col:	4
+*psetPrefs.DL.defect_info_close_col:	5
+*psetPrefs.DL.defect_info_open_col:	6
+*psetPrefs.DL.defect_info_status_col:	7
+*psetPrefs.DL.defect_info_reported_col:	8
+*psetPrefs.MaxClosureDepth:		0
+*psetPrefs.DIS_model.MultiplePsets:	0
+*psetPrefs.DIS_model.Strings_Enabled:	1
+*psetPrefs.DIS_model.Ast_Enabled:	1
+*psetPrefs.DIS_model.PRJ_Separator:	SPACE
+*psetPrefs.DIS_c.C_Parser:		C:/DISCOVER\bin\c-parser
+*psetPrefs.DIS_c.CPreprocessor:		C:/DISCOVER\bin\aset_cpp
+*psetPrefs.DIS_c.Cpp_Logfile:		
+*psetPrefs.DIS_cp.Cp_Parser:		C:/DISCOVER\bin\cp-parser
+*psetPrefs.DIS_env.Home:		\
+*psetPrefs.DIS_env.Host:		MERLE2K
+*psetPrefs.DIS_env.Printer:		
+*psetPrefs.DIS_env.UserLoginName:	tatiana
+*psetPrefs.DIS_env.UserRealName:	
+*psetPrefs.EnvVarChars:			
+*psetPrefs.DIS_editor.EditorPath:	
+*psetPrefs.DIS_graphics.Symbols_DataFile:C:/DISCOVER\lib\symbols.dat
+*psetPrefs.DIS_viewer.Menus_DataFile:	C:/DISCOVER\lib\pset_server.menus
+*psetPrefs.DIS_viewer.PopupMenus_DataFile:C:/DISCOVER\lib\pset_server.pmenus
+*psetPrefs.DIS_viewer.QuickHelp_DataFile:C:/DISCOVER\lib\pset_server.qhelp
+*psetPrefs.after-class-decl:		
+*psetPrefs.after-class-def:		
+*psetPrefs.after-func-decl:		
+*psetPrefs.after-func-def:		
+*psetPrefs.after-member-decl:		
+*psetPrefs.after-member-def:		
+*psetPrefs.after-struct:		
+*psetPrefs.before-class-decl:		
+*psetPrefs.before-class-def:		
+*psetPrefs.before-func-decl:		
+*psetPrefs.before-func-def:		
+*psetPrefs.before-member-decl:		
+*psetPrefs.before-member-def:		
+*psetPrefs.before-struct:		
+*psetPrefs.buttonbarCalltree:		
+*psetPrefs.buttonbarClass:		
+*psetPrefs.buttonbarDatachart:		
+*psetPrefs.buttonbarERD:		
+*psetPrefs.buttonbarSMT:		
+*psetPrefs.buttonbarSSBrowser:		
+*psetPrefs.buttonbarSSMap:		
+*psetPrefs.buttonbarSTE:		
+*psetPrefs.buttonbarVisible:		
+*psetPrefs.c-hdr-file-bottom:		
+*psetPrefs.c-hdr-file-top:		
+*psetPrefs.c-src-file-bottom:		
+*psetPrefs.c-src-file-top:		
+*psetPrefs.cpp-hdr-file-bottom:		
+*psetPrefs.cpp-hdr-file-top:		
+*psetPrefs.cpp-src-file-bottom:		
+*psetPrefs.cpp-src-file-top:		
+*psetPrefs.func-final:			
+*psetPrefs.func-init:			
+*psetPrefs.installRoot:			C:/DISCOVER
+*psetPrefs.makefileTargets:		clean
+*psetPrefs.member-def-final:		
+*psetPrefs.member-def-init:		
+*psetPrefs.miniBrowserHistory:		15
+*psetPrefs.miniBrowserTitles:		1
+*psetPrefs.paraDocCommandLine:		C:/DISCOVER\bin\wordserver.exe
+*psetPrefs.paraDocName:			Word
+*psetPrefs.priv-decl:			
+*psetPrefs.prot-decl:			
+*psetPrefs.pub-decl:			
+*psetPrefs.relation-src-definition:	
+*psetPrefs.relation-src-header:		
+*psetPrefs.relation-src-member:		
+*psetPrefs.relation-trg-definition:	
+*psetPrefs.relation-trg-header:		
+*psetPrefs.relation-trg-member:		
+*psetPrefs.subsys_setting_file:		C:/DISCOVER\lib\subsysPrefs.default
+*psetPrefs.ADMINDIR:			C:\DISCOVER\prebuilt\learn
+*psetPrefs.doPassProj:			yes
+*psetPrefs.projectList:			/xip_shared /ttt_shared /sysinclude
+*psetPrefs.projectListHeaders:		
+*psetPrefs.projectListDependency:	
+*psetPrefs.projectHome:			/xip_private
+*psetPrefs.forgive:			0
+*psetPrefs.Simplify.Verbose:		0
+*psetPrefs.Simplify.PrintScreen:	0
+*psetPrefs.Simplify.NoComments:		0
+*psetPrefs.Simplify.NoSubstitutions:	0
+*psetPrefs.Simplify.UseShortSubNames:	0
+*psetPrefs.Simplify.VerifyExclusionsCmd:
+*psetPrefs.Simplify.LogFile:		
+*psetPrefs.SubmissionCheck.Enabled:	0
+*psetPrefs.SubmissionCheck.SourceList:	
+*psetPrefs.SubmissionCheck.Procedures:	
+*psetPrefs.SubmissionCheck.Enforce:	1
+*psetPrefs.SubmissionCheck.Filter:	
+*psetPrefs.SubmissionCheck.AnalyzeChanges:1
+*psetPrefs.SubmissionCheck.MailExecPath:
+*psetPrefs.SubmissionCheck.CheckinLog:	
+*psetPrefs.SubmissionCheck.Libraries:	
+*psetPrefs.SubmissionCheck.Policy:	
+*psetPrefs.QACockpit.BaseLibrary:	C:/DISCOVER/lib/baselib.sc
+*psetPrefs.QACockpit.AttributeFilter:	0
+*psetPrefs.branch_list:			checkedout main
+*psetPrefs.TPM.diffFileRoot:		
+*psetPrefs.groupsPath:			C:/DISCOVER/prebuilt/learn\groups
+*psetPrefs.DIS_misc_BuildMetrics:	1
+*psetPrefs.DIS_misc_StoreMetrics:	1

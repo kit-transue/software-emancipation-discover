@@ -1,0 +1,31 @@
+<html>
+<body>
+
+<p><b>MFDTCSF - Method finalize() Doesn't Call super.finalize()</b></p>
+
+<p>As it is mentioned in book 'The Java Programming Language' by Ken Arnold and
+James Gosling, calling of super.finalize() from finalize() is good practice of
+programming, even if base class doesn't define finalize() method. This makes
+class implementations less dependent from each other.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+<font color='red'>void finalize () {<br>
+}</font>
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Always call <code>super.finalize()</code>
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+<font color='blue'>void finalize () {<br>
+&nbsp; &nbsp; super.finalize(); <br>
+} </font>
+</code></p></nobr>
+
+</body>
+</html>

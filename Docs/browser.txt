@@ -1,0 +1,96 @@
+to:        MB, VPG, Smit.
+from:      MG
+date:      7/7/94
+subject:   browser-less browsing
+-
+There are well known problems with 'usability' of paraset. 
+Major UI issues:
+  1. inconsistencies / split of functionality between viewer and browser shells.
+  2. unintuitive and cumbersome browsing/scanning dualism in the Browser Shell.
+
+Issue #1 was well addressed in other memos.
+The desicion has been made to revamp the UI.
+
+Significant Part of this project is to eliminate the browser shell as separate 
+  top-level shell and move the browser itself under the auspicies of viewer shell.
+
+Independently, Ashesh under my supervision started implementation of 'browsing in emacs'
+project with the goal to provide some commonly used browser functionality
+in a simple and straight-forward way.
+
+Independently I kept thinking what to do about the issue #2 and finally came up with a
+solution. I asked Ashesh to implement this as additional part of his 'extended'
+'quick browsing' project.
+
+The new browsing is simpler, more intuitive, and more powerful then the old one.
+It completely eliminates the need for browser as it exists today.
+
+Instead of browser-shell containing
+  - browser to navigate projects
+  - 4-column scan mode
+  - menu bar (file, view, manage, etc)
+
+ we'll have:
+  - new type of view: 'list' (a.k.a 'RTL') in viewer shell
+     The list view can contain symbols (projects, functions, files, hyperlinks, etc)
+  - QUERY button containg '3-d column' options + 'new-group' option
+
+
+The new united querying/browsing paradigm.
+
+On start-up, viewer shell is created and list containing top-level-projects is displayed.
+User can dive in subprojects with double-clicks as usual.
+To get, e.g. a list of functions in a projects,
+ the user simply selects the desired project and then query -> defines-functions
+
+The selections in RTL go to the unified selection stack. All the operations
+ on the menu-bar can be applied (when appropriate). Similarly, the query button can
+ be applied not only to selections from list(s), but equally well to 
+ selections in other views.
+
+The old browser shell is not poped-up automaticly, only when explicitly requested by
+user (opposite of what we do today: browser shell appears on start-up, but viewer shell
+only on demand, which accidently is subject of complaints by developers)
+
+Advantages:
+ - Much more intuitive
+ - Better integrated.
+ - More compact
+ - more functionality (e.g: project->uses-functions generates list of external functions.
+      With the current browser, we can show only functions defined in the project,
+      but not the external functions used by the project).
+ - no inconsistencies
+
+ - less work:
+ since we 'downgrade' the browser shell, we can keep it 'as is' in the (deep)
+ background. This means that following significant tasks (1m-m) are eliminated
+ from the ongoing ui-cleanup project:
+	- move Browser Shell into viewer shell.
+        - make browser use standard selection stack.
+        - retrofit the tests to work with new browser.
+
+Disadvantages:
+ None.
+
+Status:
+  Ashesh is finishing 'experimental' quality implementation.
+  - 1w to finish 'prototype'
+  - 1w ui spec. Several people, including Bruce, WMM, Smit, will have to 
+       (ab)use and critique it heavily.
+  - 2w for 'productization'.
+
+  Will NOT be ready in 2.1 time frame.
+
+Issues (small) (to be resolved before we 'productize' it)
+  Visual appearencies
+     - separate viewer vs emacs screen
+     - x-lists vs emacs lists
+     - etc.
+
+  Policies: 
+     - how many lists to keep around.
+     - etc
+
+  Missing bits and pieces:
+     - filters
+

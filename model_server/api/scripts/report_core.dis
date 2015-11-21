@@ -1,0 +1,104 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+###############################################################################
+# proc         doRecursiveIncludesReport
+# Description:
+#       Creates a text file listing number of recursively included
+#          files from the parse.
+#       This procedure contains core logic for doing the report, and is used in
+#          './report_menu.dis' and '/paraset/newntui/scripts/menu_cmds.dis'.
+###############################################################################
+proc doRecursiveIncludesReport {repFileName selFiles} {
+    set OutFile [open "$repFileName" w+]
+    puts $OutFile "Format: <filename> <total number of files included>"
+    foreach ParseFile $selFiles {
+        set NumberOfRecursiveIncludes -1
+        set ListOfRecursiveIncludes [get_include_files $ParseFile]
+        while {[size $ListOfRecursiveIncludes] != $NumberOfRecursiveIncludes} {
+            set NumberOfRecursiveIncludes [size $ListOfRecursiveIncludes]
+            sappend $ListOfRecursiveIncludes [get_include_files $ListOfRecursiveIncludes]
+            set ListOfRecursiveIncludes [set_unique $ListOfRecursiveIncludes]
+        }
+        puts $OutFile "[name $ParseFile]: $NumberOfRecursiveIncludes"
+    }
+    close $OutFile
+} ;# doRecursiveIncludesReport
+
+###############################################################################
+# proc         doCreateInventoryList
+# Description:
+#       Print symbols used, declared, or defined in selected
+#          files/functions.
+#       This procedure contains core logic for doing the report, and is used in
+#          './report_menu.dis' and '/paraset/newntui/scripts/menu_cmds.dis'.
+###############################################################################
+proc doCreateInventoryList {repFileName selFiles} {
+    set OutFile [open "$repFileName" w+]
+    foreach CurrentFile $selFiles {
+        puts $OutFile "Entity: [kind $CurrentFile] [name $CurrentFile] [fname $CurrentFile]"
+        set EntityDeclarations [get_declares $CurrentFile]
+        if {[size $EntityDeclarations] > 0} {
+            puts $OutFile "\tDeclares:"
+            foreach EntityDeclared $EntityDeclarations {
+                puts $OutFile "\t\t[kind $EntityDeclared] [name $EntityDeclared]"
+            }
+        }
+        set DefinedEntities [defines -all $CurrentFile]
+        if {[size $DefinedEntities] > 0} {
+            puts $OutFile "\tDefines:"
+            foreach DefinedEntity $DefinedEntities {
+                if {[kind $DefinedEntity] == "module" || [kind $DefinedEntity] == "VERSION"} {
+                    # Skip the module itself, and its version
+                } else {
+                    puts $OutFile "\t\t[kind $DefinedEntity] [name $DefinedEntity]"
+                }
+                if {[function $DefinedEntity]} {
+                    set EntitiesDefinedInFunction [data symbol [uses_locals $DefinedEntity]]
+                    if {[size $EntitiesDefinedInFunction] > 0} {
+                        puts $OutFile "\t\t\tDefines:"
+                        foreach EntityDefinedInFunction $EntitiesDefinedInFunction {
+                            puts $OutFile "\t\t\t\t[kind $EntityDefinedInFunction] [name $EntityDefinedInFunction]"
+                        }
+                    }
+                }
+            }
+        }
+        set UsedEntities [uses -macro $CurrentFile]
+        sappend $UsedEntities [uses -string $CurrentFile]
+        if {[size $UsedEntities] > 0} {
+            puts $OutFile "\tUses:"
+            foreach UsedEntity $UsedEntities {
+                puts $OutFile "\t\t[kind $UsedEntity] [name $UsedEntity]"
+            }
+        }
+    }
+    close $OutFile
+} ;# doCreateInventoryList
+
+# END OF FILE

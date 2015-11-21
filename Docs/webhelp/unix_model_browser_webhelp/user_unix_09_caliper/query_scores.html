@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Query Scores</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 10.0px 'Courier New'}
+    span.s2 {font: 12.0px Courier}
+    span.s3 {font: 10.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Query Scores</b></p>
+<p class="p2">Caliper queries are collections of standards run against your code; these can be predefined, such as the Global and Localization queries included in DIScover, or custom queries that you build yourself. When you run a set of queries, Caliper generates a quality score for each query. When you select a query, its score appears in the <b>Score</b> property box in the right pane of the Caliper window. A query’s score is based on the number of violations found, divided by the total number of possible violations. This is the query’s raw score, represented by the following equation:</p>
+<p class="p3">RS<span class="s1">q</span> = H/T</p>
+<p class="p2">To generate the visual score for a query, the raw score of that query is multiplied by a scaling constant. The scaling constant has a value of 3; this is based on the supposition that if a third of your code is severely error-ridden, it probably needs a significant amount of remediation. The scaling constant is represented by the following equation:</p>
+<p class="p3">SC = 3</p>
+<p class="p2">The product of the raw score and the scaling constant is then subtracted from 1. (This is for inversion; the higher <span class="s2">RS</span><span class="s3">q</span> is, the lower the quality score.) Finally, the difference is multiplied by 100 to produce the visual score. The visual score for a query is represented by the following equation:</p>
+<p class="p3">VS<span class="s1">q</span> = (1 - (RS<span class="s1">q</span> * SC)) * 100</p>
+</body>
+</html>

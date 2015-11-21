@@ -1,0 +1,144 @@
+
+sub cleanup {
+    local($dir,$pattern) = @_;
+    die "$dir is not a directory" if ( ! -d $dir );
+
+    open (LS, "ls -tr -1 $dir |") || die "Cannot ls the directory $dir";
+    while (<LS>) {
+	chop;
+	if (/$pattern/) {
+	    print $_, "\n";
+	    unlink ("$dir/$_");
+	}
+    }
+}
+
+
+$pattern = @ARGV[0];
+print "Hi BoRa!", "Pattern: $pattern", "\n";
+$dir = "/usr/tmp";
+&cleanup ("$dir","$pattern");
+
+
+
+
+##########      	/usr/tmp/fork.pl
+
+#!/usr/local/bin/perl
+$cmd = "sleep <P1>";
+
+$tdir = "/net/mu/home/tmp/test_fork";
+die "Can't create $tdir: $!\n" unless -d $tdir || mkdir("$tdir",0777);
+
+$flist = "$tdir/list.$$";
+open (FLIST,">$flist") || die "Could not open $flist: $!\n";
+for ( $i = 1 ; $i < 10 ; $i++ ) {
+    print FLIST "$i\n";
+}
+close FLIST;
+
+$lockf = "$tdir/lockfile.$$";
+open (LOCKF,">$lockf") || die "Could not open $lockf: $!\n";
+close LOCKF;
+
+@resource = ("mu", "oxen:3", "quark:1");
+#@resource = ("mu");
+$dofile = "/net/mu/home/tmp/test_fork/dofile.$$";
+open (DOFILE,">$dofile") || die "Could not create $dofile: $!\n";
+print DOFILE "$cmd", "\n", $flist, "\n", $lockf, "\n";
+close DOFILE;
+
+print "\n";
+for (@resource) {
+   local ($host, $cpus) = split(':');
+   $cpus = 1 if ( $cpus eq "" );
+   for ( $i = 1 ; $i <= $cpus ; $i++ ) {
+       $pid = &do_fork(qq/$host/, $i);
+   }
+}
+print "\n";
+
+WAIT: {
+ local($cur) = wait;
+ if ($cur > -1) {
+    print "Done pid ", $cur, "\n";
+    redo WAIT;
+ } else {
+   print "All done\n";
+ }
+}
+
+sub do_fork {
+    local ($host,$cnt) = @_;
+    local ($pid);
+  FORK: {
+      if ($pid = fork) {
+          printf "Started %15s:%d, pid $pid\n", $host, $cnt;
+          return $pid;
+      } elsif (defined $pid) {
+	  local ($runner) = "/net/mu/home/tmp/aa.pl";
+	  exec "rsh $host $runner $host $cnt $dofile";
+      } elsif ($! =~ /No more process/) {
+	  print "EAGAIN; try after 5 seconds\n";
+	  sleep 5;
+	  redo FORK;
+      } else {
+	  die "Can't fork: $!\n";
+      }
+  }
+}
+
+######### 		/usr/tmp/aa.pl
+#!/usr/local/bin/perl
+
+sub ext_command {
+    local($cmd) = @_;
+    local($answer) = "";
+    $res = open (FILE, "$cmd" . "|") || return $answer;
+
+    $answer = <FILE>;
+    close FILE;
+    return $answer;
+}
+
+($host, $cnt, $dofile) = @ARGV;
+open (DOFILE,"<$dofile") || die "Could not open $dofile: $!\n";
+$i = 0;
+while (<DOFILE>) {
+    s/[\n\r]//;
+    $docmd[$i] = $_;
+    $i++ ;
+}
+$cmd   = $docmd[0];
+$flist = $docmd[1];
+$lockf = $docmd[2];
+
+#print "    Started $host, cnt= $cnt, cmd= $cmd\n";
+select(STDOUT); $| = 1;
+
+open (FLIST,"<$flist") || die "Could not open $flist: $!\n";
+$i = 0;
+while (<FLIST>) {
+    s/[\n\r]//;
+    @flist[$i] = $_;
+    $i++;
+}
+close FLIST;
+
+die "Empty file $flist.\n" unless $i;
+
+LOOP: {
+    $lnum = &ext_command("$ENV{'PSETHOME'}/bin/dis_lock $lockf");
+    $lnum--;
+    $line = @flist[$lnum];
+    last LOOP if ($line eq "");
+    $_ = $cmd;
+    s/<P1>/$line/;
+    local($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime(time);
+    printf "    Host %15s:%1d, running $_ %2d/%2d/%2d %2d:%2d.%2d ... \n", $host, $cnt, $mon, $mday, $year, $hour, $min, $sec;
+    system "$_";
+    redo LOOP;   
+}
+
+#print "    Ended   $host, cnt= $cnt, cmd= $cmd\n";
+

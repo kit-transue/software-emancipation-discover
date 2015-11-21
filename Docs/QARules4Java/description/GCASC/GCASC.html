@@ -1,0 +1,47 @@
+<html>
+<body>
+
+<p><b>GCASC - GC - Avoid Static Collections, like Vector, Hashtable; it ca
+n grow without bounds. </b></p>
+
+<p>Static variables (Vector, Hashtable, etc) are able to hold large number of
+objects are therefore candidates for memory leaks.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class GCASC {<br>
+&nbsp;  <font color='red'> public static Vector vector = new Vector ();</font><br>
+&nbsp; void oper(Object o) {<br>
+&nbsp; &nbsp; vector.add(o);<br>
+&nbsp; }<br>
+}</nobr></code></p>
+
+<p><b>Tip:</b>
+If the static variable is necessary, set a maximum size and make sure that
+Vector does not exceed that limit.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class GCASC {<br>
+&nbsp; public static void addVector(Object o) {<br>
+&nbsp; &nbsp; // checks size of the Vector before calling <i>add()</i>.<br>
+<font color='blue'> 
+&nbsp; &nbsp; if(vector.size() &lt; MAX) {<br>
+&nbsp; &nbsp; &nbsp;  vector.add(o);<br>
+&nbsp; &nbsp; }<br>
+</font>
+&nbsp; }<br>
+&nbsp; void oper(Object o) {<br>
+&nbsp; &nbsp; addVector(o);<br>
+&nbsp; }<br>
+<font color='blue'> 
+&nbsp; public static Vector vector = new Vector (5,5);<br>
+&nbsp; public static final int MAX = 5;<br>
+</font>
+}
+</code></p></nobr>
+
+</body>
+</html>

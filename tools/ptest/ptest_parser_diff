@@ -1,0 +1,22 @@
+#!/bin/sh
+[ -z "$1" ] && 
+{
+	echo "Usage: $0 dir1 dir2 ..."
+	exit 1;
+}
+
+startdir=`pwd`
+scriptname=`basename $0`
+while( true )
+do
+	[ -z "$1" ] && exit;
+	[ ! -d "$1" ] &&
+	{
+		echo "Argument not directory [$1]."
+		exit 1;
+	}
+	cd $1
+	./$scriptname
+	cd $startdir
+	shift ;
+done	

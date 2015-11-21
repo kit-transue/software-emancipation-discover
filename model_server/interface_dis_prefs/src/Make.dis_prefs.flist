@@ -1,0 +1,4 @@
+CPROOTS=\
+	dis_prefs\
+	stubs\
+

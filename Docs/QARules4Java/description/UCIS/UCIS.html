@@ -1,0 +1,41 @@
+<html>
+<body>
+
+<p><b>UCIS - Use <i>charAt()</i> instead of <i>startsWith()</i> for one character comparisons.</b></p>
+
+<p>Using <i>startsWith()</i> with a one character argument works fine but from a
+performance perspective this method is a misuse of the String API.
+<i>startsWith()</i> makes quite a few computations preparing itself to compare
+its prefix with another string.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class UCIS {<br>
+&nbsp; private void method(String s) {<br>
+&nbsp; &nbsp; <font color='red'> if (s.startsWith("a")) </font> {<br> 
+&nbsp; &nbsp; &nbsp; // ...<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Replace 'startsWith()' with 'charAt()'.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class UCIS {<br>
+&nbsp; private void method(String s) {<br>
+&nbsp; &nbsp; <font color='blue'> if ('a' == s.charAt(0)) </font> {<br>
+&nbsp; &nbsp; &nbsp; // ...<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Dov Bulka, "Java Performance and Scalability Volume 1: Server-Side Programming
+Techniques"  Addison Wesley, ISBN: 0-201-70429-3</p>
+
+</body>
+</html>

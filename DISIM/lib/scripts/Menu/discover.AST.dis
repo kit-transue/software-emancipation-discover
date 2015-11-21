@@ -1,0 +1,167 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+global Client
+global env
+
+############################################################################
+# proc 		FindValidASTNodes
+# Description:	Find the next parent node with ast_offset!=0
+############################################################################
+proc FindValidASTNodes { sel } {
+	if {[size $sel]==0} {
+		msg -error "Error:  empty argument set."
+		return
+	}
+	if { [group exists FoundNodes] } {
+		group delete FoundNodes
+	}
+	group tmp FoundNodes
+	foreach ThisNode $sel {
+		while { [ast_offset $ThisNode] == 0 } {
+			set ThisNode [tree navigate <- $ThisNode]
+		}
+		group add FoundNodes $ThisNode
+	}
+	return [group get FoundNodes]
+}
+
+############################################################################
+# proc 		FindASTNodesOfEntitiesFromName
+# Description:	Find AST nodes of selected entities
+############################################################################
+proc FindASTNodesOfEntitiesFromName { sel } {
+	if { [size $sel] == 0 } {
+		msg -error "Error:  No Entities to find."
+		return
+	}
+	set AllFoundNodes [nil_set]
+	foreach ThisEntity $sel {
+		set ReferencingFiles [nil_set]
+		sappend $ReferencingFiles [where referenced $ThisEntity]
+		sappend $ReferencingFiles [where defined $ThisEntity]
+		set LastFileName "NoName"
+		foreach ThisFile [sort lname $ReferencingFiles] {
+			set ThisEntityName [name $ThisEntity]
+			set ThisFileName [lname $ThisFile]
+			set FoundNodes [tree find name=="$ThisEntityName" $ThisFileName]
+			sappend $AllFoundNodes $FoundNodes
+			if { "$LastFileName" != "$ThisFileName" && "$LastFileName" != "NoName" } {
+				src_unload $LastFileName
+				set LastFileName $ThisFileName
+			}
+		}
+		if { "$LastFileName" != "NoName" } {
+			src_unload $ThisFileName
+		}
+	}
+	return $AllFoundNodes
+}
+
+############################################################################
+# proc 		FindASTNodesFromTPMExpression
+# Description:	Find AST nodes in selection from TPM expression
+############################################################################
+proc FindASTNodesFromTPMExpression { sel } {
+	set SearchFiles [filter file $sel]
+	if { [size $SearchFiles] == 0 } {
+		msg -error "Error:  No file selected for search."
+		return
+	}
+	set AllFoundNodes [nil_set]
+	set TPMExpression [prompt -title "Enter TPM Search String"]
+	foreach ThisFile $SearchFiles {
+		src_load $ThisFile
+		set FoundNodes [tree find $TPMExpression $ThisFile]
+		sappend $AllFoundNodes  $FoundNodes
+		src_unload $ThisFile
+	}
+	return $AllFoundNodes
+}
+
+############################################################################
+# proc 		GetParentASTNodes
+# Description:	Find the next parent node
+############################################################################
+proc GetParentASTNodes { sel } {
+	set ThisNode [data node $sel]
+	if {[size $ThisNode]<1} {
+		msg -error "Error:  Function GetParentASTNodes only takes AST node arguments."
+		return
+	}
+	return [tree navigate <- $ThisNode]
+}
+
+############################################################################
+# proc 		GetChildASTNodes
+# Description:	Find the next parent node
+############################################################################
+proc GetChildASTNodes { sel } {
+	set ThisNode [data node $sel]
+	if {[size $ThisNode]!=1} {
+		msg -error "Error:  Function GetChildASTNodes only takes 1 AST node argument."
+		return
+	}
+	if {[group exists FoundNodes]} {
+		group delete FoundNodes
+	}
+	group tmp FoundNodes
+	set ThisNode [tree navigate -> $ThisNode]
+	while {[size $ThisNode]!=0} {
+		group add FoundNodes $ThisNode
+		set ThisNode [tree navigate , $ThisNode]
+	}
+	if {[group size FoundNodes]==0} {
+		msg -error "Node does not have any children."
+	}
+	return [group get FoundNodes]
+}
+
+###########################################################################
+# proc 		ShowASTTree
+# Description:	Displays the AST tree of from selected node and show in emacs
+############################################################################
+proc ShowASTTree { sel } {
+	global env
+	set ThisNode [data node $sel]
+	if { [size $ThisNode] != 1 } {
+		msg -error "Error:  Only select 1 AST node\n"
+		return
+	}
+	> $env(OutFile) { tree print [filter ast $ThisNode] }
+	exec emacs $env(OutFile) &
+}
+
+
+add_menu "$Client.AST"
+add_item "$Client.AST"		"Find Nodes In Files"	FindASTNodesFromTPMExpression		-optional
+add_item "$Client.AST"		"Find Nodes Of Symbols"	FindASTNodesOfEntitiesFromName		-optional
+add_item "$Client.AST"		"Force Nodes Valid"	FindValidASTNodes			-optional
+add_item "$Client.AST"		"Get Parent Node of"	GetParentASTNodes			-optional
+add_item "$Client.AST"		"Get Child Nodes of"	GetChildASTNodes			-optional
+add_item "$Client.AST"		"Show AST Tree"		ShowASTTree				-optional
+

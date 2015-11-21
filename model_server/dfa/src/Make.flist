@@ -1,0 +1,10 @@
+CXXROOTS=\
+    dfa.h \
+    dfa_build \
+    dfa_db \
+    dfa_smt \
+    dfa_find \
+    dfa_cli \
+    dfa_flow \
+    dfa_instance \
+    dfa_graph \

@@ -1,0 +1,8 @@
+#!/bin/sh -f
+
+rm -f $cm_workfile
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/$cm_afterput ] ; then
+  $cm_optscripts/$cm_afterput &
+fi
+exit 0

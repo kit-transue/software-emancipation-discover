@@ -1,0 +1,720 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+################################################################################
+#
+#
+#
+################################################################################
+
+
+#
+# Globals
+#
+global ASCII_BUF_SIZE
+set ASCII_BUF_SIZE 128
+
+################################################################################
+##
+## dis_DL_init gets called once, as DefectLink is being loaded
+## do not change this procedure's name. Called during DISCOVER startup
+##
+################################################################################
+
+proc dis_DL_init {} {
+    return [dis_DL_load_defect_info]
+}
+
+################################################################################
+##
+## Routine to create the Defects.attr file
+## Do not change this procedure's name. It gets called by discover -batch -defect_link
+##
+################################################################################
+
+proc _DL_populate_defects {} {
+
+    if {![discover_batch_mode]} {
+	puts "Error: DefectLink's defect populating feature can only be run during a model build."
+	return
+    }
+    
+    if {[get_pref_value "DL.use_ProblemTracking"]} {
+	_DL_populate_defects_with_PT 
+	return
+    }
+    
+    set input_file [get_pref_value "DL.input_file"]
+    if {$input_file == ""} {
+	puts "Error: Please specify the DefectLink input file in"
+	puts "       your preferences file. This should be the name"
+	puts "       of the file that associates bug IDs with file versions."
+	return
+    } else {
+	puts " "
+	puts "Reading from ${input_file}."
+    }
+
+    ## checkout Defects.attr file if needed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    # count number of files
+    set numFiles [dis_DL_lines $input_file]
+    puts "$numFiles files to examine."
+    
+    # foreach file {get region (file), get entities, set attribute of entities}
+    set dataFile [open $input_file r]
+    set finished_files {}
+    set bad_files {}
+    set fileCount 0
+    while {[gets $dataFile line_tmp] > 0} {
+	
+	# do backslash substitution
+	regsub -all {\\} $line_tmp "/" line
+	
+	set fileCount [expr $fileCount + 1]
+	if {[llength $line] > 3} {
+     	    set f1 [lindex $line 0]
+	    set f2 [lindex $line 1]
+	    set f3 [lindex $line 2]
+	    set defects [lrange $line 3 end]
+	    set ents    [nil_set]
+
+	    puts " "
+	    puts "Examining file $f2 ($fileCount of $numFiles)..."
+	    set result [dis_DL_get_defect_entities_from_data_file $f1 $f2 $f3 $ents]
+	    
+	    if {$result == -1} {
+		lappend bad_files $f1
+	    } else {
+		foreach id $defects {
+		    set_defect $id $ents
+		}
+	    }
+	    lappend finished_files $f2
+	} else {
+	    puts "Error: The format of line $fileCount of the file:"
+	    puts "       $input_file"
+	    puts "       is incorrect. Please ensure that it has the format:"
+	    puts " "
+	    puts "       file1 file2 file3 defect-id [defect-id ...]"
+	    puts " "
+	    puts "       where file1 is the filename of the current version"
+	    puts "       and file2 is the version of the file that fixed the defects"
+	    puts "       and file3 is the predecessor to file2."
+	}
+
+	if {[llength $finished_files] >= 10} {
+	    puts "Saving new defects."
+	    attribute save Defects
+	    set finished_files {}
+	}	
+    }
+
+    puts " "
+    puts "Saving new defects."
+    attribute save Defects
+    
+    set goodFiles [expr $numFiles - [llength $bad_files]]
+    puts "Successfully imported new defects from $goodFiles files (out of $numFiles total files)."
+    if {[llength $bad_files]} {
+	puts "The following files could not be read for defect information:"
+	foreach file $bad_files {
+	    puts "$file"
+	}
+    }
+    
+    ## check in  Defects.attr file if needed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    close $dataFile
+}
+
+################################################################################
+
+################################################################################
+#
+# Routine to load the defect info file
+#
+################################################################################
+
+proc dis_DL_load_defect_info {} {
+
+    global dis_DL_error_info
+    set dis_DL_error_info ""
+
+    ###################
+    ## Get Preferences:
+    ###################
+    set db_file [get_pref_value DL.defect_info_file]
+    if { $db_file == "" } {
+	set dis_DL_error_info "Please specify a defect information file for DefectLink\nin your preferences file. This should be the name of\nthe file extracted from your defect tracking system."
+	puts "Error: Please specify a defect information file for DefectLink"
+	puts "       in your preferences file. This should be the name of"
+	puts "       the file extracted from your defect tracking system."
+	return
+    }
+    set delim   [get_pref_value DL.defect_info_file_delim]
+    set quotes  [get_pref_value DL.defect_info_file_parse_quotes]
+    
+    # parse $delim to convert "\t" to <tab>
+    eval set delim $delim
+
+    # attribute locations
+    set id_col       [get_pref_value DL.defect_info_id_col]
+    set severity_col [get_pref_value DL.defect_info_severity_col]
+    set priority_col [get_pref_value DL.defect_info_priority_col]
+    set owner_col    [get_pref_value DL.defect_info_owner_col]
+    set assignee_col [get_pref_value DL.defect_info_assignee_col]
+    set close_col    [get_pref_value DL.defect_info_close_col]
+    set open_col     [get_pref_value DL.defect_info_open_col]
+    set status_col   [get_pref_value DL.defect_info_status_col]
+    set reported_col [get_pref_value DL.defect_info_reported_col]
+
+    # user_defined attributes
+    set uda [get_pref_value DL.defect_info_user_defined]
+
+    #######################################
+
+    set user_defined_atts {}
+    set $uda [split $uda]
+    foreach el $uda {
+	set index [string first ":" $el]
+	if {$index != -1} {
+	    set name [string range $el 0 [expr $index - 1]]
+	    set col [string range $el [expr $index + 1] end]
+	    catch {
+		if {int($col) == $col} {
+		    lappend user_defined_atts [list $name $col]
+		}
+	    }
+	}
+    }
+
+    catch {attribute temp string Defect_Severity}
+    catch {attribute temp string Defect_Priority}
+    catch {attribute temp string Defect_Owner}
+    catch {attribute temp string Defect_Assignee}
+    catch {attribute temp string Defect_Close_Date}
+    catch {attribute temp int    Defect_Close_Date_Integer}
+    catch {attribute temp string Defect_Open_Date}
+    catch {attribute temp int    Defect_Open_Date_Integer}
+    catch {attribute temp string Defect_Status}
+    catch {attribute temp string Defect_Entered_By}
+    catch {attribute temp int    Defect_Number_of_Entities}
+
+    foreach att $user_defined_atts {
+	catch {attribute temp string "Defect_[lindex $att 0]"}
+    }
+
+    if { [catch {set defect_file [open $db_file r] } ] } {
+	set dis_DL_error_info "Error: cannot open defect information file $db_file"
+	puts "Error: cannot open defect information file $db_file"
+	return
+    }
+
+    set line [gets $defect_file]
+    while {[string length $line]} {
+
+	## Parse line:
+	set line [dis_DL_parse_delimited_line $line $delim $quotes]
+
+	set id        [lindex $line $id_col]
+	set severity  [lindex $line $severity_col]
+	set priority  [lindex $line $priority_col]
+	set owner     [lindex $line $owner_col]
+	set assignee  [lindex $line $assignee_col]
+	set c_date    [lindex $line $close_col]
+	set o_date    [lindex $line $open_col]
+	set status    [lindex $line $status_col]
+	set entered_by [lindex $line $reported_col]
+
+	foreach att $user_defined_atts {
+	    set [lindex $att 0] [lindex $line [lindex $att 1]]
+	}
+
+	set defect [get_one_defect $id]
+	if {[size $defect]} {
+	    attribute set Defect_Severity $severity $defect
+	    attribute set Defect_Priority $priority $defect
+	    attribute set Defect_Owner $owner $defect
+	    attribute set Defect_Assignee $assignee $defect
+	    attribute set Defect_Entered_By $entered_by $defect
+	    attribute set Defect_Status $status $defect
+	    if {[string length $c_date] >= 4} {
+
+		set idx       [string first "/" $c_date]
+		set idx2      [string last "/" $c_date]
+		if {($idx != -1) && ($idx2 != -1) && ($idx != $idx2)} {
+		    set c_month   [string range $c_date 0 [expr $idx - 1]]
+		    set c_month   [dis_DL_convert_to_two_digits $c_month]
+		    set c_day     [string range $c_date [expr $idx + 1] [expr $idx2 - 1]]
+		    set c_day     [dis_DL_convert_to_two_digits $c_day]
+		    set c_year    [string range $c_date [expr $idx2 + 1] end]
+
+		    #handle Y2K issue
+		    if { $c_year <= 99 } {
+			if { $c_year < 50 } {
+			    set c_year [expr $c_year + 2000]
+			} else {
+			    set c_year [expr $c_year + 1900]
+			}
+		    }
+
+		    attribute set Defect_Close_Date "${c_month}/${c_day}/${c_year}" $defect
+		    attribute set Defect_Close_Date_Integer "${c_year}${c_month}${c_day}" $defect
+		}
+	    }
+
+	    if {[string length $o_date] >= 4} {
+		set idx       [string first "/" $o_date]
+		set idx2      [string last "/" $o_date]
+		if {($idx != -1) && ($idx2 != -1) && ($idx != $idx2)} {
+		    set o_month   [string range $o_date 0 [expr $idx - 1]]
+		    set o_month   [dis_DL_convert_to_two_digits $o_month]
+		    set o_day     [string range $o_date [expr $idx + 1] [expr $idx2 - 1]]
+		    set o_day     [dis_DL_convert_to_two_digits $o_day]
+		    set o_year    [string range $o_date [expr $idx2 + 1] end]
+		    #handle Y2K issue
+		    if { $o_year <= 99 } {
+			if { $o_year < 50 } {
+			    set o_year [expr $o_year + 2000]
+			} else {
+			    set o_year [expr $o_year + 1900]
+			}
+		    }
+		    attribute set Defect_Open_Date "${o_month}/${o_day}/${o_year}" $defect
+		    attribute set Defect_Open_Date_Integer "${o_year}${o_month}${o_day}" $defect
+		}
+	    }
+
+	    foreach att $user_defined_atts {
+		attribute set "Defect_[lindex $att 0]" [set [lindex $att 0]] $defect
+	    }
+
+	    attribute set Defect_Number_of_Entities [size [defect_get_entities $defect]] $defect
+	}
+
+	set line [gets $defect_file]	
+    }   
+    close $defect_file
+}
+
+################################################################################
+
+#
+# Routine to get defect entities from a triple-file set
+#
+proc dis_DL_get_defect_entities_from_data_file {f1 f2 f3 DL_out_set} {
+
+    global env
+
+    # create a tmp directory for defectlink
+    set tmpdir [tempnam]
+    file mkdir $tmpdir
+    if { ! [file isdirectory $tmpdir] } {
+	puts "Error: Failed to create temporary directory $tmpdir"
+	return -1
+    }
+
+    # make filenames absolute filenames
+    if { "[file pathtype $f1]" == "relative" } {
+	set f1 [file join [pwd] $f1]
+    }
+    if { "[file pathtype $f2]" == "relative" } {
+	set f2 [file join [pwd] $f2]
+    }
+    if { "[file pathtype $f3]" == "relative" } {
+	set f3 [file join [pwd] $f3]
+    }
+
+    # set filenames
+    set ofile $tmpdir/regions_file
+    set ffile $tmpdir/failed_files
+    set rfile $tmpdir/rejected_files
+
+    # remove from previous calls
+    if { [file exists $ofile] } {
+	file delete $ofile
+    }
+    if { [file exists $ffile] } {
+	file delete $ffile
+    }
+    if { [file exists $rfile] } {
+	file delete $rfile
+    }
+
+    # get regions
+    set regions_exe "$env(PSETHOME)/bin/dis_DL_get_regions.pl"
+    set disperl_exe "$env(PSETHOME)/bin/disperl"
+
+    puts "Finding differing regions."
+    if { [info exist env(OS)] && "$env(OS)" == "Windows_NT" } {
+	regsub -all {\\} $regions_exe "/" regions_exe_nt
+	regsub -all {\\} $disperl_exe "/" disperl_exe_nt
+	set st_reg [catch "exec $disperl_exe_nt $regions_exe_nt $f1 $f2 $f3 $ofile $ffile" out_reg ]
+    } else {   
+	set st_reg [catch "exec $disperl_exe $regions_exe $f1 $f2 $f3 $ofile $ffile" out_reg ]
+    }
+
+    if $st_reg {
+	puts "Error code $st_reg in exec $regions_exe $f1 $f2 $f3 $ofile $ffile"
+	puts "$out_reg"
+    }
+
+    if { ! [file exists $ofile] || [file size $ofile] == 0 } {
+	puts "Warning: No differences were found between file versions:"
+	puts "            $f1" 
+	puts "            $f2" 
+	puts "            $f3" 
+	puts "         Make sure that the files all exist and are readable."
+	return -1
+    }
+
+    dis_DL_process_all_files $ofile $rfile $DL_out_set
+    
+    return 0
+}
+
+################################################################################
+
+#
+# Routine to process all files
+#
+proc dis_DL_process_all_files { infile rejected_file DL_out_set } {
+    set f_inf [open $infile r]
+    set f_rej [open $rejected_file a]
+    set cur_file ""
+    set cnt_files 0
+    set cnt_regions 0
+    set cnt_rejected 0
+
+    while { [gets $f_inf line] >= 0 } {
+	incr cnt_regions
+	set ll [split $line ","]
+	set aa [lindex $ll [expr [llength $ll] - 1]]
+	set next_file  [lindex $ll 0]
+	if { [string compare $next_file $cur_file] } {
+	    if { $cur_file != "" } {
+		incr cnt_files
+		set res [dis_DL_get_file_entities $cur_file $cur_region_list $DL_out_set $cnt_files]
+
+		if { $res == -2 } { 
+		    incr cnt_rejected
+		    puts $f_rej $cur_file 
+		} 
+
+		set cur_file ""
+	    }
+	    if { [info exists cur_region_list] } {
+		unset cur_region_list
+	    }
+	}
+
+	lappend cur_region_list [list [lindex $ll 1] $aa]
+	set cur_file [lindex $ll 0]
+    }
+
+    # flush the last file
+    if { [string compare $cur_file ""] } {
+	set res [dis_DL_get_file_entities $cur_file $cur_region_list $DL_out_set $cnt_files]
+	incr cnt_files
+	
+	if { $res == -2 } { 
+	    puts $f_rej $cur_file 
+	    incr cnt_rejected
+	} 
+    }
+
+    close $f_inf
+    close $f_rej
+
+    if { [size $DL_out_set] > 0 } {
+	if { [size $DL_out_set] > 1 } {
+	    if { $cnt_regions > 1 } {
+		puts "Found [size $DL_out_set] entities from $cnt_regions regions."
+	    } else {
+		puts "Found [size $DL_out_set] entities from 1 region."
+	    }
+	} else {
+	    if { $cnt_regions > 1 } {
+		puts "Found 1 entity from $cnt_regions regions."
+	    } else {
+		puts "Found 1 entity from 1 region."
+	    }
+	}
+    }
+    
+    if { $cnt_rejected > 0 } {
+	puts "File rejected."
+    } 
+
+    return 0
+}
+
+################################################################################
+
+#
+# Routine to get the entities in a file
+#
+
+proc dis_DL_get_file_entities { cur_file reg_list DL_out_set cnt_files} {
+
+    # is file ascii?
+    if { ! [dis_DL_is_ascii_file $cur_file ] } { 
+	puts "Warning: Not an ASCII file."
+	return -2 
+    }
+
+    # is set empty?
+    if { [size [set_copy -ignore $cur_file ] ] == 0 } {
+	puts "Warning: Empty file."
+	return -2 
+    }
+
+    sappend $DL_out_set $cur_file
+    
+    set sym_set [defines -funct -struct -macro -var -typedef -union -enum $cur_file]
+    set sz [size $sym_set]
+    if { $sz == 0 } { 
+	puts "Warning: File defines no entities."
+	return -1
+    }
+    
+    set was_loaded [is_loaded $cur_file]
+    if { $was_loaded == 0 } {
+	src_load $cur_file
+    }
+
+    set first_st -1
+
+    foreach ii $reg_list {
+	set st [lindex $ii 0]
+	if { $first_st == -1 } { 
+	    set first_st $st 
+	}
+	set en [lindex $ii 1]
+	while { $st <= $en } {
+	    set $st 1
+	    incr st
+	}
+    }
+
+    set last_en $en
+
+    foreach el $sym_set {
+	set reg [src_lines $el]
+	set sym_st [lindex $reg 0]
+	set sym_en [lindex $reg 1]
+	if { $sym_en < $first_st || $sym_st > $last_en } {
+	    continue
+	}
+	while { $sym_st <= $sym_en } {
+	    if { [info exist $sym_st] } {
+		sappend $DL_out_set $el
+		break
+	    }
+	    incr sym_st
+	}
+    }
+
+    # unload files we loaded
+    if { $was_loaded == 0 } { 
+	src_unload $cur_file 
+    }
+
+    return 0
+}
+
+################################################################################
+
+#
+# Function to determine if file is an ascii file
+#
+proc dis_DL_is_ascii_file { f } {
+    global ASCII_BUF_SIZE
+    set res 0
+    if { [file exists $f] && [file readable $f] } {
+	set sz [file size $f]
+	if { $sz == 0 } { 
+	    return $res 
+	}
+	if { $sz > $ASCII_BUF_SIZE } { set sz $ASCII_BUF_SIZE }
+	set f_cur [open $f r]
+	set buf [read $f_cur $sz]
+	set res 1
+	for { set i 0 } { $i < $sz } { incr i } {
+	    scan [string index $buf $i] "%c" c
+	    if { 128 <= $c } {
+		set res 0
+		break
+	    }
+	}
+	close $f_cur
+    }
+    return $res
+}
+
+################################################################################
+
+#
+# Routine to determine the number of non-blank lines in a file
+#
+proc dis_DL_lines { fname } {
+    set lines 0
+    if { [file readable $fname] && ! [file size $fname] == "0" } {
+	set f_inf [open $fname r]
+	while { [gets $f_inf line] >= 0 } {
+	    regsub -all {^[ \t\r\n]*$} $line "" tmp
+	    if { "$tmp" != "" } {
+		incr lines
+	    }
+	}
+	close $f_inf
+    }
+    return $lines
+}
+
+################################################################################
+
+## dis_DL_parse_delimited_line EXAPMLES:
+## dis_DL_parse_delimited_line {adam,"bob","ca,rl"}  ',' 0  ==> { adam   \"bob\"   \"ca   rl\" }
+## dis_DL_parse_delimited_line {adam,"bob","ca,rl"}  ',' 1  ==> { adam   bob   ca,rl           }
+
+proc dis_DL_parse_delimited_line {str delim remove_quotes} {
+
+    if {! $remove_quotes} {
+	return [split $str $delim]
+    }
+
+    set s1 [split $str {"}]
+    set sz [llength $s1]
+    
+    # make sure it split into an odd number of parts
+    if { ($sz % 2) != 1} {
+	return {}
+    }
+
+    if {$sz == 1} {
+	return [split $str $delim]
+    }
+
+    set count 0
+    set s2 {}
+    foreach el $s1 {
+	if {$count % 2} {
+	    regsub -all "$delim" $el "\177" el2 
+	    lappend s2  $el2
+	} else {
+	    if {($el == {}) && ($count < ($sz-1))} {
+		set el {"}
+	    }
+	    lappend s2 $el
+	}
+	set count [expr $count + 1]
+    }
+    
+    set s3 [join $s2 {}]
+    set s4 [split $s3 "$delim"]
+    regsub -all "\177" $s4 "$delim" s5 
+
+    return $s5
+}
+
+#
+# Routine to make 1 digit numbers 2 digit numbers
+#
+proc dis_DL_convert_to_two_digits { num } {
+    if {[string length "$num"] == 0} {
+	return "00"
+    }
+    if {[string length "$num"] == 1} {
+	return "0$num"
+    }
+    return $num
+}
+
+################################################################################
+
+proc _DL_populate_defects_with_PT {} {
+    
+    if {![discover_batch_mode]} {
+	puts "Error: DefectLink's defect populating feature can only be run during a model build."
+	return
+    }
+
+    if { [ catch {source_dis dis_PT_main.tcl} ] } {
+	puts "Error: Could not load ProblemTracking."
+	return
+    }
+
+    set input_file [get_pref_value "DL.input_file"]
+    if {$input_file == ""} {
+	puts "Error: Please specify the DefectLink input file in your"
+	puts "       preferences file. This should be the name of the"
+	puts "       file that associates bug IDs with versions of files."
+	return
+    } else {
+	puts " "
+	puts "Reading from $input_file"
+    }
+
+    if {[catch {set dfile [open $input_file]}]} {
+	puts "Could not open file $input_file"
+	return
+    }
+    
+    set total_count 0
+    set valid_count 0
+    set line [gets $dfile]
+    while {[string length $line] > 0} {
+	set total_count [expr $total_count + 1]
+	set id [lindex [split $line] 0]
+	puts "ProblemTracking for Defect ID: $id "
+	global PT_out_set
+	set PT_out_set [new_set]
+	set stat_msg [dis_PT_driver $id $PT_out_set "" 0]
+	puts $stat_msg
+	set entities $PT_out_set
+	if {[size $entities] > 0} {
+	    set valid_count [expr $valid_count + 1]
+	    set_defect $id $entities
+	}
+	if {(($valid_count + 1) % 10) == 0} {
+	    inc valid_count
+	    puts "Saving new defects."
+	    attribute save Defects
+	}
+	gets $dfile line
+    }
+
+    puts "Saving new defects."
+    attribute save Defects
+    puts "Successfully added $valid_count defects out of $total_count attempted."
+
+    close $dfile
+}
+
+

@@ -1,0 +1,437 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+catch {
+	graph create -error realloc
+	graph add 1 0 -1 0 realloc
+}
+
+catch {
+	graph create -error acos
+	graph add 1 0 -1 0 acos
+}
+
+catch {
+	graph create -error asin
+	graph add 1 0 -1 0 asin
+}
+
+catch {
+	graph create -error atan
+	graph add 1 0 -1 0 atan
+}
+
+catch {
+	graph create -error atan2
+	graph add 1 0 -1 0 atan2
+	graph add 2 0 -1 0 atan2
+}
+
+catch {
+	graph create -error cos
+	graph add 1 0 -1 0 cos
+}
+
+catch {
+	graph create -error sin
+	graph add 1 0 -1 0 sin
+}
+
+catch {
+	graph create -error tan
+	graph add 1 0 -1 0 tan
+}
+
+catch {
+	graph create -error cosh
+	graph add 1 0 -1 0 cosh
+}
+
+catch {
+	graph create -error sinh
+	graph add 1 0 -1 0 sinh
+}
+
+catch {
+	graph create -error tanh
+	graph add 1 0 -1 0 tanh
+}
+
+catch {
+	graph create -error hypot
+	graph add 1 0 -1 0 hypot
+	graph add 2 0 -1 0 hypot
+}
+
+catch {
+	graph create -error exp
+	graph add 1 0 -1 0 exp
+}
+
+catch {
+	graph create -error frexp
+	graph add 1 0 -1 0 frexp
+	graph add 1 0 2 0 frexp
+}
+
+catch {
+	graph create -error ldexp
+	graph add 1 0 -1 0 ldexp
+	graph add 2 0 -1 0 ldexp
+}
+
+catch {
+	graph create -error log
+	graph add 1 0 -1 0 log
+}
+
+catch {
+	graph create -error log10
+	graph add 1 0 -1 0 log10
+}
+
+catch {
+	graph create -error modf
+	graph add 1 0 -1 0 modf
+	graph add 1 0 2 0 modf
+}
+
+catch {
+	graph create -error power
+	graph add 1 0 -1 0 power
+	graph add 2 0 -1 0 power
+}
+
+catch {
+	graph create -error sqrt
+	graph add 1 0 -1 0 sqrt
+}
+
+catch {
+	graph create -error ceil
+	graph add 1 0 -1 0 ceil
+}
+
+catch {
+	graph create -error fabs
+	graph add 1 0 -1 0 fabs
+}
+
+catch {
+	graph create -error floor
+	graph add 1 0 -1 0 floor
+}
+
+catch {
+	graph create -error fmod
+	graph add 1 0 -1 0 fmod
+	graph add 2 0 -1 0 fmod
+}
+
+catch {
+	graph create -error atof
+	graph add 1 1 -1 0 atof
+}
+
+catch {
+	graph create -error atoi
+	graph add 1 1 -1 0 atoi
+}
+
+catch {
+	graph create -error atol
+	graph add 1 1 -1 0 atol
+}
+
+catch {
+	graph create -error strtod
+	graph add 1 1 -1 0 strtod
+	graph add 1 0 2 1 strtod
+}
+
+catch {
+	graph create -error strtol
+	graph add 1 1 -1 0 strtol
+	graph add 1 0 2 1 strtol
+}
+
+catch {
+	graph create -error strtoul
+	graph add 1 1 -1 0 strtoul
+	graph add 1 0 2 1 strtoul
+}
+
+catch {
+	graph create -error abs
+	graph add 1 0 -1 0 abs
+}
+
+catch {
+	graph create -error div
+	graph add 1 0 -1 0 div
+	graph add 2 0 -1 0 div
+}
+
+catch {
+	graph create -error labs
+	graph add 1 0 -1 0 labs
+}
+
+catch {
+	graph create -error ldiv
+	graph add 1 0 -1 0 ldiv
+	graph add 2 0 -1 0 ldiv
+}
+
+catch {
+	graph create -error memcpy
+	graph add 2 1 1 1 memcpy
+	graph add 2 1 -1 1 memcpy
+	graph add 1 0 -1 0 memcpy
+}
+
+catch {
+	graph create -error memccpy
+	graph add 2 1 1 1 memccpy
+	graph add 2 1 -1 1 memccpy
+	graph add 1 0 -1 0 memccpy
+}
+
+catch {
+	graph create -error memmove
+	graph add 2 1 1 1 memmove
+	graph add 2 1 -1 1 memmove
+	graph add 1 0 -1 0 memmove
+}
+
+catch {
+	graph create -error strcpy
+	graph add 2 1 1 1 strcpy
+	graph add 2 1 -1 1 strcpy
+	graph add 1 0 -1 0 strcpy
+}
+
+catch {
+	graph create -error strncpy
+	graph add 2 1 1 1 strncpy
+	graph add 2 1 -1 1 strncpy
+	graph add 1 0 -1 0 strncpy
+}
+
+catch {
+	graph create -error strcat
+	graph add 1 1 -1 1 strcat
+	graph add 2 1 -1 1 strcat
+}
+
+catch {
+	graph create -error strncat
+	graph add 1 1 -1 1 strncat
+	graph add 2 1 -1 1 strncat
+}
+
+catch {
+	graph create -error strxfrm
+	graph add 2 1 1 1 strxfrm
+}
+
+catch {
+	graph create -error strtok
+	graph add 1 1 -1 1 strtok
+}
+
+catch {
+	graph create -error memchr
+	graph add 1 1 -1 1 memchr
+	graph add 2 0 -1 1 memchr
+}
+
+catch {
+	graph create -error memset
+	graph add 1 0 -1 0 memset
+}
+
+catch {
+	graph create -error strchr
+	graph add 1 1 -1 1 strchr
+	graph add 2 0 -1 1 strchr
+}
+
+catch {
+	graph create -error strpbrk
+	graph add 1 1 -1 1 strpbrk
+	graph add 2 1 -1 1 strpbrk
+}
+
+catch {
+	graph create -error strrchr
+	graph add 1 1 -1 1 strrchr
+	graph add 2 0 -1 1 strrchr
+}
+
+catch {
+	graph create -error strstr
+	graph add 1 1 -1 1 strstr
+	graph add 2 1 -1 1 strstr
+}
+
+catch {
+	graph create -error memset
+	graph add 2 0 1 1 memset
+}
+
+catch {
+	graph create -error strerror
+	graph add 1 0 -1 1 strerror
+}
+
+catch {
+	graph create -error difftime
+	graph add 1 0 -1 0 difftime
+	graph add 2 0 -1 0 difftime
+}
+
+catch {
+	graph create -error mktime
+	graph add 1 0 -1 0 mktime
+}
+
+catch {
+	graph create -error asctime
+	graph add 1 1 -1 1 asctime
+}
+
+catch {
+	graph create -error time
+	graph add 1 1 -1 1 time
+}
+
+catch {
+	graph create -error ctime
+	graph add 1 1 -1 1 ctime
+}
+
+catch {
+	graph create -error gmtime
+	graph add 1 1 -1 1 gmtime
+}
+
+catch {
+	graph create -error localtime
+	graph add 1 1 -1 1 localtime
+}
+
+catch {
+	graph create -error strftime
+	graph add 3 1 1 1 strftime
+	graph add 4 1 1 1 strftime
+}
+
+# In the functions below, the arguments higher than the highest specified
+# behave in the same way as the latter
+
+catch {
+	graph create -error fprintf
+	graph add 3 1 1 1 fprintf
+	graph add 3 0 1 1 fprintf
+}
+
+catch {
+	graph create -error fscanf
+	graph add 1 1 3 1 fscanf
+}
+
+catch {
+	graph create -error sprintf
+	graph add 3 1 1 1 sprintf
+	graph add 3 0 1 1 sprintf
+}
+
+catch {
+	graph create -error sscanf
+	graph add 1 1 3 1 sscanf
+}
+
+catch {
+	graph create -error vfprintf
+	graph add 3 0 1 1 vfprintf
+}
+
+catch {
+	graph create -error vsprintf
+	graph add 3 0 1 1 vsprintf
+}
+
+catch {
+	graph create -error fgets
+	graph add 3 1 1 1 fgets
+	graph add 3 1 -1 1 fgets
+}
+
+catch {
+	graph create -error fputs
+	graph add 1 1 2 1 fputs
+}
+
+catch {
+	graph create -error fgetc
+	graph add 1 1 -1 0 fgetc
+}
+
+catch {
+	graph create -error fputc
+	graph add 1 0 2 1 fputc
+	graph add 1 0 -1 0 fputc
+}
+
+catch {
+	graph create -error getc
+	graph add 1 1 -1 0 getc
+}
+
+catch {
+	graph create -error putc
+	graph add 1 1 2 1 putc
+}
+
+catch {
+	graph create -error ungetc
+	graph add 1 0 -1 0 ungetc
+	graph add 1 0 2 1 ungetc
+}
+
+catch {
+	graph create -error fread
+	graph add 4 1 1 1 fread
+}
+
+catch {
+	graph create -error fwrite
+	graph add 1 1 4 1 fwrite
+}
+
+return

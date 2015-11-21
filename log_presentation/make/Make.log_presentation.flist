@@ -1,0 +1,7 @@
+CROOTS=\
+
+CXXROOTS=\
+	filtersev \
+	logpresent \
+	msgreceiver \
+	msgsender

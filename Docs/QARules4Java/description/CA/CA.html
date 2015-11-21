@@ -1,0 +1,61 @@
+<html>
+<body>
+
+<p><b>CA - Complex Assignment</b></p>
+
+<p>Checks for the occurrence of multiple assignments and
+assignments to variables within the same expression.
+Too complex assignments should be avoided since they decrease program readability.
+</p>
+
+<p>If 'strict' option is <i>off</i>, assgnments of equal value to several variables
+in one operation is permited. For example the following statement
+would raise violation if 'strict' option is <i>on</i>, 
+otherwise there would be no violation:<br><br>
+<code>
+i = j = k = 0;<br>
+</code>
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+// compound assignment<br>
+<font color='red'>
+i *= j++;<br>
+k = j = 10;<br>
+l = j += 15;</font><br>
+// nested assignment<br>
+<font color='red'>
+i = j++ + 20;<br>
+i = (j = 25) + 30;</font>
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Break statement into several ones.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+// instead of i *= j++; <font color='blue'><br>
+j++;<br>
+i *= j</font><br>
+// instead of k = j = 10; <br><font color='blue'>
+k = 10;<br>
+j = 10;</font><br>
+// instead of l = j += 15;<br><font color='blue'>
+j += 15;<br>
+l = j;<br>
+</font>
+// instead of i = j++ + 20; <br><font color='blue'>
+i = j + 20; <br>
+j++; <br>
+</font>
+// instead of i = (j = 25) + 30; <br><font color='blue'>
+j = 25; <br>
+i = j + 30; </font>
+</code></p></nobr>
+
+</body>
+</html>

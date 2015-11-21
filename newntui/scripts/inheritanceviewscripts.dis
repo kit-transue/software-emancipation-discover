@@ -1,0 +1,443 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+set InheritanceEnableClassMembers "Show"
+set InheritanceEnableClassProperties "Show"
+set InheritanceEnablePublicMembers "Show"
+set InheritanceEnableProtectedMembers "Show"
+set InheritanceEnablePackageAccessMembers "Show"
+set InheritanceEnablePrivateMembers "Show"
+set InheritanceNameFormat "Short"
+set InheritanceSort  "Name"
+set InheritanceMerge "Divide"
+
+######################################################################################################
+# This procedures designed to re-reference client nodes
+######################################################################################################
+proc graph_copy_start {} {
+global InheritanceView
+global temp_list
+   set temp_list [nil_set]
+}
+
+proc graph_copy_element { index } {
+global InheritanceView
+global temp_list
+
+    set result ""
+    set sz [size $temp_list]
+    incr sz
+    append result $sz
+    sappend $temp_list $InheritanceView $index 
+	return $result
+}
+
+proc graph_copy_complete {} {
+global InheritanceView
+global temp_list
+set result ""
+    set InheritanceView [set_copy $temp_list]
+	return $result
+}
+
+######################################################################################################
+# This procedure designed to exchange options between client and server.
+######################################################################################################
+proc InheritanceProperties { method property value } {
+global InheritanceEnableClassMembers
+global InheritanceEnableClassProperties
+global InheritanceEnablePublicMembers
+global InheritanceEnableProtectedMembers
+global InheritanceEnablePackageAccessMembers
+global InheritanceEnablePrivateMembers
+global InheritanceNameFormat
+global InheritanceSort
+global InheritanceMerge
+
+     if {$method == "get"} {
+	   if { $property == "class_members" } {
+	       return $InheritanceEnableClassMembers
+	   }
+	   if { $property == "class_properties" } {
+	       return $InheritanceEnableClassProperties
+	   }
+	   if { $property == "public_members" } {
+	       return $InheritanceEnablePublicMembers
+	   }
+	   if { $property == "protected_members" } {
+	       return $InheritanceEnableProtectedMembers
+	   }
+	   if { $property == "package_access_members" } {
+	       return $InheritanceEnablePackageAccessMembers
+	   }
+	   if { $property == "private_members" } {
+	       return $InheritanceEnablePrivateMembers
+	   }
+	   if { $property == "nameformat" } {
+	       return $InheritanceNameFormat
+	   }
+	   if { $property == "sort" } {
+	       return $InheritanceSort
+	   }  
+	   if { $property == "merge" } {
+	       return $InheritanceMerge
+	   }
+	} 
+     if {$method == "set"} {
+	   if { $property == "class_members" } {
+	       set InheritanceEnableClassMembers $value
+	   }
+	   if { $property == "class_properties" } {
+	       set InheritanceEnableClassProperties $value
+	   }
+	   if { $property == "public_members" } {
+	       set InheritanceEnablePublicMembers $value
+	   }
+	   if { $property == "protected_members" } {
+	       set InheritanceEnableProtectedMembers $value
+	   }
+	   if { $property == "package_access_members" } {
+	       set InheritanceEnablePackageAccessMembers $value
+	   }
+	   if { $property == "private_members" } {
+	       set InheritanceEnablePrivateMembers $value
+	   }
+	   if { $property == "nameformat" } {
+	       set InheritanceNameFormat $value
+	   }
+	   if { $property == "sort" } {
+	       set InheritanceSort $value
+	   }  
+	   if { $property == "merge" } {
+	       set InheritanceMerge $value
+	   }
+	} 
+   
+}
+
+#####################################################################################
+# This function will be called from the function call tree view to place all selected
+# elements into the tree view global server array. It will be possible to call
+# "create_calltree_childs" function every time we need to expand call tree node.
+# This function will return "\n" separated 1-based set indexes of the newly 
+# inserted elements. It will remove all elements from the global server array
+# first.
+#####################################################################################
+proc set_inheritance_selection { selection } {
+global InheritanceView
+ 
+     set InheritanceView [nil_set] 
+     set result ""
+     foreach node $selection {
+	     set sz [size $InheritanceView]
+		 incr sz
+         append result $sz
+	     append result "\n"
+         sappend $InheritanceView $node
+     }
+     return $result
+}
+
+#####################################################################################
+# This function will be called from the function call tree view to create a list of
+# functions used by the function already in the global array "InheritanceView" referenced
+# by it's index. It will place all results into the same global array and will
+# return the "\n" separated string with the result indexes". All indexes are 1-based.
+#####################################################################################
+proc create_inheritance_children { parentID } {
+global InheritanceView
+  
+     set node [set_copy $InheritanceView $parentID]
+     set childs [get_sub_classes $node]
+     set result ""
+     foreach child $childs {
+	     set sz [size $InheritanceView]
+		 incr sz
+         append result $sz
+	     append result "\n"
+         sappend $InheritanceView $child
+     }
+     return $result
+}
+
+
+
+#####################################################################################
+# This function will be called from the function call tree view to create a list of
+# functions uses the function already in the global array "InheritanceView" referenced
+# by it's index. It will place all results into the same global array and will
+# return the "\n" separated string with the result indexes". All indexes are 1-based.
+#####################################################################################
+proc create_inheritance_parents { parentID } {
+global InheritanceView
+  
+     set childs [get_super_classes $InheritanceView $parentID]
+     set result ""
+     foreach child $childs {
+	     set sz [size $InheritanceView]
+		 incr sz
+         append result $sz
+	     append result "\n"
+         sappend $InheritanceView $child
+     }
+     return $result
+}
+
+
+######################################################################################
+# This script will return the amount of children for this node
+######################################################################################
+proc test_inheritance_parents { parentID } {
+global InheritanceView
+   set result [size [get_super_classes $InheritanceView $parentID]]
+   return $result
+}
+
+######################################################################################
+# This script will return the amount of children for this node
+######################################################################################
+proc test_inheritance_children { parentID } {
+global InheritanceView
+   set result [size [get_sub_classes $InheritanceView $parentID]]
+   return $result
+}
+
+
+#####################################################################################
+# This function will be called from the function call tree to find relations. Right
+# now it is the stub returning nothing because we have no additional relations
+# on this graph. This function will receve the node index and will return the
+# 4-digits tags separated by "\n" in the format 
+# <source node id> <source field id> <target node id> <target field id>
+#####################################################################################
+proc create_inheritance_relations { nodeID } {
+     set result "";
+	 return $result
+}
+
+
+#####################################################################################
+# This function will extract readable node name to show on the graph.
+#####################################################################################
+proc extract_inheritance_nodename { nodeID } {
+global InheritanceView
+
+   set result [name $InheritanceView $nodeID]
+   return $result
+}
+
+
+#####################################################################################
+# This function will return the node icon index
+#####################################################################################
+proc extract_inheritance_nodeimage { nodeID } {
+global InheritanceView
+
+   set result "0"
+   return $result
+}
+
+
+#####################################################################################
+# This function will create a node fields
+# Now works as stub because no fields available in the call tree view
+#####################################################################################
+proc create_inheritance_fields { nodeID } {
+global InheritanceView
+global InheritanceEnableClassMembers
+global InheritanceEnableClassProperties
+
+global InheritanceEnablePublicMembers
+global InheritanceEnableProtectedMembers
+global InheritanceEnablePackageAccessMembers
+global InheritanceEnablePrivateMembers
+global InheritanceSort
+
+     set result ""
+
+
+
+     if { $InheritanceEnableClassMembers == "Show" } {
+         set childs [get_member_functions $InheritanceView $nodeID]
+
+         set publ_mem [filter "public==1"       $childs]
+	     set prot_mem [filter "protected==1"    $childs]
+		 set priv_mem [filter "private==1"      $childs]
+		 set pack_mem [filter "package_prot==1" $childs]
+		 set others [filter "public==0 && protected==0 && private==0 && package_prot==0" $childs]
+		 set childs [nil_set]
+
+         
+		 ### fields filtration - only fields with defined acess will be shown
+		 if { $InheritanceEnablePublicMembers == "Show" } {
+		     sappend $childs $publ_mem 
+		 }
+		 if { $InheritanceEnableProtectedMembers == "Show" } {
+		     sappend $childs $prot_mem 
+		 }
+		 if { $InheritanceEnablePrivateMembers == "Show" } {
+		     sappend $childs $priv_mem 
+		 }
+		 if { $InheritanceEnablePackageAccessMembers == "Show" } {
+		     sappend $childs $pack_mem 
+		 }
+		 sappend $childs $others 
+          
+		 if { $InheritanceSort == "Name" } {
+		       set childs [sort name $childs]
+		 } 
+
+         foreach child $childs {
+	         set sz [size $InheritanceView]
+		     incr sz
+             append result $sz
+	         append result "\n"
+             sappend $InheritanceView $child
+         }
+	 }
+     if { $InheritanceEnableClassProperties == "Show" } {
+         set childs [get_member_data $InheritanceView $nodeID]
+
+         set publ_mem [filter "public==1"       $childs]
+	     set prot_mem [filter "protected==1"    $childs]
+		 set priv_mem [filter "private==1"      $childs]
+		 set pack_mem [filter "package_prot==1" $childs]
+		 set others [filter "public==0 && protected==0 && private==0 && package_prot==0" $childs]
+		 set childs [nil_set]
+
+         
+		 ### fields filtration - only fields with defined acess will be shown
+		 if { $InheritanceEnablePublicMembers == "Show" } {
+		     sappend $childs $publ_mem 
+		 }
+		 if { $InheritanceEnableProtectedMembers == "Show" } {
+		     sappend $childs $prot_mem 
+		 }
+		 if { $InheritanceEnablePrivateMembers == "Show" } {
+		     sappend $childs $priv_mem 
+		 }
+		 if { $InheritanceEnablePackageAccessMembers == "Show" } {
+		     sappend $childs $pack_mem 
+		 }
+		 sappend $childs $others 
+          
+		 if { $InheritanceSort == "Name" } {
+		       set childs [sort name $childs]
+		 } 
+         foreach child $childs {
+	         set sz [size $InheritanceView]
+		     incr sz
+             append result $sz
+	         append result "\n"
+             sappend $InheritanceView $child
+         }
+	 }
+     return $result
+}
+
+
+
+#####################################################################################
+# This function will extract readable node field name to show on the graph.
+# Now works as stub because no fields available in the call tree view
+#####################################################################################
+proc extract_inheritance_fieldname { fieldID } {
+global InheritanceView
+global InheritanceNameFormat
+   if { $InheritanceNameFormat == "Short" } {
+       set result [cname $InheritanceView $fieldID]
+   } else {
+       set result [name $InheritanceView $fieldID]
+   }
+   return $result
+}
+
+
+#####################################################################################
+# This function will return the node icon index
+# Now works as stub because no fields available in the call tree view
+#####################################################################################
+proc extract_inheritance_fieldimage { fieldID } {
+global InheritanceView
+
+   if { [virtual $InheritanceView $fieldID] == 0 } {
+       if { [kind $InheritanceView $fieldID] == "funct"} {
+           if { [public $InheritanceView $fieldID] == 1 } {
+               set result "0"
+	           return $result
+           }
+           if { [protected $InheritanceView $fieldID] == 1 } {
+               set result "1"
+	           return $result
+           }
+           if { [private $InheritanceView $fieldID] == 1 } {
+               set result "2"
+	           return $result
+           }
+           if { [package_prot $InheritanceView $fieldID] == 1 } {
+               set result "3"
+	           return $result
+           }
+		} else {
+           if { [public $InheritanceView $fieldID] == 1 } {
+               set result "4"
+	           return $result
+           }
+           if { [protected $InheritanceView $fieldID] == 1 } {
+               set result "5"
+	           return $result
+           }
+           if { [private $InheritanceView $fieldID] == 1 } {
+               set result "6"
+	           return $result
+           }
+           if { [package_prot $InheritanceView $fieldID] == 1 } {
+               set result "7"
+	           return $result
+           }
+	    }
+	} else {
+           if { [public $InheritanceView $fieldID] == 1 } {
+               set result "8"
+	           return $result
+           }
+           if { [protected $InheritanceView $fieldID] == 1 } {
+               set result "9"
+	           return $result
+           }
+           if { [private $InheritanceView $fieldID] == 1 } {
+               set result "10"
+	           return $result
+           }
+           if { [package_prot $InheritanceView $fieldID] == 1 } {
+               set result "11"
+	           return $result
+           }
+    }
+    set result "12"
+    return $result
+}

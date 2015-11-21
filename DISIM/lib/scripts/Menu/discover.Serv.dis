@@ -1,0 +1,333 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+global Client
+global env
+
+###########################################################################
+# proc 		MakeTempGroup
+# Description:	if named group exists, delete it then re-create it as temp
+############################################################################
+proc MakeTempGroup { GroupName } {
+        if {[group exists $GroupName]} {
+                group delete $GroupName
+        }
+        group tmp $GroupName
+	return
+}
+
+###########################################################################
+# proc 		ShowAttributes
+# Description:	Displays all attributes for a selected entity and shows in emacs
+############################################################################
+proc ShowAttributes { args } {
+	global env
+	if {[size $args]!=1} {
+		puts "Error:  Only select 1 entity, not [size $args]"
+		return
+	}
+	set OutFileName $env(HOME)/dislite/dislite_tmpfile.txt
+	set OutFile [open "$OutFileName" w+]
+	foreach ThisAttribute [lsort [info attributes]] {
+		if { $ThisAttribute == "group" || $ThisAttribute == "namespace" || $ThisAttribute == "catch" || $ThisAttribute == "file" || $ThisAttribute == "label" || $ThisAttribute == "error" || $ThisAttribute == "string" || $ThisAttribute == "package" || $ThisAttribute == "where" } {
+			continue				;# these cause errors
+		}
+		if { $ThisAttribute == "dll" || $ThisAttribute == "exe" || $ThisAttribute == "strange" || $ThisAttribute == "writable" } {
+			continue				;# these cause crashes
+		}
+		if { [string length $ThisAttribute] >=16 } {
+			puts $OutFile "$ThisAttribute	[$ThisAttribute $args]"
+		} elseif { [string length $ThisAttribute] >=8 } {
+			puts $OutFile "$ThisAttribute		[$ThisAttribute $args]"
+		} else {
+			puts $OutFile "$ThisAttribute			[$ThisAttribute $args]"
+		}
+	}
+	close $OutFile
+	exec emacs $OutFileName &
+	return
+}
+
+############################################################################
+# proc 		ShowCommands
+# Description:	Show all commands that DIScover can execute
+############################################################################
+proc ShowCommands {args} {
+	global env
+	set OutFileName $env(HOME)/dislite/dislite_tmpfile.txt
+	set OutFile [open "$OutFileName" w+]
+	foreach CommandName [lsort [info commands]] {
+		puts $OutFile "$CommandName"
+	}
+	close $OutFile
+	exec emacs $OutFileName &
+	return
+}
+
+############################################################################
+# proc 		ImpactAnalysisReport
+# Description:	Report entities, files, subsystems, ...etc. affected by change
+############################################################################
+proc ImpactAnalysisReport { args } {
+	global env
+	if {[size $args]==0} {
+		puts "Error No Args"
+		return
+	}
+
+	set OutFileName $env(HOME)/dislite/dislite_tmpfile.txt
+	set OutFile [open "$OutFileName" w+]
+
+#	MakeTempGroup DIS_TMP_GRP
+	MakeTempGroup DIS_TMP_GRP_SELECTED
+	MakeTempGroup DIS_TMP_GRP_MODIFIED
+	MakeTempGroup DIS_TMP_GRP_FILES_MODIFIED
+	MakeTempGroup DIS_TMP_GRP_AFFECTED
+	MakeTempGroup DIS_TMP_GRP_FILES_AFFECTED
+	MakeTempGroup DIS_TMP_GRP_DISCARDED
+	MakeTempGroup DIS_TMP_GRP_FILES_RECOMPILE
+
+	#----------------------------------------------------
+	# these things are external and don't have definitions
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_DISCARDED [filter stringl $args]
+	group add DIS_TMP_GRP_DISCARDED [filter constant $args]
+	group add DIS_TMP_GRP_DISCARDED [filter local $args]
+	
+	#----------------------------------------------------
+	# assume this means the line has changed, not necessarily the entity
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_DISCARDED [filter instance $args]
+	group add DIS_TMP_GRP_DISCARDED [filter ast $args]
+
+	#----------------------------------------------------
+	# initialize Modified group with ALL selected things
+	#----------------------------------------------------
+	group set DIS_TMP_GRP_SELECTED $args
+	group set DIS_TMP_GRP_MODIFIED $args
+	
+	#----------------------------------------------------
+	# resolve all instances to scope of instance
+	#----------------------------------------------------
+	foreach ThisInst [filter instance [group get DIS_TMP_GRP_DISCARDED]] {
+		group add DIS_TMP_GRP_MODIFIED [inst_scope $ThisInst]
+#		group subtract DIS_TMP_GRP_DISCARDED $ThisInst]
+	}
+	
+	#----------------------------------------------------
+	# files and projects are special exeptions too
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_DISCARDED [filter module $args]
+	group add DIS_TMP_GRP_DISCARDED [filter project $args]
+
+	#----------------------------------------------------
+	# adjust to contain only actual modified entities
+	#----------------------------------------------------
+	group subtract DIS_TMP_GRP_MODIFIED [group get DIS_TMP_GRP_DISCARDED]
+	
+	#----------------------------------------------------
+	# Modified files contain location of Modified entities
+	# and all files specifically selected
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_FILES_MODIFIED [where defined [group get DIS_TMP_GRP_MODIFIED]]
+	group add DIS_TMP_GRP_FILES_MODIFIED [filter module [group get DIS_TMP_GRP_DISCARDED]]
+		
+	#----------------------------------------------------
+	# Set Affected group to 'where used' for functions,
+	# variables, and macros
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_AFFECTED [where used [filter function [group get DIS_TMP_GRP_MODIFIED]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter variable [group get DIS_TMP_GRP_MODIFIED]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter macro [group get DIS_TMP_GRP_MODIFIED]]]
+
+	#----------------------------------------------------
+	# Set Affected group to 'where used' and trace through
+	# typedefs for structures/classes, enums, and typedefs
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_AFFECTED [where used [filter class [group get DIS_TMP_GRP_MODIFIED]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter enum [group get DIS_TMP_GRP_MODIFIED]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter typedef [group get DIS_TMP_GRP_MODIFIED]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter typedef [where used [filter class [group get DIS_TMP_GRP_MODIFIED]]]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter typedef [where used [filter enum [group get DIS_TMP_GRP_MODIFIED]]]]]
+	group add DIS_TMP_GRP_AFFECTED [where used [filter typedef [where used [filter typedef [group get DIS_TMP_GRP_MODIFIED]]]]]
+
+	#----------------------------------------------------
+	# Affected files contain location of Affected entities
+	# but do not contain files already listed in Modified Files
+	#----------------------------------------------------
+	group add DIS_TMP_GRP_FILES_AFFECTED [where defined [group get DIS_TMP_GRP_AFFECTED]]
+	group subtract DIS_TMP_GRP_FILES_AFFECTED [group get DIS_TMP_GRP_FILES_MODIFIED]
+
+	#----------------------------------------------------
+	# Find all files that will need to be re-compiled
+	#----------------------------------------------------
+	set LastSize 0
+	group set DIS_TMP_GRP_FILES_RECOMPILE [group get DIS_TMP_GRP_FILES_MODIFIED]
+	while {[group size DIS_TMP_GRP_FILES_RECOMPILE] != $LastSize} {
+		set LastSize [group size DIS_TMP_GRP_FILES_RECOMPILE]
+		group add DIS_TMP_GRP_FILES_RECOMPILE [where included [group get DIS_TMP_GRP_FILES_RECOMPILE]]
+	}
+
+	#----------------------------------------------------
+	# Print the report based on the accumulated information
+	#----------------------------------------------------
+	puts $OutFile "================================================="
+	puts $OutFile "    Impact Report on [group size DIS_TMP_GRP_SELECTED] Selected Items  "
+	puts $OutFile "================================================="
+	puts $OutFile "Author: $env(USER)"
+	puts $OutFile ""
+	puts $OutFile "Number of Modified Objects: [group size DIS_TMP_GRP_MODIFIED]"
+	puts $OutFile "Number of Modified Sources: [group size DIS_TMP_GRP_FILES_MODIFIED]"
+	puts $OutFile "Number of Affected Objects: [group size DIS_TMP_GRP_AFFECTED]"
+	puts $OutFile "Number of Affected Sources: [group size DIS_TMP_GRP_FILES_AFFECTED]"
+	puts $OutFile "Number of Files Needing Recompilation: [group size DIS_TMP_GRP_FILES_RECOMPILE]"
+
+	puts $OutFile ""
+	puts $OutFile "Modified Objects:"
+	puts $OutFile "-----------------"
+	foreach ThisEntity [sort kind [group get DIS_TMP_GRP_MODIFIED]] {
+		puts $OutFile "	[kind $ThisEntity]	[name $ThisEntity]"
+	}
+	puts $OutFile ""
+	puts $OutFile "Modified Sources:"
+	puts $OutFile "-----------------"
+	foreach ThisEntity [sort fname [group get DIS_TMP_GRP_FILES_MODIFIED]] {
+		puts $OutFile "	[fname $ThisEntity]"
+	}
+	puts $OutFile ""
+
+	puts $OutFile "Affected Objects:"
+	puts $OutFile "-----------------"
+	foreach ThisEntity [sort kind [group get DIS_TMP_GRP_AFFECTED]] {
+		puts $OutFile "	[kind $ThisEntity]	[name $ThisEntity]"
+	}
+	puts $OutFile ""
+	puts $OutFile "Affected Sources:"
+	puts $OutFile "-----------------"
+	foreach ThisEntity [sort fname [group get DIS_TMP_GRP_FILES_AFFECTED]] {
+		puts $OutFile "	[fname $ThisEntity]"
+	}
+	puts $OutFile ""
+	puts $OutFile "Files Needing Recompilation:"
+	puts $OutFile "-----------------"
+	foreach ThisEntity [sort fname [group get DIS_TMP_GRP_FILES_RECOMPILE]] {
+		puts $OutFile "	[fname $ThisEntity]"
+	}
+	
+	puts $OutFile ""
+	puts $OutFile "Sorted List of Modified Entities by File"
+	puts $OutFile "----------------------------------------"
+	set ThisFileName "NoFile"
+	foreach ThisEntity [sort fname [group get DIS_TMP_GRP_MODIFIED]] {
+		if {"[fname $ThisEntity]"!="$ThisFileName"} {
+			set ThisFileName [fname $ThisEntity]
+			if {"$ThisFileName"==""} {
+				puts $OutFile "Location: External"
+			} else {
+				puts $OutFile "Location: $ThisFileName"
+			}
+		}
+		puts $OutFile "	[kind $ThisEntity]	[name $ThisEntity]"
+	}
+
+	puts $OutFile ""
+	puts $OutFile "Sorted List of Affected Entities by File"
+	puts $OutFile "----------------------------------------"
+	set ThisFileName "NoFile"
+	foreach ThisEntity [sort fname [group get DIS_TMP_GRP_AFFECTED]] {
+		if {"[fname $ThisEntity]"!="$ThisFileName"} {
+			set ThisFileName [fname $ThisEntity]
+			if {"$ThisFileName"==""} {
+				puts $OutFile "Location: External"
+			} else {
+				puts $OutFile "Location: $ThisFileName"
+			}
+		}
+		puts $OutFile "	[kind $ThisEntity]	[name $ThisEntity]"
+	}
+	
+	close $OutFile
+	exec emacs $OutFileName &
+	
+	group delete DIS_TMP_GRP_SELECTED
+	group delete DIS_TMP_GRP_MODIFIED
+	group delete DIS_TMP_GRP_DISCARDED
+	group delete DIS_TMP_GRP_FILES_MODIFIED
+	return
+}
+
+############################################################################
+# proc 		dummy1
+# Description:	
+############################################################################
+proc dummy1 {args} {
+	MakeTempGroup DIS_TMP_GRP
+	set ThisSet ""
+	foreach ThisFile [modules /] {
+		group add DIS_TMP_GRP [modified_entities $ThisFile]
+	}
+	return [group get DIS_TMP_GRP]
+}
+
+############################################################################
+# proc 		dummy2
+# Description:	
+############################################################################
+proc dummy2 {args} {
+	if {[size $args]==0} {
+		puts "Error No Args"
+		return
+	}
+	return
+}
+
+############################################################################
+# proc 		dummy3
+# Description:	
+############################################################################
+proc dummy3 { args } {
+	if {[size $args]==0} {
+		puts "Error No Args"
+		return
+	}
+	return
+}
+
+############################################################################
+# proc 		dummy4
+# Description:	
+############################################################################
+proc dummy4 { args } {
+	if {[size $args]==0} {
+		puts "Error No Args"
+		return
+	}
+	return
+}
+
+puts "Source Complete"
+

@@ -1,0 +1,302 @@
+*psetPrefs.excludedDirectories:
+*psetPrefs.makefileDir:				.
+*psetPrefs.makePath:				C:\MSDEV\BIN\NMAKE.EXE
+*psetPrefs.rtlFileStat:				0
+*psetPrefs.steEditMode:				0
+*psetPrefs.PutTrackBugs:			0
+*psetPrefs.version:				1
+*psetPrefs.gdbPath:
+*psetPrefs.steSuffix:				.txt
+*psetPrefs.rshProjInvoker:
+
+*psetPrefs.configurator:
+*psetPrefs.configuratorLock:
+*psetPrefs.configuratorUnlock:
+*psetPrefs.configuratorPut:
+*psetPrefs.configuratorGet:
+*psetPrefs.configuratorDiff:
+*psetPrefs.configuratorCustomDirectory:
+*psetPrefs.configuratorSystem:
+*psetPrefs.configuratorOptionalScriptsDir:
+*psetPrefs.configuratorCreate:
+*psetPrefs.configuratorCopy: 
+*psetPrefs.configuratorDelete: 
+*psetPrefs.configuratorDoBackups:		1
+*psetPrefs.configuratorObsolete:
+*psetPrefs.configuratorPutLocks:		1
+*psetPrefs.configuratorFastPutMerge:		0
+*psetPrefs.configuratorGetWithComments:		0
+*psetPrefs.configuratorRemovePsets:		0
+*psetPrefs.configuratorStat:
+*psetPrefs.configuratorTerse:			0
+*psetPrefs.configuratorUnget:
+*psetPrefs.configuratorUseSoftLinks:		0
+*psetPrefs.configuratorUseLocks:		0
+
+#
+# This preference controls whether filename cases
+# will be flattened (BigFile.C-->bigfile.c)
+*psetPrefs.PreserveFilenameCase:			0
+
+
+
+
+*psetPrefs.getModel:				no
+*psetPrefs.putModel:				no
+
+*psetPrefs.pdfFileBuild:			%ADMINDIR%\pdf\build.pdf
+*psetPrefs.pdfFileUser:				%ADMINDIR%\pdf\user.pdf
+*psetPrefs.projectParallel:			no
+*psetPrefs.defaultPDF:				%ADMINDIR%\pdf\user.pdf
+
+
+*psetPrefs.doPassDependency:			yes
+*psetPrefs.doPassHeaders:			yes
+*psetPrefs.doPassSaveProj:			yes
+*psetPrefs.doPassSaveRoot:			yes
+
+
+
+*psetPrefs.acceptSyntaxErrors:			yes
+*psetPrefs.debugDiscoverExecPath:
+*psetPrefs.debugEnvSave:			no
+*psetPrefs.debugShowMakeRuleOutput:		yes
+*psetPrefs.executableTimer:
+*psetPrefs.logFileCreate:			yes
+*psetPrefs.logFileDir:				%ADMINDIR%\log
+*psetPrefs.logFileCompress:			no
+*psetPrefs.logFileUserDelete:			no
+*psetPrefs.logFileMonitor:			yes
+*psetPrefs.logFileNameFixed:			no
+*psetPrefs.logPrefValues:			no
+*psetPrefs.msgLogger:				yes
+*psetPrefs.nameCompany:				Software Emancipation Technology, Inc.
+*psetPrefs.nameDiscoverAdministrator:		"Tech Support, support@setech.com, 781-359-3400"
+
+*psetPrefs.cPlusDfltHdrSuffix:			.H
+*psetPrefs.cPlusDfltSrcSuffix:			.CPP
+*psetPrefs.cPlusCompiler:			CL
+*psetPrefs.cPlusFlags:				-w --old_for_init --no_wchar_t --microsoft_bugs --preinclude $PSETHOME/include/dis_nt.h
+*psetPrefs.cPlusSuffix:				.cpp .cxx .h .hpp .inl .CPP .CXX .H .HPP .INL
+*psetPrefs.cPlusHdrSuffix:			.h .hpp .inl .H .HPP .INL
+*psetPrefs.cPlusDefines:			-D__DISCOVER__ -D_DEBUG -D_MT -D_DLL _D_WINDLL -D_AFXDLL -D_AFX_PORTABLE -D_AFX_CORE_IMPL -D_AFX_OLE_IMPL -D_AFX_DB_IMPL -D_AFX_NET_IMPL -U__STDC__
+*psetPrefs.cPlusIncludes:			-IC:\MSDEV\MFC\SRC -IC:\MSDEV\MFC\INCLUDE -IC:\MSDEV\INCLUDE
+
+*psetPrefs.cDfltHdrSuffix:			.H
+*psetPrefs.cDfltSrcSuffix:			.C
+*psetPrefs.cCompiler:				CL
+*psetPrefs.cFlags:				-w --microsoft_bugs --preinclude $PSETHOME/include/dis_nt.h
+*psetPrefs.cSuffix:				.c .h .C .H
+*psetPrefs.cHdrSuffix:				.h .H
+*psetPrefs.cStyle:				0
+*psetPrefs.compilerIgnoreCase:			yes
+*psetPrefs.cIncludes:				-IC:\MSDEV\MFC\SRC -IC:\MSDEV\MFC\INCLUDE -IC:\MSDEV\INCLUDE
+*psetPrefs.cDefines:				-D__DISCOVER__ -D_DEBUG -D_MT -D_DLL -D_WINDLL -D_AFXDLL -D_AFX_PORTABLE -D_AFX_CORE_IMPL -D_AFX_OLE_IMPL -D_AFX_DB_IMPL -D_AFX_NET_IMPL -U__STDC__
+
+*psetPrefs.cEsqlPp:				proc
+*psetPrefs.cPlusEsqlPp:				proc
+*psetPrefs.cEsqlSuffix:				.csql
+*psetPrefs.cPlusEsqlSuffix:			.cpsql
+*psetPrefs.cEsqlArgs:				
+*psetPrefs.cPlusEsqlArgs:
+
+
+*psetPrefs.ELS.List:				java sql
+*psetPrefs.ELS.sql.Suffix:			.sql .spb .sps .ff .fp .fpp .sf .sp .spp
+*psetPrefs.ELS.sql.Flags:
+*psetPrefs.ELS.sql.FileIcon:			156
+*psetPrefs.ELS.java.Suffix:			.java .class .zip .jar .jproxy
+*psetPrefs.ELS.java.Flags:
+*psetPrefs.ELS.java.FileIcon:			158
+*psetPrefs.ELS.EDG:				yes
+*psetPrefs.ELS.nonAscii.Suffix:			.class .zip .jar .pkapl
+*psetPrefs.cPlusDisabled:
+*psetPrefs.cDisabled:
+
+*psetPrefs.DIS_build.PRJ_Backups: 
+
+
+*psetPrefs.DIS_msg.MsgLogFile:			%PSETHOME%\lib\messages.dat
+*psetPrefs.DIS_msg.UseMsgLogger:		0
+*psetPrefs.DIS_msg.LogErrorMessages:		1
+*psetPrefs.DIS_msg.LogWarningMessages:		1
+*psetPrefs.DIS_msg.LogInformativeMessages:	1
+*psetPrefs.DIS_msg.LogDiagnosticMessages:	1
+*psetPrefs.DIS_msg.LogDuringImport:		1
+*psetPrefs.DIS_msg.LogDuringCompile:		1
+*psetPrefs.DIS_msg.LogDuringPropagate:		1
+
+
+*psetPrefs.DIS_misc.ProblemTracking_enabled:
+*psetPrefs.DIS_misc.PT_custom_exe:
+*psetPrefs.DIS_misc.PT_versions_exe:
+
+*psetPrefs.DL.use_ProblemTracking:       0
+*psetPrefs.DL.input_file:                
+
+*psetPrefs.DL.defect_info_file:          
+*psetPrefs.DL.defect_info_file_delim:    ,
+*psetPrefs.DL.defect_info_file_parse_quotes: 1
+
+*psetPrefs.DL.defect_info_user_defined:  
+
+*psetPrefs.DL.defect_info_id_col:        0
+*psetPrefs.DL.defect_info_severity_col:  1
+*psetPrefs.DL.defect_info_priority_col:  2
+*psetPrefs.DL.defect_info_owner_col:     3
+*psetPrefs.DL.defect_info_assignee_col:  4
+*psetPrefs.DL.defect_info_close_col:     5
+*psetPrefs.DL.defect_info_open_col:      6
+*psetPrefs.DL.defect_info_status_col:    7
+*psetPrefs.DL.defect_info_reported_col:  8
+
+*psetPrefs.MaxClosureDepth: 			0
+
+*psetPrefs.DIS_model.MultiplePsets:		0
+*psetPrefs.DIS_model.SaveMetrics:		1
+*psetPrefs.DIS_model.GenerateY2KInfo:		2
+*psetPrefs.DIS_model.Strings_Enabled:		1
+*psetPrefs.DIS_model.LocalVars_Enabled:		1
+*psetPrefs.DIS_model.Instances_Enabled:		1
+*psetPrefs.DIS_model.Ast_Enabled:		1
+*psetPrefs.DIS_model.DoMergePass:		no
+*psetPrefs.DIS_model.PRJ_Separator: 		SPACE
+
+
+*psetPrefs.DIS_c.C_Parser:			%PSETHOME%\bin\c-parser
+*psetPrefs.DIS_c.CPreprocessor:			%PSETHOME%\bin\aset_cpp
+*psetPrefs.DIS_c.Cpp_Logfile:
+*psetPrefs.DIS_cp.Cp_Parser:			%PSETHOME%\bin\cp-parser
+
+*psetPrefs.DIS_env.Home:			%HOMEPATH%
+*psetPrefs.DIS_env.Host:			%COMPUTERNAME%
+*psetPrefs.DIS_env.Printer:
+*psetPrefs.DIS_env.UserLoginName:		%USERNAME%
+*psetPrefs.DIS_env.UserRealName:
+
+*psetPrefs.EnvVarChars:
+
+*psetPrefs.DIS_editor.EditorPath:
+*psetPrefs.DIS_graphics.Symbols_DataFile:	%PSETHOME%\lib\symbols.dat
+
+*psetPrefs.DIS_viewer.Menus_DataFile:		%PSETHOME%\lib\pset_server.menus
+*psetPrefs.DIS_viewer.PopupMenus_DataFile:	%PSETHOME%\lib\pset_server.pmenus
+*psetPrefs.DIS_viewer.QuickHelp_DataFile:	%PSETHOME%\lib\pset_server.qhelp
+
+*psetPrefs.after-class-decl:
+*psetPrefs.after-class-def:
+*psetPrefs.after-func-decl:
+*psetPrefs.after-func-def:
+*psetPrefs.after-member-decl:
+*psetPrefs.after-member-def:
+*psetPrefs.after-struct:
+*psetPrefs.before-class-decl:
+*psetPrefs.before-class-def:
+*psetPrefs.before-func-decl:
+*psetPrefs.before-func-def:
+*psetPrefs.before-member-decl:
+*psetPrefs.before-member-def:
+*psetPrefs.before-struct:
+*psetPrefs.buttonbarCalltree: 
+*psetPrefs.buttonbarClass: 
+*psetPrefs.buttonbarDatachart: 
+*psetPrefs.buttonbarERD: 
+*psetPrefs.buttonbarSMT: 
+*psetPrefs.buttonbarSSBrowser: 
+*psetPrefs.buttonbarSSMap: 
+*psetPrefs.buttonbarSTE: 
+*psetPrefs.buttonbarVisible: 
+*psetPrefs.c-hdr-file-bottom:
+*psetPrefs.c-hdr-file-top:
+*psetPrefs.c-src-file-bottom:
+*psetPrefs.c-src-file-top:
+
+
+*psetPrefs.cpp-hdr-file-bottom:
+*psetPrefs.cpp-hdr-file-top:
+*psetPrefs.cpp-src-file-bottom:
+*psetPrefs.cpp-src-file-top:
+
+*psetPrefs.func-final:
+*psetPrefs.func-init:
+
+*psetPrefs.installRoot:				%PSETHOME%
+*psetPrefs.makefileTargets:			clean
+
+*psetPrefs.member-def-final:
+*psetPrefs.member-def-init:
+
+*psetPrefs.miniBrowserHistory:			15
+*psetPrefs.miniBrowserTitles: 1
+
+*psetPrefs.paraDocCommandLine:			%PSETHOME%\bin\wordserver.exe
+*psetPrefs.paraDocName:				Word
+*psetPrefs.priv-decl:
+*psetPrefs.prot-decl:
+*psetPrefs.pub-decl:
+
+*psetPrefs.relation-src-definition:
+*psetPrefs.relation-src-header:
+*psetPrefs.relation-src-member:
+*psetPrefs.relation-trg-definition:
+*psetPrefs.relation-trg-header:
+*psetPrefs.relation-trg-member:
+*psetPrefs.subsys_setting_file:			%PSETHOME%\lib\subsysPrefs.default
+
+
+
+# useful environment variables
+*psetPrefs.ADMINDIR:				%PSETHOME%\prebuilt\template
+*psetPrefs.sharedSrcRoot:			%ADMINDIR%\shared
+*psetPrefs.sharedModelRoot:			%ADMINDIR%\model
+*psetPrefs.privateSrcRoot:			%ADMINDIR%\private
+*psetPrefs.privateModelRoot:			%ADMINDIR%\model
+
+
+*psetPrefs.doPassProj:				yes
+*psetPrefs.projectList:				/example/inc /example/src
+*psetPrefs.projectListHeaders:			/example/inc
+*psetPrefs.projectListDependency:
+*psetPrefs.projectHome:				/example/src
+
+
+# builds DFA information if you have a license.
+*psetPrefs.doBuildDFA: 			no
+
+# should the parser stop on errors
+*psetPrefs.forgive: 0
+
+*psetPrefs.Simplify.Verbose: 		0
+*psetPrefs.Simplify.PrintScreen:	0
+*psetPrefs.Simplify.NoComments:		0
+*psetPrefs.Simplify.NoSubstitutions:	0
+*psetPrefs.Simplify.UseShortSubNames:	0
+*psetPrefs.Simplify.VerifyExclusionsCmd:
+*psetPrefs.Simplify.LogFile:
+
+
+
+*psetPrefs.SubmissionCheck.Enabled: 0
+*psetPrefs.SubmissionCheck.SourceList:
+*psetPrefs.SubmissionCheck.Procedures:
+*psetPrefs.SubmissionCheck.Enforce: 1
+*psetPrefs.SubmissionCheck.Filter:
+*psetPrefs.SubmissionCheck.AnalyzeChanges: 1
+*psetPrefs.SubmissionCheck.MailExecPath:
+*psetPrefs.SubmissionCheck.CheckinLog:
+*psetPrefs.SubmissionCheck.Libraries:
+*psetPrefs.SubmissionCheck.Policy:
+*psetPrefs.QACockpit.BaseLibrary: $PSETHOME/lib/baselib.sc
+*psetPrefs.QACockpit.AttributeFilter: 0
+
+*psetPrefs.branch_list: checkedout main
+
+# The following value, if set, gives the directory (no trailing "/")
+# in which "diff" files for TPM-based change propagation should be
+# created; set it if the default location (the directory containing
+# the file's ".pset" file) is not writable or otherwise unsuitable.
+
+*psetPrefs.TPM.diffFileRoot:
+
+#Preference for path to store/restore groups
+*psetPrefs.groupsPath:

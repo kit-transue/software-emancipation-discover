@@ -1,0 +1,7 @@
+ProjectThree : $sharedSrcRoot/src <-> /three
+{
+
+  *.c
+
+}
+

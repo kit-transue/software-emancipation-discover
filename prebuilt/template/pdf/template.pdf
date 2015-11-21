@@ -1,0 +1,25 @@
+#
+# This is a DISCOVER pdf template
+#
+
+example	: %sharedSrcRoot% <-> /example
+{
+
+# -- include files subproject
+	inc	: INCLUDE <-> include {
+		*.H
+	}
+
+# -- source files subproject
+	src	: SRC <-> source {
+		*.CXX
+	}
+
+}
+
+__rule001 : / <-> /__rule001
+{
+	"" : %sharedSrcRoot%\(**).pmod\%\.pmoddir	=> %ADMINDIR%\model\pmod\(1).pmod
+	"" : %sharedSrcRoot%\(**)\(*)\%\.pset 		=> %ADMINDIR%\model\pset\(1)\(2).pset
+	.  : %sharedSrcRoot%\(**)\(*).CXX\%\.make	=> "echo CL (2).obj"
+}

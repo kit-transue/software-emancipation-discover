@@ -1,0 +1,227 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+#
+# Procedures used to control the attribute viewer
+#
+
+source_dis require.dis
+require workflow_aux.dis
+
+#
+# Initialize default attributes:
+#
+set Status_attr_initialized 0
+ 
+proc dis__attr_initialize {} {
+    global Status_attr_initialized
+
+    if { $Status_attr_initialized == 0 } {
+	set Status_attr_initialized 1
+	if { [attribute exists Status] } {
+	    set dummy "Do nothing"
+	} else {
+	    if { [ extfile enabled attribute ] } {
+		attribute enum Status { NotChecked CheckedOK CheckedFixed CheckedNotGood }
+	    }
+	}
+    }
+}
+
+#
+# Manipulate attributes:
+#
+
+proc dis__attr_create_group { cb_data all_items sel_items } {
+    if { [size $sel_items] != 0 } {
+	set group_name [prompt -title "Group" "New group name:"]
+	if { $group_name == "" } { return }
+	group tmp $group_name $sel_items
+#	smgr -refresh
+    } else {
+	msg warning_sev "nothing is selected"
+    }
+}
+
+proc dis__attribute_change_callback { type values data } {
+    #global dis_attribute_edit_sel
+    global dis_attr_window
+
+    set dis_attribute_edit_sel [ getsym GLOBAL_ATTVIEW_SYMS ]
+
+    if { $type == "cancel" } { 
+	#no more attribute window
+	unset dis_attr_window
+	return 1 
+    }
+    if { [size $dis_attribute_edit_sel] != 0 } {
+	foreach pair $values {
+	    set att [lindex $pair 0]
+	    set val [lindex $pair 1]
+	    attribute set $att $val $dis_attribute_edit_sel
+	}
+	mini_refresh 1 
+    }
+    # in notify mode 1 - means advance to next field
+    return 1 
+}
+
+proc dis__attribute_display { sel } {
+    #global dis_attribute_edit_sel
+
+    set dis_attribute_edit_sel $sel
+    setsym GLOBAL_ATTVIEW_SYMS $dis_attribute_edit_sel
+
+    if { [size $sel] != 0 } {
+        set first [ set_copy $sel 1 ]
+        if { [ proj $first ] != "1" } {
+	  open_view $first
+	  emacs_command "(di-delete-selections)"
+	  emacs_command "(di-highlight-word)"
+        }
+    }
+    if { [mini_window_alive] == 0 } {
+	# window could be closed by any other query; here is the check for that case
+	return 
+    }
+    if { [size $sel] != 0 } {
+	set fill_data ""
+	set attrs [dis_list_attributes]
+	foreach at $attrs {
+	    set att_data $at
+	    lappend att_data [$at $sel]
+	    lappend fill_data $att_data
+	}
+	mini_fill $fill_data
+    }
+}
+
+proc dis__attribute_edit_box { item } {
+    global dis_attr_window
+
+    set attrs [dis_list_attributes]
+    set layout ""
+    foreach at $attrs {
+	set row_def $at
+	set def_val [apply $at $item]
+	if { $def_val == "{}" } { set def_val "" }
+	lappend row_def $def_val
+	set at_type [lindex [dis_list_attributes $at] 0]
+	if { $at_type == "string" } { lappend row_def text }
+	if { $at_type == "int" } { lappend row_def text }
+	if { $at_type == "enum" } { 
+	    lappend row_def enum 
+	    set enum_values [lindex [dis_list_attributes $at] 1]
+	    foreach val $enum_values {
+		lappend row_def $val
+	    }
+	}
+	lappend layout $row_def
+    }
+    set dis_attr_window [mini_create $layout dis__attribute_change_callback {} -notify]
+}
+
+proc dis__edit_attribute { cb_data all_items sel_items } {
+    #global dis_attribute_edit_sel
+
+    set dis_attribute_edit_sel $sel_items
+    setsym GLOBAL_ATTVIEW_SYMS $dis_attribute_edit_sel
+
+    if { [size $sel_items] != 0 } {
+	set item [set_copy $sel_items 1]
+	dis__attribute_edit_box $item
+    }
+}
+
+proc dis_list_attributes { args } {
+
+  if { [ llength $args ] > 0 } {
+
+    set attrs [ eval attribute info $args ]
+
+  } else {
+
+    set attrs [ attribute info ]
+
+    global dis_attr_hide_list
+
+    if { [ info exists dis_attr_hide_list ] } {
+      set list ""
+      foreach attr $attrs {
+        if { [ lsearch -exact $dis_attr_hide_list $attr ] == -1 } {
+          lappend list $attr
+        }
+      }
+      set attrs $list
+    }
+  }
+
+  return $attrs
+}
+
+if { [ info commands set_mini ] != "" } {
+
+proc vcr { src args } {
+  dis__attr_initialize
+  set cmd "set_mini -popup -vcr \
+           -click dis__attribute_display \
+           -button A dis__edit_attribute 0 \
+           -button G dis__attr_create_group 0"
+
+  foreach arg $args {
+    lappend cmd $arg
+  }
+
+  set syms [ set_copy -ignore $src ]
+  append cmd " $syms"
+
+  eval $cmd
+}
+
+proc instance_view { sel } {
+    dis__attr_initialize
+    set inst [viewable_instances $sel]
+    sappend $inst [filter ast $sel]
+    set title "Instances of: "
+    if { [size $sel] <= 1 } {
+        append title [name $sel]
+    } else {
+        append title [name $sel]
+        append title ", ..."
+    }
+    set_mini -popup -vcr -title $title -click dis__attribute_display -button \
+      "A" dis__edit_attribute "0" -button "G" dis__attr_create_group "0" $inst
+}
+ 
+proc instance_view_title { title sel } {
+  dis__attr_initialize
+  set inst [viewable_instances $sel]
+  set_mini -popup -title $title -vcr -click dis__attribute_display -button \
+    "A" dis__edit_attribute "0" -button "G" dis__attr_create_group "0" $inst
+}
+ 
+}

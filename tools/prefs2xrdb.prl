@@ -1,0 +1,60 @@
+#! /usr/local/bin/perl
+# prefs2xrdb.prl: convert prefs file to sections required in C program
+# to write defaults
+# Dec 14 1995, Kit Transue
+
+# Reads standard input; writes standard out
+# Assumes the setting in the preference should be the default
+# Reads the file excludePrefs for values it should not modify
+
+# need to do some work for multi-line preferences
+
+# load the list of items not to work with:
+if (open(SKIP, "excludePrefs")) {
+	while ($key = <SKIP>) {
+		chop $key;
+		$skip{$key} = "yes";
+	}
+}
+else { printf (STDERR "couldn't open excludePrefs; skipping\n"); };
+
+# read the input:
+
+while (<STDIN>) {
+	if (/^\*psetPrefs\./) {
+		$key = $_;
+		$value = $_;
+		$key =~ s/^\*psetPrefs\.([^:]*):.*/$1/ ;
+		chop ($key);
+		$value =~ s/^\*psetPrefs\.[^:]*:[ 	]*(.*)/$1/ ;
+		# escape all quotes or backslashes:
+		$value =~ s/([\\"])/\\$1/g;
+		chop ($value);
+		if (!defined $skip{$key}) {
+			$xrdb{$key} = $value;
+		}
+	}
+}
+
+# then output the sections in alphabetical order:
+
+foreach $key (sort (keys %xrdb)) {
+	printf ("static genString admin_%s(\"%s\");\n", $key, $xrdb{$key});
+}
+
+print "\n";
+
+foreach $key (sort (keys %xrdb)) {
+	($K = substr ($key, 0, 1)) =~ tr/a-z/A-Z/;
+	$Key = $K . substr ($key, 1);
+	printf ("    admin_%s = get_string(\n", $key);
+	printf ("        \"%s\", \"%s\", project);\n", $key, $Key);
+}
+
+print "\n";
+
+foreach $key (sort (keys %xrdb)) {
+	printf ("    put_string(\n");
+	printf ("        \"%s\", (char*)admin_%s, project)\n", $key, $key);
+}
+

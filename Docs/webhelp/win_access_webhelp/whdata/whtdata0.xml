@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<tocdata>
+<book name="Welcome to Access" url="ciee_access_01_welcome/welcome_to_access.htm#TOC_Welcome_to_Access" >
+  <item name="About This Online Help" url="ciee_access_01_welcome/about_this_online_help.htm#TOC_About_This_Online_Help" />
+  <item name="Related Documentation" url="ciee_access_01_welcome/related_documentation.htm#TOC_Related_Documentation" />
+  <item name="Typographical Conventions" url="ciee_access_01_welcome/typographical_conventions.htm#TOC_Typographical_Conventions" />
+  <item name="Roles" url="ciee_access_01_welcome/roles.htm#TOC_Roles" />
+  <item name="Assumptions" url="ciee_access_01_welcome/assumptions.htm#TOC_Assumptions" />
+  <item name="Getting Help" url="ciee_access_01_welcome/getting_help.htm#TOC_Getting_Help" />
+  <item name="Professional Services" url="ciee_access_01_welcome/professional_services.htm#TOC_Professional_Services" />
+  <item name="Documentation Feedback" url="ciee_access_01_welcome/documentation_feedback.htm#TOC_Documentation_Feedback" />
+  <item name="Where To Go From Here" url="ciee_access_01_welcome/where_to_go_from_here.htm#TOC_Where_To_Go_From_Here" />
+</book>
+<book name="Understanding Access" url="ciee_access_02_introduction/understanding_access.htm#TOC_Understanding_Access" >
+  <item name="About Access" url="ciee_access_02_introduction/about_access.htm#TOC_About_Access" />
+  <item name="Applications of Access" url="ciee_access_02_introduction/applications_of_access.htm#TOC_Applications_of_Access" />
+  <book name="Samples of Access Programming" url="ciee_access_02_introduction/samples_of_access_programming.htm#TOC_Samples_of_Access" >
+    <item name="Lines of Code in a Model" url="ciee_access_02_introduction/lines_of_code_in_a_model.htm#TOC_Lines_of_Code_in_a_Model" />
+    <item name="Include File Naming Conventions" url="ciee_access_02_introduction/include_file_naming_conventions.htm#TOC_Include_File_Naming" />
+    <item name="Static Functions Declared in Header Files" url="ciee_access_02_introduction/static_functions_declared_in_header_files.htm#TOC_Static_Functions" />
+  </book>
+</book>
+<book name="Getting Started With Access" url="ciee_access_03_starting/getting_started_with_access.htm#TOC_Getting_Started_With" >
+  <book name="Interactive Access Sessions on UNIX" url="ciee_access_03_starting/interactive_access_sessions_on_unix.htm#TOC_Interactive_Access" >
+    <item name="Using Access in a Viewer" url="ciee_access_03_starting/using_access_in_a_viewer.htm#TOC_Using_Access_in_a_Viewer" />
+    <item name="Starting Access Mode" url="ciee_access_03_starting/starting_access_mode.htm#TOC_Starting_Access_Mode" />
+    <item name="Interpreting the Access Buffer" url="ciee_access_03_starting/interpreting_the_access_buffer.htm#TOC_Interpreting_the_Access" />
+    <item name="Autoloading Access Commands" url="ciee_access_03_starting/autoloading_access_commands.htm#TOC_Autoloading_Access" />
+  </book>
+  <book name="Access from the UNIX Command Line" url="ciee_access_03_starting/access_from_the_unix_command_line.htm#TOC_Access_from_the_UNIX" >
+    <item name="Connecting to a model_server Using dish2" url="ciee_access_03_starting/connecting_to_a_model_server_using_dish2.htm#TOC_Connecting_to_a_model" />
+  </book>
+  <book name="User Interface Customization on UNIX" url="ciee_access_03_starting/user_interface_customization_on_unix.htm#TOC_User_Interface" >
+    <item name="Browser Menu Creation Commands" url="ciee_access_03_starting/browser_menu_creation_commands.htm#TOC_Browser_Menu_Creation" />
+    <item name="Menu Creation Example" url="ciee_access_03_starting/menu_creation_example.htm#TOC_Menu_Creation_Example" />
+    <item name="Interface Commands" url="ciee_access_03_starting/interface_commands.htm#TOC_Interface_Commands" />
+  </book>
+  <book name="Interactive Access Sessions on Windows" url="ciee_access_03_starting/interactive_access_sessions_on_windows.htm#TOC_Interactive_Access1" >
+    <item name="Autoloading Access Commands" url="ciee_access_03_starting/autoloading_access_commands1.htm#TOC_Autoloading_Access1" />
+  </book>
+  <book name="Access Menu" url="ciee_access_03_starting/access_menu.htm#TOC_Access_Menu" >
+    <item name="Open DISH" url="ciee_access_03_starting/open_dish.htm#TOC_Open_DISH" />
+    <item name="Utilities" url="ciee_access_03_starting/utilities.htm#TOC_Utilities" />
+    <item name="Action" url="ciee_access_03_starting/action.htm#TOC_Action" />
+    <item name="Convert" url="ciee_access_03_starting/convert.htm#TOC_Convert" />
+    <item name="AST" url="ciee_access_03_starting/ast.htm#TOC_AST" />
+    <item name="TPM" url="ciee_access_03_starting/tpm.htm#TOC_TPM" />
+    <item name="Category" url="ciee_access_03_starting/category.htm#TOC_Category" />
+    <item name="Query" url="ciee_access_03_starting/query.htm#TOC_Query" />
+    <item name="Filter" url="ciee_access_03_starting/filter.htm#TOC_Filter" />
+    <item name="Project" url="ciee_access_03_starting/project.htm#TOC_Project" />
+    <item name="Report" url="ciee_access_03_starting/report.htm#TOC_Report" />
+  </book>
+</book>
+<book name="Access Fundamentals" url="ciee_access_04_fundamentals/access_fundamentals.htm#TOC_Access_Fundamentals" >
+  <book name="Data Types" url="ciee_access_04_fundamentals/data_types.htm#TOC_Data_Types" >
+    <item name="Symbols" url="ciee_access_04_fundamentals/symbols.htm#TOC_Symbols" />
+    <item name="Instances" url="ciee_access_04_fundamentals/instances.htm#TOC_Instances" />
+    <item name="AST Nodes" url="ciee_access_04_fundamentals/ast_nodes.htm#TOC_AST_Nodes" />
+    <item name="Data Cells" url="ciee_access_04_fundamentals/data_cells.htm#TOC_Data_Cells" />
+    <item name="Data Type Conversions" url="ciee_access_04_fundamentals/data_type_conversions.htm#TOC_Data_Type_Conversions" />
+  </book>
+  <book name="Attributes and Attribute Expressions" url="ciee_access_04_fundamentals/attributes_and_attribute_expressions.htm#TOC_Attributes_and_Attribute" >
+    <item name="Simple Attribute Expressions: Attributes" url="ciee_access_04_fundamentals/simple_attribute_expressions_attributes.htm#TOC_Simple_Attribute" />
+    <item name="Attribute Functions" url="ciee_access_04_fundamentals/attribute_functions.htm#TOC_Attribute_Functions" />
+    <item name="Useful Attributes" url="ciee_access_04_fundamentals/useful_attributes.htm#TOC_Useful_Attributes" />
+    <item name="Metric Attributes" url="ciee_access_04_fundamentals/metric_attributes.htm#TOC_Metric_Attributes" />
+    <item name="Compound Attribute Expressions" url="ciee_access_04_fundamentals/compound_attribute_expressions.htm#TOC_Compound_Attribute" />
+    <item name="Shortcuts" url="ciee_access_04_fundamentals/shortcuts.htm#TOC_Shortcuts" />
+    <item name="Tcl Variables" url="ciee_access_04_fundamentals/tcl_variables.htm#TOC_Tcl_Variables" />
+  </book>
+  <book name="Sets" url="ciee_access_04_fundamentals/sets.htm#TOC_Sets" >
+    <item name="Set Creation" url="ciee_access_04_fundamentals/set_creation.htm#TOC_Set_Creation" />
+    <item name="Set Semantics" url="ciee_access_04_fundamentals/set_semantics.htm#TOC_Set_Semantics" />
+    <item name="Iteration" url="ciee_access_04_fundamentals/iteration.htm#TOC_Iteration" />
+    <item name="About the Print Procedure" url="ciee_access_04_fundamentals/about_the_print_procedure.htm#TOC_About_the_Print_Procedure" />
+  </book>
+  <book name="Procedures" url="ciee_access_04_fundamentals/procedures.htm#TOC_Procedures" >
+    <item name="Project Structure, or Browse Mode Queries" url="ciee_access_04_fundamentals/project_structure,_or_browse_mode_queries.htm#TOC_Project_Structure_or" />
+    <book name="Entity and Relationship Queries" url="ciee_access_04_fundamentals/entity_and_relationship_queries.htm#TOC_Entity_and_Relationship" >
+      <item name="Command where and Its Subcommands" url="ciee_access_04_fundamentals/command_where_and_its_subcommands.htm#TOC_Command_where_and_Its" />
+      <item name="Other Commands" url="ciee_access_04_fundamentals/other_commands.htm#TOC_Other_Commands" />
+    </book>
+  </book>
+  <book name="Access Specific Commands" url="ciee_access_04_fundamentals/access_specific_commands.htm#TOC_Access_Specific_Commands" >
+    <item name="Set Operations" url="ciee_access_04_fundamentals/set_operations.htm#TOC_Set_Operations" />
+    <item name="Miscellaneous Commands" url="ciee_access_04_fundamentals/miscellaneous_commands.htm#TOC_Miscellaneous_Commands" />
+  </book>
+  <book name="Groups" url="ciee_access_04_fundamentals/groups.htm#TOC_Groups" >
+    <item name="Group Commands" url="ciee_access_04_fundamentals/group_commands.htm#TOC_Group_Commands" />
+    <item name="Group Subcommands" url="ciee_access_04_fundamentals/group_subcommands.htm#TOC_Group_Subcommands" />
+    <item name="Importing and Exporting Groups" url="ciee_access_04_fundamentals/importing_and_exporting_groups.htm#TOC_Importing_and_Exporting" />
+  </book>
+  <item name="Closure" url="ciee_access_04_fundamentals/closure.htm#TOC_Closure" />
+</book>
+<book name="Tree Pattern Matching" url="ciee_access_05_tree_pattern_matching/tree_pattern_matching.htm#TOC_Tree_Pattern_Matching" >
+  <item name="Abstract Syntax Trees" url="ciee_access_05_tree_pattern_matching/abstract_syntax_trees.htm#TOC_Abstract_Syntax_Trees" />
+  <book name="AST Nodes" url="ciee_access_05_tree_pattern_matching/ast_nodes1.htm#TOC_AST_Nodes1" >
+    <item name="Converting Entities" url="ciee_access_05_tree_pattern_matching/converting_entities.htm#TOC_Converting_Entities" />
+    <item name="Automatic Conversions" url="ciee_access_05_tree_pattern_matching/automatic_conversions.htm#TOC_Automatic_Conversions" />
+  </book>
+  <item name="Displaying the AST" url="ciee_access_05_tree_pattern_matching/displaying_the_ast.htm#TOC_Displaying_the_AST" />
+  <book name="Attributes of AST Nodes" url="ciee_access_05_tree_pattern_matching/attributes_of_ast_nodes.htm#TOC_Attributes_of_AST_Nodes" >
+    <item name="Accessing Symbol Attributes" url="ciee_access_05_tree_pattern_matching/accessing_symbol_attributes.htm#TOC_Accessing_Symbol" />
+  </book>
+  <item name="Tree Subcommands" url="ciee_access_05_tree_pattern_matching/tree_subcommands.htm#TOC_Tree_Subcommands" />
+  <book name="Navigation in Attribute Expressions" url="ciee_access_05_tree_pattern_matching/navigation_in_attribute_expressions.htm#TOC_Navigation_in_Attribute" >
+    <item name="Tree Navigation" url="ciee_access_05_tree_pattern_matching/tree_navigation.htm#TOC_Tree_Navigation" />
+  </book>
+  <item name="Find and Search Attribute Functions" url="ciee_access_05_tree_pattern_matching/find_and_search_attribute_functions.htm#TOC_Find_and_Search" />
+  <item name="Attribute Iterators" url="ciee_access_05_tree_pattern_matching/attribute_iterators.htm#TOC_Attribute_Iterators" />
+  <item name="Variable Capture in Attribute Expressions" url="ciee_access_05_tree_pattern_matching/variable_capture_in_attribute_expressions.htm#TOC_Variable_Capture_in" />
+  <item name="Attribute Expression Actions" url="ciee_access_05_tree_pattern_matching/attribute_expression_actions.htm#TOC_Attribute_Expression" />
+  <book name="Writing Efficient TPM Expressions" url="ciee_access_05_tree_pattern_matching/writing_efficient_tpm_expressions.htm#TOC_Writing_Efficient_TPM" >
+    <item name="Optimize the Scope of Your Searches" url="ciee_access_05_tree_pattern_matching/optimize_the_scope_of_your_searches.htm#TOC_Optimize_the_Scope_of" />
+    <item name="Manage the ASTs in Memory" url="ciee_access_05_tree_pattern_matching/manage_the_asts_in_memory.htm#TOC_Manage_the_ASTs_in_Memory" />
+    <item name="Simple Examples" url="ciee_access_05_tree_pattern_matching/simple_examples.htm#TOC_Simple_Examples" />
+    <item name="Advanced Applications" url="ciee_access_05_tree_pattern_matching/advanced_applications.htm#TOC_Advanced_Applications" />
+  </book>
+</book>
+<book name="Change Propagation" url="ciee_access_06_propogation/change_propagation.htm#TOC_Change_Propagation" >
+  <item name="Event Sequence" url="ciee_access_06_propogation/event_sequence.htm#TOC_Event_Sequence" />
+  <item name="Diff Initialization and Finalization" url="ciee_access_06_propogation/diff_initialization_and_finalization.htm#TOC_Diff_Initialization_and" />
+  <item name="Making Changes" url="ciee_access_06_propogation/making_changes.htm#TOC_Making_Changes" />
+  <book name="Applying Diffs" url="ciee_access_06_propogation/applying_diffs.htm#TOC_Applying_Diffs" >
+    <item name="Viewing Diff Files" url="ciee_access_06_propogation/viewing_diff_files.htm#TOC_Viewing_Diff_Files" />
+    <item name="Resolving Conflicts" url="ciee_access_06_propogation/resolving_conflicts.htm#TOC_Resolving_Conflicts" />
+  </book>
+  <item name="diff_tpm_all" url="ciee_access_06_propogation/diff_tpm_all.htm#TOC_diff_tpm_all" />
+</book>
+<book name="Source Mode Queries" url="ciee_access_07_queries/source_mode_queries.htm#TOC_Source_Mode_Queries" >
+  <item name="SMT Structure" url="ciee_access_07_queries/smt_structure.htm#TOC_SMT_Structure" />
+  <item name="Obtaining an SMT Node" url="ciee_access_07_queries/obtaining_an_smt_node.htm#TOC_Obtaining_an_SMT_Node" />
+  <item name="SMT Navigation" url="ciee_access_07_queries/smt_navigation.htm#TOC_SMT_Navigation" />
+  <item name="SMT Attributes" url="ciee_access_07_queries/smt_attributes.htm#TOC_SMT_Attributes" />
+  <item name="Printing the SMT Example" url="ciee_access_07_queries/printing_the_smt_example.htm#TOC_Printing_the_SMT_Example" />
+  <book name="SMT/CP Operations" url="ciee_access_07_queries/smt_cp_operations.htm#TOC_SMT_CP_Operations" >
+    <item name="SMT Change Commands" url="ciee_access_07_queries/smt_change_commands.htm#TOC_SMT_Change_Commands" />
+    <item name="Auxiliary Commands" url="ciee_access_07_queries/auxiliary_commands.htm#TOC_Auxiliary_Commands" />
+  </book>
+</book>
+<book name="Access Commands" url="ciee_access_appa_commands/access_commands.htm#TOC_Access_Commands" >
+  <book name="Project Commands" url="ciee_access_appa_commands/project_commands.htm#TOC_Project_Commands" >
+    <item name="Query Commands" url="ciee_access_appa_commands/query_commands.htm#TOC_Query_Commands" />
+    <item name="Set Operation Commands" url="ciee_access_appa_commands/set_operation_commands.htm#TOC_Set_Operation_Commands" />
+    <item name="Group Operation Commands" url="ciee_access_appa_commands/group_operation_commands.htm#TOC_Group_Operation_Commands" />
+    <item name="Auxiliary Commands" url="ciee_access_appa_commands/auxiliary_commands1.htm#TOC_Auxiliary_Commands1" />
+    <item name="Kind Attributes" url="ciee_access_appa_commands/kind_attributes.htm#TOC_Kind_Attributes" />
+    <item name="Integer Attributes" url="ciee_access_appa_commands/integer_attributes.htm#TOC_Integer_Attributes" />
+    <item name="Boolean Attributes" url="ciee_access_appa_commands/boolean_attributes.htm#TOC_Boolean_Attributes" />
+    <item name="String Attributes" url="ciee_access_appa_commands/string_attributes.htm#TOC_String_Attributes" />
+    <item name="Metric Attributes" url="ciee_access_appa_commands/metric_attributes1.htm#TOC_Metric_Attributes1" />
+    <item name="Applying Attributes" url="ciee_access_appa_commands/applying_attributes.htm#TOC_Applying_Attributes" />
+  </book>
+  <book name="Attribute Expressions" url="ciee_access_appa_commands/attribute_expressions.htm#TOC_Attribute_Expressions" >
+    <item name="C Function Attribute Expressions" url="ciee_access_appa_commands/c_function_attribute_expressions.htm#TOC_C_Function_Attribute" />
+    <item name="Miscellaneous Commands and Expressions" url="ciee_access_appa_commands/miscellaneous_commands_and_expressions.htm#TOC_Miscellaneous_Commands1" />
+    <item name="Interface Commands" url="ciee_access_appa_commands/interface_commands1.htm#TOC_Interface_Commands1" />
+  </book>
+</book>
+<book name="Attribute Expression Grammar" url="ciee_access_appb_grammar/attribute_expression_grammar.htm#TOC_Attribute_Expression1" >
+  <book name="Typographical Conventions for Backus-Naur Form" url="ciee_access_appb_grammar/typographical_conventions_for_backus-naur_form.htm#TOC_Typographical" >
+    <item name="TPM Expression Syntax" url="ciee_access_appb_grammar/tpm_expression_syntax.htm#TOC_TPM_Expression_Syntax" />
+    <item name="TPM Expression Variables" url="ciee_access_appb_grammar/tpm_expression_variables.htm#TOC_TPM_Expression_Variables" />
+  </book>
+</book>
+<book name="AST_node Attributes" url="ciee_access_appc_attributes/ast_node_attributes.htm#TOC_AST_node_Attributes" >
+  <item name="AST_node Attribute Codes" url="ciee_access_appc_attributes/ast_node_attribute_codes.htm#TOC_AST_node_Attribute_Codes" />
+  <item name="Samples for C++, Java, and SQL" url="ciee_access_appc_attributes/samples_for_c++,_java,_and_sql.htm#TOC_Samples_for_C_Java_and" />
+</book>
+<book name="Access Quick Reference" url="ciee_access_appd_quickref.fm/access_quick_reference.htm#TOC_Access_Quick_Reference" >
+  <item name="Invoking Access" url="ciee_access_appd_quickref.fm/invoking_access.htm#TOC_Invoking_Access" />
+  <item name="Access Menu Commands" url="ciee_access_appd_quickref.fm/access_menu_commands.htm#TOC_Access_Menu_Commands" />
+  <item name="Access-Specific Commands" url="ciee_access_appd_quickref.fm/access-specific_commands.htm#TOC_Access_Specific_Commands1" />
+  <item name="Attribute Expression Navigation" url="ciee_access_appd_quickref.fm/attribute_expression_navigation.htm#TOC_Attribute_Expression2" />
+  <item name="Boolean Attributes" url="ciee_access_appd_quickref.fm/boolean_attributes1.htm#TOC_Boolean_Attributes1" />
+  <item name="Group Operation Commands" url="ciee_access_appd_quickref.fm/group_operation_commands1.htm#TOC_Group_Operation_Commands1" />
+  <item name="Interface Commands" url="ciee_access_appd_quickref.fm/interface_commands2.htm#TOC_Interface_Commands2" />
+  <item name="Project Structure Queries" url="ciee_access_appd_quickref.fm/project_structure_queries.htm#TOC_Project_Structure_Queries" />
+  <item name="Set Operations" url="ciee_access_appd_quickref.fm/set_operations1.htm#TOC_Set_Operations1" />
+  <item name="String Attributes" url="ciee_access_appd_quickref.fm/string_attributes1.htm#TOC_String_Attributes1" />
+  <item name="Tree Subcommands" url="ciee_access_appd_quickref.fm/tree_subcommands1.htm#TOC_Tree_Subcommands1" />
+  <item name="Miscellaneous Commands" url="ciee_access_appd_quickref.fm/miscellaneous_commands1.htm#TOC_Miscellaneous_Commands2" />
+</book>
+
+</tocdata>

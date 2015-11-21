@@ -1,0 +1,9 @@
+CPROOTS=\
+	ui_cm_oper\
+	ui_cm_get\
+	ui_cm_unget\
+	ui_cm_put\
+	ui_cm_lock\
+	ui_cm_unlock\
+	
+CROOTS=\

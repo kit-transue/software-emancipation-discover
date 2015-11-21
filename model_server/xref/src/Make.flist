@@ -1,0 +1,29 @@
+CROOTS=\
+
+CXXROOTS=\
+    symbolScope.h \
+    Link.h \
+    SharedXref.h \
+    Xref \
+    Xref.h \
+    XrefTable.h \
+    Xref_util \
+    checklinks \
+    checkpmod \
+    ddKind.h \
+    ddKind_readable_names \
+    linkType_selector \
+    linkTypes.h \
+    link_type_converter.h \
+    print_pmod \
+    remove_modules \
+    sortlinks \
+    symHeaderInfo.h \
+    symInd.h \
+    symbolArr.h \
+    symbolPtr.h \
+    symbolSet.h \
+    xrefSymbol.h \
+    ddSymbol.h \
+    XrefQuery \
+    

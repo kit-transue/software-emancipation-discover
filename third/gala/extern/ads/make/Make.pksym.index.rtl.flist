@@ -1,0 +1,10 @@
+CPROOTS=\
+	listitem \
+	parray \
+	pstack \
+	argParam \
+	argPrmAssign \
+	cstring \
+	indFSet
+
+CROOTS=\

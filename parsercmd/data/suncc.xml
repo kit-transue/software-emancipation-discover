@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- To verify these defaults, use cc -### filename. -->
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>Sun cc</compilername>
+C
+    --no_microsoft
+    -D__DISCOVER__
+    --c
+    -D__SunOS_%1%
+    -D__SUNPRO_C=0x500
+    -D__SVR4
+    -D__unix
+    -D__sun
+    -D__sparc
+    -D__BUILTIN_VA_ARG_INCR
+    -D__PRAGMA_REDEFINE_EXTNAME
+    -Dunix
+    -Dsun
+    -Dsparc
+    -D__RESTRICT
+    --no_warnings
+    --allow_error_directive
+    -D__STDC__=0
+    -D__builtin_va_alist=(*(char*)0)
+<translate>
+  <option name="D" immarg="1" separg="1">-D%</option><!-- Associate name with token as if by #define -->
+  <option name="E" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to stdout -->
+  <option name="I" immarg="1" separg="1">-I%</option><!-- Add <dir> to preprocessor #include file search path -->
+  <option name="P" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to .i  file -->
+  <option name="U" immarg="1">-U%</option>          <!-- Delete initial definition of preprocessor symbol <name> -->
+  <option name="v" noarg="1"></option>              <!-- Do stricter semantic checking -->
+  <option name="w" noarg="1"></option>              <!-- Suppress compiler warning messages -->
+  <option name="Xa" noarg="1"></option>             <!-- Compile assuming ANSI C conformance, allow K & R extensions (default mode) -->
+  <option name="Xc" noarg="1">--strict</option>     <!-- Compile assuming strict ANSI C conformance -->
+  <option name="Xs" noarg="1">--old_c</option>      <!-- Compile assuming (pre-ANSI) K & R C style code -->
+  <option name="Xt" noarg="1">--old_c</option>      <!-- Compile assuming K & R conformance, allow ANSI C -->
+  <option name="xCC" noarg="1"></option>            <!-- Accept C++ style comments -->
+  <option name="xsfpconst" noarg="1"></option>      <!-- Represent unsuffixed floating point constants as single precision -->
+  <option name="YI" immarg="1"></option>            <!-- Change default directory searched for include files -->
+
+  <option name="h" separg="1"></option>             <!-- Assign <name> to generated dynamic shared library -->
+  <option name="o" separg="1"></option>             <!-- Set name of output file to <outputfile> -->
+</translate>
+<switch when="!(&quot;%0%&quot;==&quot;&quot;)">
+    -I%0%/include/cc
+</switch>
+</cmdline>

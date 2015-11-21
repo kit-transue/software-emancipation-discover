@@ -1,0 +1,36 @@
+<html>
+<body>
+
+<p><b>IIMBU - Imported Items Must Be Used</b></p>
+
+<p>It is not legal to import a class or an interface and never use it. This
+rule checks classes and interfaces that are explicitly imported with their
+names - that is not with import of a complete package, using an asterisk.
+If unused class and interface imports are omitted, the amount of meaningless
+source code is reduced - thus the amount of code to be understood by a reader
+is minimized.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+import java.awt.*;<br>
+import java.util.Dictionary;<br>
+import java.util.Hashtable;<br>
+<font color='red'>import java.util.Stack; </font><br>
+import java.util.Vector;<br>
+class IIMBU {<br>
+&nbsp; &nbsp; Dictionary dict;<br>
+&nbsp; &nbsp; void func (Vector vec) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; Hashtable ht;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Delete unnecessary imports.
+</p>
+
+
+</body>
+</html>

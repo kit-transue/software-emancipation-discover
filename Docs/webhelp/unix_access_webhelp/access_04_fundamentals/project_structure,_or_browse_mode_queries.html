@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Project Structure, or Browse Mode Queries</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 4.0px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 11.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Project Structure, or Browse Mode Queries</b></p>
+<p class="p2">A simple introduction to Access procedures is the <span class="s1"><b>roots</b></span> command. <span class="s1"><b>roots</b></span> takes no arguments, and returns a list of top-level modules. This is the same information displayed when you start DIScover:</p>
+<p class="p3"><b>roots</b></p>
+<p class="p4">1 (proj) /xip_private</p>
+<p class="p4">2 (proj) /ttt_private</p>
+<p class="p4">3 (proj) /package_private</p>
+<p class="p4">4 (proj) /xip_shared</p>
+<p class="p4">5 (proj) /ttt_shared</p>
+<p class="p4">6 (proj) /package_shared</p>
+<p class="p4">7 (proj) /sysinclude</p>
+<p class="p2">You can query the structure beneath a project using the <span class="s1"><b>subprojects</b></span> command. Subprojects takes an argument: the parent project whose members you want to see:</p>
+<p class="p3"><b>subprojects /ttt_shared</b></p>
+<p class="p4">1 (proj) /ttt_shared/FrameDocs</p>
+<p class="p4">2 (proj) /ttt_shared/Relations</p>
+<p class="p4">3 (proj) /ttt_shared/Subsystems</p>
+<p class="p4">4 (proj) /ttt_shared/bin</p>
+<p class="p4">5 (proj) /ttt_shared/doc</p>
+<p class="p4">6 (proj) /ttt_shared/include</p>
+<p class="p4">7 (proj) /ttt_shared/src</p>
+<p class="p2">Note that in this command, a string (<span class="s1">"/ttt_shared"</span>) was passed that was converted into a project by the subprojects command. Alternatively, the array index could have been used:</p>
+<p class="p4">subprojects [roots] 5</p>
+<p class="p2">Or in an interactive session, if the last command run was <span class="s1"><b>roots</b></span>, then you can use the shortcut of specifying the result only by the index into the set—the set is assumed to be the last result:</p>
+<p class="p4">roots<br>
+subprojects 5</p>
+<p class="p2">If passed a set containing multiple elements, the <span class="s1"><b>subprojects</b></span> command queries each element in turn:</p>
+<p class="p4">subprojects [roots]</p>
+<p class="p2">(return includes subprojects of <span class="s1">/ttt_shared,</span> <span class="s1">/xip_shared,</span> <span class="s1">/sysinclude</span>, on so on).</p>
+<p class="p2">Other commands that describe the project structure are:</p>
+<p class="p5">•<span class="s2">   </span><span class="s1"><b>contents scope</b></span> returns the project structure specified by the scope (project), such as / (root) or /project name.</p>
+<p class="p5">•<span class="s2">   </span><span class="s1"><b>modules [-level n] scope</b></span><span class="s3"><b> </b></span>returns the set of modules (files) defined under the project <span class="s1">scope</span>. If the level is specified, modules returns only the indicated level.</p>
+<p class="p5">•<span class="s2">   </span><span class="s1"><b>parent module</b></span><span class="s3"><b> </b></span>returns the parent project that contains <span class="s1">module</span>.</p>
+</body>
+</html>

@@ -1,0 +1,1428 @@
+<html>
+
+
+
+<head>
+
+<meta http-equiv="AUTHOR" content="Alex Pavlov">
+
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+
+<meta name="ProgId" content="FrontPage.Editor.Document">
+
+<title>List of rules for Java Programming Language</title>
+
+</head>
+
+
+
+<body>
+
+<p>This list of rules are prepared base on Sun's Code Conventions for
+
+the Java<SUP><FONT size=-2>TM</FONT></SUP>  Programming Language document. You can take it <a href="http://java.sun.com/docs/codeconv/">here</a>.
+
+<ul>
+
+  <li><a href="#Start Severity Level - High">Severity High</a></li>
+
+  <li><a href="#Start Sevelity Level - Normal">Severity Normal</a></li>
+
+  <li><a href="#Start Severity Level - Low">Severity Low</a></li>
+
+  <p>
+
+  <li><a href="#Garbage Collection">Garbage Collection Issues</a></li>
+
+  <li><a href="#Performance Issues">Performance Issues</a></li>
+
+  <li><a href="#Security Issues">Security weaks Issues</a></li>
+
+</ul>
+
+<ul>J2EE Coding Standards<br>
+
+  <li><a href="#EJB">EJB API Coding Standard Violations</a></li>
+
+  <li><a href="#SERVLET">SERVLET API Coding Issues</a></li></ul>
+
+<p>
+
+	The rule marked with color <span style="background-color: #CECEFF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> are covered by
+
+    CodeRover.
+
+<p>
+
+<table border=1 cellpadding=0 cellspacing=0 width="100%">
+
+<tr>
+
+  <td><b>Severity</b></td>
+
+  <td><b>Abbreviation</b></td>
+
+  <td><b>Explanation</b></td>
+
+</tr>
+
+<tr style="background-color: #CECEFF">
+
+  <td><a name="Start Severity Level - High">High</a></td>
+
+  <td><a href="./description/AHIIV/AHIIV.html">AHIIV</a></td>
+
+<td>
+
+  <a href="./description/AHIIV/AHIIV.html">Avoid Hiding Inherited Attributes</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/AHISM/AHISM.html">AHISM</a></td>
+
+  <td><a href="./description/AHISM/AHISM.html">Avoid Hiding Inherited Static
+
+    Methods</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/AOSMTO/AOSMTO.html">AOSMTO</a></td>
+
+  <td><a href="./description/AOSMTO/AOSMTO.html">Access Of Static Members Through Objects</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/ATFLV/ATFLV.html">ATFLV</a></td>
+
+  <td><a href="./description/ATFLV/ATFLV.html">Assignment To For-Loop Variables</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/ATSWL/ATSWL.html">ATSWL</a></td>
+
+  <td><a href="./description/ATSWL/ATSWL.html">Append To String Within a Loop</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/CPAMBF/CPAMBF.html">CPAMBF</a></td>
+
+  <td><a href="./description/CPAMBF/CPAMBF.html">Constant Private Attributes Must Be Final</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/CQS/CQS.html">CQS</a></td>
+
+  <td><a href="./description/CQS/CQS.html">Command Query Separation</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/DID/DID.html">DID</a></td>
+
+  <td><a href="./description/DID/DID.html">Duplicate Import Declarations</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/DIPSFBT/DIPSFBT.html">DIPSFBT</a></td>
+
+  <td><a href="./description/DIPSFBT/DIPSFBT.html">Don't Import the Package the Source File Belongs To</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/EIOJLC/EIOJLC.html">EIOJLC</a></td>
+
+  <td><a href="./description/EIOJLC/EIOJLC.html">Explicit Import Of the java.lang Classes</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/HON/HON.html">HON</a></td>
+
+  <td><a href="./description/HON/HON.html">Hiding Of Names</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/Icomm/ICOMM.html">ICOMM</a></td>
+
+  <td><a href="./description/Icomm/ICOMM.html">Inaccessible Constructor Or Method Matches</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/MFDTCSF/MFDTCSF.html">MFDTCSF</a></td>
+
+  <td><a href="./description/MFDTCSF/MFDTCSF.html">Method finalize() Doesn't Call super.finalize()</a></td>
+
+</tr> 
+<!--
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/MVDWSN/MVDWSN.html">MVDWSN</a></td>
+
+  <td><a href="./description/MVDWSN/MVDWSN.html">Multiple Visible Declarations With Same Name</a></td>
+
+</tr> 
+-->
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ONAMWAM/ONAMWAM.html">ONAMWAM</a></td>
+
+  <td><a href="./description/ONAMWAM/ONAMWAM.html">Overriding a Non-Abstract Method With an Abstract Method</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/OPM/OPM.html">OPM</a></td>
+
+  <td><a href="./description/OPM/OPM.html">Overriding a Non-Abstract Method With an Abstract Method</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/OWS/OWS.html">OWS</a></td>
+
+  <td><a href="./description/OWS/OWS.html">Overloading Within a Subclass</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/PCOLSOE/PCOLSOE.html">PCOLSOE</a></td>
+
+  <td><a href="./description/PCOLSOE/PCOLSOE.html">Place Constant On the Left Side of Expression</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/UC/UC.html">UC</a></td>
+
+  <td><a href="./description/UC/UC.html">Unnecessary Casts</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/UOUIMM/UOUIMM.html">UOUIMM</a></td>
+
+  <td><a href="./description/UOUIMM/UOUIMM.html">Use Of Unnecessary Interface Member Modifiers</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/USAFI/USAFI.html">USAFI</a></td>
+
+  <td><a href="./description/USAFI/USAFI.html">Use of Static Attribute for Initialization</a></td>
+
+</tr> 
+
+<tr>
+
+  <td><a name="Start Sevelity Level - Normal">Normal</a></td>
+
+  <td><a href="./description/APAPA/APAPA.html">APAPA</a></td>
+
+  <td><a href="./description/APAPA/APAPA.html">Avoid Public And Package Attributes</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/ASWEB/ASWEB.html">ASWEB</a></td>
+
+  <td><a href="./description/ASWEB/ASWEB.html">Avoid Statements With Empty Body</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/BTIJDC/BTIJDC.html">BTIJDC</a></td>
+
+  <td><a href="./description/BTIJDC/BTIJDC.html">Bad Tag In JavaDoc Comments</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/CA/CA.html">CA</a></td>
+
+  <td><a href="./description/CA/CA.html">Complex Assignment</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/CNMMIFN/CNMMIFN.html">CNMMIFN</a></td>
+
+  <td><a href="./description/CNMMIFN/CNMMIFN.html">Class Name Must Match Its File Name</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/DCFPT/DCFPT.html">DCFPT</a></td>
+
+  <td><a href="./description/DCFPT/DCFPT.html">Don't Compare Floating Point Types</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/DVIOSE/DVIOSE.html">DVIOSE</a></td>
+
+  <td><a href="./description/DVIOSE/DVIOSE.html">Declare Variables In One Statement Each</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EOOBA/EOOBA.html">EOOBA</a></td>
+
+  <td><a href="./description/EOOBA/EOOBA.html">Equality Operations On Boolean Arguments</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/IIMBU/IIMBU.html">IIMBU</a></td>
+
+  <td><a href="./description/IIMBU/IIMBU.html">Imported Items Must Be Used</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/LAPAPMF/LAPAPMF.html">LAPAPMF</a></td>
+
+  <td><a href="./description/LAPAPMF/LAPAPMF.html">List All Public And Package Members First</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/MLOWP/MLOWP.html">MLOWP</a></td>
+
+  <td><a href="./description/MLOWP/MLOWP.html">Mixing Logical Operators Without Parentheses</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/NAICE/NAICE.html">NAICE</a></td>
+
+  <td><a href="./description/NAICE/NAICE.html">No Assignments In Conditional Expressions</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/NC/NC.html">NC</a></td>
+
+  <td><a href="./description/NC/NC.html">Naming Conventions</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/OOAOM/OOAOM.html">OOAOM</a></td>
+
+  <td><a href="./description/OOAOM/OOAOM.html">Order Of Appearance Of Modifiers</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/PIIFS/PIIFS.html">PIIFS</a></td>
+
+  <td><a href="./description/PIIFS/PIIFS.html">Provide Incremental In For-Statement or use while-statement</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/RFDI/RFDI.html">RFDI</a></td>
+
+  <td><a href="./description/RFDI/RFDI.html">Replacement For Demand Imports</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/UAAO/UAAO.html">UAAO</a></td>
+
+  <td><a href="./description/UAAO/UAAO.html">Use Abbreviated Assignment Operator</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/UEIOE/UEIOE.html">UEIOE</a></td>
+
+  <td><a href="./description/UEIOE/UEIOE.html">Use 'equals' Instead Of '=='</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/UIOE/UIOE.html">UIOE</a></td>
+
+  <td><a href="./description/UIOE/UIOE.html">Unnecessary 'instanceof' Evaluations</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/UITI/UITI.html">UITI</a></td>
+
+  <td><a href="./description/UITI/UITI.html">Use <b><i>instanceof</i></b> Tests to an Interfaces</i></b></a></td>
+
+</tr> 
+
+<tr>
+
+  <td><a name="Start Severity Level - Low">Low</a></td>
+
+  <td><a href="./description/ADVIL/ADVIL.html">ADVIL</a></td>
+
+  <td><a href="./description/ADVIL/ADVIL.html">Avoid Declaring Variables Inside Loops</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/ACIUCFL/ACIUCFL.html">ACIUCFL</a></td>
+
+  <td><a href="./description/ACIUCFL/ACIUCFL.html">Avoid Complex Initialization or Update Clause in For Loops</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/AECB/AECB.html">AECB</a></td>
+
+  <td><a href="./description/AECB/AECB.html">Avoid Empty Catch Blocks</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/ATFP/ATFP.html">ATFP</a></td>
+
+  <td><a href="./description/ATFP/ATFP.html">Assignment To Formal Parameters</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/ATLL/ATLL.html">ATLL</a></td>
+
+  <td><a href="./description/ATLL/ATLL.html">Avoid Too Long Lines</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/BLAD/BLAD.html">BLAD</a></td>
+
+  <td><a href="./description/BLAD/BLAD.html">Badly Located Array Declarators</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/CLE/CLE.html">CLE</a></td>
+
+  <td><a href="./description/CLE/CLE.html">Complex Loop Expressions</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/CVMBF/CVMBF.html">CVMBF</a></td>
+
+  <td><a href="./description/CVMBF/CVMBF.html">Constant Variables Must Be Final</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/DCNCD/DCNCD.html">DCNCD</a></td>
+
+  <td><a href="./description/DCNCD/DCNCD.html">Don't Code Numerical Constants Directly</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/DPMSSL/DPMSSL.html">DPMSSL</a></td>
+
+  <td><a href="./description/DPMSSL/DPMSSL.html">Don't Place Multiple Statements on the Same Line</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/DUNOF/DUNOF.html">DUNOF</a></td>
+
+  <td><a href="./description/DUNOF/DUNOF.html">Don't Use Negation Operator Frequently</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/EBWB/EBWB.html">EBWB</a></td>
+
+  <td><a href="./description/EBWB/EBWB.html">Enclosing Body Within a Block</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/EIAV/EIAV.html">EIAV</a></td>
+
+  <td><a href="./description/EIAV/EIAV.html">Explicitly Initialize All Variables</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/GOWSNT/GOWSNT.html">GOWSNT</a></td>
+
+  <td><a href="./description/GOWSNT/GOWSNT.html">Group Operations With Same Name Together</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/ICSBF/ICSBF.html">ICSBF</a></td>
+
+  <td><a href="./description/ICSBF/ICSBF.html">Instantiated Classes Should Be Final</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/OCMD/OCMD.html">OCMD</a></td>
+
+  <td><a href="./description/OCMD/OCMD.html">Order of Class Members Declaration</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/OMNBU/OMNBU.html">OMNBU</a></td>
+
+  <td><a href="./description/OMNBU/OMNBU.html">Operator '?:' May Not Be Used</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/PDOBB/PDOBB.html">PDOBB</a></td>
+
+  <td><a href="./description/PDOBB/PDOBB.html">Put Declarations Only at the Beginning of Blocks</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/PMFL/PMFL.html">PMFL</a></td>
+
+  <td><a href="./description/PMFL/PMFL.html">Put the Main Function Last</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/UCVN/UCVN.html">UCVN</a></td>
+
+  <td><a href="./description/UCVN/UCVN.html">Use Conventional Variable Names</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Low</td>
+
+  <td><a href="./description/ULVAFP/ULVAFP.html">ULVAFP</a></td>
+
+  <td><a href="./description/ULVAFP/ULVAFP.html">Unused Local Variables And Formal Parameters</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Low</td>
+
+  <td><a href="./description/UPCM/UPCM.html">UPCM</a></td>
+
+  <td><a href="./description/UPCM/UPCM.html">Unused Private Class Member</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/UTETACM/UTETACM.html">UTETACM</a></td>
+
+  <td><a href="./description/UTETACM/UTETACM.html">Use 'this' Explicitly To Access Class Members</a></td>
+
+</tr> 
+
+</table>
+
+<br><FONT size=+1>Performance Issues</FONT>
+
+<table border=1 cellpadding=0 cellspacing=0 width="100%">
+
+<tr>
+
+  <td><b>Severity</b></td>
+
+  <td><b>Abbreviation</b></td>
+
+  <td><b>Explanation</b></td>
+
+</tr>
+
+<tr style="background-color: #CECEFF">
+
+  <td><a name="Performance Issues">High</a></td>
+
+  <td><a href="./description/ATSWL/ATSWL.html">ATSWL</a></td>
+
+  <td><a href="./description/ATSWL/ATSWL.html">Append To String Within a Loop</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/MUI/MUI.html">MUI</a></td>
+
+  <td><a href="./description/MUI/MUI.html">Minimize use of <b><i>instanceof</i></b></a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/MI/MI.html">MI</a></td>
+
+  <td><a href="./description/MI/MI.html">Minimize instantiation</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>High</td>
+
+  <td><a href="./description/MUC/MUC.html">MUC</a></td>
+
+  <td><a href="./description/MUC/MUC.html">Minimize Use of Casting</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td></td>
+
+  <td>Minimize use of synchronization</td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/DICFVH/DICFVH.html">DICFVH</a></td>
+
+  <td><a href="./description/DICFVH/DICFVH.html">Define Initial Capacity for <i>Vector</i> and <i>Hashtable</i> collections</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/DIS/DIS.html">DIS</a></td>
+
+  <td><a href="./description/DIS/DIS.html">Define Initial capacity for <i>StringBuffer</i></a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/DNTEFNP/DNTEFNP.html">DNTEFNP</a></td>
+
+  <td><a href="./description/DNTEFNP/DNTEFNP.html">Do Not Throw Exceptions for Normal Processing</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/GCAUTCPTS/GCAUTCPTS.html">GCAUTCPTS</a></td>
+
+  <td><a href="./description/GCAUTCPTS/GCAUTCPTS.html">GC - Avoid Unnecessary Temporaries when Convert Primitive Types to String</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/PTCOL/PTCOL.html">PTCOL</a></td>
+
+  <td><a href="./description/PTCOL/PTCOL.html">Place Try/Catch blocks Outside of Loops</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/UArrCpy/UArrCpy.html">UARRCPY</a></td>
+
+  <td><a href="./description/UArrCpy/UArrCpy.html">Use 'System.arraycopy ()'</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/UCISFSC/UCISFSC.html">UCISFSC</a></td>
+
+  <td><a href="./description/UCISFSC/UCISFSC.html">Use <i>char</i> Instead of <i>String</i> For one character String Concatenation</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Low</td>
+
+  <td><a href="./description/ADVIL/ADVIL.html">ADVIL</a></td>
+
+  <td><a href="./description/ADVIL/ADVIL.html">Avoid Declaring Variables Inside Loops</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Low</td>
+
+  <td><a href="./description/CLE/CLE.html">CLE</a></td>
+
+  <td><a href="./description/CLE/CLE.html">Complex Loop Expressions</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/ULV/ULV.html">ULV</a></td>
+
+  <td><a href="./description/ULV/ULV.html">Use Local Variables Whenever it possible</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Low</td>
+
+  <td><a href="./description/UCIS/UCIS.html">UCIS</a></td>
+
+  <td><a href="./description/UCIS/UCIS.html">Use charAt() instead startsWith()</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Low</td>
+
+  <td><a href="./description/USAFMFI/USAFMFI.html">USAFMFI</a></td>
+
+  <td><a href="./description/USAFMFI/USAFMFI.html">Use Static And Final Modifiers For methods Inlining</a></td>
+
+</tr> 
+
+</table>
+
+<br><FONT size=+1>Garbage Collection/Resource leaks</FONT>
+
+<table border=1 cellpadding=0 cellspacing=0 width="100%">
+
+<tr>
+
+  <td><b>Severity</b></td>
+
+  <td><b>Abbreviation</b></td>
+
+  <td><b>Explanation</b></td>
+
+</tr>
+
+<tr style="background-color: #CECEFF">
+
+  <td><a name="Garbage Collection">Normal</a></td>
+
+  <td><a href="./description/GCASC/GCASC.html">GCASC</a></td>
+
+  <td><a href="./description/GCASC/GCASC.html">GC - Avoid Static Collections - <i>Vector</i>, <i>Hashtable</i></a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/GCAUTCPTS/GCAUTCPTS.html">GCAUTCPTS</a></td>
+
+  <td><a href="./description/GCAUTCPTS/GCAUTCPTS.html">GC - Avoid Unnecessary Temporaries when Convert Primitive Types to String</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/GCFMUL/GCFMUL.html">GCFMUL</a></td>
+
+  <td><a href="./description/GCFMUL/GCFMUL.html">GC - <i>finalize()</i> method should not unregister listeners</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/GCGCB/GCGCB.html">GCGCB</a></td>
+
+  <td><a href="./description/GCGCB/GCGCB.html">GC - <i>getClipBounds()</i> should not be called too often</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/GCNCFE/GCNCFE.html">GCNCFE</a></td>
+
+  <td><a href="./description/GCNCFE/GCNCFE.html">GC - Never Call <i>finalize()</i> method Explicitly</a></td>
+
+</tr> 
+
+<tr style="background-color: #CECEFF">
+
+  <td>Normal</td>
+
+  <td><a href="./description/GCOSKR/GCOSKR.html">GCOSKR</a></td>
+
+  <td><a href="./description/GCOSKR/GCOSKR.html">GC - Object Stream Keep References</a></td>
+
+</tr> 
+
+</table>
+
+<br><FONT size=+1>Security weaks issues</FONT>
+
+<table border=1 cellpadding=0 cellspacing=0 width="100%">
+
+<tr>
+
+  <td><b>Severity</b></td>
+
+  <td><b>Abbreviation</b></td>
+
+  <td><b>Explanation</b></td>
+
+</tr>
+
+<tr>
+
+  <td><a name="Security Issues">Normal</a></td>
+
+  <td><a href="./description/SECDCCBN/SECDCCBN.html">SECDCCBN</a></td>
+
+  <td><a href="./description/SECDCCBN/SECDCCBN.html">Security - Don't compare classes by name</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SECDDPS/SECDDPS.html">SECDDPS</a></td>
+
+  <td><a href="./description/SECDDPS/SECDDPS.html">Security - Don't depend on Package Scope</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SECDUICDA/SECDUICDA.html">SECDUICDA</a></td>
+
+  <td><a href="./description/SECDUICDA/SECDUICDA.html">Security - Do not use inner classes with default attribute</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SECIESI/SECIESI.html">SECIESI</a></td>
+
+  <td><a href="./description/SECIESI/SECIESI.html">Security - An interface extends the Serializable interface</a></td>
+
+</tr>
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SECMYCU/SECMYCU.html">SECMYCU</a></td>
+
+  <td><a href="./description/SECMYCU/SECMYCU.html">Security - Make your class unclonable</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SECMYCUS/SECMYCUS.html">SECMYCUS</a></td>
+
+  <td><a href="./description/SECMYCUS/SECMYCUS.html">Security - Make your class unserializable</a></td>
+
+</tr> 
+
+</table>
+
+<p></p>
+
+<p><FONT size=+2>J2EE Coding Standards</FONT></p>
+
+<FONT size=+1>EJB API Coding standard violations</FONT>
+
+<table border=1 cellpadding=0 cellspacing=0 width="100%">
+
+<tr>
+
+  <td><b>Severity</b></td>
+
+  <td><b>Abbreviation</b></td>
+
+  <td><b>Explanation</b></td>
+
+</tr>
+
+<tr>
+
+  <td><a name="EJB">High</a></td>
+  <td><a href="./description/ejbcl/ejbcl.html">EJBCL</a></td>
+
+  <td><a href="./description/ejbcl/ejbcl.html">The enterprise bean must not attempt
+    to create a class loader, or use classloader object.</a></td>
+
+</tr> 
+
+  <td>High</td>
+  <td><a href="./description/ejbcon/ejbconsole.html">EJBCCON</a></td>
+
+  <td><a href="./description/ejbcon/ejbconsole.html">The enterprise bean must not attempt to
+    interact directly with a keyboard/display attached to the server system</a></td>
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBBCNDA/EJBBCNDA.html">EJBBCNDA</a></td>
+
+  <td><a href="./description/EJBBCNDA/EJBBCNDA.html">A Bean <i>class</i> cannot be declared as <i>abstract</i>.</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBECMBP/EJBECMBP.html">EJBECMBP</a></td>
+
+  <td><a href="./description/EJBECMBP/EJBECMBP.html"><i>ejbCreate ()</i> must be <i>public</i>, and can be neither <i>static</i> nor <i>final</i></a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBFDR/EJBFDR.html">EJBFDR</a></td>
+
+  <td><a href="./description/EJBFDR/EJBFDR.html">The enterprise bean must not attempt to directly read or write a file 
+descriptor.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ejbio/ejbioawt.html">EJBIO</a></td>
+
+  <td><a href="./description/ejbio/ejbioawt.html">The enterprise bean must not use the AWT functionality to attempt to output 
+information to a display, or to input information from a keyboard.</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ejbio/ejbiofiles.html">EJBIOFILES</a></td>
+
+  <td><a href="./description/ejbio/ejbiofiles.html">The enterprise bean must not use the java.io package to attempt to access files and 
+directories in the file system.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ejbjdbc/ejbjdbc.html">EJBJDBC</a></td>
+
+  <td><a href="./description/ejbjdbc/ejbjdbc.html">The enterprise session bean should not work with persistent data.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBMNDF/EJBMNDF.html">EJBMNDF</a></td>
+
+  <td><a href="./description/EJBMNDF/EJBMNDF.html">A Bean <i>class</i> must not define the <i>finalize()</i> method.</a></td>
+
+</tr> 
+
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBPCMBP/EJBPCMBP.html">EJBPCMBP</a></td>
+
+  <td><a href="./description/EJBPCMBP/EJBPCMBP.html">The <i>ejbPostCreate ()</i> method must be <i>public</i>, and it cannot be <i>static</i> or <i>final</i></a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ejbreflection/ejbrefl.html">EJBREFL</a></td>
+
+  <td><a href="./description/ejbreflection/ejbrefl.html">The enterprise bean must not attempt to use the Reflection API to access 
+information that the security rules of the Java programming language make 
+unavailable.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBRTEB/EJBRTEB.html">EJBRTEB</a></td>
+
+  <td><a href="./description/EJBRTEB/EJBRTEB.html">The finder method's type must be the primary key or a collection of primary keys.</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBRTSBV/EJB.html">EJBRTSBV</a></td>
+
+  <td><a href="./description/EJBRTSBV/EJBRTSBV.html">The SessionBean's <i>ejbCreate()</i> method's <i>return</i> type must be <i>void</i></a></td>
+
+</tr> 
+
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBRTPCV/EJBRTPCV.html">EJBRTPCV</a></td>
+
+  <td><a href="./description/EJBRTPCV/EJBRTPCV.html">The <i>ejbPostCreate()</i> method's <i>return</i> type must be <i>void</i>.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ejbsocket/ejbsocket.html">EJBSOCKET</a></td>
+
+  <td><a href="./description/ejbsocket/ejbsocket.html">The enterprise bean must not attempt to set the socket factory used by ServerSocket, 
+Socket, or the stream handler factory used by URL.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/ejbreflection/ejbsubst.html">EJBSUBST</a></td>
+
+  <td><a href="./description/ejbreflection/ejbsubst.html">The enterprise bean must not attempt to use the subclass and object substitution 
+features of the Java Serialization Protocol.</a></td>
+
+</tr> 
+<tr>
+
+  <td>High</td>
+
+  <td><a href="./description/EJBTREST/EJBTREST.html">EJBTREST</a></td>
+
+  <td><a href="./description/EJBTREST/EJBTREST.html">Avoid starting, stopping, or managing threads in any way.</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBAEBS/EJBAEBS.html">EJBAEBS</a></td>
+
+  <td><a href="./description/EJBAEBS/EJBAEBS.html">Avoid access EJB <i>entity bean</i> directly from client code</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBAMSCO/EJBAMSCO.html">EJBAMSCO</a></td>
+
+  <td><a href="./description/EJBAMSCO/EJBAMSCO.html">Avoid accessing or modifying security configuration objects</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/Ejbauauf/Ejbauauf.html">Ejbauauf</a></td>
+
+  <td><a href="./description/Ejbauauf/Ejbauauf.html">Always use accessors to update JavaBeans properties.</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/Ejbbcdp/Ejbbcdp.html">Ejbbcdp</a></td>
+
+  <td><a href="./description/Ejbbcdp/Ejbbcdp.html">A Bean <i>class</i> should be declared as <i>public</i></a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBIECM/EJBIECM.html">EJBIECM</a></td>
+
+  <td><a href="./description/EJBIECM/EJBIECM.html">A Bean <i>class</i> should implement one or more <i>ejbCreate ()</i> methods</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBIEPCM/EJBIEPCM.html">EJBIEPCM</a></td>
+
+  <td><a href="./description/EJBIEPCM/EJBIEPCM.html">A EntityBean <i>class</i> should implement one or more <i>ejbPostCreate ()</i> methods</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBLNLSBA/EJBLNLSBA.html">EJBLNLSBA</a></td>
+
+  <td><a href="./description/EJBLNLSBA/EJBLNLSBA.html">Avoid loading native libraries in a Bean class</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBMFS/EJBMFS.html">EJBMFS</a></td>
+
+  <td><a href="./description/EJBMFS/EJBMFS.html">Declare all <i>static</i> fields in the EJB component as <i>final</i></a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBTHIS/EJBTHIS.html">EJBTHIS</a></td>
+
+  <td><a href="./description/EJBTHIS/EJBTHIS.html">Avoid passing the <i>this</i> reference as an argument</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/EJBTHISRET/EJBTHISRET.html">EJBTHISRET</a></td>
+
+  <td><a href="./description/EJBTHISRET/EJBTHISRET.html">Avoid returning the <i>this</i> reference as a result.</a></td>
+
+</tr> 
+
+</table>
+
+<br><FONT size=+1>SERVLET API Coding Issues</FONT>
+
+<table border=1 cellpadding=0 cellspacing=0 width="100%">
+
+<tr>
+
+  <td><b>Severity</b></td>
+
+  <td><b>Abbreviation</b></td>
+
+  <td><b>Explanation</b></td>
+
+</tr>
+
+<tr>
+
+  <td><a name="SERVLET">Normal</a></td>
+
+  <td><a href="./description/Srvltaubi/Srvltaubi.html">SRVLTAUBI</a></td>
+
+  <td><a href="./description/Srvltaubi/Srvltaubi.html">Avoid using <i>java.beans.Beans.instantiate ()</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SRVLTDUSSC/SRVLTDUSSC.html">SRVLTDUSSC</a></td>
+
+  <td><a href="./description/SRVLTDUSSC/SRVLTDUSSC.html">Do not use <i>SingleThreadModel</i> in a Servlet class</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SrvltHVSRF/SrvltHVSRF.html">SRVLTHVSRF</a></td>
+
+  <td><a href="./description/SrvltHVSRF/SrvltHVSRF.html">HttpSession variables should be released when finished</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SRVLTMSIS/SRVLTMSIS.html">SRVLTMSIS</a></td>
+
+  <td><a href="./description/SRVLTMSIS/SRVLTMSIS.html">Minimize using of synchronization in Servlets</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SRVLTMUSOP/SRVLTMUSOP.html">SRVLTMUSOP</a></td>
+
+  <td><a href="./description/SRVLTMUSOP/SRVLTMUSOP.html">Minimize use of System.out.println() or System.err.println()</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SrvltRDSJC/SrvltRDSJC.html">SRVLTRDSJC</a></td>
+
+  <td><a href="./description/SrvltRDSJC/SrvltRDSJC.html">Reuse data sources for JDBC connections</a></td>
+
+</tr> 
+
+<tr>
+
+  <td>Normal</td>
+
+  <td><a href="./description/SRVLTRJRF/SRVLTRJRF.html">SRVLTRJRF</a></td>
+
+  <td><a href="./description/SRVLTRJRF/SRVLTRJRF.html">Release JDBC resources when finished</a></td>
+
+</tr> 
+
+</table>
+
+</body>
+
+</html>
+

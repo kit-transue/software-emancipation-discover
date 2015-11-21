@@ -1,0 +1,8 @@
+CPROOTS=\
+	graViewLayer \
+	gviewerShell \
+	getSelection \
+	open_view \
+	stubs
+
+CROOTS=\

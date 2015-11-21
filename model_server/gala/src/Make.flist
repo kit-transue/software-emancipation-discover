@@ -1,0 +1,50 @@
+CPROOTS=\
+  	WinHelp\
+	AttributeEditor\
+	apl_menu\
+        bar\
+	centeredLabel\
+	client_cmds\
+	commandLine\
+	controlObjects\
+	dialog\
+	dialogLayer\
+	dis_browser\
+	dis_cmds\
+	dis_confirm\
+	dis_path\
+	draw\
+	editorLayer\
+        facet\
+	fileChooser\
+	gDrawingArea \
+	genDialog\
+        genConfirmDialog\
+	globalFuncs\
+	gString\
+        interp\
+	layer\
+	paneObjects\
+   	path\
+	prefs\
+        rtlClient\
+	sash\
+	scanner\
+        shelltextitem\
+	SpreadSheet\
+	state\
+        subwin\
+        syspipe\
+	tcpServer\
+	tipwin\
+	TextFile\
+	toolbar\
+	view\
+	viewer\
+	viewerMenu\
+	viewerMenuBar\
+	viewerMenuItem\
+	viewerPopupMenuList\
+	stubs\
+
+CROOTS=\

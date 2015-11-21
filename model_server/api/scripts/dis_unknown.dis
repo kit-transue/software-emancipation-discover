@@ -1,0 +1,145 @@
+#
+# This is an override of proc unknown in init.tcl
+#
+# This is used so that access can use attributes such as
+# fname and lname as commands, instead of returning errors
+# on them.
+#
+# Note: only access proper uses this unknow.  For example, the
+# gala interpreters still use the stock unknown.
+#
+#
+
+#
+# extracted directly from tcl8.0/library:
+#
+
+# unknown --
+# This procedure is called when a Tcl command is invoked that doesn't
+# exist in the interpreter.  It takes the following steps to make the
+# command available:
+#
+#	1. See if the autoload facility can locate the command in a
+#	   Tcl script file.  If so, load it and execute it.
+#	2. If the command was invoked interactively at top-level:
+#	    (a) see if the command exists as an executable UNIX program.
+#		If so, "exec" the command.
+#	    (b) see if the command requests csh-like history substitution
+#		in one of the common forms !!, !<number>, or ^old^new.  If
+#		so, emulate csh's history substitution.
+#	    (c) see if the command is a unique abbreviation for another
+#		command.  If so, invoke the command.
+#
+# Arguments:
+# args -	A list whose elements are the words of the original
+#		command, including the command name.
+
+proc unknown args {
+    global auto_noexec auto_noload env unknown_pending tcl_interactive
+    global errorCode errorInfo
+
+    # Save the values of errorCode and errorInfo variables, since they
+    # may get modified if caught errors occur below.  The variables will
+    # be restored just before re-executing the missing command.
+
+    set savedErrorCode $errorCode
+    set savedErrorInfo $errorInfo
+    set name [lindex $args 0]
+    if ![info exists auto_noload] {
+	#
+	# Make sure we're not trying to load the same proc twice.
+	#
+	if [info exists unknown_pending($name)] {
+	    return -code error "self-referential recursion in \"unknown\" for command \"$name\"";
+	}
+	set unknown_pending($name) pending;
+	set ret [catch {auto_load $name [uplevel 1 {namespace current}]} msg]
+	unset unknown_pending($name);
+	if {$ret != 0} {
+	    return -code $ret -errorcode $errorCode \
+		"error while autoloading \"$name\": $msg"
+	}
+	if ![array size unknown_pending] {
+	    unset unknown_pending
+	}
+	if $msg {
+	    set errorCode $savedErrorCode
+	    set errorInfo $savedErrorInfo
+	    set code [catch {uplevel 1 $args} msg]
+	    if {$code ==  1} {
+		#
+		# Strip the last five lines off the error stack (they're
+		# from the "uplevel" command).
+		#
+
+		set new [split $errorInfo \n]
+		set new [join [lrange $new 0 [expr [llength $new] - 6]] \n]
+		return -code error -errorcode $errorCode \
+			-errorinfo $new $msg
+	    } else {
+		return -code $code $msg
+	    }
+	}
+    }
+
+    if {([info level] == 1) && ([info script] == "") \
+	    && [info exists tcl_interactive] && $tcl_interactive} {
+	if ![info exists auto_noexec] {
+	    set new [auto_execok $name]
+	    if {$new != ""} {
+		set errorCode $savedErrorCode
+		set errorInfo $savedErrorInfo
+		set redir ""
+		if {[info commands console] == ""} {
+		    set redir ">&@stdout <@stdin"
+		}
+		return [uplevel exec $redir $new [lrange $args 1 end]]
+	    }
+	}
+	set errorCode $savedErrorCode
+	set errorInfo $savedErrorInfo
+	if {$name == "!!"} {
+	    set newcmd [history event]
+	} elseif {[regexp {^!(.+)$} $name dummy event]} {
+	    set newcmd [history event $event]
+	} elseif {[regexp {^\^([^^]*)\^([^^]*)\^?$} $name dummy old new]} {
+	    set newcmd [history event -1]
+	    catch {regsub -all -- $old $newcmd $new newcmd}
+	}
+	if [info exists newcmd] {
+	    tclLog $newcmd
+	    history change $newcmd 0
+	    return [uplevel $newcmd]
+	}
+
+	set ret [catch {set cmds [info commands $name*]} msg]
+	if {[string compare $name "::"] == 0} {
+	    set name ""
+	}
+	if {$ret != 0} {
+	    return -code $ret -errorcode $errorCode \
+		"error in unknown while checking if \"$name\" is a unique command abbreviation: $msg"
+	}
+	if {[llength $cmds] == 1} {
+	    return [uplevel [lreplace $args 0 0 $cmds]]
+	}
+	if {[llength $cmds] != 0} {
+	    if {$name == ""} {
+		return -code error "empty command name \"\""
+	    } else {
+		return -code error \
+			"ambiguous command name \"$name\": [lsort $cmds]"
+	    }
+	}
+    }
+
+    ## SET change: call to dis_unknown to see if the command is
+    ## an attribute being used as a command - RPP 9/24/98
+    set  command  [lindex $args 0] 
+    set  set_args [lrange $args 1 end]
+    if { [catch { dis_unknown $command $set_args } retval] } {
+    	return -code error "$retval"
+    } else {
+        return $retval
+    } 
+}

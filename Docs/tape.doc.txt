@@ -1,0 +1,91 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+/ParaSET/pset.1.0.x/src/Docs/tape.doc        written  9/1/93   DaveA
+last modified  9/1/93  5pm
+
+Cutting a customer (or interim field release) tape:
+
+All releases that ever go out to field are in
+    /integ/paraset.1/*
+one directory each.  Each such directory has exactly one subdirectory,
+always called  paraset.   So version 1.0.2 is in
+   /integ/paraset.1/paraset.1.0.2/paraset/*
+
+In addition, there is a log file (text) maintained, called
+    /integ/paraset.1/history
+Be sure and add to it, whoever cuts a new release.
+
+-------------------------------------------------------------------------
+To install a new release:
+
+1. edit splash screen text:
+    ui/setup/splashScreen.h.C
+
+   The first #define contains the text of the version, to be displayed in the
+   upper right of the splash screen.
+        #define PARASET_VERSION "1.0.3pre\n"
+
+2. rebuild system
+
+3. install to appropriate release directory
+
+   rlogin  pragma -l builder      (this defines the SYSBASE env variable)
+   su
+   df        (make sure /integ has at least 50 mb or so)
+   cd  /integ/paraset.1
+   mkdir  paraset.1.xx.xx.x      or whatever
+   cd     (ditto)
+   /ParaSET/tools/builder/install.sh   paraset  sun4-O
+
+        You can ignore the error that it cannot copy the RCS directory
+   exit  back to regular user;  don't stay as superuser, or builder
+
+4. As jon, add a line to the history file.  This line should indicate the
+   date, what the new directory was called, and a comment.
+
+-----------------------------------------
+To cut a tape from one of the releases:
+
+1.  rlogin tweety      (machine on Kevin's desk)
+    su                 (no environment variables needed)
+    cd  /integ/paraset.1
+    cd  paraset.xxxxxxxx     (whatever release is desired)
+    tar  cvf  /dev/rst0  paraset
+           ("Permission denied"  means the tape is write-protected)
+    (this takes about 10 minutes)
+    tar   tvf  /dev/rst0      (shows table of contents)
+    use  ^C to abort after a few lines come out
+
+    No unmount command needed
+    Wait a minute or so for tape to stop rewinding
+
+    Remove the tape & write-protect it
+
+2.  Blank tapes & labels are in office next to Alena
+    Alena knows how to make up new version numbers when needed
+

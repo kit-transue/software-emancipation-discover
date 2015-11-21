@@ -1,0 +1,54 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+                                                March 24, 1994 V. Geisberg
+
+
+    
+
+                                 Sketching
+
+    1. User customizable palettes of graphical elements: shapes, connectors etc.
+
+    2. "Prefabricated" palettes of shapes and connectors reflecting various methodologies.
+
+    3. Free positioning of shapes on "paper"
+
+    4. Semiautomatic connecting between shapes.
+
+    5. If diagram type is specified then elements that do not belong to this type either should be dimmed on the palette or special palette should be displayed.
+
+    6. Diagramming toolbar should be able to serve several windows (ie., each window becomes current at the click of a mouse on it).
+
+    7. Freeform diagrams (sketches) can be saved "as is" or "straightening up" can be applied. Additionally, integrity check should be carried out (similar to syntax checking) before filing sketch away.
+
+    8. Drawn objects can be named using typing, pointing to other objects in browser, other diagram, source code, etc.
+
+    9. Sketch ma be "soft associated" with an appropriate set of other elements in the system: docs, source, subsystems, etc. (SDO)
+
+    10. When user wants to incorporate sketch into a model, button "update" should be depressed. An appropriate consistency and completeness checks will have to be performed. (SDO)

@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>ATFLV - Assignment To For-Loop Variables</b></p>
+
+<p>For-loop variables should not be assigned to.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+for (int i = 0; i &lt; charBuf.length; i++) {<br>
+&nbsp; &nbsp; while ( Character.isWhitespace(charBuf[i]) )<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>i++;</font> <br>
+&nbsp; &nbsp; ....<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Use <code>continue</code> operator or convert for-loop to while-loop.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+for (int i = 0; i &lt; charBuf.length; i++) {<br>
+&nbsp; &nbsp; while ( Character.isWhitespace(charBuf[i]) )<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>continue;</font><br>
+&nbsp; &nbsp; ....<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

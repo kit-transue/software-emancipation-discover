@@ -1,0 +1,64 @@
+@@FLT01
+9
+52
+1 char 2
+1 char 3
+1 char 6
+1 char 7
+1 time_t {}
+1 tm {}
+0 partment {}
+0 {[hH]tml} {}
+0 clientmsg {}
+1 19% 0 1 1
+1 01/01/01 0 1 1
+1 {%[^/].*/%[^/].*/%[^/].*} 0 1 1
+1 MM/DD/YY 1 1 1
+1 DOB 0 1 1
+1 {[Yy]ear|YEAR|[Yy]r|YR|yy|YY|yyyy|YYYY} 0 1 1
+1 day 1 1 1
+1 time 1 1 1
+1 month 1 1 1
+1 julian 1 1 1
+1 gregorian 1 1 1
+1 97|98|99|00|01 1 1 1
+1 dod 1 1 1
+0 {_H$} 0 1 0
+1 dt|Dt|DT 0 1 1
+0 wordtext 1 1 1
+0 dt.*wordtext|wordtext.*dt 1 1 1
+0 width 1 1 1
+0 dt.*width|width.*dt 1 1 1
+1 dat|Dat|DAT 0 1 1
+0 data 1 1 1
+0 dat.*data|data.*dat 1 1 1
+0 mandatory 1 1 1
+0 dat.*mandatory|mandatory.*dat 1 1 1
+1 date 1 1 1
+0 update 1 1 1
+0 dat.*update|update.*dat 1 1 1
+0 validate 1 1 1
+0 dat.*validate|validate.*dat 1 1 1
+1 age 1 1 1
+0 page 1 1 1
+0 age.*page|page.*age 1 1 1
+0 stage 1 1 1
+0 age.*stage|stage.*age 1 1 1
+0 agent 1 1 1
+0 age.*agent|agent.*age 1 1 1
+0 message 1 1 1
+0 age.*message|message.*age 1 1 1
+0 usage 1 1 1
+0 age.*usage|usage.*age 1 1 1
+0 manage 1 1 1
+0 age.*manage|manage.*age 1 1 1
+0 mortgage 1 1 1
+0 age.*mortgage|mortgage.*age 1 1 1
+0 agency 1 1 1
+0 age.*agency|agency.*age 1 1 1
+0 percentage 1 1 1
+0 age.*percentage|percentage.*age 1 1 1
+0 lineage 1 1 1
+0 age.*lineage|lineage.*age 1 1 1
+0 _CLI_ALIGN_ 0 1 1
+0 _CLI_ISWIDGET_ 0 1 1

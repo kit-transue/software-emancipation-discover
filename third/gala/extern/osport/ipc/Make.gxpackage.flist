@@ -1,0 +1,11 @@
+CROOTS=
+
+CPROOTS=\
+	asyncHandler \
+	commChannel \
+	commChannelAsync \
+	commFDIO \
+	commFDIO3 \
+	commFDPipe \
+	commFDPipe3 \
+	systemAsyncWatcher

@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Interface Commands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 1.0px 12.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    p.p8 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 11.0px Courier}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 107.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 270.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 107.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 270.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Interface Commands</b></p>
+<p class="p2">There is an additional set of commands that serve to communicate with the Browser or a user. These commands are:</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3"><b>Interface Command</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p3"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4"><b>get_selection</b></p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Places the entities selected in the Browser <b>Elements</b> or <b>Results</b> columns into the current set.</p>
+        <p class="p6">get_selection</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4"><b>set_result</b></p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Copies the contents of the specified set into the Browser’s Results column.</p>
+        <p class="p6">set_result <i>set_name</i></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4"><b>msg</b></p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Generates a message relevant to the current operation in the Browser’s status bar.</p>
+        <p class="p6">msg <i>options</i></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4"><b>emacs_command</b></p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Executes an Emacs command.</p>
+        <p class="p6">emacs_command <i>command</i> <i>args</i></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4"><b>open_view</b></p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Opens the source of the specified entity.</p>
+        <p class="p6">open_view <i>entity_name</i></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4"><b>prompt</b></p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Generates a prompt dialog box (with the information text contained in <span class="s1"><i>text_string</i></span>) that accepts text input.</p>
+        <p class="p6">prompt <i>text_string</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p2">These commands use the following syntax:</p>
+<p class="p8">get selection<br>
+set_result [set1 set2 ...]<br>
+emacs_command (emacs-command)<br>
+msg -error "text"<br>
+open_view [set1 set2 ...]<br>
+prompt [ -title message_text] [-errmsg error_text]</p>
+</body>
+</html>

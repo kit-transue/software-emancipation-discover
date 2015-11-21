@@ -1,0 +1,66 @@
+#!/bin/sh
+d='$'
+
+
+#
+# If the first argument is -exec, it will be passed on to ptest_run
+# to allow the creation of scripts for local executables testing batch
+# mode builds.
+#
+[ "$1" = "-exec" ] && 
+{
+	shift;
+	[ -n "$1" ] &&
+	{
+		exec="-exec $1"
+		shift ;
+	}
+}
+
+test_dir="${1:?first parameter must be test dir}"
+
+if [ ! -d $test_dir ] ; then
+  echo "$0: $1 is not a directory"
+  exit 1
+fi
+
+#convert test_dir to  full path 
+chdir $test_dir
+test_dir=`pwd`
+ 
+if [ ! -w $test_dir ] ; then
+  echo "$0: $1 is not writable"
+  exit 1
+fi
+
+cccdir=$test_dir/_ccc_/
+if [ ! -d $cccdir ] ; then
+   mkdir $cccdir
+fi
+
+if [ *.ccc != "*.ccc" ] ; then
+   echo "mv -f *.ccc $cccdir"
+   mv -f *.ccc $cccdir
+fi
+
+if [ "$2" = "-clean" ]; then
+   echo "removing .pset and .pmod files ...."
+   find $test_dir -name "*.[cChH].pset" -print -exec rm -f {}  \;
+   find $test_dir -name "*.pmod.*" -print -exec rm -f {} \;
+   echo "done"
+   exit
+fi
+
+hp="${2:?second parameter must be name of home project}"
+
+shift
+
+for hp in $* ; do
+  echo "ptest_batch ${d}1 /$hp" | sed 's!//!/!'
+done  > $test_dir/before_test.sh
+
+set -a
+ptest_batch_dump_dir=$test_dir
+
+ptest_run $exec $test_dir
+

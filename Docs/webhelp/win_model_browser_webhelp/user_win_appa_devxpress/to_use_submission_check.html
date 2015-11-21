@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>To use submission check</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p5 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p6 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 13.0px Helvetica}
+  </style>
+</head>
+<body>
+<p class="p1"><b>To use submission check</b></p>
+<p class="p2"><span class="s1"><b>1</b></span><span class="s2"><b>   </b></span>Start Developer Xpress.</p>
+<p class="p2"><span class="s1"><b>2</b></span><span class="s2"><b>   </b></span>Select <b>File &gt; Service Chooser</b>.</p>
+<p class="p2"><span class="s1"><b>3</b></span><span class="s2"><b>   </b></span>Select the desired service.</p>
+<p class="p2"><span class="s1"><b>4</b></span><span class="s2"><b>   </b></span>Set <b>Mode</b> to <b>No Transform</b>, unless the paths used for source files differ between the server side and the client, or between the shared and private versions of files.</p>
+<p class="p2">In this case, set the mode to <b>Transform</b>, and specify in the fields below the roots used for the source on the server, on the client, and for private files.</p>
+<p class="p2"><span class="s1"><b>5</b></span><span class="s2"><b>   </b></span>Check out and modify some files.</p>
+<p class="p2"><span class="s1"><b>6</b></span><span class="s2"><b>   </b></span>Select the files you want to check.</p>
+<p class="p2"><span class="s1"><b>7</b></span><span class="s2"><b>   </b></span>Click <b>File &gt; Sub. Check</b>.</p>
+<p class="p2">The <b>Submission Check</b> window appears, displaying the selected files in the <b>Files to Submit</b> pane.</p>
+<p class="p3"><br></p>
+<p class="p4"><img src="./tmp119961.jpg" alt="tmp119961.jpg"></p>
+<p class="p5"> </p>
+<p class="p2"><span class="s1"><b>8</b></span><span class="s2"><b>   </b></span>To check your files, click <b>Check</b>.</p>
+<p class="p2">Any parse errors appear in the <b>Errors</b> pane, and the results of the queries appear in the <b>Hits</b> pane.</p>
+<p class="p2"><span class="s1"><b>9</b></span><span class="s2"><b>   </b></span>To view the list of hits detected by the queries, click <b>Hits</b>.</p>
+<p class="p2">Hits are in the form of brief descriptions or warning messages, with file names and line numbers attached. The list can be divided into <b>All hits</b> and <b>New hits</b> by using the appropriate buttons at the left bottom of this tab window. Submission Check uses diff to determine whether a hit occurs on a line that has changed, so even minor changes to lines containing hits may cause those hits to be reported as new. The predecessor version against which the diff is run is normally the version of the file that was used during the original model build. However, when you submit a file through Submission Check, a copy of it is stored in the server area, and subsequent checks are run against this version. This should give the correct behavior unless a merge is required, in which case the merge should be done before Submission Check is run. If you submit a file outside of Submission Check, the check reports all changes made in this external submission as part of the new changes.</p>
+<p class="p2"><span class="s1"><b>10</b></span><span class="s2"><b>   </b></span>To view the objects in your software that were modified by the submission, click <b>Modified Objects</b>.</p>
+<p class="p2">The <b>Modified Objects</b> pane shows new objects, objects which were removed, and objects which were changed when you click the <b>New</b>, <b>Removed</b>, or <b>Modified</b> buttons at the bottom left of this tab windows. Again, diff is used to determine which objects are modified, so objects on the same line as a change may be reported as modified even if they were not.</p>
+<p class="p2"><span class="s1"><b>11</b></span><span class="s2"><b>   </b></span>After the check is complete, click <b>Unparsed files</b>.</p>
+<p class="p2">The <b>Unparsed files</b> tab displays the list of files that were not parsed during the model build. These are files no flags were available for, or header files which were not included by any of the checked source files. Currently, Submission Check does not support new files. You can check header files by launching the user interface again with the header and a source file which includes it. To check header files in this way, both the header file and the source file need to be given to SubCheck. Errors for any unparsed files appear in the <b>Errors</b> tab.</p>
+<p class="p2"><span class="s1"><b>12</b></span><span class="s2"><b>   </b></span>To view compiler errors in unparsed files, click <b>Errors</b>.</p>
+<p class="p2">These errors may be normal compiler errors in your code, or they may be artifacts of the method by which Submission Check collects the files to be parsed.</p>
+<p class="p2"><span class="s1"><b>13</b></span><span class="s2"><b>   </b></span>To enter submission comments, click <b>Comments</b>.</p>
+<p class="p2">The <b>Comments</b> dialog box appears.</p>
+<p class="p2"><span class="s1"><b>14</b></span><span class="s2"><b>   </b></span>Type in your comments about the files being submitted.</p>
+<p class="p2"><span class="s1"><b>15</b></span><span class="s2"><b>   </b></span>Click <b>OK</b>.</p>
+<p class="p6"><b>Note: </b>Comments are discarded if the submission is made through the normal <b>CM &gt; Check In</b><span class="s3"> </span>or outside of Developer Xpress entirely.</p>
+<p class="p2"><span class="s1"><b>16</b></span><span class="s2"><b>   </b></span>To submit the files, click <b>Submit</b>.</p>
+<p class="p2">This checks in the files that you have brought into Submission Check through the CM system that do not have parse errors or new quality hits. The summary report generated by the check is e-mailed to the list of recipients and is also used to generate the check-in comments for each file. In addition, the model server stores a copy of the submitted files and a list of the entities that they contain, so that subsequent submissions use this submission as their background.</p>
+<p class="p2"><span class="s1"><b>17</b></span><span class="s2"><b>   </b></span>To view the log for errors after you submit the files, click <b>Log</b>.</p>
+<p class="p2">Displays the output from the build server as it builds the model and runs the queries. Information displayed there probably is useful only for debugging, in case something goes wrong.</p>
+<p class="p2"><span class="s1"><b>18</b></span><span class="s2"><b>   </b></span>To view the report summarizing the findings of the check, click <b>Report</b>.</p>
+<p class="p2">This is the report that is e-mailed at the time of the submission to the recipients listed in the policy.</p>
+</body>
+</html>

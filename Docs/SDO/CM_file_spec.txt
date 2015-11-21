@@ -1,0 +1,73 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Date: 6/28/95
+File: CM_file_spec.txt
+Subject: CM file spec and design
+From: Trung Dung
+
+
+I   Requirement:
+    * How many bug fixes were done to : subsystem, file, function,
+      objects for a period of time?
+    * How many LOC, entities were added/modified/pruned: for a period
+      of time, with a particular submission, by a team, by an
+      individual for a project, subsystem, file, function, object?
+    * # of defects per LOC, per # of entities of subsystem (baseline),
+      file, project, whole model?
+  *** Traceability (modified history) on entity level (instead of just file
+      level).
+
+II  Entity CM_file : SDO_base
+    a)	purpose: adding modified/new/delete entities history per file during
+	check-in: 
+
+    b) 	attributes:
+	* enum entity_action { MOD, NEW, DEL }
+	* name
+	* History: capture information like ci, modified entities, comment,
+	  etc. Could have format: [date, user, code_entity, MOD, comment]
+
+    c)	relations:
+	* Relational: 
+	  * [Status, check-out] : track who currently check this file out.
+
+    d) behavior: 
+	* Query/Function:
+	  * get_checkout_users()
+	  * get_modified_entities(from_date, to_date)
+ 	* Filter:
+	* Action: 
+	  * combine: when merging diff. files to one,
+	  * split: when spliting file into different files,
+	* View: union
+
+    e) 	Trigger:
+	* check-in: remove [Status, check-out] relation, update history
+	* check-out: establish [Status, check-out] relation
+	* merge_file: merge diff. files to one
+	* split_file: split file into different files

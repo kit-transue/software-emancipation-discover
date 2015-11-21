@@ -1,0 +1,20 @@
+#!/bin/sh
+# cm_unget_src (ClearCase) - Uncheckout the source file.
+
+# exit script if we get any errors
+set -e
+
+set +e
+unreserved=`cleartool describe $cm_workfile 2> /dev/null | grep CHECKEDOUT | grep reserved`
+set -e
+
+if [ "$unreserved" != "" ] ; then
+  # if here it means that we have this file checkedout & reserved/unreserved
+  # UnCheck out the file.
+  echo "cleartool uncheckout -rm $cm_workfile"
+        cleartool uncheckout -rm $cm_workfile
+  fi
+
+exit 0
+
+

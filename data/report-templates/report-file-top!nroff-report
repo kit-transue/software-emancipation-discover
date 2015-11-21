@@ -1,0 +1,17 @@
+.de NP
+'sp 0.3i
+.po +1i
+.tl '$B'$D'%'
+.po -1i
+'bp
+..
+.wh -1i NP
+.nf
+.po 0
+.ll 8.5i
+.sp 0.3i
+.ps 18
+.ce
+$R
+.ps 10
+.in 1i

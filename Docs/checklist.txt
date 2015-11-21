@@ -1,0 +1,188 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+			DISCOVER Release Checklist
+			~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I. Summary
+
+This document provides a brief checklist of basic usage and feature
+availability that must be satisfied before DISCOVER may be released 
+to a customer. It is intended that this be used as a guide for the 
+final hands-on verification of any new release or patch. 
+
+This checklist is simply a "sanity-check" and should not be used to 
+verify the existence of any real DISCOVER functionality. This is
+intended as a brief overview of the product. The goal is to touch 
+upon each major area of operation as briefly as possible, and answer
+questions like: Is there anything glaringly wrong with the product?
+Are all the major features available for use? It is assumed that the
+product has already been tested internally, so this checklist may 
+be used to ensure that the release areas are fully intact, and that 
+no catastrophic defects were somehow missed before the product is 
+finally entombed on some media and sent to the customer.
+
+II. Preparation
+
+First log out of the machine completely (this might entail logging out
+of your window manager, and then logging out of the console shell.) Log 
+back in and start up X. 
+
+Global shell variables (most notably "PATH" and "PSET_*") can cause 
+unpredictable or non-standard behavior, so it is best to use a "clean" 
+environment when testing. The easiest way to clean out your environment 
+is to execute the following commands (in t?csh):
+
+	% unsetenv *
+	% /usr/local/bin/tcsh
+
+This will ensure that you are using the default t?csh environment.
+
+Since we will be using the "Learn" environment, it is important that you 
+clean out any old Learn files that you might have. The following command 
+usually does the trick:
+
+	% rm -rf ~/DISCOVER/Learn
+
+III. The Checklist
+
+Report any issues that you encounter as you go through this checklist.
+
+A. Start-up
+
+   a. Invoke the learn environment by typing "discover -learn".       
+
+      1. Make sure there are no tar extraction errors. 
+
+      2. Does the splash screen come up with the proper date, version 
+         number, install location, and copyright info?
+
+B. Browser
+
+   a. Select /xip_private from the Home Project Selection dialog.
+      
+      1. Does the Browser come up?
+      
+      2. Can you activate scan mode?
+
+C. Viewer
+
+   a. Open up /xip_shared/src. Double-click on xip.c. 
+      
+      1. Does Emacs pop-up with xip.c displayed in the buffer?
+
+      2. Can you double-click on projects and navigate through folders 
+         in the minibrowser?
+
+   b. Switch back to the text view of xip.c with the Viewer history 
+      button.
+
+      1. Can you find a token's location and type info by shift-LMB-
+         clicking on it?
+
+      2. Can you do this for "reglist" on line 37?
+
+D. CM
+
+   a. With the text view of xip.c still in the Viewer, select Manage -> 
+      Get. Does the CM/sw Monitor Window come up and check-out the file 
+      without any errors? ("Get completed for /xip/src/xip.c" should 
+      appear in the minibuffer.)
+
+   b. Modify the file, save it with C-x C-s, and select Manage -> Put... 
+      Enter a comment and select Put All. Was the file successfully 
+      checked-in?
+
+E. Update
+
+   a. Double-click on stage.c (in /xip_shared/src) from the Browser. Hit 
+      the Update button. Does the file parse successfully?
+
+F. Report
+
+   a. Select Utility -> REPORT/sw in the Browser. Edit the "Output to" 
+      field to read "/usr/tmp/rep". Select Files from the categories 
+      column and highlight TicTacToeGame.H in the elements column. 
+      Select the Generate Report button. Does DISCOVER create a report 
+      in /usr/tmp/rep?
+
+G. Groups
+   
+   a. In scan mode, select Files from the Categories column. Select the 
+      source code module init.c from the Elements column and highlight 
+      Defines from the Ask column. Highlight all of the variables (icon 
+      resembles an X) in the Results column and select the Group button. 
+      Does the Group Manager pop-up with a new group (GROUP-1) listed?
+
+H. Debug
+
+   a. Select View -> New Viewer from the Browser. In the Viewer, click on 
+      Debug -> Set Debugger -> GDB 4.14. Now select Debug -> Start Debugger.
+      Does gdb come up successfully in a second pane at the bottom of the 
+      Viewer?
+  
+I. Frame
+
+   a. In the Browser, navigate to the root project. Scan for Files and 
+      double-click on /xip/doc/requirements.doc. Hit OK when asked for 
+      confirmation. 
+  
+      1. Does Frame pop-up with a document entitled "X Image Processor 
+         Requirements" in the editor window?
+
+      2. Is StageObj (on the second-to-last line) double-underlined?
+
+J. Partition
+
+   a. Close all Viewers and Frame sessions. Enter the /xip_shared/src 
+      subproject and double-click on pipeline.c. When the Viewer comes 
+      up, select Partition -> Simplify #includes. Does partition comment 
+      out the include directives for stage.h and image_win.h?
+
+   b. Double-click on fonts.c in the Browser. Shift-LMB-click on the 
+      function name DaInitAppFonts (line 10). Select Partition -> 
+      Move Entities. Append new.c to the file path in the Move Entities 
+      to File dialog. Hit OK to this and any subsequent confirmation 
+      dialogs. 
+ 
+      1. Does the new file appear in the Viewer?
+
+      2. Do you see the definition for the function you moved 
+         (DaInitAppFonts) in the new file?
+
+K. Package
+
+   a. Quit DISCOVER and type "discover package -gui" at the shell 
+      prompt. Does the Package window come up?
+
+L. Misc
+
+   a. Does the command "discover -v" display the correct version and date 
+      info? (Check if it is consistent with the splash screen.)
+
+[Thanks to Nat and Greg for suggestions. 08/22/96, abover]

@@ -1,0 +1,239 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+Trip report: Customer1, Customer2, Customer3 -- Trung Dung, 5/19-5/20
+
+    I. Customer1, 5/19
+
+    1. Spoke with Mike Ly. for 1 hour: project leader, does not write code anymore, occasionally debugs some code. Does not have knowledge of C++. Currently not using ParaSET. Following are excerpts from my conversation with him:
+
+    * There is a gap between the potential seen during the demo, and actually realizing that potential.
+
+    * There is a steep learning curve.
+
+    * Integration is not smooth.
+
+    * They had difficulty with configuration.
+
+    * The initial difficulties tend to cool off many people.
+
+    * ParaSET is not intuitive or natural to use (i.e., you need to think about what you are trying to do instead of having it come as second nature).
+
+    * Navigation/browsing: They want to see files, functions, etc. at the same time; Mike suggests having something like multiple instances of Column 2 (Elements) in Scan mode (he does not want to have them mixed like now). The user usually knows more or less what he's looking for. The current sequence of steps in the browser for looking up some structures or functions is not much better than doing grep and emacs in terms of time/effort to get the result. Mike would like to simultaneously display multiple views of an object (e.g., an option to see a call tree and a text view in one action). Avoid pulling down menus as much as possible (e.g., to open up the definition of a function, the user currently needs to make a selection in the text view, then use the pull down menu). Synchronize selection in the View and the Browser (e.g., the highlight in the View should cause the appropriate item in the Browser to be highlighted). Option to open new viewer instead of overwrite it.
+
+    * Typical scenario for maintenance: looking up specific error message by grepping on entire code. ParaSET Query is awkward to use and takes much longer than grep. In dbx, you can go to the crash; but ParaSET currently only supports gdb.
+
+    * The training course is too long. People fall off the "learning curve"; people back out before using features like Impact Analysis, etc.
+
+    * All new development at Customer1 is in C++, but ParaSET is NOT being used. Here's why: lack of awareness of C++ (what can be done by ParaSET in C++); people opt to use SparcWork III plus Code Center instead, because they provide more checking; problem with reverse engineering existing C++ code.
+
+    * Would like more test coverage analysis, such as printing out the trace of program execution.
+
+    * Would like to have yacc and lex in ParaSET
+
+    * SET should consider features to restructure/reorganize code: for example, a feature to automatically extract several functions and put in a [new] file might be useful.
+
+    2. Spoke with Da. S. for 1 hour: leader of new QA group, went through training. Following are excerpts from my conversation with her:
+
+    * No chance of knowing how to use ParaSET without training.
+
+    * The tool as presented during training class seems complex; it discourages the trainee.
+
+    * People thought the tool was hard to use; it was not clear how to get certain things done.
+
+    * The amount of wait time for certain operations is long: it seems to hang for a while, then occasionally crashes (or gives unpredictable results) after some random clicking to see if it's really hung or doing something.
+
+    * You often need to look up specific information, but ParaSET gives too much information, which can be difficult to filter out; for example, the steps to open up some function.
+
+    * The concept of "projects" does not come through in training. Too much terminology is thrown out, too much information is given out, making it difficult to catch up and digest all of it. Training excersises could be written down. Even after training, users have a hard time adjusting to the real enviroment. Very strongly suggest customized training: study customer enviroment, then give the training based on customer enviroment.
+
+    * User often clicks on the wrong mouse button. UI discrepancy in graphics mode.
+
+    * NOT using Help often: instead of explanation, should give sequence of steps for an action/senario.
+
+    * User walks out of training without feeling that he/she knows much.
+
+    * ParaDEBUG was difficult (Da. was used to dbx); training helps people learn gdb.
+
+    * The View List button does not give sufficient information. It's not possible to know which item is a call tree, a text view, etc.
+
+    3. Spoke with Sp. for 1 hour: member of QA group, does not do coding, went to training, only does browsing/analysis on ParaSET, occasional user.
+
+    * Hard to get up to speed; not obvious how to get things done.
+
+    * Likes OO design
+
+    * Problems with training class: very few things were written down (e.g., handouts); students would like to redo training on their own but can't...they need to go back to the manual but are reluctant to read manual; problem with getting so much information in training: student forget, overfull. Could follow topics during class, but they get lost when using in real enviroment. Would like to have more detailed handout during class.
+
+    * Should have a more example/scenario-oriented document in training. Should have something like online training: example how to do things.
+
+    * Getting around the tool is not easy; frustrating.
+
+    * Should emphasize and raise more awareness regarding Impact Analysis during training. Some reasons why developers do not use IA: initial learning difficulty discourages people; not used to the idea of IA; don't recognize the importance of IA.
+
+    * Potentially will do analysis of code for restructuring, and restructure of code: group "similar" (i.e., in terms of functionality) functions, classes.
+
+    * Would like to have some test coverage functionality like dynamic information when running test case. A potential usage senario: Developers will submit along with test case the dynamic information (e.g., function calling trace); this info will be useful for QA to identify which routines are [not] sufficiently covered. Thus, will construct complementary test case.
+
+    4. Spoke with Jessica for 0.5 hour: C++ developer, not using ParaSET, went through training.
+
+    * The learning curve too high; not enough time; product presented as complex.
+
+    * Was not comfortable using it even after training.
+
+    * Here is why she is not using OODT for new C++ dev: doesn't know how to set up; interacting with too detailed menus; it's faster to write code; non-familiarity (doesn't know how to go about using it). Project schedule is too tight to risk spending time learning (and not getting paid back immediately); developer is not inclined to use it, and does not know how to set up the enviroment.
+
+    * Needs too much thinking to navigate around ParaSET even after training.
+
+    5. Spoke with Si. for 0.5 hour: new developer.
+
+    * Stopped using ParaSET because cannot edit file. (Note: this was a configuration problem, which has since been solved.)
+
+    * Mental block: might get stuck with ParaSET again, and doesn't want to waste time and risk schedule.
+
+    * Problem with compiling files.
+
+    * Difficult to find out "what is in which menu"; falling off learning curve (i.e., the user forgets 50% what was learned). Would like some guide, examples, sequence of steps for a particular senario.
+
+    * ParaSET is complex compared to "regular" packages, or just the regular steps to get things done (he could not be more specific).
+
+    * Would like to have a support group (or more support) locally to provide motivation to use it. (Would like to have 3-5 people using it; then, will be more comfortable using it.) Does not want to have impression that he's using it alone.
+
+    * Using dbx; hesitates to leave debugger environment and go to ParaSET for other use.
+
+    6. Spoke with Mike Li. for 1 hour: Responsible for maintaining pdf; building pmod, pset.
+
+    * Building psets and pmods is unacceptably slow.
+
+    * Maintaining the pdf is fustrating; too much time to get a working pdf; should have debugging capability for pdf to test it, especially when editing rules in pdf.
+
+    * Suggest putting the psetPrefs in the pdf; would like to run paraSET without a local writable project.
+
+    * ParaSET consumes a lot of swap space; creates too many temporary files while doing batch; leaves too many temporary files after kill or crash.
+
+    * ParaSET does not handle #ifdef.
+
+    * Automount problem. Removing a file from pdf should cause the removal of the file from the pmod after batch. Different return code for different symptoms in batch.
+
+    * General performance: list of files; start up and quitting ParaSET.
+
+    * Should explicitly set border width.
+
+    * Potential problem when having both Solaris and Sun4.
+
+    * Cannot set to use his own Emacs (for which he hasmodified source code).
+
+    * Wants more sophisticated Query: for example, find all functions that use a system call.
+
+    * Too many clicks.
+
+    * Should automatically email errors to paraSET [SET?] (to make it easier to report bugs).
+
+    7. Spoke with Vi. for 3 hours: New developer; has been trying to use ParaSET for 2 days. 
+
+    * Currently getting stuck because of parser errors in code that compiled fine under cc. 
+
+    * Does not have any experience yet, except some growing concern since he cannot continue. Since he was the last one I spoke to at Customer1, I spent 3 hours basically trying to help him, but did not have much success.
+
+    8. Observation at Customer1:
+
+    * Each developer is pretty much left on his own to start using ParaSET and setting up their environment. It's hard for them to find any local help, and people are reluctant to call the SET hotline.
+
+    * People do not want to risk their schedules by spending time learning ParaSET without clear short-term benefits.
+
+    * They have a problem with awareness of ParaSET features and what exactly ParaSET can do to help them.
+
+    II. Customer2, morning 5/19
+
+    1. Spoke with Geoffrey for 1 hour: doing TRP, contractor to maintain existing code; hasn't gone through training; hasn't used ParaSET much, only the analysis part of ParaSET:
+
+    * Strength: source code browser.
+
+    * Product could be used more often if only users know how to find out how to use it, and what it can do.
+
+    * Product documentation is lacking: needs how-to-use, why-to-use information, with special effort on case/scenario studies, for example: given a problem, what series of steps to follow.
+
+    * On several occasions, wanted to do something, but didn't know how to until John said "Oh, here ...". For example: when using dormant code analysis, he didn't know that he needed to select several "main" functions.
+
+    * Online doc: Frame's hardcopy doc is better (application has same complexity but Frame has a much larger size document); performance (going to next help); no facility for inserting book mark; wants to find help by a phrase, a few keywords -- suggest to have index on text; specific context sensitive online help (I'm here, what do I do next?).
+
+    * Hardcopy doc: seems more like an outline; example of good doc -- HP9000 series.
+
+    * High cost of figuring out how to do things (he couldn't be more specific).
+
+    * Get overloaded with information when calls in for help.
+
+    * A company might be reluctant to pay for training cost for a contractor.
+
+    * ParaSET does not remember much: going up and down projects loses information such as selection and highlight state; switching between Browse Mode and Scan Mode loses focus; he suggests having an option to preserve states.
+
+    * Not sure how to pose complicated questions to Scan Mode.
+
+    * Should have an Apply button for Filter List [see Bug 3825, 6/93]; also option to remember states; don't reset it.
+
+    * Not finding where things are on a menu.
+
+    * The cursor changes to busy (hourglass) only after several seconds -- raises the question "Did I push it?".
+
+    * He is certain that the product did not go through "naive user testing, negative testing". There is no tolerance for stumbling: for example, if something is wrong with the license (say he forgot to run script for env vars), ParaSET will just sit there and display "Feature does not exist" messages.
+
+    * John is very helpful.
+
+    III. Customer3, 5/19
+
+    1. Spoke with Sm. for 3 hours: TRP; only uses ParaSET analysis; has not gone through training. 
+
+    * She does not know much about ParaSET features. I ended up showing her how to use ParaSET for 3 hours. She is very enthusiastic about the potential of ParaSET.
+
+    * Macro expansion capability is absolutely important: option to expand by level, full expansion, notes. They bought Pro-Case just so that they can use this feature.
+
+    * Template/exception handling is a must, since it is in the Coding Standards there.
+
+    * Wants to do hyperlinks and associations to Frame. Notes: Her enviroment is Solaris and she complained about not getting straight answers from John and Dan about the status of ParaSET on Solaris, and/or Frame connection with ParaSET, etc.
+
+    * ParaSET should read some Xdefault for set up: can't use copy/cut/paste key, mouse click interval, Xdefault property window (?), etc.
+
+    * Help: not very helpful; wants more scenario/usage examples.
+
+    * Crash in expanding macro.
+
+    * Wants option do customized code indenting.
+
+    III. Recomendation
+
+    1. The trip was very useful. Schedules need to be worked out in more detail (to avoid doing tech-support [Customer3], or talking to people who have not used ParaSET enough [Customer2].
+
+    2. Documentation and online help are very important to make the product appear more friendly. Might want to consider more emphasis on troubleshooting for the pdf; installation; enviroment; examples; scenario; specific steps for solving specific task. For each pulldown menu, we should have a Help option.
+
+    3. Initial hand-holding for the customer seems important to get customer usage. Might want to have support staff there a few hours a day for the first few months to establish user group locally.
+
+    4. Consider customized training classes, shorter training classes. (We might not need to show every feature of ParaSET, just show the key areas).
+
+    5. Option to avoid clicking, provide shortcuts in browsing, UI should provide more feedback, cancel option for long operations. General performance, stability (negative testing, naive user testing, etc.).
+
+     

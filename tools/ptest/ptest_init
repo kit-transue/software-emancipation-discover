@@ -1,0 +1,40 @@
+#!/bin/csh -f
+
+set to_test = "$1"
+set to_out = "$2"
+
+set out_save = ${to_out}.save
+
+if (-f $to_test) then 
+    echo "$to_test is a file. Can not create a directory"
+    exit 1
+endif
+
+if (-f $to_out) then
+    echo "$to_out is a file. Can not create a directory"
+    exit 1
+endif
+
+if (-d $to_test) then
+   echo -n "Clean $to_test ..."
+   \rm -rf $to_test/* >&! /dev/null
+   echo " done"
+else
+   mkdir -p $to_test
+endif
+
+if (-d $to_out) then
+   #mkdir -p $out_save
+   echo -n "Save $to_out TO $out_save ..."
+   if (-e $out_save) then
+      rm -rf $out_save
+   endif
+   #(cd $to_out; tar cf - . ) | (cd $out_save; tar xf -)
+   mv $to_out $out_save
+   echo " done"
+   #\rm -rf $to_out >&! /dev/null
+endif
+
+mkdir -p $to_out
+
+exit 0

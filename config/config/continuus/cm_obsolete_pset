@@ -1,0 +1,29 @@
+#!/bin/sh
+# cm_obsolete_pset (ClearCase) - Obsolete .pset file.
+
+# exit script if we get any errors
+set -e
+
+if [ -f $cm_workfile ] ; then
+  #Checkout current directory if it was not checked out
+  #directory=`echo $cm_workfile | sed -e 's?\(.*\)/\([^/]*\)?\1?'`
+  directory=`dirname $cm_workfile`
+
+  # Check out directory (ignore errors if it is already checked out)
+  set +e
+  echo "ccm co $directory"
+  ccm co $directory
+  set -e
+
+  #Remove name
+  echo "ccm unuse $cm_workfile"
+  ccm unuse $cm_workfile
+
+  # Check the directory back in
+  echo "ccm ci -nc $directory"
+  ccm ci -nc $directory
+
+fi
+
+exit 0
+

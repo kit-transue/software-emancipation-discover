@@ -1,0 +1,5 @@
+element * CHECKEDOUT
+element * /rl_fix/LATEST
+element * R1.0 -mkbranch rl_fix
+element * ../rl_fix/R2.0 -mkbranch rl_fix
+element ../*.c /main/LATEST -mkbranch rl_fix

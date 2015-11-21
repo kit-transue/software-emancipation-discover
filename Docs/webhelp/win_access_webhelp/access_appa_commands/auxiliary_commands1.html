@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Auxiliary Commands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p5 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 1.0px 12.0px; font: 12.0px 'Courier New'}
+    p.p8 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 11.0px 'Courier New'}
+    span.s3 {font: 12.0px 'Courier New'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 118.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 257.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 118.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 257.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Auxiliary Commands</b></p>
+<p class="p2">Auxiliary commands do not fit into any one category, but help manage set input and output. The following table describes auxiliary commands and their syntax.</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td1">
+        <p class="p3"><b>Auxiliary Command</b></p>
+      </td>
+      <td rowspan="2" valign="middle" class="td2">
+        <p class="p3"><b>Description and Syntax</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">&gt;</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Direct command output to a file.</p>
+        <p class="p5">&gt; filename command</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">&gt;&gt;</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Append command output to a file.</p>
+        <p class="p5">&gt;&gt; filename command</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">add-attribute</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Creates a new attribute using the specified attribute expression.</p>
+        <p class="p5">add_attribute <i>attribute_name</i> <i>attribute_expression</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">apply</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Applies the specified attributes to each entity or instance in the specified set, removing duplicate entities or instances. Returns a list of unique attribute values.</p>
+        <p class="p5">apply <i>attribute_name</i> <i>set_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">apply_per_file</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Loads files as necessary, and unloads them when they are no longer needed.</p>
+        <p class="p7">apply_per_file<span class="s1">      </span> "string args”<span class="s1">   </span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">filter</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Return those members of the set for which <span class="s2"><i>attribute-expression</i></span><span class="s3"><i>,</i></span> applied to that member, returns true.</p>
+        <p class="p5">filter <i>attribute-expression set_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">foreach</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">For every element in <span class="s2"><i>set</i></span>, set <span class="s2"><i>var </i></span>to the element and perform <span class="s2"><i>action</i></span>.</p>
+        <p class="p5">foreach <i>var set { action }</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">new_set</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Makes the specified set the current set (same as set_copy).</p>
+        <p class="p5">new_set <i>set_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">print</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Prints the entities contained in the specified set using the current print format.</p>
+        <p class="p5">print <i>set_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">printformat</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Determines the format of printed output.</p>
+        <p class="p5">printformat <i>formatstring</i> [<i>attribute</i> [<i>attribute</i>...]]</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">size</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the size of the specified set.</p>
+        <p class="p5">size <i>set</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">sort</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the specified set according to a specified sort attribute (default is alphabetical).</p>
+        <p class="p5">sort [-a | -d] <i>sort_attribute</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<p class="p8"><br></p>
+</body>
+</html>

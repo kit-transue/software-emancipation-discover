@@ -1,0 +1,21 @@
+#!/bin/csh -f
+
+# Set up Makefile
+
+if ( ! -e Makefile && -e $sd/Makefile ) then
+    ln -s $sd/Makefile* .
+endif
+if ( ! -e .depend ) touch .depend
+
+egrep "includes[ a-zA-Z]*:" Makefile >&/dev/null
+set includes_status = $status
+egrep "makemf[ a-zA-Z]*:" Makefile >&/dev/null
+set makemf_status = $status
+
+if ( -e Makefile && "$includes_status" == "0" && "$makemf_status" == "0" ) then
+    (make includes makemf >>& /dev/null &) >&/dev/null
+else if ( -e Makefile && "$includes_status" == "0") then
+    (make includes >>& /dev/null &) >&/dev/null
+else if ( -e Makefile && "$makemf_status" == "0") then
+    (make makemf >>& /dev/null &) >&/dev/null
+endif

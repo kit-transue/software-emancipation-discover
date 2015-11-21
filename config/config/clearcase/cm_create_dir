@@ -1,0 +1,18 @@
+#!/bin/sh
+# Find the version of the file selected by the view
+set +e
+viewversion=`cleartool describe $cm_workfile 2> /dev/null | head -1 | \
+             $PSETCFG/util/atria_revisions`
+set -e
+
+if [ "$viewversion" = "" ] ; then
+  # This is not a clearcase element
+
+   workdir=`dirname $cm_workfile`
+   echo "mkdir -p  $workdir"
+   mkdir -p $workdir
+else
+   echo "You need to create a directory for your Information Model files."
+   echo "Please contact your DISCOVER Administrator"
+exit 255
+fi

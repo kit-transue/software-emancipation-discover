@@ -1,0 +1,49 @@
+<html>
+<body>
+
+<p><b>DICFVH - Define Initial Capacity for <i>Vector</i> and <i>Hashtable</i> collections.</b></p>
+
+<p>Expansion of Vector capacity involves allocating a larger array and copying
+the contents of the old array to the new one.  Eventually, the old array
+object gets reclaimed by the garbage collector.  Vector expansion is an
+expensive operation. Same situation with HashTable. It is often the case that 
+the default 10-element capacity of a collection is not enough. 
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class DICFV {<br>
+&nbsp; public void addObjects (Object[] o) {<br>      
+&nbsp; &nbsp; // if length &gt; 10, Vector needs to expand<br>
+&nbsp; &nbsp; for (int i = 0; i &lt; o.length;i++) {<br>
+&nbsp; &nbsp; &nbsp; v.add(o[i]); &nbsp; &nbsp; // capacity before it can add more elements.<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+&nbsp; public <font color='red'> Vector v = new Vector();</font> &nbsp; &nbsp; // no initialCapacity.<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Often, you may have a pretty good guess for the expected size. Define initialcapacity when known.<br>
+<br>
+&nbsp; &nbsp;public Vector v = new Vector(20);<br>
+&nbsp; &nbsp;public Hashtable hash = new Hashtable(40);
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class DICFV {<br>
+&nbsp; public void addObjects (Object[] o) {<br>      
+&nbsp; &nbsp; for (int i = 0; i &lt; o.length;i++) {<br>
+&nbsp; &nbsp; &nbsp; v.add(o[i]);<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+&nbsp; public <font color='blue'> Vector v = new Vector(20); &nbsp; &nbsp; // You set initialCapacity.</font><br>
+}</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Dov Bulka, "Java Performance and Scalability Volume 1: Server-Side Programming
+Techniques" Addison Wesley, ISBN: 0-201-70429-3 pp.55 - 57</p>
+</body>
+</html>

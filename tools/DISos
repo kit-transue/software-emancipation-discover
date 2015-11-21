@@ -1,0 +1,28 @@
+#!/bin/csh -f
+#
+
+set OS=`uname -s`
+
+switch ($OS)
+  case SunOS:
+    echo sun`uname -r | sed 's@\..*$@@'`.x
+    breaksw
+
+  case HP-UX:
+    echo hpux9.x
+    breaksw
+
+  case IRIX:
+    echo irix`uname -r | sed 's@\..*$@@'`.x
+    breaksw
+
+  case Linux:
+    echo linux`uname -r | sed 's@\..*$@@'`.x
+    breaksw
+
+  default:
+    echo 'discover: Warning - unrecognized operating system ('`uname -r`')'
+    breaksw
+endsw
+
+exit 0

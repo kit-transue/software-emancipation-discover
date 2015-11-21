@@ -1,0 +1,5 @@
+#!/bin/sh
+echo 1
+exit 0
+
+$PSETHOME/bin/rlog $cm_revision_file | $PSETCFG/util/rcs_revisions 1 | $PSETCFG/util/cm_time_filter $cm_date

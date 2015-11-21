@@ -1,0 +1,16 @@
+VPATH=/paraset/src/paraset/els/driver/src
+
+TARGETS=\
+	fileSorter.o \
+	flagGenerator.o \
+	gmaker.o \
+	iffConsumer.o \
+	iffParser.o \
+	iffProducer.o \
+	langIffProducer.o \
+	language.o \
+	ldfInfo.o \
+	modelBuilder.o \
+	parserIffConsumer.o
+
+L_CCINCLUDES=-I/paraset/src/paraset/els/driver/include

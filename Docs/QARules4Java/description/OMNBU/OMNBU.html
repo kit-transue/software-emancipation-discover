@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>OMNBU - Operator '?:' May Not Be Used</b></p>
+
+<p>The operator '?:' makes the code harder to read,
+than the alternative form with an if-statement.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void func (int a) {<br>
+&nbsp; &nbsp; int b = <font color='red'> (a == 10) ? 20 : 30; </font><br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Replace '?:'  operator with the appropriate if-else statement.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void func (int a) {<br>
+&nbsp; &nbsp;<font color='blue'> if (a == 10) <br>
+&nbsp; &nbsp; &nbsp; &nbsp; b = 20;<br>
+&nbsp; &nbsp; else <br>
+&nbsp; &nbsp; &nbsp; &nbsp; b = 30;</font><br>
+}
+</code></p></nobr>
+
+</body>
+</html>

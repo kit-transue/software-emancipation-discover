@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>MVDWSN - Multiple Visible Declarations With Same Name</b></p>
+
+<p>Multiple declarations with the same name must not be simultaneously
+visible except for overloaded methods.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class MVDWSN {<br>
+&nbsp; &nbsp; void index () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>int index; </font><br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+   Rename&nbsp;members (or variables) with clashing names.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class MVDWSN {<br>
+&nbsp; &nbsp; void index () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>int anIndex; </font><br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

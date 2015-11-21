@@ -1,0 +1,15 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    db_buffer.h \
+    db_def \
+    db_intern.h \
+    db_io \
+    db_read_src_from_pset \
+    db_restore \
+    db_save \
+    db_util \
+    saveXref \
+
+

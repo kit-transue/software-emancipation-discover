@@ -1,0 +1,26 @@
+#
+# File
+# ----
+#
+dis_MenuAddMenuArgument AppFileMenu             "qhelp=Shuts down this layer"
+  
+dis_MenuAddItemArgument FileQuit             "qhelp=Exit Filter Manager"
+
+
+ dis_MenuAddItemArgument SEV_Menu             "qhelp=Manage QA Cockpit Sessions"
+dis_MenuAddItemArgument SEVOpen           "qhelp=Open a different session"
+
+dis_MenuAddItemArgument SEVSaveSession             "qhelp=Save this session"
+dis_MenuAddItemArgument SEVSaveSessionAs             "qhelp=Save this session with a different name"
+dis_MenuAddItemArgument SEVRemove            "qhelp=Remove QA Cockpit sessions"
+
+
+
+
+#
+# Help
+# ----
+ 
+  dis_MenuAddMenuArgument HelpMenu                      "qhelp=Get help"
+      dis_MenuAddItemArgument HelpContentsItem          "qhelp=Display the table of contents"
+

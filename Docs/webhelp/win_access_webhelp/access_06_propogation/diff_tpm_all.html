@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>diff_tpm_all</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>diff_tpm_all</b></p>
+<p class="p2">The following example demonstrates how you can search for a function call, <span class="s1"><b>pdstrcmp</b></span>, and replace it with a new function call, <span class="s1"><b>new_pdstrcmp</b></span>.</p>
+<p class="p3"><b>Note: </b>Executing this command does not change your source code; it creates a diff file containing the delta between your original code and the changes that the command represents.</p>
+<p class="p4">diff_tpm_all {call_expr -&gt; c: "pdstrcmp” {diff_replace "new_pdstrcmp" $c}} /selected_files</p>
+<p class="p2">You can execute a single command or a series. You may find it convenient to create a script containing a series of commands. A separate diff file is created with each execution of <span class="s1"><b>diff_tpm_all</b></span>.</p>
+<p class="p2"> </p>
+<p class="p5"> </p>
+</body>
+</html>

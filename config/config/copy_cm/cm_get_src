@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+
+echo "cp $cm_sysfile $cm_workfile"
+cp $cm_sysfile $cm_workfile
+chmod +w $cm_workfile 2> /dev/null
+

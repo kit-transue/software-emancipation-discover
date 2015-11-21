@@ -1,0 +1,78 @@
+<html>
+<body>
+
+<p><b>Servlet API - Reuse data sources for JDBC connections.</b></p>
+
+<p>A <i>javax.sql.DataSource</i> is obtained from your Application Server container through
+a JNDI naming lookup.  Avoid the overhead of acquiring a <i>javax.sql.DataSource</i>
+for each SQL access.  This is an expensive operation that will severely impact
+the performance and scalability of the application.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.*;<br>
+import javax.servlet.http.*;<br>
+import javax.sql.*;<br>
+import javax.naming.Context;<br>
+import javax.naming.InitialContext;<br>
+<br>
+public class DemoDataSourceServlet extends HttpServlet {<br>
+&nbsp; public void doGet () throws ServletException {<br>
+&nbsp; &nbsp; <font color='red'> DataSource ds = null;</font><br>
+&nbsp; &nbsp; try {<br>
+&nbsp; &nbsp; &nbsp; <font color='red'> java.util.Hashtable env = new java.util.Hashtable ();<br>
+&nbsp; &nbsp; &nbsp; env.put (Context.INITIAL_CONTEXT_FACTORY, "jndi.CNInitialContext");<br>
+&nbsp; &nbsp; &nbsp; Context ctx = new InitialContext (env);<br>
+&nbsp; &nbsp; &nbsp; ds = (DataSource)ctx.lookup ("jdbc/SAMPLE");<br>
+&nbsp; &nbsp; &nbsp; ctx.close ();</font><br>
+&nbsp; &nbsp; } catch (Exception e) {<br>
+&nbsp; &nbsp; &nbsp; e.printStackTrace ();<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Servlet should acquire the <i>javax.sql.DataSource</i> in the <i>Servlet.init ()</i> method
+(or some other thread-safe method) and maintain it in a common location for reuse.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.*;<br>
+import javax.servlet.http.*;<br>
+import javax.sql.*;<br>
+import javax.naming.Context;<br>
+import javax.naming.InitialContext;<br>
+<br>
+public class BetterDemoDataSourceServlet extends HttpServlet {<br>
+&nbsp; // caching the DataSource<br>
+&nbsp; <font color='blue'> private DataSource ds = null;</font><br>
+&nbsp; public void init (ServletConfig config) throws ServletException {<br>
+&nbsp; &nbsp; &nbsp; super.init (config);<br>
+&nbsp; &nbsp; &nbsp; try {<br>
+&nbsp; &nbsp; &nbsp; <font color='blue'> java.util.Hashtable env = new java.util.Hashtable ();<br>
+&nbsp; &nbsp; &nbsp; env.put (Context.INITIAL_CONTEXT_FACTORY, "jndi.CNInitialContext");<br>
+&nbsp; &nbsp; &nbsp; Context ctx = new InitialContext (env);<br>
+&nbsp; &nbsp; &nbsp; ds = (DataSource)ctx.lookup ("jdbc/SAMPLE");<br>
+&nbsp; &nbsp; &nbsp; ctx.close ();</font><br>
+&nbsp; &nbsp; } catch (Exception e) {<br>
+&nbsp; &nbsp; &nbsp; e.printStackTrace ();<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

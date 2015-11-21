@@ -1,0 +1,73 @@
+ Edit this line to be the title of the document. For example: "STE Functional Specification".
+ Do NOT delete this line...only edit its text. STE formatting requires that this line not be
+ deleted. 
+
+     <Delete all instructions and examples (including this paragraph) enclosed in angle
+   brackets (<>).> 
+
+   What it is 
+
+       <Name of function: For example: "Hyperlinks".> 
+
+   Functional description 
+
+       <This section should be written in simple English and should describe what the function
+     does, typically in the context of what the user will see. > 
+
+   Justification 
+
+       <Why this functionality is being added/fixed/enhanced.> 
+
+   Marketing Mandates 
+
+       <Critical issues as defined by GP and/or VPG. Not all specs will have these. Some will
+     have several.> 
+
+   Design description 
+
+     <You can get technical here (but please try to keep it comprehensible to your colleagues).
+   Specify what data and code elements are involved...> 
+
+     What the user can do with it 
+
+   What it does 
+
+     <The following two sections sometimes differ, but not always. For example, a given piece
+   of functionality might have some basic characteristics, but the context in which those
+   charcteristics get used might be critical. > 
+
+     In isolation 
+
+     In the context of the product 
+
+   How to use it 
+
+   Environmental considerations 
+
+       <Note any significant issues below.> 
+
+     Performance 
+
+         <List any significant figures relating to memory, diskspace, time, etc: 
+
+         Memory: 
+
+         Diskspace: 
+
+         Time: 
+
+     Scalability 
+
+         <How does this functionality hold up as the demands on it increase?> 
+
+   What does it take 
+
+       Tasks 
+
+       Time 
+
+       Money 
+
+       Resources 
+
+       Ordering 

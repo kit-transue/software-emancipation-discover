@@ -1,0 +1,11 @@
+VPATH=/paraset/src/paraset/els/mapper/src
+
+TARGETS=\
+	mappedFile.o \
+	position.o \
+	region.o \
+	mapping.o \
+	mappingList.o \
+	elsMapper.o
+
+L_CCINCLUDES=-I/paraset/src/paraset/els/mapper/include

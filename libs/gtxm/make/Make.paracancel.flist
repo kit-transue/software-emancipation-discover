@@ -1,0 +1,35 @@
+CPROOTS= \
+	gtPrimXm.h \
+	WM_Override \
+	gtBaseXm.h \
+	gtTopShellXm.h \
+	gtPushButtonXm.h \
+	gtFormXm.h \
+	gtShellXm.h \
+	gtAppShellXm.h \
+	gtCallbackMgrXm.h \
+	gtNoParentXm.h \
+	gtDisplayXm.h
+
+
+CPP_INCLUDES= \
+	-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+	-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+	-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+	-I$(LOCAL_SRC_ROOT)/gt/include \
+	-I$(BUILD_SRC_ROOT)/gt/include \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include \
+	-I$(LOCAL_SRC_ROOT)/nihcl/include \
+	-I$(BUILD_SRC_ROOT)/nihcl/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+	-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/gtxm/data \
+	-I$(BUILD_SRC_ROOT)/gtxm/data \
+	-I$(LOCAL_SRC_ROOT)/gtxm/include \
+	-I$(BUILD_SRC_ROOT)/gtxm/include

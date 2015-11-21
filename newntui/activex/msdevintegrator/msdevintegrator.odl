@@ -1,0 +1,80 @@
+// MSDEVIntegrator.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (MSDEVIntegrator.tlb) that will become a resource in
+// MSDEVIntegrator.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(C5267912-392E-11D2-AF11-00A0C9B71DC4), version(1.0),
+  helpfile("MSDEVIntegrator.hlp"),
+  helpstring("MSDEVIntegrator ActiveX Control module"),
+  control ]
+library MSDEVINTEGRATORLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CMSDEVIntegratorCtrl
+
+	[ uuid(C5267913-392E-11D2-AF11-00A0C9B71DC4),
+	  helpstring("Dispatch interface for MSDEVIntegrator Control"), hidden ]
+	dispinterface _DMSDEVIntegrator
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CMSDEVIntegratorCtrl)
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CMSDEVIntegratorCtrl)
+			[id(1)] void OpenFile(BSTR filename, long line);
+			[id(2)] void MakeSelection(BSTR filename, long line, long column, BSTR token);
+			[id(3)] short GetTabSize();
+			[id(4)] void SetInfo(BSTR info);
+			[id(5)] void GetSelection(BSTR* filename, BSTR* token, long* line, long* column);
+			[id(6)] void Exit();
+			[id(7)] void Command(BSTR string);
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CMSDEVIntegratorCtrl
+
+	[ uuid(C5267914-392E-11D2-AF11-00A0C9B71DC4),
+	  helpstring("Event interface for MSDEVIntegrator Control") ]
+	dispinterface _DMSDEVIntegratorEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CMSDEVIntegratorCtrl)
+			[id(1)] void CtrlClick(BSTR filename, long line, long column, long token);
+			[id(2)] void Query(BSTR fname, long line, long col, long len);
+			[id(3)] void Definition(BSTR filename, long line, long col, long len);
+			[id(4)] void Activate();
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CMSDEVIntegratorCtrl
+
+	[ uuid(AA00DC08-36DE-11D2-AF0F-00A0C9B71DC4),
+	  helpstring("MSDEVIntegrator Control"), control ]
+	coclass MSDEVIntegrator
+	{
+		[default] dispinterface _DMSDEVIntegrator;
+		[default, source] dispinterface _DMSDEVIntegratorEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

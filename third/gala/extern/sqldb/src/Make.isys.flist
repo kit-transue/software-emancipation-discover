@@ -1,0 +1,14 @@
+CPROOTS =  \
+	mysql_local_server \
+	mysql_server \
+	mysql_table \
+	mysql_tcpip_server \
+	sql_server \
+	sql_table \
+	sql_constraint \
+	sql_colspec
+
+
+
+
+

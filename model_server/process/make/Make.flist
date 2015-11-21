@@ -1,0 +1,33 @@
+CROOTS=\
+    process_stub \
+    remangle \
+    shared_list \
+    signature \
+    so_shared \
+    tty \
+
+
+CXXROOTS=\
+    MemSeg.h \
+    SymManager.h \
+    finiteStateMachine \
+    mManager.h \
+    shared_malloc \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/gcc/src \
+-I$(BUILD_SRC_ROOT)/gcc/src \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \
+

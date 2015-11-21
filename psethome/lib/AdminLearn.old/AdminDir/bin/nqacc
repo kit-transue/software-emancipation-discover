@@ -1,0 +1,5 @@
+#!/bin/sh
+# Not Quite A C Compiler
+# (but a pedagogical tool for fooling make)
+
+touch $4

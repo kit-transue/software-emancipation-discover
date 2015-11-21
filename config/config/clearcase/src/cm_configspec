@@ -1,0 +1,8 @@
+vw=`cleartool pwv -short`
+tmp_dir=${PTEST_TMPDIR:-/usr/tmp}
+tmp_cs=$tmp_dir/pset_cs.$$
+pdf_file=${1:-$PSET_PROJECT_FILE}
+cleartool catcs -tag $vw | $PSETCFG/util/generate_cs > $tmp_cs
+$PSETCFG/util/dynamic_pdf_generator $tmp_cs < $pdf_file
+rm $tmp_cs
+

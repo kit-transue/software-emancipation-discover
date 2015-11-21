@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>SMT Structure</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>SMT Structure</b></p>
+<p class="p2">The SMT is created as a result of a parse-phase, model build process. In contrast to the rich, relationship-bearing structure of the AST, the SMT is flat, maintaining only an inventory of where each entity exists in your source and where it is defined. Because the SMT records the line number and offset of each symbol of your source, you can see your code as it exists prior to preprocessing and learn more about how preprocessing has affected your source.</p>
+<p class="p2">For example, the SMT displays the existence of multiple <span class="s1">#ifdef</span> conditions in your source even when the <span class="s1">#ifdef</span> resolution that occurs during preprocessing resolves to one; while the AST contains the one symbol, the SMT helps you to understand the rest of the <span class="s1">#ifdef</span> construct. This is especially helpful while using DIScover for tasks such as code comprehension.</p>
+</body>
+</html>

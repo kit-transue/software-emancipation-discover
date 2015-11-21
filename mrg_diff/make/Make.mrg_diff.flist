@@ -1,0 +1,7 @@
+
+CXXROOTS=\
+    main \
+    mrgFile \
+    stubs \
+    tokenize \
+    mrg_diff

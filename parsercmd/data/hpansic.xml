@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="warning"><alternate nameintro="+"/>
+<compilername>HP ANSI C</compilername>
+C -D__hp9000s800 -D__hppa -D__hpux -D__unix -D_PA_RISC2_0 -I/usr/include --c --no_warnings -D_SIZE_T --diag_suppress 265 --microsoft --size_t_is_unsigned_long -D_HPUX_SOURCE -D_PA_RISC2_0 -D__HP_CXD_SPP -D__STDC_EXT__ -D__STDC__ -D__hp9000s700
+  <translate>
+    <option name="Aa" noarg="1">-U_HPUX_SOURCE</option> <!-- -Aa  ANSI C -->
+    <option name="Ac" noarg="1"/>                       <!-- -Ac  HP C version 3.1 compatibility -->
+    <option name="Ae" noarg="1">-D_HPUX_SOURCE</option> <!-- -Ae  ANSI C with HP exts -->
+    <option name="b" noarg="1"/>                        <!-- -b  unknown option ignored -->
+    <option name="Bextern" noarg="1"/>                  <!-- -Bextern -->
+    <option name="c" noarg="1"/>                        <!-- -c  no link -->
+    <option name="C" noarg="1"/>                        <!-- -C  No preprocessor stripping comments. -->
+    <option name="D" immarg="1" separg="1">-D%</option> <!-- -Dname -->
+    <option name="dynamic" noarg="1"/>                  <!-- -dynamic  PIC objects -->
+    <option name="E" noarg="1">-E</option>              <!-- -E  Preprocessing only, output to stdout. -->
+    <option name="fast" noarg="1"/>                     <!-- -fast  optimize generated code -->
+    <option name="g" noarg="1"/>                        <!-- -g  debugger info -->
+    <option name="G" noarg="1"/>                        <!-- -G  gprof info -->
+    <option name="I" immarg="1" separg="1">-I%</option> <!-- -Idir  -->
+    <option name="l" immarg="1"/>                       <!-- -lx  links with /lib/libx.a and /usr/lib/libx.a -->
+    <option name="L" immarg="1"/>                       <!-- -Ldir  Aadd dir to library search path. -->
+    <option name="n" noarg="1"/>                        <!-- -n  shareable code -->
+    <option name="N" noarg="1"/>                        <!-- -N  unshareable code -->
+    <option name="noshared" noarg="1"/>                 <!-- -noshared  Statically-bound executable. -->
+    <option name="o" separg="1"/>                       <!-- -o outfile  object modules to outfile -->
+    <option name="O" noarg="1"/>                        <!-- -O  optimize level 2 -->
+    <option name="p" noarg="1"/>                        <!-- -p  prof info -->
+    <option name="P" noarg="1">-P</option>              <!-- -P  preprocess only, output to .i file. -->
+    <option name="q" noarg="1"/>                        <!-- -q  demand loadable executable -->
+    <option name="Q" noarg="1"/>                        <!-- -Q  not demand loadable executable -->
+    <option name="s" noarg="1"/>                        <!-- -s  strip symbol table from executable -->
+    <option name="S" noarg="1"/>                        <!-- -S  generate asm -->
+    <option name="t" immarg="1" separg="1"/>            <!-- -t x,name  compiler subprocess control -->
+    <option name="U" immarg="1" separg="1">-U%</option> <!-- -Uname  -->
+    <option name="v" noarg="1"/>                        <!-- -v  verbose -->
+    <option name="V" noarg="1"/>                        <!-- -V  subprocess version info to stderr -->
+    <option name="w" noarg="1">-w</option>              <!-- -w  no warnings -->
+    <option name="Wd" immarg="1"/>                      <!-- -Wd,-a  linker control -->
+    <option name="W" immarg="1"/>                       <!-- -Wx, arg1 [,arg2,..,argn]  args to subprocess -->
+    <option name="y" noarg="1"/>                        <!-- -y  HP SoftBench info -->
+    <option name="Y" noarg="1"/>                        <!-- -Y  NLS -->
+    <option name="z" noarg="1"/>                        <!-- -z  dereferencing null pointer is fatal -->
+    <option name="Z" noarg="1"/>                        <!-- -Z  dereferencing null pointer is zero -->
+    <option intro="+" name="a" noarg="1"/>              <!-- +a  linker control -->
+    <option intro="+" name="DA" immarg="1"/>            <!-- +DAmodel  gen code for specific architecture -->
+    <option intro="+" name="DC" immarg="1"/>            <!-- +DCapptype  gen code for embedded -->
+    <option intro="+" name="DD32" noarg="1"/>           <!-- +DD32  gen 32-bit code for PA1.1 -->
+    <option intro="+" name="DD64" noarg="1"/>           <!-- +DD64  gen 64-bit code for PA2.0 -->
+    <option intro="+" name="d" immarg="1"/>             <!-- +dfname  optimization profile -->
+    <option intro="+" name="DS" immarg="1"/>            <!-- +DSmodel  control scheduling optimization -->
+    <option intro="+" name="DO" immarg="1"/>            <!-- +DOosname  specify target OS -->
+    <option intro="+" name="e" noarg="1"/>              <!-- +e  extensions -->
+    <option intro="+" name="ESfic" noarg="1"/>          <!-- +ESfic  optimization -->
+    <option intro="+" name="ESconstlit" noarg="1"/>     <!-- +ESconstlit  const literals in read-only memory. -->
+    <option intro="+" name="ESlit" noarg="1"/>          <!-- +ESlit  string literals and constants in read-only -->
+    <option intro="+" name="ESnolit" noarg="1"/>        <!-- +ESnolit  not const literals in read-only memory -->
+    <option intro="+" name="ESnoparmreloc" noarg="1"/>  <!-- +ESnoparmreloc  optimization -->
+    <option intro="+" name="ESsfc" noarg="1"/>          <!-- +ESsfc  optimization -->
+    <option intro="+" name="f" noarg="1"/>              <!-- +f  no promote float to double, except calls -->
+    <option intro="+" name="FPflags" noarg="1"/>        <!-- +FPflags  FP traps -->
+    <option intro="+" name="help" noarg="1"/>           <!-- +help -->
+    <option intro="+" name="hugesize" noarg="1"/>       <!-- +hugesize  controls huge data -->
+    <option intro="+" name="I" noarg="1"/>              <!-- +I  profiling data collection -->
+    <option intro="+" name="k" noarg="1"/>              <!-- +k  code gen control -->
+    <option intro="+" name="L" noarg="1"/>              <!-- +L  pragma & listing -->
+    <option intro="+" name="m" noarg="1"/>              <!-- +m  controls listing -->
+    <option intro="+" name="M" noarg="1"/>              <!-- +M  migration warnings -->
+    <option intro="+" name="M0" noarg="1"/>             <!-- +M0  migration warnings -->
+    <option intro="+" name="M1" noarg="1"/>             <!-- +M1  migration warnings -->
+    <option intro="+" name="M2" noarg="1"/>             <!-- +M2  migration warnings -->
+    <option intro="+" name="o" noarg="1"/>              <!-- +o  controls listing -->
+    <option intro="+" name="objdebug" noarg="1"/>       <!-- +[no]objdebug -->
+    <option intro="+" name="noobjdebug" noarg="1"/>     <!-- +[no]objdebug -->
+    <option intro="+" name="O" immarg="1"/>             <!-- +Oopt  opt level -->
+    <option intro="+" name="P" noarg="1"/>              <!-- +P  opt -->
+    <option intro="+" name="pa" noarg="1"/>             <!-- +pa  profiling -->
+    <option intro="+" name="pal" noarg="1"/>            <!-- +pal  profiling -->
+    <option intro="+" name="pgmname" noarg="1"/>        <!-- +pgmname  optimization -->
+    <option intro="+" name="r" noarg="1"/>              <!-- +r  no promote float to double -->
+    <option intro="+" name="sb" noarg="1"/>             <!-- +sb  signed bit-fields -->
+    <option intro="+" name="u" immarg="1"/>             <!-- +ubytes  alignment -->
+    <option intro="+" name="uc" noarg="1">-u</option>   <!-- +uc  char is unsigned char -->
+    <option intro="+" name="v" noarg="1">+w</option>    <!-- +v unknown option ignored -->
+    <option intro="+" name="w" immarg="1"/>             <!-- +wn  warning control -->
+    <option intro="+" name="W" separg="1"/>             <!-- +W n1[,n2,...nN]  warning suppression -->
+    <option intro="+" name="We" separg="1"/>            <!-- +Wen1[,n2,...nN]  warnings are error -->
+    <option intro="+" name="Ww" separg="1"/>            <!-- +Wwn1[,n2,...nN]  enable warnings -->
+    <option intro="+" name="z" noarg="1"/>              <!-- +z  shared library object code -->
+    <option intro="+" name="Z" noarg="1"/>              <!-- +Z  shared library object code -->
+  </translate>
+</cmdline>

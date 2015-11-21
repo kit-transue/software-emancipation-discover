@@ -1,0 +1,53 @@
+#!/bin/sh 
+s4=pragma
+s5=tweety
+hp=loner
+export s4 s5 hp
+if [ ! "$1" ] ; then
+cat > /tmp/mail.$$
+if [ ! -z "`fgrep 'Subject: Regression test results' /tmp/mail.$$`" ] ; then
+	SUBJECT="`fgrep 'Subject: Regression test results' /tmp/mail.$$`"
+	echo $SUBJECT
+	if [ ! -z "`echo $SUBJECT | fgrep 'SunOS 5.3'`" ] ; then
+		PLATFORM=sun5
+	elif [ ! -z "`echo $SUBJECT | fgrep 'SunOS 4.1.3'`" ] ; then
+		PLATFORM=sun4
+	elif [ ! -z "`echo $SUBJECT | fgrep 'HP-UX'`" ] ; then
+		PLATFORM=hp700
+	fi
+	echo Platform is $PLATFORM
+else 
+	exit 0
+fi
+else
+	case $1  in
+		[sS]4) 
+		    file=`(cd /net/pragma/compile/test_output; ls -lt | head -2 | grep -v total |awk '{print $NF}' )`
+		    PLATFORM=sun4
+		    cp /net/$s4/compile/test_output/$file/test.log /tmp/mail.$$ ;;
+		[sS]5) 
+		    file=`(cd /net/tweety/compile/test_output; ls -lt | head -2 | grep -v total| awk '{print $NF}')`
+		    PLATFORM=sun5
+		    cp /net/$s5/compile/test_output/$file/test.log /tmp/mail.$$ ;;
+		[hH][pP]*) 
+		    PLATFORM=hp700
+		    file=`(cd /net/$hp/compile/test_output; ls -lt | head -2 |grep -v total | awk '{print $NF}' )`
+		    cp /net/$hp/compile/test_output/$file/test.log /tmp/mail.$$ ;;
+	esac
+fi
+	grep Succeed /tmp/mail.$$  > /users/btest/$PLATFORM."`date +%d-%m`"
+	grep Test /tmp/mail.$$ | grep fail | grep -v From | awk -F\/ '{print $NF}' | awk -F\; '{print $1}' |		  sort > /tmp/$$.sort
+	echo end >> /tmp/$$.sort
+	Area=`head -1 /tmp/$$.sort`
+	count=0
+	cat /tmp/$$.sort | while read ThisArea
+			   do
+			    if [ $Area  = $ThisArea ] ;  then
+				count=`expr  $count + 1` ;
+			    else 
+				echo "  $Area    $count "
+			        count=1
+				Area=$ThisArea	
+			     fi  
+			   done | tee /users/btest/Regression.Tables/$PLATFORM."`date +%d-%m`"
+ exit 0

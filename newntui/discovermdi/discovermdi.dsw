@@ -1,0 +1,263 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "CBrowserFrame"=..\ActiveX\CBrowserFrame\CBrowserFrame.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    CBrowserFrame
+    ..\activex\cbrowserframe
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "CMIntegrator"=..\activex\CMIntegrator\CMIntegrator.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    CMIntegrator
+    ..\activex\cmintegrator
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "CategoriesCombo"=..\ActiveX\CategoriesCombo\CategoriesCombo.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    CategoriesCombo
+    ..\activex\categoriescombo
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "CodeRoverIntegrator"=..\activex\CodeRoverIntegrator\CodeRoverIntegrator.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    CodeRoverIntegrator
+    ..
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "DataSource"=..\ActiveX\DataSource\DataSource.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    DataSource
+    ..\activex\datasource
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "DiscoverMDI"=.\DiscoverMDI.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    DiscoverMDI
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "GroupsCombo"=..\ActiveX\GroupsCombo\GroupsCombo.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    GroupsCombo
+    ..\activex\groupscombo
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "Impact"=..\activex\Impact\Impact.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    Impact
+    ..\activex\impact
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ProjectModules"=..\ActiveX\ProjectModules\ProjectModules.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    ProjectModules
+    ..\activex\projectmodules
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ProjectTree"=..\ActiveX\ProjectTree\ProjectTree.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    ProjectTree
+    ..\activex\projecttree
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "QueriesCombo"=..\ActiveX\QueriesCombo\QueriesCombo.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    QueriesCombo
+    ..\activex\queriescombo
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "QueryResults"=..\ActiveX\QueryResults\QueryResults.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    QueryResults
+    ..\activex\queryresults
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ReportTemolate"=..\ActiveX\ReportTemolate\ReportTemolate.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    ReportTemolate
+    ..\activex\reporttemolate
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "Spreadsheet"=..\ActiveX\Spreadsheet\Spreadsheet.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    Spreadsheet
+    ..\activex\spreadsheet
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "TabSelector"=..\ActiveX\TabSelector\TabSelector.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    TabSelector
+    ..\activex\tabselector
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+    begin source code control
+    discovermdi
+    .
+    end source code control
+}}}
+
+Package=<3>
+{{{
+    {2047B32D-6D1B-4538-9AF5-41F7B8D0BDBE}
+    {8DBAE788-DB45-11D4-8E41-000102390321}
+}}}
+
+###############################################################################
+

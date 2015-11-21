@@ -1,0 +1,5 @@
+ProjectFour : $sharedSrcRoot <-> /four
+{
+  *.[ch]
+}
+

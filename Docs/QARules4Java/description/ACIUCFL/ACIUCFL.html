@@ -1,0 +1,42 @@
+<html>
+<body>
+
+<p><b>ACIUCFL - Avoid Complex Initialization or Update Clause in For Loops</b></p>
+
+<p>
+When using the comma operator in the initialization or update clause of a <code>for</code> statement,
+avoid the complexity of using more than three variables.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+for ( i = 0, j=0, k=10<font color='red'>, l=-1 </font>; i &lt; cnt;<br>
+&nbsp; &nbsp; i++, j++, k--<font color='red'>, l += 2 </font> ) { <br>
+&nbsp; &nbsp; // do something<br>
+}<br>
+</code></p></NOBR>
+
+<p><b>Tip:</b> If needed, use separate 
+statements before the <code>for </code>
+        loop (for the initialization clause)
+or at the end of the loop (for the update clause).
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+<font color='blue'>
+l=-1;<br>
+</font>
+for ( i = 0, j=0, k=10; i &lt; cnt;<br> i++, j++, k-- ) { <br>
+&nbsp; &nbsp; // do something<br>
+<font color='blue'>
+&nbsp; &nbsp; l += 2;<br>
+</font>
+}<br>
+<p><code><nobr>
+</code></p></nobr></code>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Date: 6/28/95
+File: SWProject_spec.txt
+Subject: SW project spec and design
+From: Trung Dung
+
+I   Requirement: 
+    Managers:
+	* What are current status of project A?
+    Developers:
+	* who depends on completion of my coding part?
+
+    Notes: pmt -> project management tool
+	   activities are leaf projects
+
+II  Entity SW_Project : SDO_base
+    a)	purpose: support an active sw development task.
+
+    b)  attributes:
+	* name, committed date, developers, 
+	* pmt_type: project, activity
+	* pmt_project: foreign key to project mgnt tools
+	* pmt_activity: foreign key to project mgnt tools
+	* state: analysis, design, development, testing, defect-fixing,
+	  enhancement, active, closed.
+	* History: capture activities like: ci/co, bugs, modified entities, 
+	* History_summary: ???
+
+    c) relations:
+	* Entities_attributes: code_files, code_entities, subsystem, tests,
+	  docs, bugs, developers
+
+	* Relational:
+	  * [parent <-> child, 1-N]: sub projects decomposition hierachy
+	  * [Status, current_participant, N-N]:
+	  * [dependency_usage, N-N]: client-server, peer-to-peer,
+	  * [dependency_link N-N]: start-start, start-finish, finish-start,
+            finish-finish for coding (aka. implemented by pmt)
+	  * [SW_Contract, user_sw, 1-N]: to support re-use
+
+    d) behavior: 
+	* Query/Function:
+	  * completion_report(): non/complete portion, waiting, etc.
+	  * get_users_of(Code): all users if code == 0
+	* PMT functions:
+	  * pmt_put_link(pmt_project, linkType)
+	  * pmt_get_link(pmt_project, linkType)
+	  * pmt_rm_link(pmt_project, linkType)
+	  * static pmt_create_project(name)   
+	  * pmt_create_sub_project(name)
+	  * pmt_create_activity(name)
+	  * pmt_create_software_activity(name, kind)
+	  * pmt_get_activities()
+	  * pmt_get_software_activity()  -> also returns status of software
+	  * pmt_get_date(date_kind)
+	  * get_parent()
+	  * get_children()
+
+ 	* Filter: get_belong_to, get_dependent, 
+	* Action: 
+	  * transfer_from: combining different SWProjects
+	  * decomposition: split into sub projects
+	  * integration: merge children to parent.
+	* View: intersection, union, difference, erd
+
+    e) 	Trigger:
+	* check-in:
+	* check-out: 
+	* update_status:

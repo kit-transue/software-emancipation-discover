@@ -1,0 +1,6 @@
+/* Function termination code: failure in the function body can do
+ * "goto bail_out_and_clean_up;" to abort processing.  Cleanup code
+ * should be added following this label.
+ */
+
+bail_out_and_clean_up: ;

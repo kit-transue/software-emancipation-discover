@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Data Type Conversions</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {text-decoration: underline ; color: #ff6262}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Data Type Conversions</b></p>
+<p class="p2">Objects of the types listed previously are pointers into the information model. Access commands take these types as arguments and, as a result, are able to access more information than just the object’s name. When an Access command is passed an argument with a type different from the type it is expecting, it attempts to convert that argument into the required type. Most of these type conversions are discussed later; however, Access provides a mechanism for converting between strings and symbols—the primary currency of most Access operations.</p>
+<p class="p2">The most reliable way to convert from a string to a symbol is to use the object’s <span class="s1">etag</span> attribute. The <span class="s1">etag</span> is a string representation that encodes the object’s name, location, and type to uniquely identify the object.</p>
+<p class="p2">While reliable, <span class="s1">etags</span> can be awkward to use without already having the object. Given the following constructs, Access looks in the information model for an element that matches the specification. If more than one element matches, Access only returns one:</p>
+<p class="p3">•<span class="s2">   </span><span class="s1">/proj: </span>scope or project</p>
+<p class="p3">•<span class="s2">   </span><span class="s1">func(): </span>extern C function called <span class="s1">func</span>, or a C++ function with no arguments</p>
+<p class="p3">•<span class="s2">   </span><span class="s1">func(char *)</span>: C++ function called <span class="s1">func</span> that takes <span class="s1">char*</span> as an argument</p>
+<p class="p3">•<span class="s2">   </span><span class="s1">func</span>: C function called <span class="s1">func</span></p>
+<p class="p3">•<span class="s2">   </span><span class="s1">var</span>: variable named <span class="s1">var</span></p>
+<p class="p3">•<span class="s2">   </span><span class="s1">string</span>: string literal <span class="s1">string</span></p>
+<p class="p3">•<span class="s2">   </span><span class="s1">macro</span>: macro</p>
+<p class="p4"><b>Note: </b>Integer strings (for example, “5”) are not converted into constants, but are instead interpreted as indices into arrays (<a href="../access_04_fundamentals/sets.html#XREF_Sets_arrays"><span class="s3">see Sets</span></a>).</p>
+<p class="p2">It is important to understand the limitations of string-to-symbol conversion when writing Access scripts. Where conversion is required, keep in mind that conversion may only return one element where multiple elements are required (for example, in automating dormant code analysis, remember that the information model may contain several applications with a function <span class="s1">main</span>.).</p>
+<p class="p2">Scripts executed from interactive sessions usually receive the user’s selection from a DIScover group or a selection from the user interface. In these cases, the input is already in the form of a DIScover set, and no conversion is required.</p>
+</body>
+</html>

@@ -1,0 +1,44 @@
+all: obj client_object.o libdiapi.so browser_members.i
+	echo 'Made all objects.'
+
+obj:
+	mkdir obj
+
+obj/api: obj/api.o obj/api_util.o
+	cc -xgot -cckr $(CFLAGS) -o obj/api obj/api.o obj/api_util.o
+
+obj/api.o: $(SRC)/api.l
+	lex -t $(SRC)/api.l > obj/api.c
+	cc -xgot -cckr $(CFLAGS) -c obj/api.c -o obj/api.o
+
+obj/api_util.o: $(SRC)/api_util.c
+	cc -xgot -cckr $(CFLAGS) -c $(SRC)/api_util.c -o obj/api_util.o
+
+client_object.o: obj/api $(SRC)/SPEC
+	obj/api <$(SRC)/SPEC
+	mv client.c obj/client.c
+	rm -f server.c
+	cc -xgot -cckr $(CFLAGS) -c -o obj/client.o obj/client.c 
+	cc -xgot -cckr $(CFLAGS) -c -o obj/comm.o $(SRC)/DI_communication.c 
+	ld -r -o client_object.o obj/comm.o obj/client.o 
+	
+libdiapi.so: obj/api $(SRC)/SPEC $(SRC)/extension.c
+	obj/api <$(SRC)/SPEC 
+	cat  server.c $(SRC)/extension.c > obj/server.c
+	rm -f server.c
+	rm -f client.c
+	cc -xgot -cckr $(CFLAGS) -c -o obj/server.o obj/server.c 
+	ld -r -o libdiapi.o obj/server.o
+	make -f $(SRC)/Makefile.irix5 -k -s errorfree 
+	mv server.o obj/server.o
+	ld -o libdiapi.so obj/server.o
+
+clean:
+	rm -rf ./*
+
+	
+browser_members.i: $(SRC)/SPEC
+	$(SRC)/genmembers.sh <$(SRC)/SPEC  > browser_members.i	
+
+errorfree:
+	cc -xgot -cckr $(CFLAGS) -c -KPIC obj/server.c

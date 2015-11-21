@@ -1,0 +1,24 @@
+#ADMINDIR=/c:/discover/prebuilt/learn
+#HOST=10.19.9.91
+X 0 /xip_shared c:/discover/prebuilt/learn/source/shared/xip_FLDX_1011 /xip c:/discover/prebuilt/learn/model/shared/pmod/xip/xip_shared.pmod.sym_FLDX_0000
+  N 0 /xip_shared/FrameDocs c:/discover/prebuilt/learn/source/shared/xip/doc_FLDX_1011 /xip/doc NULL
+    m -1 /xip_shared/FrameDocs/requirements.doc c:/discover/prebuilt/learn/source/shared/xip/doc/requirements.doc_FLDX_1000 /xip/doc/requirements.doc c:/discover/prebuilt/learn/source/shared/xip/doc/requirements.doc.pset_FLDX_0000
+  N 0 /xip_shared/doc c:/discover/prebuilt/learn/source/shared/xip/doc_FLDX_1011 /xip/doc NULL
+  N 0 /xip_shared/include c:/discover/prebuilt/learn/source/shared/xip/include_FLDX_1011 /xip/include NULL
+    h 1 /xip_shared/include/canvas.h c:/discover/prebuilt/learn/source/shared/xip/include/canvas.h_FLDX_1000 /xip/include/canvas.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/canvas.h.pset_FLDX_0000
+    h 1 /xip_shared/include/dt.h c:/discover/prebuilt/learn/source/shared/xip/include/dt.h_FLDX_1000 /xip/include/dt.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/dt.h.pset_FLDX_0000
+    h 1 /xip_shared/include/externals.h c:/discover/prebuilt/learn/source/shared/xip/include/externals.h_FLDX_1000 /xip/include/externals.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/externals.h.pset_FLDX_0000
+    h 1 /xip_shared/include/extra.h c:/discover/prebuilt/learn/source/shared/xip/include/extra.h_FLDX_1000 /xip/include/extra.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/extra.h.pset_FLDX_0000
+    h 1 /xip_shared/include/extra2.h c:/discover/prebuilt/learn/source/shared/xip/include/extra2.h_FLDX_1000 /xip/include/extra2.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/extra2.h.pset_FLDX_0000
+    h 1 /xip_shared/include/image_win.h c:/discover/prebuilt/learn/source/shared/xip/include/image_win.h_FLDX_1000 /xip/include/image_win.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/image_win.h.pset_FLDX_0000
+    h 1 /xip_shared/include/stage.h c:/discover/prebuilt/learn/source/shared/xip/include/stage.h_FLDX_1000 /xip/include/stage.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/stage.h.pset_FLDX_0000
+    h 1 /xip_shared/include/xip.h c:/discover/prebuilt/learn/source/shared/xip/include/xip.h_FLDX_1000 /xip/include/xip.h c:/discover/prebuilt/learn/model/shared/pset/xip/include/xip.h.pset_FLDX_0000
+  N 0 /xip_shared/src c:/discover/prebuilt/learn/source/shared/xip/src_FLDX_1011 /xip/src NULL
+    s 0 /xip_shared/src/canvas.c c:/discover/prebuilt/learn/source/shared/xip/src/canvas.c_FLDX_1000 /xip/src/canvas.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/canvas.c.pset_FLDX_0000
+    s 0 /xip_shared/src/color.c c:/discover/prebuilt/learn/source/shared/xip/src/color.c_FLDX_1000 /xip/src/color.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/color.c.pset_FLDX_0000
+    s 0 /xip_shared/src/fonts.c c:/discover/prebuilt/learn/source/shared/xip/src/fonts.c_FLDX_1000 /xip/src/fonts.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/fonts.c.pset_FLDX_0000
+    s 0 /xip_shared/src/image_win.c c:/discover/prebuilt/learn/source/shared/xip/src/image_win.c_FLDX_1000 /xip/src/image_win.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/image_win.c.pset_FLDX_0000
+    s 0 /xip_shared/src/init.c c:/discover/prebuilt/learn/source/shared/xip/src/init.c_FLDX_1000 /xip/src/init.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/init.c.pset_FLDX_0000
+    s 0 /xip_shared/src/pipeline.c c:/discover/prebuilt/learn/source/shared/xip/src/pipeline.c_FLDX_1000 /xip/src/pipeline.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/pipeline.c.pset_FLDX_0000
+    s 0 /xip_shared/src/stage.c c:/discover/prebuilt/learn/source/shared/xip/src/stage.c_FLDX_1000 /xip/src/stage.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/stage.c.pset_FLDX_0000
+    s 0 /xip_shared/src/xip.c c:/discover/prebuilt/learn/source/shared/xip/src/xip.c_FLDX_1000 /xip/src/xip.c c:/discover/prebuilt/learn/model/shared/pset/xip/src/xip.c.pset_FLDX_0000

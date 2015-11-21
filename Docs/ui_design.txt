@@ -1,0 +1,187 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+    User Interface Specification: Change Propagation [10/04/93 12:30]
+
+        General Description
+
+        To invoke Change Propagation, the user will select a group of objects, then select a Change Propagation menu item. 
+
+        The user should be able to "select any object any where" (Browser or Viewer). Therefore, Change Propagation menu items should be provided in both places: under the Browser Utility menu, and the Viewer Edit menu (replacing the current Rename and Change Arguments items). [Note: Since we are trying to implement a generic Impact Analyzer, we may want to either provide both Change Prop and Impact Analyzer menu items, or come up with a more generic, single item. Also, since Chnage Prop is a major operation, but one which is likely to be used infrequently, we must make it as simple a possible.]
+
+        ParaSET will then start the propagation functionality which consists of two stages (each of which has its own UI menu):
+
+        o Pre-propagation stage
+
+        o Main propagation stage
+
+        In the pre-propagation stage, ParaSET will do associative analysis: identifying overloaded and virtual functions affected by the proposed change. Then the user will select the final collection of objects for propagation. The user can also inputnew changes. The menu for the pre-propagation is shown in the illustration of menu #1.
+
+        In the main propagation stage, Impact Analysis and the actual propagation occur (see menu #2).
+
+        In cases where propagation does not complete (either because the user suspends the operation, or the system crashes), the Change Propagation item on theBrowser Utility menu will change to Resume Propagation, which will activate the unfinished propagation session. However,local objects (such as local variables or enums inside a block) will not be restored.
+
+        Only one propagation session (whether it's active or suspended) can exist at one time. If the user tries to invoke a new propagation session, and ParaSET finds an existing one, an error message is generated.
+
+        1. Stage 1 (Pre-propagation) menu:
+
+        The pre-propagation menu (the final title of which should contain the term "associativity" in one form or another) will consist of 2 rows:
+
+        Top row
+
+        The top row will consist of four columns. These columns are decribed below, from left to right:
+
+        o Column 1 contains objects selected by users. 
+
+        o Column 2 containsassociative objects supplied by ParaSET (that is, overloaded functions, virtual functions of those in col 1).
+
+        o Column 3 contains objects for final propagation (picked from columns 1 and 2).
+
+        o Column 4 stores the new changes edited by users for objects in column 3.
+
+        Bottom row
+
+        The bottom row will have the following buttons, organized by groups of functionality:
+
+        Rename -- Invoke Rename propagation option.
+
+        ChangeArg -- Invoke Change Arguments option.
+
+        ImpactAnalyzer -- Impact analysis option
+
+        OK -- Start propagation on objects in Column 3 with new changes in Column 4. The pre-propagation menu will disappear after the propagation is done.
+
+        Apply -- Start propagation on objects in Column 3 with new changes in Column 4. The pre-propagation menu will remain for the next propagation of objects remaining in Columns 1 and 2.
+
+        Cancel -- Cancel change propagation. Remove the menu from the screen.
+
+        Help -- Display online documentation for this menu.
+
+        Add -- Append selected objects from Column 1 or 2 to Column 3.
+
+        Remove -- Remove selected objects from any column.
+
+        Edit -- Propagation will not be activated until the user edits new changes to all objects in Column 3. If the user selects an item in Column 3, Column 4 will reflect the current values of the new change. (We need to either disable multiple col 3 selection, or have Edit complain about multiple selections.)
+
+        Show -- [Not well defined...will this actually be in the release?]
+
+        Text fields -- There are two text fields under Column 4: Pattern and  New Change. The default pattern is the current name of the object selected in Column 3, and is read-only in the first release. New Change will be reflected in Column 4.
+
+        Note: The current project only handles one pattern. Multiple patterns will be implemented at a future date for pattern-based argument change.
+
+        2. Stage 2 (main propagation) menu:
+
+        The main propagation menu also consists of two rows:
+
+        Top row
+
+            Like the pre-propagation menu, this top row also consists of four columns, but the operation of these columns is similar to the ParaSET Browser:
+
+            o Column 1 offers the following selectable options:
+
+            - Files needed for propagation
+
+            -  Files needing reparsing before propagation can start
+
+            - Files that will need reparsing after propagation
+
+            - Files already propagated
+
+            - Current file [Note: Does this make sense?...A dynamic "current file" status box may be more useful. -- bfrederi]
+
+            - Files not yet propagated
+
+            - Files failed propagation (subset of "already propagated" above)
+
+            - Objects selected for propagation (Column 3 of the pre-propagation menu)
+
+            - Objects affected (functions that use the objects in Column 3 of the pre-propagation menu)
+
+            o Column 2 displays objects based on the selections made in Column 1.
+
+            o Column 3 offers the following selectable options:
+
+            - Instances (of propagating objects in files)
+
+            - Apply instances
+
+            - Notify instances
+
+            - Fail instances
+
+            - Affected instances
+
+            - Changing to
+
+            - Where defined, etc (a selected subset of Column 3 in ProjectBrowser) T.B.D.
+
+            o Column 4 displays objects based on the selections made in Column 3
+
+        Bottom row
+
+        The bottom row contains the following buttons. Certain buttons are dimmed in the generic Impact Analyzer (that is, when ImpactAnalyzer is selected in the pre-propagation menu).
+
+        OK -- Start propagation. (Dimmed for generic Impact Analyzer.)
+
+        Apply -- If the current selection is an instance, apply the change to the instance. If the current selection is a file, apply the change to the whole file. This will be implemented with an interface similar to query-replace EMACS. The user can type changes directly to the highlighted instances. If nothing is selected, propagation will continue (ie. resume). (Dimmed for generic Impact Analyzer.)
+
+        Cancel -- Remove this dialogbox from the screen.
+
+        Help -- Display the online documentation for this menu.
+
+        Fetch -- Fetch a file
+
+        Open -- Load file and display it in a Viewer.
+
+        Unload -- Unload files from memory.
+
+        Suspend -- Suspend propagation.  (Dimmed for generic Impact Analyzer.)
+
+        Undo -- Roll back all changes for this propagation. (Dimmed for generic Impact Analyzer.
+
+        Reparse -- Reparses specified entities; selection is made through a dialogbox similar to the current File->Save All dialogbox.
+
+        Issues:
+
+        1. Can we truly support "select anything anywhere"? What does it mean to invoke Change Propagation from the Browser? Having Change Prop menus on both Browser and Viewer may encounter same problems as our current Debugger menus. -- bfrederi
+
+        2. Do we really need a "current file" category in menu #2 Column #1?; what about a dynamic "current file" status box instead? -- bfrederi
+
+        3. Who will extract the relevant items from ProjectBrowser column 3 for incorporation in menu 2? When? -- bfrederi
+
+         
+
+         
+
+         
+
+         
+
+         
+
+         

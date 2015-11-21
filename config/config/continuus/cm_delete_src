@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "ccm unuse -r -d $cm_workfile"
+ccm unuse -r -d $cm_workfile
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterput ] ; then
+  $cm_optscripts/cm_afterput &
+fi
+exit 0

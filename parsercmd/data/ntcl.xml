@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- Configuration for files which are source files
+     based on their position in a DSP file.
+     These are compiled independently, based on their suffix,
+     possibly overridden by /TP or /TC.
+     If no suffix is recognized, the CL compiler does not default to
+     C or C++, but assumes an object file which we need to ignore.
+  -->
+<cmdline nameintro="/" unrecognized="no_message"><equivalent nameintro="-"/>
+<compilername>Visual C++</compilername>
+reconfigure object
+<translate>
+  <filesuffix name="cpp" foldcase="1">ntclcpp(%0%)</filesuffix>
+  <filesuffix name="cxx" foldcase="1">ntclcpp(%0%)</filesuffix>
+  <filesuffix name="c" foldcase="1">ntclc(%0%)</filesuffix>
+  <filesuffix name="h" foldcase="1">ntclh(%0%)</filesuffix>
+  <option           name="Tc" immarg="1" noarg="1">ntclc(%0%)</option>    <!-- specify C language -->
+  <option           name="Tp" immarg="1" noarg="1">ntclcpp(%0%)</option>  <!-- specify C++ language -->
+  <option           name="TC" noarg="1">ntclc(%0%)</option>               <!-- specify C language -->
+  <option           name="TP" noarg="1">ntclcpp(%0%)</option>             <!-- specify C++ language -->
+</translate>
+</cmdline>

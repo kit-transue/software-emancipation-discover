@@ -1,0 +1,14 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    avl_tree.h \
+    binsearch.h \
+    hashtable.h \
+    linked_list.h \
+
+CPP_INCLUDES=\
+-I..\include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+

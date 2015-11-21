@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Using Submission Check</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 8.0px 1.0px; font: 13.0px Tahoma; color: #af0a16}
+    p.p5 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; color: #ff6262}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Using Submission Check</b></p>
+<p class="p2"><i>Submission Check</i> allows you to subject files that are going to be added to the information model to a series of tests, called <i>queries</i>. The results of the queries are displayed, and upon submission can be e-mailed to managers or code reviewers. The set of queries that run can be specified by the administrator, as can the recipients of the report.</p>
+<p class="p2">Submission Check consists of the following four components:</p>
+<p class="p3">•<span class="s1">   </span><b>Model server</b> makes the information model available to Developer Xpress.</p>
+<p class="p3">•<span class="s1">   </span><b>Build server</b> builds an information model of your local files and runs the queries on the information model.</p>
+<p class="p3">•<span class="s1">   </span><b>Submission Check policy</b> informs the build server which queries to run and what to do with the results.</p>
+<p class="p3">•<span class="s1">   </span><b>Developer Xpress</b> allows you to check out and modify files, send them to the build server to be verified, and then submit them.</p>
+<p class="p2">In a typical usage scenario, the administrator is responsible for building information models on a regular basis, installing them, and keeping the build and model servers up and running. The administrator is also responsible for maintaining and updating the Submission Check policy for the site. You can use Developer Xpress to check out files and make changes to them. You can then use Submission Check to verify their changes and submit them. Your managers can then receive reports describing these submissions via e-mail.</p>
+<p class="p2">Sends all of the files in the <b>Submission Check</b> user interface to the build server. All other files necessary to carry out the model build are found by the build server in the source tree. Under RCS, the build server looks in the shared area for the files. Under Rational ClearCase on UNIX, the build server sets its view to match the view on the client side, so that if the files can be parsed in the client environment they can also be parsed in the build server’s environment. This requires that the client side view be accessible from the server machine. Under Rational ClearCase on Windows, the build server sets its view to the view the model was built with; this means that there may be problems if the checked files depend on other files which are not in the Submission Check user interface and are not selected by the build view.</p>
+<p class="p4"><b>Related Topics</b></p>
+<p class="p5"><span class="s2"><a href="../user_win_appa_devxpress/to_use_submission_check.html#XREF_To_launch_Developer">To use submission check</a></span></p>
+</body>
+</html>

@@ -1,0 +1,32 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    DAGHandlerXREF \
+    DGDataAccessXREF \
+    DGNodeDataXREF \
+    DGPathXREF \
+    DGPrintXREF \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/dagraph/include \
+-I$(BUILD_SRC_ROOT)/model_server/dagraph/include \
+-I$(LOCAL_SRC_ROOT)/model_server/debug/include \
+-I$(BUILD_SRC_ROOT)/model_server/debug/include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/search/include \
+-I$(BUILD_SRC_ROOT)/model_server/search/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \

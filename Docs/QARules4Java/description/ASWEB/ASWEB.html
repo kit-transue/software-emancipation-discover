@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>ASWEB - Avoid Statements With Empty Body</b></p>
+
+<p>As far as possible avoid statements with empty body.</p>
+
+<p><b>Wrong</b></p>
+<p><code><nobr>
+StringTokenizer st = new StringTokenizer(class1.getName(), ".", true);<br>
+String s;<br>
+<font color='red'>
+for( s = ""; st.countTokens() > 2; <br>
+&nbsp; &nbsp; s = s + st.nextToken() ); </font>
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Provide statement body or change the logic of the program
+(for example, use <code>while</code> statement instead of <code>for</code> statement)
+</p>
+
+
+<p><b>Right</b></p>
+<p><code><nobr>
+StringTokenizer st = new StringTokenizer(class1.getName(), ".", true);<br>
+String s <font color='blue'>= ""</font>;<br>
+<font color='blue'>while( st.countTokens() > 2 ) {<br>
+&nbsp; &nbsp; s += st.nextToken();<font color='blue'><br>
+}
+</code></p></nobr>
+
+</body>
+</html>

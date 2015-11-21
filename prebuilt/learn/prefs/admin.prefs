@@ -1,0 +1,40 @@
+*psetPrefs.pdfFileBuild:			%ADMINDIR%\pdf\admin.pdf
+*psetPrefs.pdfFileUser:				%ADMINDIR%\pdf\user.pdf
+*psetPrefs.defaultPDF:				%ADMINDIR%\pdf\user.pdf
+
+*psetPrefs.doPassDependency:			yes
+*psetPrefs.doPassHeaders:			yes
+*psetPrefs.doPassSaveProj:			yes
+*psetPrefs.doPassSaveRoot:			yes
+
+*psetPrefs.acceptSyntaxErrors:			yes
+
+*psetPrefs.logFileCreate:			yes
+*psetPrefs.logFileDir:				%ADMINDIR%\log
+*psetPrefs.logFileMonitor:			yes
+
+*psetPrefs.DIS_misc_BuildMetrics:		1
+*psetPrefs.DIS_misc_StoreMetrics:		1
+*psetPrefs.DIS_model.SaveMetrics:		1
+
+*psetPrefs.DIS_model.GenerateY2KInfo:		2
+
+*psetPrefs.cDefines:				-D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__
+*psetPrefs.cPlusDefines:			-D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__
+*psetPrefs.cIncludes:				-I"%ADMINDIR%\include"
+*psetPrefs.cPlusIncludes:			-I"%ADMINDIR%\include"
+*psetPrefs.cFlags:				-w
+*psetPrefs.cPlusFlags:				--no_wchar_t_keyword -w
+
+*psetPrefs.doPassProj:				yes
+*psetPrefs.projectList:				/xip_shared /ttt_shared /sysinclude
+*psetPrefs.projectListHeaders:
+*psetPrefs.projectListDependency:
+
+*psetPrefs.ADMINDIR:				%PSETHOME_LOCAL%\prebuilt\learn
+*psetPrefs.projectHome:				/xip_private
+*psetPrefs.sharedSrcRoot:			%ADMINDIR%\source\shared
+*psetPrefs.sharedModelRoot:			%ADMINDIR%\model\shared
+*psetPrefs.privateSrcRoot:			%ADMINDIR%\source\private
+*psetPrefs.privateModelRoot:			%ADMINDIR%\model\private
+*psetPrefs.groupsPath:			      %ADMINDIR%\groups

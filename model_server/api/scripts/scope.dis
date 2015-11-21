@@ -1,0 +1,82 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+set no_dll [size [filter dll [root_scopes]]]
+if $no_dll {
+    proc hide_exe_with_dlls { execs } {
+	set dlls [imports $execs]
+	hide_scopes $execs
+	foreach dll $dlls {
+	    set execs [filter !hidden [wimp $dll]]
+	    if { 0 == [size $execs]} {
+		lappend hd [name $dll]
+	    }
+	}
+	if {[llength $hd] > 0} {
+	    hide_scopes $hd
+	}
+    }
+
+    proc unhide_exe_with_dlls { execs } {
+	set dlls [imports $execs]
+	unhide_scopes $execs $dlls 
+    }
+
+    proc set_exe_with_dlls { execs } {
+	set dlls [imports $execs]
+	set_scope $execs $dlls 
+    }
+}
+
+if {[info commands add_menu] == ""} { return}
+
+add_menu Scope 
+add_item Scope "List All"     root_scopes -none -c
+if $no_dll { 
+    add_item Scope "List DLL"     {filter dll [root_scopes]} -none -c
+    add_item Scope "List EXE"     {filter exe [root_scopes]} -none -c
+}
+add_item Scope "List Hidden"  "root_scopes hid" -none -c
+add_item Scope "List Visible" "root_scopes vis" -none -c
+add_item Scope Set             set_scope
+add_item Scope Hide            hide_scopes
+add_item Scope Unhide          unhide_scopes
+if $no_dll { 
+    add_item Scope "Hide with DLLs" hide_exe_with_dlls 
+    add_item Scope "Unhide with DLLs" unhide_exe_with_dlls
+    add_item Scope "Set with DLLs" set_exe_with_dlls
+
+    add_item Scope Imports imports
+    add_item Scope Exports exports
+    add_item Scope "Where Imported" wimp
+}
+proc rso { ll } {
+    set x [filter proj||scope $ll]
+    set y [apply rscope [filter !(proj||scope) $ll]]
+    scopes_of $x $y
+}
+add_item Scope "Where Used" rso

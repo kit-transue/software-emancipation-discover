@@ -1,0 +1,33 @@
+(1)_shared : %sharedSrcRoot%/(xip) [[ W ]] <-> /(1) {
+
+  * {
+    *.[CH]
+  }
+
+}
+
+(1)_shared : %sharedSrcRoot%/(ttt) [[ W ]] <-> /(1) {
+
+  * {
+    *.H
+    *.CPP
+  }
+
+}
+
+(1) : %sharedSrcRoot%/(sysinclude) [[ W ]] <-> /(1) {
+
+  **.H
+
+}
+
+__ruleShared : %sharedSrcRoot% <-> /__ruleShared {
+
+  .  : %sharedSrcRoot%/(*)/**/(*).([CH]|CPP)/%/.make	=> ""%ADMINDIR%\prefs\(1)_defs.bat" shared (2).obj"
+
+  "" : %sharedSrcRoot%/(**)/(*).([CH]|CPP)/%/.pset	=> %sharedModelRoot%/pset/(1)/(2).(3).pset
+
+  "" : %sharedSrcRoot%/(**).pmod/%/.pmoddir		=> %sharedModelRoot%/pmod/(1).pmod
+
+}
+

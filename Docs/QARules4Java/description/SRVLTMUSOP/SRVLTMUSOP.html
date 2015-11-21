@@ -1,0 +1,52 @@
+<html>
+<body>
+
+<p><b>Servlet API - Minimize use of <i>System.out.println()</i> or <i>System.err.println()</i>.</b></p>
+
+<p>System.out.println statements and similar constructs synchronize processing
+for the duration of disk I/O, they can significantly slow throughput.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.*;<br>
+import javax.servlet.http.*;<br>
+<br>
+public class DemoDebugPrintServlet extends HttpServlet {<br>
+&nbsp; public void service () {<br>
+&nbsp; &nbsp; <font color='red'> System.out.println ("starting service");</font><br>
+&nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Implement option to switch off printing debug information in production environment.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.*;<br>
+import javax.servlet.http.*;<br>
+<br>
+public class BetterDemoDebugPrintServlet extends HttpServlet {<br>
+&nbsp; private final static boolean DEBUG_ON = false;<br>
+&nbsp; public void service () {<br>
+&nbsp; &nbsp; // activate tracing only when absolutely needed.<br>
+&nbsp; &nbsp; <font color='blue'> if (DEBUG_ON) {<br>
+&nbsp; &nbsp; &nbsp; System.out.println ("starting service");<br>
+&nbsp; &nbsp; }</font><br>
+&nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

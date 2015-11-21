@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+#  Check Out file, which resides in RCS.
+#
+#  Arguments:
+#    $1 - comment
+#    $2 - file
+#
+
+
+# Set RCSHOME environment variable if it is not exist.
+# It is directory where RCS's executables are resided.
+if [ -z "${RCSHOME}" ] ; then
+  RCSHOME=${PSETHOME}/bin
+  export RCSHOME
+fi
+
+
+# Write comment to temporary file.
+comment_file="$2.tmp_comment_file_for_${USER}"
+touch "$comment_file"
+printf "%s" "$1" > "$comment_file"
+
+
+# Check the given file out.
+${RCSHOME}/co -l "$2" < "$comment_file"
+
+
+# Save the exit code. We will return it from this script.
+res=$?
+
+
+# Remove temporary file.
+rm "$comment_file"
+
+
+# Propagate error code from RCS's executable to our client.
+exit $res
+
+# END OF FILE.
+

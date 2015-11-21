@@ -1,0 +1,45 @@
+#!/bin/sh
+# cm_unlock (ClearCase) - Change a checkout to unreserved
+
+# exit script if we get any errors
+set -e
+
+# Check if file is locked
+set +e
+lockstring=`cleartool lscheckout $cm_workfile | grep '(reserved)$' 2>/dev/null`
+set -e
+
+# Return 0 if file is not locked
+rt=1
+if [ "$lockstring" = "" ]; then
+   rt=0
+else
+   set +e
+   viewstring=`cleartool lscheckout -cview $cm_workfile | grep '(reserved)$' 2>/dev/null`
+   set -e
+# If file is already locked by a current view, return 0
+   if [ "$viewstring" != "" ]; then
+       rt=0
+   fi
+fi
+exit $rt
+#### Parameters    : None
+#### Return values : 0 = not locked, 1 = locked
+#### Output	   : stdout = None
+####		   : stderr = error messages (displayed in config status dialog box)
+
+#### Environment Variables
+# Environment variables setup for this script by the configurator:
+#	$cm_workfile	  - path to local (private) copy of file to be processed
+
+
+
+
+
+
+
+
+
+
+
+

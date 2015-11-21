@@ -1,0 +1,135 @@
+<head>
+<title>Message Group API</title>
+</head>
+<body bgcolor="white">
+<h2 align="center">Message Group API</h2>
+<!--
+Every message contains a parent ID.
+Every program receives a parent ID as a parameter.
+Every program receives a log presentation service name.
+Messages which might have children must have an ID indicated, to be matched by log presentation.
+
+void create_message_group(const char *name)
+finalize_message_group(severity, ...?)
+const char *current_message_group_id();
+-->
+
+<p>A message group shows up in the Pushbutton Model Build GUI as a
+set of messages all having the same parent.  Where does this structure
+come from?  We don't indicate a message group explicitly everywhere
+that a line of code selects a message for output.  Instead, the
+call which outputs a message implicitly places it within the current
+message group.
+</p> 
+
+<p>The current message group is a global variable which is controlled
+in a structured way.  Generally, messages are grouped by the sequence
+in which they are emitted.  The GUI displays messages in a tree structure,
+for example
+<pre>
+     O Messages
+     |
+     +--O Specified command line options
+     |
+      --O Running scandsp
+     |
+     ---O env
+        |
+         --O PSETHOME=C:/DISCOVER 
+        |
+         --O ADMINDIR=N:/nt-bin/parsercmd/Model
+</pre>
+If the user browses this tree from top to bottom, the messages will
+be viewed in the order in which they were emitted.  Note that in the
+above example, the message groups are "Specified command line options"
+and "env", while "Running scandsp" appears not to be a message group
+because no children are indicated.
+</p>
+
+<p>Within code that's part of the model build, the most common scenario
+requiring a new message group will be for the duration of a local
+section of code (and for its calls to other functions).  This might
+have been handled with a matching pair of functions 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>pushNewMessageGroup</code>
+<br>and
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>popMessageGroup</code>
+<br>in fact that's how it's done in Perl.  C++ has a more convenient
+idiom for the same thing, using a constructor and destructor.
+There's an AutoMessageGroup class, 
+<pre>
+    class AutoMessageGroup {
+        AutoMessageGroup(const char *name);
+        virtual ~AutoMessageGroup();
+    };
+</pre>
+The constructor for AutoMessageGroup creates the object and sets the
+current message group to indicate the new object. 
+Its name appears in the GUI as the parent node for
+all subsequent messages in the group.
+The destructor
+restores the current message group to its former object.  So to generate
+messages for the tree shown above, the model build program need only
+declare two local objects of type AutoMessageGroup.  If needed, a
+local block can be introduced just for the local object.
+<pre>
+    {
+        AutoMessageGroup mg("Specified command line options");
+        iterator it;
+        for (it = clopts.begin(); it != clopts.end(); it++) {
+           *pi.dump();
+        }
+    }
+    run_scandsp();
+    dump_env();
+...
+void dump_env()
+{
+    AutoMessageGroup mg("env");
+    for (;;) {
+    ...
+    msg("$1=$2") &lt;&lt; var_name &lt;&lt; eoarg &lt;&lt; var_value &lt;&lt; eoarg &lt;&lt; eom;
+    ...
+    }
+}
+</pre>
+</p>
+<hr>
+<p>When a program first starts up, where in the GUI's message tree do the program's messages go?  Most programs, such as aset_CCcc or
+pset_server, are started while the model build is already in
+progress and their messages need to fit into a location which
+relates to the script which invokes them.  Each program must
+be able to report its messages in terms of how they fit in.
+To support this, each program takes a command line option
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>-messagegroup &lt;string&gt;</code>
+<br>in which the string is a code which conveys the necessary information.
+Once the command line arguments are analyzed, and prior to
+issuing any ordinary messages, the program calls
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>static AutoMessageGroup::init(const char *message_group);</code>
+<br>passing the string from the command line.
+</p>
+<p>Corresponding to this receiver of a message group id string,
+is the generator.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>static const char *AutoMessageGroup::current();</code>
+<br>This can be used to pass the message group when calling exec
+on a program, for example
+<pre>
+void run_scandsp()
+{
+    exec("scandsp",
+         "-messagegroup", AutoMessageGroup::current(),
+    	 dspFileName);
+}
+</pre>
+Note that the id string is passed to identify the message group's
+<em>location</em>, and therefore will be distinct from
+the visible name in the GUI.
+</p>
+<hr>
+<h4>Perl</h4>
+<pre>
+dismb_msg::push_new_message_group(name)
+dismb_msg::pop_new_message_group()
+dismb_msg::init_auto_message_group(string)
+dismb_msg::current_auto_message_group() returns string
+</pre>
+</body>

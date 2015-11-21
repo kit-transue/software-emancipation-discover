@@ -1,0 +1,8 @@
+#!/bin/sh
+# rcs  -I -u$cm_version $cm_revision_file
+
+(echo y; cat $cm_description) | rcs -I -u$cm_version $cm_revision_file 2>&1
+
+if [ $? -ne 0 ] ; then
+    (echo y; cat $cm_description) | rcs -I -u$cm_version $cm_revision_file
+fi

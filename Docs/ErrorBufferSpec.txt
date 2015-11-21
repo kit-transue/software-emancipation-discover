@@ -1,0 +1,102 @@
+Merging the Error Browser and the Epoch Compile buffer
+
+The existing Error Browser has the following problems:
+
+	o Error messages are unreadable because they are
+	  typically quite long and the error browser puts
+	  them all on one line.
+
+	o It is Yet Another Dialog Box. We have too many
+	  as it is and it is hard to shuffle them around
+	  and keep track of them.
+
+	o Error messages from similar functions (update,
+	  the "make" interface on the browser, compile/grep
+	  from Epoch) are reported and navigated in completely
+	  different manners.
+
+	o It's not what people are used to, they want something
+	  more "Emacs" like.
+
+One good thing about the error browser is:
+
+	o It is easy to navigate to your error. Select the error,
+	  press show, and bang, you're there.
+
+If we merge the functionality of the error browser with the existing
+Epoch "compile" buffer, we should be able to address all of the problems
+listed above.  The addition of a few buttons will allow us to preserve
+the easy navigation.  Here is how it should work:
+
+USAGE SCENAIRO
+
+1) The user causes a "compile" by doing one of the following:
+
+	o Pressing "Update" on the viewer shell
+	o Selecting File->Load for a file that does not have a .pset
+	o Selecting a make command from the browser shell
+	o Executing the Epoch "compile" or "grep" command
+	o Indirectly causing a reparse by, for example, selecting
+	  Add->Member from and ERD
+
+2) An Epoch "compile" buffer would appear in the viewer shell.
+This buffer is the same buffer Epoch uses when asked to execute
+a make command. The target viewer for the buffer would be determined
+the same way as for when the users opens other new views. Namely:
+
+	o If there is not an existing viewer shell, one is created
+	o If there is a target button on a specific viewer, that
+	  viewer gets the buffer
+	o Otherwise, the current view gets the buffer
+
+If the target viewer already has an Epoch view in it, that view would
+be spilt and the compile buffer would appear in the lower half of the
+viewer (exactly as Epoch does it now).
+
+3) While the "compile" is happening, all output from the "compile"
+command is fed to the compile buffer as it is generated.  This provides
+feedback to the user that something is happening and it would allow them
+to see the error messages as they are generated (instead of at the end,
+as it works now). If the user has Async. Parsing enabled, they would be
+able to start correcting any errors right away.
+
+4) After the command is finished, the Epoch commands "next-error" and
+"previous-error" can be used to navigate the errors.  Additionally,
+a set of navigation buttons will be added to the viewer to make the
+mechanism more visible and obvious. As the user navigates the errors,
+the upper half of the view will be changed to show the file with the
+error with the cursor on the line the caused the error.
+
+
+IMPLEMENTATION POINTS
+
+The parser already generates error messages in the format needed for
+the compile buffer.  These messages are currently visible during 
+"-batch" updates.  These messages will have to be output during
+interactive parsing as well.
+
+A mechanism will need to be developed to pass the parser messages to
+the compile buffer.
+
+The logic for creating a new view already exists but will have to be
+modified slightly to deal with the cases where the poch view needs
+to be split.  The mechanism for splitting the Epoch view is already
+implemented inside ParaSET, but it is unused and may be untested.
+
+Currently, special Epoch buffers such as *help* and *compilation*
+do not appear in the options menu for the viewers.  The only way to
+select these buffers is to use the build in Epoch commands. This will
+have to be changed so that the compile buffer does appear (the other
+special buffers should remain hidden, however).
+
+
+IMPLEMENTATION TIME ESTIMATES
+
+This project will be done by Alex Z.  Estimated time: 5-7 days
+
+Jon Ferguson will need to be consulted on UI issues: 1 day
+
+Boris Furman will need to be consulted: 1/2 - 1 day
+
+Bruce will need to change the Documentation: 2-3 days (guess)
+

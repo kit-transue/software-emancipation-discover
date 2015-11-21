@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Saving a Session</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 8.0px 1.0px; font: 13.0px Tahoma; color: #af0a16}
+    p.p5 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; color: #ff6262}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 11.0px 'Courier New'}
+    span.s4 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Saving a Session</b></p>
+<p class="p2">After you run queries, you can save information from that session for future use. When you save sessions, Caliper records the following information:</p>
+<p class="p3">•<span class="s1">   </span>your application’s total quality score</p>
+<p class="p3">•<span class="s1">   </span>the quality score for each item</p>
+<p class="p3">•<span class="s1">   </span>the values of any weights that you edited</p>
+<p class="p3">•<span class="s1">   </span>the values of any threshold queries that you edited</p>
+<p class="p2">Session information is stored as a group in a directory specified in the <span class="s2">Group</span> path.</p>
+<p class="p2">The first time that you run queries, Caliper automatically saves the information in a session called <span class="s3">default_run</span>, unless you save the session with a different name.</p>
+<p class="p2">Groups and status attributes for individual instances, however, are persistent from session to session. Any groups that you create while in that session appear in the <b>Group Manager</b> and remain until you delete them. Status attributes remain set until the information model is replaced with a new version.</p>
+<p class="p2">Caliper does not save input information (the modules you ran queries on), so it is best to give your sessions descriptive names. Session names should not include special characters or spaces. Caliper flattens session names when saving; so avoid using case to distinguish sessions.</p>
+<p class="p4"><b>Related Topics</b></p>
+<p class="p5"><span class="s4"><a href="../user_unix_09_caliper/to_save_a_session.html#XREF_To_save_a_session">To save a session</a></span></p>
+</body>
+</html>

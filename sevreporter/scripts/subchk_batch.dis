@@ -1,0 +1,336 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc scb:init {} {
+
+  # source necesary files:
+  global _SCB_SOURCELIB
+  if { ! [ info exists _SCB_SOURCELIB ] } {
+    querytree init
+    querytree source
+    set _SCB_SOURCELIB 1
+  }
+
+  source_dis list_ent.dis
+
+
+  # user_scripts file, located in the same directory as a policy file
+  # should contain custom queries
+
+  set path [ get_pref_value SubmissionCheck.Policy ]
+  if { $path != "" && [file exists $path] } {
+      set dirname [ file dirname $path ]
+      set user_scripts "$dirname/user_scripts.dis"
+      if [file exists $user_scripts] {
+	  catch { puts_verbose "Using user scripts file: $user_scripts" }
+	  source $user_scripts
+      }	
+  }
+	
+  # clear globals:
+  set vars [ info globals SCB* ]
+  foreach var $vars {
+    global $var
+    if { [ info exists $var ] } {
+      unset $var
+    }
+  }
+
+  sev_clear_cache
+
+}
+
+proc scb:exec_tree { nodes domain } {
+
+  set modules [ set_unique [ filter { language != "UNKNOWN" } [ defines -module $domain ] ] ]
+
+  if { [ size $modules ] > 0 } {
+
+    set queries ""
+
+    foreach node $nodes {
+      set runners [ querytree runners $node ]
+      foreach query $runners {
+        if { [ lsearch -exact $queries $query ] < 0 } {
+          lappend queries $query
+        }
+      }
+    }
+
+    if { [ llength $queries ] > 0 } {
+      foreach module $modules {
+        set was_loaded [ is_loaded $module ]
+        scb:exec_queries $queries $module
+        if { ($was_loaded != "1") && ([ is_loaded $module ] == "1") } {
+          catch { src_unload $module }
+        }        
+      }
+    } else {
+      scb:log error "No queries to run."
+    }
+  } else {
+    scb:log error "No valid modules specified."
+  }
+
+}
+
+proc scb:exec_queries { queries module } {
+
+  set module [ set_copy $module ]
+
+  foreach query $queries {
+
+    global QUERYDIAG SCBDIAG
+
+    set name [ querytree get $query name ]
+    set cmd [ querytree get $query cmd ]
+    set dbgcmd "$cmd [ lname $module ]"
+    catch { puts_verbose "Running command: $dbgcmd" }
+
+    set code [ catch {
+      set QUERYDIAG(text) ""
+      set validsyms 0
+      set rval [ eval $cmd $module ]
+      if { [ size -ignore $rval ] > 0 } {
+        set validsyms 1
+        set cres [ querytree get $query cres ]
+        querytree set $query cres [ set_unique [ set_union $cres $rval ] ]
+      }
+      set diags $QUERYDIAG(text)
+      if { ($diags == "") && ($validsyms) } {
+        foreach el $rval {
+          lappend diags [ qdiagfmt $el $name ]
+        }
+      }
+      if { ! [ info exists SCBDIAG($query) ] } { set SCBDIAG($query) "" }
+      set SCBDIAG($query) [ concat $SCBDIAG($query) $diags ]
+    } tclerr ]
+
+    if { $code != "0" } {
+      global errorInfo
+      if { [ info exists errorInfo ] } { set tclerr $errorInfo }
+      regsub -all "\n+" $tclerr "\n\t" tclerr
+      if { $tclerr == "" } { set tclerr "unknown failure" }
+      set msg "Query \"$name\" was aborted ($dbgcmd):\n\t$tclerr"
+      scb:log query $msg
+    }
+  }
+
+}
+
+proc scb:log { key msg } {
+
+  global SCB_LOG
+ 
+  lappend SCB_LOG($key) $msg
+
+}
+
+proc scb:log_dump {} {
+
+  set ret ""
+
+  global SCB_LOG
+
+  if { [ info exists SCB_LOG ] } {
+    set keys [ array names SCB_LOG ]
+    foreach key $keys {
+      set msgs $SCB_LOG($key)
+      foreach msg $msgs {
+        append ret "$msg\n"
+      }
+    }
+  }
+
+  return $ret
+
+}
+
+proc scb:category { node } {
+
+  set ret ""
+
+  set parent [ querytree relation $node parent ]
+  while { $parent != "" } {
+    set type [ querytree type $parent ]
+    if { $type == "folder" } {
+      set name [ querytree get $parent name ]
+      if { $ret == "" } {
+        set ret $name
+      } else {
+        set ret [ list $name $ret ]
+      }
+    }
+    set parent [ querytree relation $parent parent ]
+  }
+
+  return $ret
+
+}
+
+proc scb:print { tree } {
+
+  set ret {}
+
+  # violations
+
+  set sub ""
+  global SCBDIAG
+  set queries [ querytree runners $tree ]
+  foreach query $queries {
+    if { [ info exists SCBDIAG($query) ] } {
+      foreach diag $SCBDIAG($query) {
+        if { [ catch { querytree get $query tag } qtag ] } {
+          set qtag ""
+        }
+        set used($query) ""
+        set diag [ linsert $diag 2 $qtag ]
+        lappend sub $diag
+      }
+    }
+  }
+  lappend ret violations $sub
+
+  # querylib
+
+  set sub ""
+  foreach query [ array names used ] {
+    set tag [ querytree get $query tag ]
+    set name [ querytree get $query name ]
+    set category [ scb:category $query ]
+    set info [ list $tag $name $category ]
+    lappend sub $info
+  }
+  lappend ret querylib $sub
+
+  # mail
+
+  set sub ""
+  foreach item { mail_dtl mail_dtu mail_stl mail_stu } {
+    set val [ querytree get $tree $item ]
+    lappend sub [ list $item $val ]
+  }
+  lappend ret mail $sub
+
+  # entities
+
+  set full_list [ list_entities / ]
+  lappend ret entities $full_list
+
+  # save list entities per file
+
+  foreach myline $full_list {
+      set level [lindex $myline 0]
+      if {$level==0} {
+	  set file [lindex $myline 2]
+      }
+      lappend arr($file) $myline
+  }
+
+  set old_list {}
+
+  if [info exists arr] {
+      foreach {ln part_lst} [array get arr] {
+	  set fn "[fname $ln].ent"
+	  set fd [open $fn "w"]
+	  puts $fd $part_lst
+	  close $fd
+	  
+	  if [file exists "$fn.old"] {
+	      set fd [open "$fn.old" "r"]
+	      append old_list [read $fd]
+	      close $fd
+	  }
+      }
+  }
+
+  if { [llength $old_list] > 0 } {
+      lappend ret old_entities $old_list
+  }
+  
+  # report
+
+  lappend ret report [ subchk:report_basic $tree html 1 "" ]
+
+  return $ret
+}
+
+
+proc scb:get_policy {} {
+
+  set path [ get_pref_value SubmissionCheck.Policy ]
+
+  if { $path == "" || ![file exists $path] } {
+    global env
+    set path $env(PSETHOME)/lib/baselib.sc
+  }
+
+  catch { puts_verbose "Using policy file: $path" }
+
+  set tree [ querytree read $path ]
+
+  return $tree
+
+}
+
+proc scb:run {} {
+
+  set code [ catch {
+    scb:init
+    set tree [ scb:get_policy ]
+    if { $tree != "" } {
+      set errors [ scb:exec_tree $tree / ]
+      set results [ scb:print $tree ]
+      set outfile [ get_pref_value queryOutputFile ]
+      if { $outfile == "" } {
+        puts $results
+      } else {
+        > $outfile { puts $results }
+      }
+    } else {
+      scb:log error "Failed to initialize policy file."
+    }
+  } tclerr ]
+
+  if { $code != 0 } {
+    global errorInfo
+    if { [ info exists errorInfo ] } { set tclerr $errorInfo }
+    regsub -all "\n+" $tclerr "\n\t" tclerr
+    if { $tclerr == "" } { set tclerr "unknown failure" }
+    set msg "Fatal error occured:\n\t$tclerr"
+    scb:log error $msg
+  }
+
+  set msgs [ scb:log_dump ]
+
+  if { $msgs != "" } {
+    puts stderr $msgs
+  }
+
+}
+
+scb:run

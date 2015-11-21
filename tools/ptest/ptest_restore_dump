@@ -1,0 +1,62 @@
+#!/bin/sh -f
+#boris 06/05/096
+
+echo ""
+echo "Dumping $PSETTEST for Save/Restore."
+echo "DISCOVER PSETHOME= $PSETHOME"
+echo ""
+
+cd $PSETTEST
+
+echo "Cleaning the MODEL files"
+find . \( -name "*.pset" -o -name "*.pmod*" \) -print | xargs \rm {} \;
+
+echo "Building the model for $* ..."
+$PSETHOME/bin/discover -batch -pdf $PSETTEST/build.pdf -prefs $PSETTEST/test.prefs -proj $*
+if [ $? != 0 ] ; then
+	echo "Failed to build the MODEL"
+	exit 1
+fi
+
+echo "MODEL is built"
+echo "Removing the pset files"
+find . -name "*.pset" -print | xargs \rm {} \;
+
+echo 'Create PRJ file(s) for '"$*"
+$PSETHOME/bin/discover -batch -pdf $PSETTEST/build.pdf -prefs $PSETTEST/test.prefs -save_root
+if [ $? != 0 ] ; then
+	echo "Failed to create the PRJ files"
+	exit 1
+fi
+
+num=`find . -name "*.prj" -print | wc -l`
+if [ $num = "0" ] ; then
+	echo "No PRJ file created"
+	exit 1
+fi
+
+echo 'Created the PRJ file(s)'
+echo 'Moving the PRJ file(s) into .dump files'
+for ii in `find . -name "*.prj" -print`
+    do
+	echo "  Moving $ii"
+	mv $ii $ii.dump
+    done
+
+scrpt=$PSETTEST/before_test.sh
+echo "Creating $scrpt ..."
+cp /ParaSET/tools/template_for_restore.sh $scrpt
+chmod 777 $scrpt
+if [ $? != 0 ] ; then
+	echo "Failed to create $scrpt"
+	exit 1
+fi
+
+echo "DUMP: succeeded to dump $PSETTEST. It will validate PRJ save"
+echo "DUMP: please record the $PSETTEST/test.ccc for the"
+echo "      interactive PRJ restore validation."
+
+echo ""
+exit 0
+echo ""
+

@@ -1,0 +1,8 @@
+CPPROOTS= \
+     CmXml \
+     CmXmlCollection \
+     CmXmlErrorHandler \
+     CmXmlException \
+     CmXmlNode \
+     CmXmlStringTokenizer \
+     CmXmlSystem

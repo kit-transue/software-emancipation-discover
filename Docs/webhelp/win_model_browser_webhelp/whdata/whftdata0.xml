@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ftstdata>
+<topic name="About This Online Help" url="ciee_user_win_01_welcome/about_this_online_help.htm" />
+<topic name="Assumptions" url="ciee_user_win_01_welcome/assumptions.htm" />
+<topic name="Documentation Feedback" url="ciee_user_win_01_welcome/documentation_feedback.htm" />
+<topic name="Getting Help" url="ciee_user_win_01_welcome/getting_help.htm" />
+<topic name="Professional Services" url="ciee_user_win_01_welcome/professional_services.htm" />
+<topic name="Related Documentation" url="ciee_user_win_01_welcome/related_documentation.htm" />
+<topic name="Roles" url="ciee_user_win_01_welcome/roles.htm" />
+<topic name="Typographical Conventions" url="ciee_user_win_01_welcome/typographical_conventions.htm" />
+<topic name="Welcome to DIScover" url="ciee_user_win_01_welcome/welcome_to_code_integrity_enterprise_edition.htm" />
+<topic name="Where To Go From Here" url="ciee_user_win_01_welcome/where_to_go_from_here.htm" />
+<topic name="Access" url="ciee_user_win_02_introduction/access.htm" />
+<topic name="Build Server" url="ciee_user_win_02_introduction/build_server.htm" />
+<topic name="DIScover Components" url="ciee_user_win_02_introduction/code_integrity_components.htm" />
+<topic name="DIScover in the Enterprise Environment" url="ciee_user_win_02_introduction/code_integrity_in_the_enterprise_environment.htm" />
+<topic name="DIScover Overview" url="ciee_user_win_02_introduction/code_integrity_overview.htm" />
+<topic name="Core Concepts" url="ciee_user_win_02_introduction/core_concepts.htm" />
+<topic name="Developer Xpress" url="ciee_user_win_02_introduction/developer_xpress.htm" />
+<topic name="Entities and Instances" url="ciee_user_win_02_introduction/entities_and_instances.htm" />
+<topic name="Features and Benefits" url="ciee_user_win_02_introduction/features_and_benefits.htm" />
+<topic name="Information Model" url="ciee_user_win_02_introduction/information_model.htm" />
+<topic name="Model Browser" url="ciee_user_win_02_introduction/model_browser.htm" />
+<topic name="Model Server" url="ciee_user_win_02_introduction/model_server.htm" />
+<topic name="Project" url="ciee_user_win_02_introduction/project.htm" />
+<topic name="Queries" url="ciee_user_win_02_introduction/queries.htm" />
+<topic name="Repository" url="ciee_user_win_02_introduction/repository.htm" />
+<topic name="Understanding DIScover" url="ciee_user_win_02_introduction/understanding_code_integrity.htm" />
+<topic name="Before Starting a Session" url="ciee_user_win_03_starting/before_starting_a_session.htm" />
+<topic name="Choosing a Configuration Management System" url="ciee_user_win_03_starting/choosing_a_configuration_management_system.htm" />
+<topic name="Choosing an IDE" url="ciee_user_win_03_starting/choosing_an_ide.htm" />
+<topic name="Closing a DIScover Session" url="ciee_user_win_03_starting/closing_a_code_integrity_session.htm" />
+<topic name="Connecting to an Information Model" url="ciee_user_win_03_starting/connecting_to_an_information_model.htm" />
+<topic name="Getting Started With DIScover" url="ciee_user_win_03_starting/getting_started_with_code_integrity.htm" />
+<topic name="Post-Installation Integration" url="ciee_user_win_03_starting/post-installation_integration.htm" />
+<topic name="Setting Up the Integrity Manager Integration" url="ciee_user_win_03_starting/setting_up_the_integrity_manager_integration.htm" />
+<topic name="Starting the Model Browser" url="ciee_user_win_03_starting/starting_the_model_browser.htm" />
+<topic name="To choose your configuration management system" url="ciee_user_win_03_starting/to_choose_your_configuration_management_system.htm" />
+<topic name="To choose your IDE" url="ciee_user_win_03_starting/to_choose_your_ide.htm" />
+<topic name="To close a session" url="ciee_user_win_03_starting/to_close_a_session.htm" />
+<topic name="To connect to an information model" url="ciee_user_win_03_starting/to_connect_to_an_information_model.htm" />
+<topic name="To integrate with Borland JBuilder integration" url="ciee_user_win_03_starting/to_integrate_with_borland_jbuilder_integration.htm" />
+<topic name="To integrate with Microsoft Visual Studio" url="ciee_user_win_03_starting/to_integrate_with_microsoft_visual_studio.htm" />
+<topic name="To launch the model browser" url="ciee_user_win_03_starting/to_launch_the_model_browser.htm" />
+<topic name="To uninstall DIScover" url="ciee_user_win_03_starting/to_uninstall_code_integrity.htm" />
+<topic name="Uninstalling DIScover" url="ciee_user_win_03_starting/uninstalling_code_integrity.htm" />
+<topic name="Your Model Environment" url="ciee_user_win_03_starting/your_model_environment.htm" />
+<topic name="Browser" url="ciee_user_win_04_interfaces/browser.htm" />
+<topic name="Categories Pane" url="ciee_user_win_04_interfaces/categories_pane.htm" />
+<topic name="Errors Window" url="ciee_user_win_04_interfaces/errors_window.htm" />
+<topic name="Groups Pane" url="ciee_user_win_04_interfaces/groups_pane.htm" />
+<topic name="Icons and Graphics" url="ciee_user_win_04_interfaces/icons_and_graphics.htm" />
+<topic name="Menu Bar" url="ciee_user_win_04_interfaces/menu_bar.htm" />
+<topic name="Mouse Operations" url="ciee_user_win_04_interfaces/mouse_operations.htm" />
+<topic name="Projects Pane" url="ciee_user_win_04_interfaces/projects_pane.htm" />
+<topic name="Queries Pane" url="ciee_user_win_04_interfaces/queries_pane.htm" />
+<topic name="Results Window" url="ciee_user_win_04_interfaces/results_window.htm" />
+<topic name="Shortcut Menu" url="ciee_user_win_04_interfaces/shortcut_menu.htm" />
+<topic name="Status Bar" url="ciee_user_win_04_interfaces/status_bar.htm" />
+<topic name="The Model Browser" url="ciee_user_win_04_interfaces/the_model_browser.htm" />
+<topic name="The Model Browser Interface" url="ciee_user_win_04_interfaces/the_model_browser_interface.htm" />
+<topic name="Title Bar" url="ciee_user_win_04_interfaces/title_bar.htm" />
+<topic name="Toolbar" url="ciee_user_win_04_interfaces/toolbar.htm" />
+<topic name="Adding Entities to a Group" url="ciee_user_win_05_querying/adding_entities_to_a_group.htm" />
+<topic name="Advanced Filtering" url="ciee_user_win_05_querying/advanced_filtering.htm" />
+<topic name="Applying a Saved Filter" url="ciee_user_win_05_querying/applying_a_saved_filter.htm" />
+<topic name="Applying Closure" url="ciee_user_win_05_querying/applying_closure.htm" />
+<topic name="Basic Filtering" url="ciee_user_win_05_querying/basic_filtering.htm" />
+<topic name="Creating a Group" url="ciee_user_win_05_querying/creating_a_group.htm" />
+<topic name="Deleting a Group" url="ciee_user_win_05_querying/deleting_a_group.htm" />
+<topic name="Displaying Entity Attributes" url="ciee_user_win_05_querying/displaying_entity_attributes.htm" />
+<topic name="Displaying Short Names" url="ciee_user_win_05_querying/displaying_short_names.htm" />
+<topic name="Exporting Group Contents" url="ciee_user_win_05_querying/exporting_group_contents.htm" />
+<topic name="Exporting Query Results" url="ciee_user_win_05_querying/exporting_query_results.htm" />
+<topic name="Filtering Results" url="ciee_user_win_05_querying/filtering_results.htm" />
+<topic name="Finding a Group" url="ciee_user_win_05_querying/finding_a_group.htm" />
+<topic name="Group Operations" url="ciee_user_win_05_querying/group_operations.htm" />
+<topic name="Nested Structure Notation" url="ciee_user_win_05_querying/nested_structure_notation.htm" />
+<topic name="Notation" url="ciee_user_win_05_querying/notation.htm" />
+<topic name="Querying an Information Model" url="ciee_user_win_05_querying/querying_an_information_model.htm" />
+<topic name="Querying Your Source Code" url="ciee_user_win_05_querying/querying_your_source_code.htm" />
+<topic name="Removing Entities From a Group" url="ciee_user_win_05_querying/removing_entities_from_a_group.htm" />
+<topic name="Sample Group Operations" url="ciee_user_win_05_querying/sample_group_operations.htm" />
+<topic name="Saving a Filter" url="ciee_user_win_05_querying/saving_a_filter.htm" />
+<topic name="Sorting Entity Attributes" url="ciee_user_win_05_querying/sorting_entity_attributes.htm" />
+<topic name="To display entity attributes" url="ciee_user_win_05_querying/to_display_entity_attributes.htm" />
+<topic name="To export group contents to a text file" url="ciee_user_win_05_querying/to_export_group_contents_to_a_text_file.htm" />
+<topic name="To export query results to a file" url="ciee_user_win_05_querying/to_export_query_results_to_a_file.htm" />
+<topic name="To filter query results" url="ciee_user_win_05_querying/to_filter_query_results.htm" />
+<topic name="To find a group" url="ciee_user_win_05_querying/to_find_a_group.htm" />
+<topic name="To identify all root classes of a project" url="ciee_user_win_05_querying/to_identify_all_root_classes_of_a_project.htm" />
+<topic name="To identify external functions of a project" url="ciee_user_win_05_querying/to_identify_external_functions_of_a_project.htm" />
+<topic name="To perform operations on groups" url="ciee_user_win_05_querying/to_perform_operations_on_groups.htm" />
+<topic name="To query your source code" url="ciee_user_win_05_querying/to_query_your_source_code.htm" />
+<topic name="To sort entity attributes" url="ciee_user_win_05_querying/to_sort_entity_attributes.htm" />
+<topic name="To view instance sources" url="ciee_user_win_05_querying/to_view_instance_sources.htm" />
+<topic name="To view instances" url="ciee_user_win_05_querying/to_view_instances.htm" />
+<topic name="Viewing Group Contents" url="ciee_user_win_05_querying/viewing_group_contents.htm" />
+<topic name="Viewing Instances" url="ciee_user_win_05_querying/viewing_instances.htm" />
+<topic name="Working With Groups" url="ciee_user_win_05_querying/working_with_groups.htm" />
+<topic name="Call Graph" url="ciee_user_win_06_views/call_graph.htm" />
+<topic name="Data Chart" url="ciee_user_win_06_views/data_chart.htm" />
+<topic name="Data Chart Menu Options" url="ciee_user_win_06_views/data_chart_menu_options.htm" />
+<topic name="Entity Relation Diagram" url="ciee_user_win_06_views/entity_relation_diagram.htm" />
+<topic name="Entity Relation Diagram Menu Options" url="ciee_user_win_06_views/entity_relation_diagram_menu_options.htm" />
+<topic name="Flow Chart" url="ciee_user_win_06_views/flow_chart.htm" />
+<topic name="General View Options" url="ciee_user_win_06_views/general_view_options.htm" />
+<topic name="Graphical Views" url="ciee_user_win_06_views/graphical_views.htm" />
+<topic name="Inheritance Menu Options" url="ciee_user_win_06_views/inheritance_menu_options.htm" />
+<topic name="Inheritance View" url="ciee_user_win_06_views/inheritance_view.htm" />
+<topic name="Opening a Call Graph" url="ciee_user_win_06_views/opening_a_call_graph.htm" />
+<topic name="Opening a Data Chart" url="ciee_user_win_06_views/opening_a_data_chart.htm" />
+<topic name="Opening a Flow Chart" url="ciee_user_win_06_views/opening_a_flow_chart.htm" />
+<topic name="Opening a Tree Diagram" url="ciee_user_win_06_views/opening_a_tree_diagram.htm" />
+<topic name="Opening an Entity Relation Diagram" url="ciee_user_win_06_views/opening_an_entity_relation_diagram.htm" />
+<topic name="Opening an Inheritance View" url="ciee_user_win_06_views/opening_an_inheritance_view.htm" />
+<topic name="Opening an Outline View" url="ciee_user_win_06_views/opening_an_outline_view.htm" />
+<topic name="Outline View" url="ciee_user_win_06_views/outline_view.htm" />
+<topic name="Tree Diagram" url="ciee_user_win_06_views/tree_diagram.htm" />
+<topic name="Tree Diagram Menu Options" url="ciee_user_win_06_views/tree_diagram_menu_options.htm" />
+<topic name="Working With Graphical Views" url="ciee_user_win_06_views/working_with_graphical_views.htm" />
+<topic name="Borland JBuilder" url="ciee_user_win_07_working_with_source/borland_jbuilder.htm" />
+<topic name="Emacs" url="ciee_user_win_07_working_with_source/emacs.htm" />
+<topic name="gVim" url="ciee_user_win_07_working_with_source/gvim.htm" />
+<topic name="Launching Your Integrated IDE" url="ciee_user_win_07_working_with_source/launching_your_integrated_ide.htm" />
+<topic name="Microsoft Visual Studio" url="ciee_user_win_07_working_with_source/microsoft_visual_studio.htm" />
+<topic name="Performing Detailed Querying" url="ciee_user_win_07_working_with_source/performing_detailed_querying.htm" />
+<topic name="Refining Your Source Analysis" url="ciee_user_win_07_working_with_source/refining_your_source_analysis.htm" />
+<topic name="To display symbol information" url="ciee_user_win_07_working_with_source/to_display_symbol_information.htm" />
+<topic name="To display symbol information" url="ciee_user_win_07_working_with_source/to_display_symbol_information1.htm" />
+<topic name="To refine your source analysis" url="ciee_user_win_07_working_with_source/to_refine_your_source_analysis.htm" />
+<topic name="To view the information model definition of a symbol" url="ciee_user_win_07_working_with_source/to_view_the_information_model_definition_of_a_symbol.htm" />
+<topic name="To view the information model definition of a symbol" url="ciee_user_win_07_working_with_source/to_view_the_information_model_definition_of_a_symbol1.htm" />
+<topic name="To view the symbol in the DIScover Browser" url="ciee_user_win_07_working_with_source/to_view_the_symbol_in_the_code_integrity_browser.htm" />
+<topic name="To view the symbol in the DIScover Browser" url="ciee_user_win_07_working_with_source/to_view_the_symbol_in_the_code_integrity_browser1.htm" />
+<topic name="Transferring Entities to DIScover" url="ciee_user_win_07_working_with_source/transferring_entities_to_code_integrity.htm" />
+<topic name="Using MKS Source Integrity Enterprise Edition" url="ciee_user_win_07_working_with_source/using_mks_source_integrity_enterprise_edition.htm" />
+<topic name="Using Rational ClearCase" url="ciee_user_win_07_working_with_source/using_rational_clearcase.htm" />
+<topic name="Working With Configuration Management Systems" url="ciee_user_win_07_working_with_source/working_with_configuration_management_systems.htm" />
+<topic name="Working With IDEs" url="ciee_user_win_07_working_with_source/working_with_ides.htm" />
+<topic name="Working With Source Code" url="ciee_user_win_07_working_with_source/working_with_source_code.htm" />
+<topic name="Attaching Impact Analysis Reports to Integrity Manager Issues" url="ciee_user_win_08_impact/attaching_impact_analysis_reports_to_integrity_manager_issues.htm" />
+<topic name="C/C++ Language Entities" url="ciee_user_win_08_impact/c_c++_language_entities.htm" />
+<topic name="Generating an Impact Analysis Report" url="ciee_user_win_08_impact/generating_an_impact_analysis_report.htm" />
+<topic name="Impact Analysis" url="ciee_user_win_08_impact/impact_analysis.htm" />
+<topic name="Impact Analysis Options" url="ciee_user_win_08_impact/impact_analysis_options.htm" />
+<topic name="Java Language Entities" url="ciee_user_win_08_impact/java_language_entities.htm" />
+<topic name="Performing an Impact Analysis" url="ciee_user_win_08_impact/performing_an_impact_analysis.htm" />
+<topic name="Printing an Impact Analysis Report" url="ciee_user_win_08_impact/printing_an_impact_analysis_report.htm" />
+<topic name="Saving an Impact Analysis Report" url="ciee_user_win_08_impact/saving_an_impact_analysis_report.htm" />
+<topic name="The Impact Analysis Report" url="ciee_user_win_08_impact/the_impact_analysis_report.htm" />
+<topic name="To attach an Impact Analysis report to an Integrity Manager issue" url="ciee_user_win_08_impact/to_attach_an_impact_analysis_report_to_an_integrity_manager_issue.htm" />
+<topic name="To generate your Impact Analysis Report" url="ciee_user_win_08_impact/to_generate_your_impact_analysis_report.htm" />
+<topic name="To perform an Impact Analysis" url="ciee_user_win_08_impact/to_perform_an_impact_analysis.htm" />
+<topic name="To save an Impact Analysis report" url="ciee_user_win_08_impact/to_save_an_impact_analysis_report.htm" />
+<topic name="Why Use Impact Analysis?" url="ciee_user_win_08_impact/why_use_impact_analysis_.htm" />
+<topic name="Attaching Quality Assessment Reports to Integrity Manager Issues" url="ciee_user_win_09_caliper/attaching_quality_assessment_reports_to_integrity_manager_issues.htm" />
+<topic name="Caliper" url="ciee_user_win_09_caliper/caliper.htm" />
+<topic name="Caliper Sessions" url="ciee_user_win_09_caliper/caliper_sessions.htm" />
+<topic name="Caliper Window Components" url="ciee_user_win_09_caliper/caliper_window_components.htm" />
+<topic name="Enabled Queries" url="ciee_user_win_09_caliper/enabled_queries.htm" />
+<topic name="Enterprise Quality Management" url="ciee_user_win_09_caliper/enterprise_quality_management.htm" />
+<topic name="Filter Set Scores" url="ciee_user_win_09_caliper/filter_set_scores.htm" />
+<topic name="Printing a Quality Assessment Report" url="ciee_user_win_09_caliper/printing_a_quality_assessment_report.htm" />
+<topic name="Quality Assessment Reports" url="ciee_user_win_09_caliper/quality_assessment_reports.htm" />
+<topic name="Quality Rule Queries" url="ciee_user_win_09_caliper/quality_rule_queries.htm" />
+<topic name="Quality Scores" url="ciee_user_win_09_caliper/quality_scores.htm" />
+<topic name="Query Scores" url="ciee_user_win_09_caliper/query_scores.htm" />
+<topic name="Report Tab" url="ciee_user_win_09_caliper/report_tab.htm" />
+<topic name="Saving a Quality Assessment Report" url="ciee_user_win_09_caliper/saving_a_quality_assessment_report.htm" />
+<topic name="Settings and Reports" url="ciee_user_win_09_caliper/settings_and_reports.htm" />
+<topic name="Settings Tab" url="ciee_user_win_09_caliper/settings_tab.htm" />
+<topic name="The Query Tree" url="ciee_user_win_09_caliper/the_query_tree.htm" />
+<topic name="To attach a QAR to an Integrity Manager issue" url="ciee_user_win_09_caliper/to_attach_a_qar_to_an_integrity_manager_issue.htm" />
+<topic name="To launch a stored Caliper session" url="ciee_user_win_09_caliper/to_launch_a_stored_caliper_session.htm" />
+<topic name="To save a QAR" url="ciee_user_win_09_caliper/to_save_a_qar.htm" />
+<topic name="To save your work in a stored session" url="ciee_user_win_09_caliper/to_save_your_work_in_a_stored_session.htm" />
+<topic name="To view a query that has violations" url="ciee_user_win_09_caliper/to_view_a_query_that_has_violations.htm" />
+<topic name="Total Quality Score" url="ciee_user_win_09_caliper/total_quality_score.htm" />
+<topic name="Viewing the Source of Hits" url="ciee_user_win_09_caliper/viewing_the_source_of_hits.htm" />
+<topic name="Violations" url="ciee_user_win_09_caliper/violations.htm" />
+<topic name="What Is Caliper?" url="ciee_user_win_09_caliper/what_is_caliper_.htm" />
+<topic name="Available Metrics" url="ciee_user_win_10_metrics/available_metrics.htm" />
+<topic name="Creating a Complex Query" url="ciee_user_win_10_metrics/creating_a_complex_query.htm" />
+<topic name="Displaying Metrics" url="ciee_user_win_10_metrics/displaying_metrics.htm" />
+<topic name="Metrics" url="ciee_user_win_10_metrics/metrics.htm" />
+<topic name="To create a complex metric query" url="ciee_user_win_10_metrics/to_create_a_complex_metric_query.htm" />
+<topic name="To display metrics with an entity in a column" url="ciee_user_win_10_metrics/to_display_metrics_with_an_entity_in_a_column.htm" />
+<topic name="Dormant" url="ciee_user_win_11_dormant/dormant.htm" />
+<topic name="Entity Reference Level" url="ciee_user_win_11_dormant/entity_reference_level.htm" />
+<topic name="Overview of Dormant" url="ciee_user_win_11_dormant/overview_of_dormant.htm" />
+<topic name="Performing a Dormant Analysis" url="ciee_user_win_11_dormant/performing_a_dormant_analysis.htm" />
+<topic name="Project Scope" url="ciee_user_win_11_dormant/project_scope.htm" />
+<topic name="Selecting a Root Entity" url="ciee_user_win_11_dormant/selecting_a_root_entity.htm" />
+<topic name="Overview of Simplify.h" url="ciee_user_win_12_simplify/overview_of_simplify.h.htm" />
+<topic name="Simplify.h" url="ciee_user_win_12_simplify/simplify.h.htm" />
+<topic name="Simplifying a Source Files Header Files" url="ciee_user_win_12_simplify/simplifying_a_source_file_s_header_files.htm" />
+<topic name="Access Queries" url="ciee_user_win_appa_devxpress/access_queries.htm" />
+<topic name="Basic Functions" url="ciee_user_win_appa_devxpress/basic_functions.htm" />
+<topic name="Choosing a Configuration Management System" url="ciee_user_win_appa_devxpress/choosing_a_configuration_management_system1.htm" />
+<topic name="Choosing a Model Server" url="ciee_user_win_appa_devxpress/choosing_a_model_server.htm" />
+<topic name="Choosing a Source Mode" url="ciee_user_win_appa_devxpress/choosing_a_source_mode.htm" />
+<topic name="Choosing an IDE" url="ciee_user_win_appa_devxpress/choosing_an_ide1.htm" />
+<topic name="Configuring Developer Xpress" url="ciee_user_win_appa_devxpress/configuring_developer_xpress.htm" />
+<topic name="Customizing Developer Xpress" url="ciee_user_win_appa_devxpress/customizing_developer_xpress.htm" />
+<topic name="Customizing the Menu Bar" url="ciee_user_win_appa_devxpress/customizing_the_menu_bar.htm" />
+<topic name="Developer Xpress" url="ciee_user_win_appa_devxpress/developer_xpress1.htm" />
+<topic name="Editing an Application File" url="ciee_user_win_appa_devxpress/editing_an_application_file.htm" />
+<topic name="Enabling Icons" url="ciee_user_win_appa_devxpress/enabling_icons.htm" />
+<topic name="Exiting Developer Xpress" url="ciee_user_win_appa_devxpress/exiting_developer_xpress.htm" />
+<topic name="Filtering Entity Subsets" url="ciee_user_win_appa_devxpress/filtering_entity_subsets.htm" />
+<topic name="Finding Items" url="ciee_user_win_appa_devxpress/finding_items.htm" />
+<topic name="Groups" url="ciee_user_win_appa_devxpress/groups.htm" />
+<topic name="Navigating Your Source Code" url="ciee_user_win_appa_devxpress/navigating_your_source_code.htm" />
+<topic name="Predefined Queries" url="ciee_user_win_appa_devxpress/predefined_queries.htm" />
+<topic name="Querying Entities In Your Source Code" url="ciee_user_win_appa_devxpress/querying_entities_in_your_source_code.htm" />
+<topic name="Rational ClearCase Specific Commands" url="ciee_user_win_appa_devxpress/rational_clearcase_specific_commands.htm" />
+<topic name="Searching a Project Hierarchy" url="ciee_user_win_appa_devxpress/searching_a_project_hierarchy.htm" />
+<topic name="Select Options" url="ciee_user_win_appa_devxpress/select_options.htm" />
+<topic name="Source Integrity Specific Commands" url="ciee_user_win_appa_devxpress/source_integrity_specific_commands.htm" />
+<topic name="Starting Developer Xpress" url="ciee_user_win_appa_devxpress/starting_developer_xpress.htm" />
+<topic name="The Developer Xpress Interface" url="ciee_user_win_appa_devxpress/the_developer_xpress_interface.htm" />
+<topic name="To choose a CM system" url="ciee_user_win_appa_devxpress/to_choose_a_cm_system.htm" />
+<topic name="To choose a model server" url="ciee_user_win_appa_devxpress/to_choose_a_model_server.htm" />
+<topic name="To choose a source mode" url="ciee_user_win_appa_devxpress/to_choose_a_source_mode.htm" />
+<topic name="To choose your IDE" url="ciee_user_win_appa_devxpress/to_choose_your_ide1.htm" />
+<topic name="To explore your project hierarchy" url="ciee_user_win_appa_devxpress/to_explore_your_project_hierarchy.htm" />
+<topic name="To filter entity subsets" url="ciee_user_win_appa_devxpress/to_filter_entity_subsets.htm" />
+<topic name="To find items" url="ciee_user_win_appa_devxpress/to_find_items.htm" />
+<topic name="To run a predefined query" url="ciee_user_win_appa_devxpress/to_run_a_predefined_query.htm" />
+<topic name="To run a query based on an Access command" url="ciee_user_win_appa_devxpress/to_run_a_query_based_on_an_access_command.htm" />
+<topic name="To search a project hierarchy" url="ciee_user_win_appa_devxpress/to_search_a_project_hierarchy.htm" />
+<topic name="To use submission check" url="ciee_user_win_appa_devxpress/to_use_submission_check.htm" />
+<topic name="Troubleshooting" url="ciee_user_win_appa_devxpress/troubleshooting.htm" />
+<topic name="Using Configuration Management Systems" url="ciee_user_win_appa_devxpress/using_configuration_management_systems.htm" />
+<topic name="Using Submission Check" url="ciee_user_win_appa_devxpress/using_submission_check.htm" />
+<topic name="Using the Runtime List" url="ciee_user_win_appa_devxpress/using_the_runtime_list.htm" />
+<topic name="Working With a Group" url="ciee_user_win_appa_devxpress/working_with_a_group.htm" />
+<topic name="Working With Multiple Groups" url="ciee_user_win_appa_devxpress/working_with_multiple_groups.htm" />
+
+</ftstdata>  

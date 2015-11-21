@@ -1,0 +1,21 @@
+CROOTS=\
+    buttonbar_rowcol \
+    viewer \
+    viewerShell \
+
+
+CPROOTS=\
+    enable_reparse_buttons \
+	get_create_app \
+    histview.h \
+	instanceBrowser.h \
+	miniBrowser.h \
+    view_creation \
+    view_report \
+    viewer.h \
+    viewerShell.h \
+    viewerShellData \
+    viewerShell_btn_bar \
+    viewerShell_cmd \
+    viewerShell_extra \
+

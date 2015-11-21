@@ -1,0 +1,28 @@
+<html>
+<body>
+
+<p><b>Securty - Make Your Class Uncloneable</b></p>
+
+<p>Java's object cloning mechanism lets the programmer make exact duplicates of
+objects that have already been instantiated in a running program.  This can let
+an attacker manufacture new instances of classes you define, without executing
+any of your constructors.  If your class is not cloneable, the attacker can
+define a subclass of your class and make the subclass implement java.lang.Clonea
+ble.
+This lets the attacker make new instances of your class by copying the memory
+images of existing objects.  This is often an unacceptable way to make a new
+object.</p>
+
+<p><b>Tip:</b>
+If you want your class to be cloneable, you can protect yourself by defining a
+clone method and making it final.  If you're relying on a non-final clone method
+in one of your super classes, then override the method to make it final or make
+your entire class final.</p>
+
+<p><b>REFERENCE</b></p>
+<p>Statically Scanning Java Code: Finding Security Vulnerabilities.<br>
+John Viega, Gary McGraw, Tom Mutdosch, and Edward W. Felten<br>
+IEEE SOFTWARE September/October 2000</p>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+2000.04.24 sschmidt
+
+The purpose of this document is to explain the meaning of the various
+priorities listed in bugtool, to offer some examples in support of
+these, and to provide a rough guide for translation from old priorities
+to the current priorities.  First comes a table, then some examples.
+
+-------------------------------------------------------------------------
+
+Old description		Old p		Current p	Current desc.
+
+Unassigned		-1		-1		Unassigned
+
+Need to fix		 0		 0		Release blocking
+
+					 1		Really bad
+
+					 2		Pretty bad
+
+Ought to fix		 1		 3		Ought to fix
+
+					 4		Maybe ought to fix
+
+Who cares?		 2		 5		Who cares?
+
+Don't fix!		 3		 6		Don't fix!
+
+Internal		10		10		Internal
+
+-------------------------------------------------------------------------
+
+As you can see, the only changes are that old priority 0 has been split
+into three priorities, 0, 1, and 2, and old priority 1 has been split
+into two priorities, 3 and 4.  Interpretations of the priorites follow.
+
+-1 Unassigned.  	This means that no one has reviewed the bug yet 
+			to assign it a priority.  If a bug with 
+			priority -1 is assigned to you and you would 
+			like to recommend a priority, either talk to 
+			someone in QA or write your recommendations in 
+			the BugNature.
+
+ 0 Release blocking.	This priority is reserved for bugs which must be
+			fixed before the next release.  This list should
+			never grow very large, and MUST shrink to 0 at
+			each release.
+
+ 1 Really bad.		This priority is given to bugs which really need
+			to be fixed, but which are tolerable enough that
+			any given one will not hold up a release.  This
+			priority should be reserved for bugs that are 
+			really bad;  lots of bugs which we need to fix
+			will not make the cut.
+
+ 2 Pretty bad.		This priority is given to any bugs which need to
+			be fixed but which we can tolerate for some
+			amount of time.  Any bug which we would commit
+			to fix if it were found by a customer should get
+			at least this high a priority.
+			
+ 3 Ought to fix.	This priority is given to issues which are
+			definitely bugs and which should get fixed, but
+			which we do not plan on fixing any particular 
+			time.
+
+ 4 Maybe ought to fix.	This priority is given to issues which are
+			definitely bugs and which we think someone 
+			might care about, but which we do not plan on
+			fixing any particular time.
+
+ 5 Who cares?		This priority is for issues which are bugs but
+			which seem unimportant.  Basically, any customer
+			issue will have a higher priority than this
+			unless the customer specifically said that they
+			didn't care about the issue.
+
+ 6 Don't fix!		This priority is for issues which are not bugs,
+			or in which the cure is worse than the disease.
+			These issues should probably just be closed 
+			unless there is some specific reason to leave
+			them open (frequent misguided requests, 
+			customer issues, etc.).
+
+10 Internal.		This priority denotes issues which are internal
+			to SET and which do not affect the software 
+			received by customers.  For example, defects in
+			the bugtool or the regression testing system
+			fall into this category.

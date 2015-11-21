@@ -1,0 +1,39 @@
+<html>
+<body>
+
+<p><b>OOAOM - Order Of Appearance Of Modifiers</b></p>
+
+<p>Checks for correct ordering of modifiers.
+<br>For classes:
+visibility (public, protected or private), abstract, static, final.
+<br>
+For attributes:
+visibility (public, protected or private), static, final, transient, volatile.
+<br>
+For operations:
+visibility (public, protected or private), abstract, static, final, synchronized, native</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+<font color='red'>final public</font> class OOAOM { <br>
+&nbsp; &nbsp; public static final int attr1;<br>
+&nbsp; &nbsp; <font color='red'>static public</font> int attr2; <br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Change the order of modifiers
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+<font color='blue'>public final </font> class OOAOM { <br>
+&nbsp; &nbsp; public static final int attr1;<br>
+&nbsp; &nbsp; <font color='blue'>public static </font> int attr2;<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

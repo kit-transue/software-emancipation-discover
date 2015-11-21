@@ -1,0 +1,220 @@
+#!/bin/sh
+#purgemodel
+
+#examines the model storage; purges old components of the model
+#takes either a pdf and project, or a list of filenames
+#a variety of options indicating number of versions, date, etc. may be
+#supplied.  Defaults for each parameter will be provided.
+
+### FUNCTIONS ###
+
+
+Usage() {
+	echo purgemodel usage: purgemodel [-v] [-n] [-project project] [-days n] [-versions n] [-rmlabel] [-rmbranch] 1>&2;
+}
+
+#     getversion()
+# Call with nawk "$getversion" howmanyversions=n, passed the output
+# of a cleartool lshist [long version, so we get labels, too]
+# 
+# Returns "filename branch version", where version is n existing versions
+# back from LATEST.  Ignores deleted version (doesn't necessarily return
+# LATEST-n).  If there is no such version, output is silent.
+# Depends on the fact that lshist reports versions in reverse-chronological
+# order (says so in the man page!)
+
+# Uses the global associative arrays:
+#	number--keeps track of the number of versions seen
+#	version--the version number that matches howmanyversions
+#	labels--the number of labels seen on the branch
+# The key for each array is the branch name
+
+getversion='
+#make sure we are dealing with a version and not just an element or CHECKEDOUT:
+$5 ~ /@@\/main.*\/[0-9]+\"$/ {
+	# clean up the leading and trailing quotes:
+	gsub(/\"/, "", $5);
+	# find where the version string begins:
+	i = match ($5, /\/[^\/]*$/);
+	# do not forget to skip the leading quote
+	branch = substr ($5, 0, i);
+	# use associative array to track how many back versions we have seen:
+	if (number[branch]++ == howmanyversions) {
+		version[branch] = substr ($5, i + 1)
+	};
+	if ( NF > 5) {	# There are labels involved:
+		label[branch] = "yes"
+	}
+}
+END {
+	for ( branch in version ) {
+		name = branch
+		sub(/@@/, " ", name)
+		print name, version[branch], label[branch]
+	}
+}
+'
+
+
+# remove appropriate versions of a file; $1 is UNIX filename
+purgefile () {
+	filename=$1
+	# First, make sure this is a ClearCase element:
+	if cleartool describe -short $filename 2> /dev/null | grep "@@" > /dev/null
+	then :
+	else
+		if [ $verbose ]; then
+			echo "Warning: \"$filename\" is not a ClearCase element"
+		fi
+		return
+	fi
+	# We keep a certain number of versions...
+	cleartool lshist $filename | $AWK "$getversion" howmanyversions=$howmanyversions |
+	while read filename branch version label
+		do
+		# ...and we don't delete versions that are newer than a certain number of days:
+		timeversion=`cleartool describe -short -ver "${branch}{!created_since($whattime)}" $filename | sed 's/.*\///'`
+		if [ $timeversion ] ; then 	# we need to decide which takes priority...
+			if [ $timeversion -lt $version ] ; then
+				version=$timeversion
+			fi
+			# check to see if we're deleting a whole branch:
+			# <NOT IMPLEMENTED>
+			# rmver will not delete the endpoints, so we increment the end by one:
+			version=`expr $version + 1`
+			# ...and remove versions, pursuant to our definition of "interesting"
+			if [ $version -gt 1 ] ; then 
+				# we want to do:
+				# cleartool rmver -vrange ${branch}0 ${branch}${version} -force -xhlink -xattr $rmlabel $filename
+				# but this won't do anything if _any_ versions are "interesting"
+				x=1
+				while [ $x -lt $version ] ; do
+					if cleartool ls -short ${filename}@@${branch}${version} 2> /dev/null > /dev/null
+					then
+					$noexec cleartool rmver -force -xhlink -xattr $rmlabel ${filename}@@${branch}${x}
+					fi
+					x=`expr $x + 1`
+				done;
+			fi
+		fi
+		# else there isn't a version aged enough to be purged
+	done
+}
+
+
+getOptions() {
+	while [ $# -gt 0 ] ; do
+	case $1 in 
+		-h)
+			Usage
+			exit 0
+			;;
+		-proj*)
+			shift
+			project=$1
+			;;
+		-prefs)
+			shift
+			prefs=$1
+			;;
+		-day*)
+			shift
+			howmanydays=$1
+			;;
+		-ver*)
+			shift
+			howmanyversions=$1
+			;;
+		-rmlabel)
+			rmlabel=-xlabel
+			;;
+		-rmbranch)
+			rmbranch=1
+			;;
+		-v)
+			verbose=1
+			;;
+		-n)
+			noexec=echo
+			;;
+		*)
+			echo "Error: unknown command line argument: $1"
+			Usage
+			exit 1
+			;;
+	esac
+	shift
+	done
+}
+
+
+### END FUNCTIONS ###
+
+
+
+
+# Collect the options:
+# defaults:
+howmanydays=30
+howmanyversions=4
+getOptions $*
+
+
+
+
+# do some setup:
+if [ -z "$PSETHOME" ] ; then
+  PSETHOME=`discover -where`
+  export PSETHOME
+fi
+
+# we're going to need nawk; this will tell us what it's called:
+. $PSETHOME/bin/util.sh
+
+# this is the time we'll use as the most recent version to remove:
+whattime=`time_delta $howmanydays | awk '{print $3 "-" $2 "-" $5 "." $4}'`
+
+
+FILELIST=${TMPDIR:-/usr/tmp}/purgemodel.list.$$
+
+if [ $project ]; then 
+	# store the pdf results here:
+	PDFMAP=${TMPDIR:-/usr/tmp}/batch.pdf.map.$$
+
+	modeladmin -batch -pdf_prt $project -prefs ${prefs:-$ADMINDIR/prefs/build.prefs} > $PDFMAP
+	
+	#get the pmods to purge:
+	grep 'PROJECT:' $PDFMAP | tr "()" "  " | awk '{ print $5 }' | 
+	while read pmod
+	do
+		echo ${pmod}.sym >> $FILELIST
+		echo ${pmod}.ind >> $FILELIST
+	done
+
+	#and the psets:
+	grep 'MODULE:' $PDFMAP | tr "()" "  " | awk '{print $5 }' |
+	while read pset
+	do
+		echo $pset >> $FILELIST
+	done
+
+	rm $PDFMAP
+else  # this is an ugly way of getting the files from stdin:
+	while read file
+	do
+		echo $file >> $FILELIST
+	done
+fi
+
+
+
+#finally, do the purging:
+cat $FILELIST |
+while read file
+do
+	purgefile $file
+done
+
+
+# cleanup
+rm $FILELIST

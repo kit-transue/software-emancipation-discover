@@ -1,0 +1,12 @@
+BasedOn:ascii-report
+Files:DefinesMacros,DefinesEnums,DefinesTypedefs,DefinesClasses,DefinesVariables,DefinesFunctions,Metrics
+Functions:UsedByFunctions,UsesFunctions,Metrics
+Variables:WhereUsed
+Structures:WhereUsed,Metrics
+Unions:WhereUsed
+Enums:WhereUsed
+EnumValues:WhereUsed
+Typedefs:WhereUsed
+Fields:WhereUsed
+Instances:WhereDefined
+Metrics:LOC,IFS,RETURNS,DEPTH,CC,MYERS 

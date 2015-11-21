@@ -1,0 +1,30 @@
+<html>
+<body>
+
+<p><b>ATFP - Assignment To Formal Parameters</b></p>
+
+<p>Formal parameters should not be assigned to.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code>
+int oper (int param) {<br>
+&nbsp; &nbsp; <font color='red'>param += 10;</font> <br>
+&nbsp; &nbsp; <font color='red'>return ++param;</font> <br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+Declare internal variable and use it instead of formal parameter
+</p>
+
+<p><b>Right</b></p>
+
+<p><code>
+int oper (int param) {<br>
+&nbsp; &nbsp; <font color='blue'>int result = param + 10;</font><br>
+&nbsp; &nbsp; <font color='blue'>return ++result;</font><br>
+}
+</code></p></nobr>
+
+</body>
+</html>

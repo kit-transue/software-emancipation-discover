@@ -1,0 +1,193 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Proposal for message management system.
+23.Mar.98 Kit Transue
+
+
+Summary:
+
+I propose a new interface for message management.  It is stream-based,
+making it type-safe.  It includes an external database of messages and
+identifies each argument individually, simplifying internationalization
+even in cases where the order of argument output changes.  This interface
+allows for message logging, message pop-up, and offline message browsing.
+It can support severity assignment and exit code assignment.
+
+I have implemented this interface for the pdf_wizard application.  This
+implementation consists of two instances--one suitable for command-line
+invocation; the other providing a gui with pop-up notification.  The
+gui version provides buffering of messages until the gui is fully
+available, ensuring messages are not lost.
+
+
+Design requirements:
+
+Type safety: arguments passed to the message handling system should be
+type-checked at compile time, and the type safety of the message system
+must not be affected by modifications to the (external) message database.
+An implementation that capitalizes on the inserters provided for streams
+would be ideal.
+
+Clear delineation of arguments: each argument should be separately
+identified to the message handler.  This provides a margin of safety where
+the message handling system can capture and report additional or missing
+arguments.  It is also useful in internationalization, where the order
+of argument output may be different than from the initial message.
+
+Externalization: As much information as possible about the message should
+be externalized in a separate database.   This includes final message
+text, help context, exit code, as well as possible others (message severity, 
+exception throw, allowed user responses).  The programming interface
+should be sufficiently free of dependencies that changing minor things
+like help context or message text will not force re-compilation of source
+files.
+
+End of message: the end-of-message should be clear, both to indicate
+when a pop-up dialog may be posted, and to facilitate proper memory
+management.
+
+Utility: the message interface should be useful for commandline and gui
+applications.
+
+Thread safe: the design should allow for thread-safe implementation as
+required.
+
+
+Design:
+
+A message manager will return a ostream-derived object reference when passed
+a mnemonic key.  The key should be sufficiently clear that the source should
+be readable--I suggest a descriptive const char*.
+
+Two symbols will be provided: "eoarg" and "eom".  Operator << will be
+overloaded so these will act as inserters to indicate the end of argument
+or the end of message, respectively.  The eom will return a non-stream
+argument to prevent further insertion into the stream.
+
+The message manager uses lazy initialization with no static constructors
+to guarantee that messages sent during initialization will not be lost.
+
+The public interface looks like:
+
+	typedef char const *msg_key;
+	
+	// inserters:
+	extern struct msg_inserter_eom{
+	} eom;
+	
+	extern struct msg_inserter_eoarg{
+	} eoarg;
+	
+	// inserters:
+	// void so you cannot send more stuff to the closed message:
+	void
+	operator<< (ostream &, msg_inserter_eom &);
+	
+	ostream &
+	operator<< (ostream &, msg_inserter_eoarg &);
+	
+	// the dispatcher:
+	ostream &msgid(msg_key);	// message identifier
+
+The messages database looks like:
+	key|message $ more message $.|3|1
+Fields are separated by |; $ in the second field are placeholders for
+arguments (they might be $1 $2 if argument order needs to be changed).
+The third field indicates severity, and the fourth indicates errorcode.
+[The meaning of severity is not defined here.]
+
+
+
+Implmentation:
+
+Available on request.  Currently the msgid() function returns a class
+derived from an ostream.  msgid() reads the message database on the
+first call to the function.  For the commandline version, messages
+are sent to cerr.  For the GUI, there are three phases: prior to GUI
+initialization, GUI avaialable, and after GUI shutdown.  During the
+first phase, stringstreams are returned from msgid() and these are
+queued until the GUI is available, at which point they are sent to the
+GUI in the order they were posted.  When the GUI is available,
+stringstreams are returned that build the message until eom, at which
+point the message is posted to the GUI.  After GUI shutdown, messages
+are sent to cerr [where they are lost on NT, but where they could have
+been routed to a log file].
+
+A prototype that rearranges its output arguments has also been implemented.
+
+
+
+Implmentation changes:
+
+Currently uses dynamic_cast during eoarg and eom to change streams,
+etc.  This could be re-implemented to pass the stream to the message
+manager, which could use that stream as a key into a database that would
+provide the object to recieve the eoarg/eom message.  Such a change would
+remove the only structural impediment preventing implementation in older
+C++ environments.
+
+While the STL is used for some data structures in this implementation,
+equivalent functionality is avaiable or readily provided for older
+C++ environments.
+
+
+
+Design questions:
+
+Should eom() provide an integer? return to indicate the result of the
+user dialog?
+
+Should the msgid() call encapsulate the minimum severity that the
+message should generate?  For example, a "cannot open prefs file" might
+be a warning.  The user may want to increase that to a fatal error by
+changing the message database--this would allow immediate abort upon
+discovery of a setup problem in some environments.  But a malloc-failed
+message may not be allowed to be downgraded from "abort" to "don't-even-
+tell-me-it-happened".
+
+Should the avaialble buttons be signalled in the source or in the message
+database?  For example, eom could return one of:
+	CANCEL | OK | CONTINUE | IGNORE | ABORT....
+
+
+Spurious thoughts:
+
+It should be trivial to send a (binary?) copy of the log to a file.  This
+could easily be browsed (with help contexts available), messages of a certain
+type (and optionally with arguments matching some expression) filtered, and
+summarized.
+
+It may be desirable to fork some messages to two locations.
+
+For some message classes, it may be nice to be able to "ignore messages
+of this type" for the rest of the session.  This would be easy to implement.
+
+By making msgid() a macro that registers its argument statically, it should
+be possible to generate a list of all ids.  (I suppose a grep would probably
+do this as well).  This would aid in ensuring complete coverage of the
+message database.

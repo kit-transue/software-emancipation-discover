@@ -1,0 +1,24 @@
+set CompilerNames(1) "HP C/C++ compiler"
+set CompilerNames(2) "Solaris C/C++ compiler"
+set CompilerNames(3) "Sun 4.x C/C++ compiler"
+set CompilerNames(4) "Other"
+
+#Index 1 - C++, 2 - C
+set CompFlags($CompilerNames(1),1) "-D_INCLUDE_AES_SOURCE -D_INCLUDE_POSIX_SOURCE -D_INCLUDE_XOPEN_SOURCE -D_INCLUDE_HPUX_SOURCE -D__PARASET__ -D__GNUG__ -Dwchar_t=__wchar_t -D__hp9000s700 -D_PA_RISC1_1 -Dc_plusplus -D__cplusplus -D__hp9000s300 -D__hppa -D__hpux -D__unix -Dhp9000s300 -Dhppa -Dhpux -Dunix -I\$PSETHOME/include/cp_include -I/usr/include/CC"
+set CompFlags($CompilerNames(1),2) "-D_INCLUDE_AES_SOURCE -D_INCLUDE_POSIX_SOURCE -D_INCLUDE_XOPEN_SOURCE -D_INCLUDE_HPUX_SOURCE -D__PARASET__ -D__GNUG__ -Dwchar_t=__wchar_t -D__hp9000s700 -D_PA_RISC1_1 -Dc_plusplus -D__cplusplus -D__hp9000s300 -D__hppa -D__hpux -D__unix -Dhp9000s300 -Dhppa -Dhpux -Dunix -I\$PSETHOME/include/cp_include -I/usr/include/CC"
+set CompFlags($CompilerNames(2),1) "-Dsunos5 -D__PARASET__ -D__GNUG__ -Dwchar_t=__wchar_t -D__SUNPRO_CC=0x400 -Dunix -Dsun -Dsparc -D__unix -D__sun -D__sparc -D__STDC__=0 -D__BUILTIN_VA_ARG_INCR -D__SVR4 -quiet -w -fsyntax-only -Amachine(sparc)"
+set CompFlags($CompilerNames(2),2) "-Dsunos5 -D__PARASET__ -D__STDC__=0 -D__SUNPRO_C=0x300 -D__SVR4 -D__unix -D__sun -D__sparc -D__BUILTIN_VA_ARG_INCR -Dunix -Dsun -Dsparc -ansi -quiet -w -fsyntax-only -Amachine(sparc)"
+set CompFlags($CompilerNames(3),1) "-D__PARASET__ -D__GNUG__ -quiet -w -fsyntax-only -I\$PSETHOME/include/cp-include"
+set CompFlags($CompilerNames(3),2) "-D__PARASET__ -traditional -quiet -w -fsyntax-only"
+set CompFlags($CompilerNames(4),1) ""
+set CompFlags($CompilerNames(4),2) ""
+
+#Index 1 - C++, 2 - C
+set CompExts($CompilerNames(1),1) ".C .H .h .hxx"
+set CompExts($CompilerNames(1),2) ".c .h"
+set CompExts($CompilerNames(2),1) ".C .H .h .hxx"
+set CompExts($CompilerNames(2),2) ".c .h"
+set CompExts($CompilerNames(3),1) ".C .H .h .hxx"
+set CompExts($CompilerNames(3),2) ".c .h"
+set CompExts($CompilerNames(4),1) ".C .H .h .hxx"
+set CompExts($CompilerNames(4),2) ".c .h"

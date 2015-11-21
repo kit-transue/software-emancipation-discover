@@ -1,0 +1,43 @@
+<html>
+<body>
+
+<p><b>USAFI - Use of Static Attribute for Initialization</b></p>
+
+<p>Non-final static attributes should not be used in initializations of attributes.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class ClassA {<br>
+&nbsp; &nbsp; static int state = 15;<br>
+&nbsp; &nbsp; <font color='red'>static int attr1 = state; </font><br>
+&nbsp; &nbsp; <font color='red'>static int attr2 = ClassA.state; </font><br>
+&nbsp; &nbsp; <font color='red'>static int attr3 = ClassB.state; </font><br>
+}<br>
+class ClassB {<br>
+&nbsp; &nbsp; static int state = 25;<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Either make static attributes used for initialization final,
+or use another constants for initialization.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class ClassA {<br>
+&nbsp; &nbsp; static int state = 15;<br>
+&nbsp; &nbsp; <font color='blue'>static final int INITIAL_STATE = 15;</font><br>
+&nbsp; &nbsp; static int attr1 = <font color='blue'>INITIAL_STATE</font>;<br>
+&nbsp; &nbsp; static int attr2 = ClassA.state; <br>
+&nbsp; &nbsp; static int attr3 = ClassB.state; <br>
+}<br>
+class ClassB {<br>
+&nbsp; &nbsp; static <font color='blue'>final</font> int state = 25;<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

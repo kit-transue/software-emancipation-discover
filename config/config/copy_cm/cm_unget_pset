@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+
+echo rm -f $cm_workfile
+rm -f $cm_workfile

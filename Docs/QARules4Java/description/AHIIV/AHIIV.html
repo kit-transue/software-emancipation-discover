@@ -1,0 +1,36 @@
+<html>
+<body>
+
+<p><b>AHIA - Avoid Hiding Inherited Attributes</b></p>
+
+<p>Detects when attributes declared in child classes hide inherited attributes.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class Monkey extends Animal {<br>
+&nbsp; &nbsp; <font color='red'>int attr1; </font><br>
+&nbsp; &nbsp; // something...;<br>
+}<br>
+class Animal {<br>
+&nbsp; &nbsp; int attr1;<br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+Rename child class attribute.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class Monkey extends Animal {<br>
+&nbsp; &nbsp; <font color='blue'>int mnkyAttr1; </font><br>
+&nbsp; &nbsp; // something...;<br>
+}<br>
+class Animal {<br>
+&nbsp; &nbsp; int attr1;<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

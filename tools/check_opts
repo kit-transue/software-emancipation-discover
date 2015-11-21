@@ -1,0 +1,192 @@
+#!/bin/sh 
+
+parent=`basename $1`
+shift
+
+Error()
+{
+	echo "${parent} error: $1"
+	exit 1
+}
+
+Maj_defined()
+{
+	Error "Illegal option: $2; previous options imply $1 mode"!
+}
+
+# first pass - determine major mode; verify that all switches are legal
+for A do
+	case ${A} in
+		package) 
+			exit 0 ;;
+		-batch)
+			[ "${major}" ] && Maj_defined ${major} ${A}
+			major=batch;;
+		-report)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			true;;
+		-start_server|-stop_server|-show_users|-show_log|-license_log)
+			[ "${major}" -a "${major}" != LM_admin ] && Maj_defined ${major} ${A}
+			major=LM_admin;;
+		-h|-help|'-?')
+			true;;
+		-checkpmod)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" ] && Maj_defined ${batchmode} ${A}
+			batchmode=checkpmod;;
+		-where)
+			[ "${major}" -a "${major}" != where ] && Maj_defined ${major} ${A}
+			major=where;;
+		-c|-C|-m|-update|-metric|-dfa_init|-dfa|-r|-remove|-s|-t|-u|-S|-simplify|-analysis|-headers|-save_proj|-save_root|-repair|-f|-F|-V|-L|-B|-R|-U|-E|-T|-M|-A|-package|-defect_link|-dump_psets)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != normal_batch ] && Maj_defined ${batchmode} ${A}
+			batchmode=normal_batch;;
+		-verify_pdf)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" ] && Maj_defined ${batchmode} ${A}
+			batchmode=verify_pdf;;
+                -diagnostics)
+                        [ ! "${major}" ] && Error "-batch required before ${A}"
+                        [ "${major}" != batch ] && Maj_defined ${major} ${A}
+                        [ "${batchmode}" ] && Maj_defined ${batchmode} ${A}
+                        batchmode=diagnostics;;
+                -simplify)
+                        [ ! "${major}" ] && Error "-batch required before ${A}"
+                        [ "${major}" != batch ] && Maj_defined ${major} ${A}
+                        [ "${batchmode}" ] && Maj_defined ${batchmode} ${A}
+                        batchmode=simplify;;
+                -package)
+                        [ ! "${major}" ] && Error "-batch required before ${A}"
+                        [ "${major}" != batch ] && Maj_defined ${major} ${A}
+                        [ "${batchmode}" ] && Maj_defined ${batchmode} ${A}
+                        batchmode=package;;
+		-pdf_prt|-pdf_fn|-pdf_ln|-pdf_sub_proj_name)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != pdf_diag ] && Maj_defined ${batchmode} ${A}
+			batchmode=pdf_diag;;
+		-root_impact)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != root_impact ] && Maj_defined ${batchmode} ${A}
+			batchmode=root_impact;;
+		-cm_report)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ ! "${batchmode}" -o "${batchmode}" != root_impact ] && Maj_defined ${batchmode} ${A}
+			true;;
+		-validate_groups)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != validate_groups ] && Maj_defined ${batchmode} ${A}
+			batchmode=validate_groups;;
+		-extract)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != extract ] && Maj_defined ${batchmode} ${A}
+			batchmode=extract;;
+		-dormant)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != extract ] && Maj_defined ${batchmode} ${A}
+			batchmode=extract;;
+		-proj_list)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != validate_groups -a "${batchmode}" != extract ] && Maj_defined ${batchmode} ${A}
+			true;;
+		-dormant_roots)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != extract ] && Maj_defined ${batchmode} ${A}
+			true;;
+		-subdivide_groups)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != extract ] && Maj_defined ${batchmode} ${A}
+			true;;
+		-weights)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != extract ] && Maj_defined ${batchmode} ${A}
+			true;;
+		-print)
+			[ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+			[ "${batchmode}" -a "${batchmode}" != batch_print ] && Maj_defined ${batchmode} ${A}
+			batchmode=batch_print;;
+                -branch)
+                        [ ! "${major}" ] && Error "-batch required before ${A}"
+			[ "${major}" != batch ] && Maj_defined ${major} ${A}
+                        [ "${batchmode}" ] && [ "${batchmode}" = verify_pdf  -o "${batchmode}" = pdf_diag ] && Maj_defined ${batchmode} ${A}
+                        batchmode=normal_batch
+                        true;;
+                -dynamic_pdf)
+                        [ "${major}" -a "${major}" != interactive ] && Maj_defined ${major} ${A}
+                        major=interactive;;
+		-d*|-xresource|-tutor|-learn|-service)
+			[ "${major}" -a "${major}" != interactive ] && Maj_defined ${major} ${A}
+			major=interactive;;
+		-core|-home|-P|-pdf|-source|-e|-exec|-undo_forgive|-forgive|-msg_logger|-psethome|-l|-v|--version|-x|-license_file|-pmod_server)
+			true;;
+		-prefs|-userPrefs|-sysPrefs|-noUserPrefs|-DIS_*|-PSET_*)
+			true;;
+		-*)
+			Error "Unrecognized option: ${A}";;
+		*)
+			true;;
+	esac
+done
+
+# second pass - verify that switch arguments are supplied where required
+#               categorize and where possible verify these arguments
+
+while [ $# -gt 0 ]
+do
+	par=$1
+	case ${par} in
+		# one or more regular file arguments
+		-c|-C|-exec|-pdf|-source|-sysPrefs|-P|-weights|-cm_report)
+			shift
+			found=""
+			while [ $# -gt 0 ]
+			do
+				case $1 in
+					-*)
+						 break;;
+					*)
+						[ -f $1 ] || Error "No such file: $1"
+						found=1
+						shift;;
+				esac
+			done
+			[ "${found}" ] || Error "${par} requires argument!";;
+		# single directory argument
+		-psethome)
+			[ -d $2 ] || Error "No such directory: $2"
+			shift 2;;
+		# one or more string arguments
+		-home|-branch|-dynamic_pdf|-r|-proj|-service|-root_impact|-proj_list|-dormant_roots|-subdivide_groups)
+			shift
+			found=""
+			while [ $# -gt 0 ]
+			do
+				case $1 in
+					-*)
+						 break;;
+					*)
+						found=1
+						shift;;
+				esac
+			done
+			[ "${found}" ] || Error "${par} requires argument!";;
+		*)
+			shift;;
+	esac
+done
+
+exit 0

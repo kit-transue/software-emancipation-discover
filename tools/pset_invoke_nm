@@ -1,0 +1,32 @@
+#!/bin/sh
+
+name=`type "$0"|awk '{print $3}`
+
+if [ "$?" = "0" ]; then
+	dir=`echo "$name"|sed 's!/[^/]*$!!'`
+else
+	dir=UNKNOWN
+fi
+
+NM="$dir"/nm				
+CFILT="$dir"/c++filt
+
+NM_FLAGS=-px
+
+if [ `uname` = "SunOS" ]; then
+	if [ `uname -r | sed 's/\..*//'` = "4" ]; then
+		NM_FLAGS=-p
+	fi
+fi
+
+if [ "$#" != "0" ]; then
+	if [ "$1" = "-suncc" ]; then 
+		shift
+		"$NM" "$NM_FLAGS" $*   | "$CFILT" |
+		 sed -e 's/static //g' -e 's/(void)/()/g' -e 's/, /,/g' -e 's/) /)/g' -e 's/ (/(/g' -e 's/operator \([^_A-Za-z]\)/operator\1/'
+	else
+		"$NM" "$NM_FLAGS" $* |sed 's/ TS / T  /'
+	fi
+else
+	"$NM" "NM_FLAGS" 
+fi

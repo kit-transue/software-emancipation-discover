@@ -1,0 +1,76 @@
+/*-------------------------------------------------------------------------------------------
+
+    ST_NUM.STC
+
+    Autor       : Bernd Rumscheid
+    Datum       : 14.12.88
+    nderungen  : 01.01.89
+
+
+    COMPUTE_ST_NUMBERING erzeugt einen ST_GRAPHEN, dessen Knoten den unten beschriebenen 
+    Bedingungen gengen. Der zugrunde liegende Algorithmus steht in S. Evens S.180ff. .
+
+ -------------------------------------------------------------------------------------------*/
+
+struct ST_NODE;
+
+typedef 
+    struct AL_NODE
+    {
+      struct ST_NODE      *pnode;
+      struct AL_NODE      *next;
+    } AL_NODE;
+
+
+typedef
+    struct ST_NODE 
+    {
+      int                 name;
+      int                 id;
+      int                 x, y;
+      int                 leftX, rightX, height;
+      int                 wL, wR;
+      int                 dfnum, low, stnum;
+      int                 mark, dummy;
+      AL_NODE             *adj, *from, *to;
+      struct ST_NODE      *firstUp, *lastUp;
+      struct ST_NODE      *firstDown, *lastDown;
+      struct ST_NODE      *left, *right;
+      struct ST_NODE      *next;
+    } ST_NODE;
+
+
+
+typedef
+    struct ST_EDGE
+    {
+      int                 source, dest;
+      struct ST_EDGE      *next;
+    } ST_EDGE;
+
+
+
+typedef
+    struct SEGMENT                   /* Kanten werden als Folge von Segmenten dargestellt. */
+    {                                    
+      int                 x, y;
+      struct SEGMENT      *next;
+    } SEGMENT;
+    
+    
+
+typedef
+    struct ST_GRAPH
+    {
+      int                 V;                /* Anzahl Knoten                             */
+      int                 *used;            /* Eintrag, ob eine Kante benutzt ist        */
+      ST_NODE             *S, *T;           /* geben die S-T-Kante an                    */
+      int                 st_inserted;      /* true, wenn S-T-Kante eine dummy Kante ist */
+      ST_NODE             *first;           /* Erster Knoten                             */
+      ST_EDGE             *dummies;         /* Dummy-Kanten werden nicht ausgegeben      */
+      SEGMENT             **edges;          /* Segmentlisten der Kanten                  */
+    } ST_GRAPH;
+    
+
+/* END ST_NUM.STC */
+

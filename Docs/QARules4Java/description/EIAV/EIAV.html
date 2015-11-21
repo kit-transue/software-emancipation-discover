@@ -1,0 +1,33 @@
+<html>
+<body>
+
+<p><b>EIAV - Explicitly Initialize All Variables</b></p>
+
+<p>Explicitly initialize all variables.
+The only reason not to initialize a variable where it's declared
+is if the initial value depends on some computation occurring first.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void func () {<br>
+&nbsp; &nbsp; int <font color='red'> var0;</font><br>
+&nbsp; &nbsp; <font color='red'>int var1 = 1, var2</font>;<br>
+&nbsp; &nbsp; // do something..
+}
+</code></p></nobr>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void func () {<br>
+&nbsp; &nbsp; int <font color='blue'> var0 = 0;</font><br>
+&nbsp; &nbsp; int var1 = 1; <br>
+&nbsp; &nbsp;<font color='blue'> int  var2 = 0</font>;<br>
+&nbsp; &nbsp; // do something..
+}
+</code></p></nobr>
+
+</body>
+</html>

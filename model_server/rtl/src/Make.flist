@@ -1,0 +1,12 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    RTL \
+    RTL.h \
+    RTL_interface \
+    RTL_notify \
+    RelationMonitor.h \
+    objRTL.h \
+    symbolTreeHeader.h \
+

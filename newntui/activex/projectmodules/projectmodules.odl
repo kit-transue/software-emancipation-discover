@@ -1,0 +1,72 @@
+// ProjectModules.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (ProjectModules.tlb) that will become a resource in
+// ProjectModules.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(5743FFDA-0A20-11D2-AEE7-00A0C9B71DC4), version(1.0),
+  helpstring("ProjectModules OLE Control module"), control ]
+library PROJECTMODULESLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CProjectModulesCtrl
+
+	[ uuid(5743FFDB-0A20-11D2-AEE7-00A0C9B71DC4),
+	  helpstring("Dispatch interface for ProjectModules Control"), hidden ]
+	dispinterface _DProjectModules
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CProjectModulesCtrl)
+			[id(1)] IDispatch* DataSource;
+			[id(2)] BSTR Project;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CProjectModulesCtrl)
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CProjectModulesCtrl
+
+	[ uuid(5743FFDC-0A20-11D2-AEE7-00A0C9B71DC4),
+	  helpstring("Event interface for ProjectModules Control") ]
+	dispinterface _DProjectModulesEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			// Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CProjectModulesCtrl)
+			[id(1)] void ProjectChanged(BSTR project);
+			[id(2)] void ProjectDoubleclicked(BSTR project);
+			[id(3)] void ElementChanged(BSTR element);
+			[id(4)] void ElementDoubleclicked(BSTR element);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CProjectModulesCtrl
+
+	[ uuid(5743FFDD-0A20-11D2-AEE7-00A0C9B71DC4),
+	  helpstring("ProjectModules Control"), control ]
+	coclass ProjectModules
+	{
+		[default] dispinterface _DProjectModules;
+		[default, source] dispinterface _DProjectModulesEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

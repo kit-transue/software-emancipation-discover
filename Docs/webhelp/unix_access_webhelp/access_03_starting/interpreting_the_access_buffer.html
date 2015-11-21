@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Interpreting the Access Buffer</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p5 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Interpreting the Access Buffer</b></p>
+<p class="p2">In an Access buffer, you can construct commands or Tcl-style functions (known as procedures) and send them to the interpreter. The <b>Dis-Tcl-Mode</b> menu lets you send parts or all of the lines in the buffer to the interpreter.</p>
+<p class="p3"><br></p>
+<p class="p4"><img src="./tmp160321.jpg" alt="tmp160321.jpg"></p>
+<p class="p5"> </p>
+<p class="p2">Each option in this menu corresponds with an Emacs command. The <b>Send Buffer</b> option, for example, corresponds with the Emacs command <span class="s1"><b>dis-tcl-send-buffer</b></span>, which you can also execute with <span class="s1"><b>Esc-x dis-tcl-send-buffer</b></span>. For a complete list of Emacs Access menu commands, see the Emacs on-line help (<span class="s1"><b>C-h a dis</b></span>).</p>
+<p class="p2">Once you start sending data to the interpreter, Emacs opens the interpreter in a second buffer. This buffer shows the final output from your Access instructions, for example:</p>
+<p class="p3"><br></p>
+<p class="p4"><img src="./tmp16035.jpg" alt="tmp16035.jpg"></p>
+<p class="p5"> </p>
+<p class="p2">This example shows the tail end of the output for the four Access commands in the top buffer. The output shows the kind, name, and lines of code (a metric) for each file in the <span class="s2">/ttt_shared</span> project.</p>
+</body>
+</html>

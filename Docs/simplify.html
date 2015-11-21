@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Subject: Simplify</title>
+  <meta name="Author" content="Denis Peleshchuk">
+  <meta name="LastAuthor" content="Denis Peleshchuk">
+  <meta name="Company" content=" ">
+  <meta name="CreationTime" content="1998-01-22T20:21:00Z">
+  <meta name="ModificationTime" content="1998-07-13T15:01:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Times New Roman'}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px 'Times New Roman'}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 14.0px 'Times New Roman'}
+    p.p8 {margin: 0.0px 0.0px 0.0px 18.0px; text-align: justify; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p9 {margin: 0.0px 0.0px 0.0px 18.0px; text-align: justify; font: 12.0px 'Times New Roman'}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Subject: Simplify</b></p>
+<p class="p1"><b>Last modified: July 9, 1998</b></p>
+<p class="p1"><b>Prepared by: Denis Peleshchuk</b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>Design Specifications for Simplify</b></p>
+<p class="p2"><br></p>
+<p class="p4"><b>Introduction.</b></p>
+<p class="p2"><br></p>
+<p class="p5">To eliminate dependencies on gcc and cpp, the code for Simplify that constructs inclusion tree and symbol dependency list needs to be rewritten completely using information stored in IF files. All necessary information can be taken from AST section of an IF file as well as several other directives, such as REL , SMT, and SYM.<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p5">Since the core functionality of Simplify responsible for building dependencies and inclusion tree does not depend on other Discover modules, it can be implemented as a separate executable so that it can implement its own iff-parser call-backs.<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7"><b>2. Interface.</b></p>
+<p class="p6"><br></p>
+<p class="p5">The following preferences are used to customize behavior of simplify in Discover:</p>
+<p class="p6"><br></p>
+<p class="p5">Simplify.Verbose (0/1)</p>
+<p class="p5">Simplify.PrintScreen (0/1)</p>
+<p class="p5">Simplify.PrintTree (0/1)</p>
+<p class="p5">Simplify.NoComments (0/1)</p>
+<p class="p5">Simplify.NoSubstitutions (0/1)</p>
+<p class="p5">Simplify.VerifyExclusionsCmd (string)</p>
+<p class="p5">Simplify.LogFile (string)</p>
+<p class="p6"><br></p>
+<p class="p5">Discover first runs aset_CCcc to produce an IF file for selected source, and then it uses the values of these preferences to run stand-alone simplify executable that is located in $PSETHOME/bin. Here is the format of simplify executable:</p>
+<p class="p6"><br></p>
+<p class="p5">simplify [-nosub] [-nocomments] [-short_sub_names] [-modify] [-cmd name] [-verbose] [-print] [-print_tree] [-log filename] [-Idir] iff_name</p>
+<p class="p6"><br></p>
+<p class="p5">The name of the actual source file is not needed because it can be found in iff. IFF name should be last. Other arguments can be supplied in any order. All other arguments are ignored. The detailed description of all flags follows:</p>
+<p class="p6"><br></p>
+<p class="p5">-nosub: do not allow header substitutions. Header substitution refers to a case when test.c includes a.h that in turn includes b.h and test.c only needs b.h. In this case, if substitutions are allowed, a.h will be removed and b.h added to the source. If they are not allowed, no changes will be made.</p>
+<p class="p5">-verbose: output all dependencies; only works in combination with -print or -log</p>
+<p class="p5">-print: print output to screen</p>
+<p class="p5">-log filename: print output to a file</p>
+<p class="p5">-print_tree: print inclusion tree to the screen</p>
+<p class="p5">-modify: make necessary modifications to the source file that needs to have writing permissions</p>
+<p class="p5">-nocomments: when modifying the source, do not use comments, i.e. in stead of commenting out an include in the code, simply remove that line; when making a substitution, simply add an include without /* SET_SIMPLIFY SUBSTITUTED */ comment. It should be noted that if a line that needs to be removed contains a comment, this line is never simply removed; it is commented out no matter whether nocomments is used or not.</p>
+<p class="p5">-short_sub_names: when making a substitution in the source, if a header does not come from a directory specified with -I, source directory, source sub directory, or ../dir relative to source, by default, Simplify uses full file name, i.e. #include “/dir1/dir2/…/file.h”. If -short_sub_names option is specified, if other means fail, Simplify still uses #include &lt;file.h&gt;.<span class="Apple-converted-space">  </span>This option can be useful in some cases, but it should be used very carefully since it is clearly not guaranteed to work all the time.</p>
+<p class="p5">-cmd name: the name of a command that is run to verify exclusions. This command gets the list of files (full names are supplied, so users would need to extract short names if necessary) that are directly included in the source as its arguments and prints the list of files, one per line, that should not be excluded. Files can be outputted either using full names as supplied on the command line or using relative pathes which will be converted to full names by simplify. It is not really necessary for this command to analyze its arguments. It can simply output all headers that should be kept. Example:</p>
+<p class="p8"><br></p>
+<p class="p9">#this is a sample shell script that instructs simplify not to remove<span class="Apple-converted-space">  </span>test.h and test1.h that #are located in the same directory as a source file.</p>
+<p class="p9">echo “test.h”</p>
+<p class="p9">echo “test1.h”</p>
+<p class="p8"><br></p>
+<p class="p9">This functionality is useful if you want to always keep some headers that Simplify would remove otherwise.</p>
+<p class="p5">-I flags are the same -I’s that are used when compiling the source file. They are used when making a header substitution.</p>
+<p class="p6"><br></p>
+<p class="p5">To simplify a source file, select it in the browser, and then click on Utilities-&gt;Simplify; or open a file and click on Partition-&gt;Simplify #includes in the menu.</p>
+<p class="p6"><br></p>
+<p class="p5">Another way to use simplify is by using dis_simplify Access command. It takes exactly the same arguments as simplify executable, but in stead of a name of an IF file, logical file name should be given, and you do not need to specify any -I flags because Discover can automatically find them.</p>
+<p class="p6"><br></p>
+<p class="p5">And finally, It is possible to run simplify without Discover at all, but this is not recommended because in this case you have to create an IF file yourself by running aset_CCcc and you also have to supply all -I flags.<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p7"><b>Design</b></p>
+<p class="p6"><br></p>
+<p class="p5"><b>Inclusion Tree Construction.</b></p>
+<p class="p6"><br></p>
+<p class="p5">Construction of inclusion tree has to be done in two phases. First, we construct the structure of inclusion tree using REL [id1] “include” [id2] relation in IFF. The second step is going through all MAP line directives and for every node in the tree record what region of the final expanded file is covered by that node. Since one node can cover several not connected regions, we need to store a list of all these regions. This information is going to be needed by later steps to map symbol locations to inclusion tree nodes.</p>
+<p class="p6"><br></p>
+<p class="p5"><b>3.2<span class="Apple-converted-space">  </span>Location Mapping.</b></p>
+<p class="p6"><br></p>
+<p class="p5">In all cases when we need to map a symbol location to a file node in inclusion tree, we need to use line number information stored for all nodes of the tree. All locations are absolute location in an expanded file, so they are easy to compare. We cannot use elsMapper class to do the mapping for us because it simply returns a file name and a line number in that file. But if a file is included more than once, this file is going to correspond to several nodes in inclusion tree and we need to be able to differentiate between them. By using our inclusion tree for mapping, we can achieve that.</p>
+<p class="p6"><br></p>
+<p class="p5"><b>Dependency Analysis.</b></p>
+<p class="p6"><br></p>
+<p class="p5">After constructing inclusion tree, we need to find all dependencies between nodes on that tree, but first we have to find symbol dependencies.</p>
+<p class="p6"><br></p>
+<p class="p5">To construct a list of dependencies, we are going to use three arrays. One for declarations, one for definitions, and one for used symbols. These are arrays are going to be used to store the following information for every symbol:</p>
+<p class="p6"><br></p>
+<p class="p5"><b>declaration array</b>: locations of all declarations of a symbol. GetDeclarations() function returns reference to global parray that stored declarations. Use (uintList*)GetDeclarations()[symbol_id] to get a list with line numbers of all declarations of a given symbol.</p>
+<p class="p5"><b>definition array</b>: a location where a symbol was defined (if it was defined in current IF file). Actually, there is no need to have a separate definition array. There is a global array that stored information about all symbols. You can get it by calling GetSymbols(). To get information about a partucular symbol, use (symbol*) GetSymbols()[symbol_id]. Structure “symbol” has a field “loc” which contains location of this symbol definition. If it is 0, then this symbol is not defined in current IF file.</p>
+<p class="p5"><b>uses array</b>: locations where a symbol was used. Actually, there are two arrays. One for uses of regular symbols – GetUses(), and one for macro use – GetCppUses().</p>
+<p class="p6"><br></p>
+<p class="p5">To find all symbol declarations, we can use declarator [sym id] nodes in AST section. We need to be careful, though, that GNU_compatible_AST EDG option is not specified when producing an IF file. If it is specified, some node names will be different.</p>
+<p class="p6"><br></p>
+<p class="p5">To find symbols that are used, we can use SMT [id] directives that correspond to final expanded file. We need to be careful, though, that an SMT reference does not correspond to a definition or declaration. The only exception to this rule is macro use. To handle all macro uses properly, we need to use information in AST tree. The following nodes correspond to macro uses: cpp_macro_call, cpp_ifdef, cpp_ifndef.</p>
+<p class="p6"><br></p>
+<p class="p5">In addition to header file that define or declare some symbols that are used in the source, in some cases we need to keep a header file even if it only defines symbols that are not used in the source. For example, if a header file declares a global variable int GlobalVar which is not used in .C file, we still need to include that file because that variable might be used somewhere else. So all include files that contain a definition of a global variable or a function definition, have to be kept. A simple example can illustrate this.</p>
+<p class="p6"><br></p>
+<p class="p5">//////////////////////////////////////////////////////</p>
+<p class="p5">//a.h</p>
+<p class="p5">#ifndef _a_h</p>
+<p class="p5">#define _a_h</p>
+<p class="p5">int g_status;</p>
+<p class="p5">int foo()</p>
+<p class="p5">{</p>
+<p class="p5"><span class="Apple-tab-span">	</span>return 1;</p>
+<p class="p5">}</p>
+<p class="p5">#endif</p>
+<p class="p5">///////////////////////////////////////////////////////</p>
+<p class="p5">//a.c</p>
+<p class="p5">#include "a.h"</p>
+<p class="p5">///////////////////////////////////////////////////////</p>
+<p class="p5">//b.c</p>
+<p class="p5">extern int g_status;</p>
+<p class="p5">int foo();</p>
+<p class="p6"><br></p>
+<p class="p5">void bar()</p>
+<p class="p5">{</p>
+<p class="p5"><span class="Apple-tab-span">	</span>g_status = foo();</p>
+<p class="p5">}</p>
+<p class="p6"><br></p>
+<p class="p5">If simplify is run on a.c, it is going to determine that neither g_status nor foo() are used there. But if a.h is not included there, both g_status and foo() will be unresolved external symbols because they are used in b.c. Another good example of this is any of driver/src/DIS_*.C files.</p>
+<p class="p6"><br></p>
+<p class="p5">We also have to keep a header file if it is included inside some other statement. For example:</p>
+<p class="p6"><br></p>
+<p class="p5">//a.h</p>
+<p class="p5">1, 2, 3</p>
+<p class="p6"><br></p>
+<p class="p5">//a.c</p>
+<p class="p5">int arr[] = {</p>
+<p class="p5">#include “a.h”</p>
+<p class="p5">};</p>
+<p class="p6"><br></p>
+<p class="p5">All symbol definitions can be found using SYM directive. If a SYM directive for a variable or a function has a location, then this variable or function is defined at that location. A SYM directive for an extern variable or a function declaration does not have a location specified.<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p5">By using this approach, as a side effect, we are going to find not only global variables in include files, but also local variables. This is not a problem because if there is a local variable in a file, then that file defines some function and it has to be included anyway. We can also filter out local variables by checking ATR directive, which is set to 'auto' for local variables. Also, all inline functions have definitions, but we only need them if they are used in the current module. So inline function definitions behave more like simple declarations. To know whether a function is inline or not, we need to check ATR directive (attribute information is stored in global array that could by used by calling GetAttributes()).</p>
+<p class="p6"><br></p>
+<p class="p5">After inclusion tree and just mentioned arrays are constructed, the following algorithm can<span class="Apple-converted-space">  </span>be used to find all dependencies:</p>
+<p class="p6"><br></p>
+<p class="p5">For every record in uses array we first check whether there is an entry for this symbol in definition array. If there is, and definition location proceeds uses location, we do not need to do anything else because all definition files are going to be kept anyway, so this dependency does not affect anything. If there is no entry for this symbol in definition array, we check declaration array and create a dependency between a node corresponding to uses file and node corresponding to declaration file. If there is more than one declaration, we choose the the first one.<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p5">The only exception to this rule is handling functinos. For every used function, we create dependencies between a file that corresponds to uses location and files corresponding to all declation locations. We need to do that because every declaration can have its own set of default arguments. There might be a way to tell which declaration is used, but it is not straightforward, so we are not going to do it now but might want to do in the future.</p>
+<p class="p8"><br></p>
+<p class="p5"><b>3.4 Deciding what includes are needed.</b></p>
+<p class="p6"><br></p>
+<p class="p5">The following three steps are needed to find all nodes that need to be kept:</p>
+<p class="p6"><br></p>
+<p class="p5">Mark the root node and all nodes that correspond to files that contain definitions of some of the symbols in definition array. When we mark a node other than the root node, all of its children are marked too because no simplification is done on header files.</p>
+<p class="p6"><br></p>
+<p class="p5">If a script was supplied to be used for verifying exclusions, call this script with the list of header files that are directly included in the source file. The script should return the list of files that should be kept. This allows users to keep certain header files that would be excluded otherwise.<span class="Apple-converted-space"> </span></p>
+<p class="p6"><br></p>
+<p class="p5">Starting with the root node, do the following for every node recursively. If a node is marked (need to keep), mark all nodes on which this node depends. Do the same for all children of this node.</p>
+<p class="p6"><br></p>
+<p class="p5">If substations are enabled or no new nodes were marked at the previous step, go to step 5. Otherwise, for every node that is an immediate child of the root, check whether it is marked or not. If it is not marked, but it has a marked child, mark this node. If at least one new node was marked at this step, go back to step 3.</p>
+<p class="p6"><br></p>
+<p class="p5">Check every node that is an immediate child of the root. If it is not marked and substitutions are disabled, output line number at which this file was included followed by the work “exclude”. If it is not marked and substitutions are enabled, check whether it has any marked children. If no, output the inclusion line number followed by “exclude”; if yes, output the inclusion line number followed by the word “substitute” and append marked children to the list of headers needed to add (this list is output at the end).</p>
+<p class="p6"><br></p>
+</body>
+</html>

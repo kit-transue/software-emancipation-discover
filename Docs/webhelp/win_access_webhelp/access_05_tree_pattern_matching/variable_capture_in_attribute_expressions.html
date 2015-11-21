@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Variable Capture in Attribute Expressions</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 2.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p6 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Variable Capture in Attribute Expressions</b></p>
+<p class="p2">At any point in an attribute expression, the value of the current node can be captured in a Tcl variable for use later in the attribute expression (the handle is only valid for the duration of the expression, so it cannot be used outside the attribute expression). This facility makes it easier to describe more richly the context of an attribute expression.</p>
+<p class="p2">The syntax for this is <span class="s1">variable_name:</span> [the variable name followed by a colon].</p>
+<p class="p2">Variables may be referenced in attribute expressions by preceding the variable name with a dollar sign. This variable substitution syntax is similar to variable substitution in Tcl.</p>
+<p class="p2">The following tree find expression finds assignments of a variable to itself (the results assume your code contains the statement <span class="s1">d = ::d;</span>):</p>
+<p class="p3">tree find {assign_expr -&gt; x: , $x} /</p>
+<p class="p4">returns</p>
+<p class="p5">1 assign_expr 291 5 ‘d = ::d’</p>
+<p class="p6"><b>Note: </b>This attribute expression would only return this hit if the variables <span class="s2">d</span> and <span class="s2">::d</span> are the <i>same variable</i>. If the unqualified <span class="s2">d</span> referred to a local variable, then this match would not succeed.</p>
+<p class="p2">Variables are often useful in conjunction with <span class="s1"><b>find</b></span> or <span class="s1"><b>search</b></span>. The following attribute expression might be used to find unused local variables:</p>
+<p class="p3">tree find {var_decl -&gt; x: &lt;- &lt;- , ! search1($x)} /</p>
+<p class="p2">This expression has a notable shortcoming: it finds most global variables. You can address this by using the <span class="s1">global</span> symbol attribute:</p>
+<p class="p3">tree find {var_decl -&gt; !s.global x: &lt;- &lt;- , ! search1($x)} /</p>
+</body>
+</html>

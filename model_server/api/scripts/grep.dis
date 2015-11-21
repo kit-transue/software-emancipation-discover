@@ -1,0 +1,101 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+set grepped_lines ""
+proc grep_one_file { fn pat } {
+global grepped_lines
+    set f [open "| grep -n $pat $fn" r]
+    set ll ""
+    while { [gets $f line] >= 0 } {
+	lappend ll [lindex [split $line :] 0]
+        set gline ""
+        lappend gline  $fn:  [lindex [split $line :] 0]:  [lindex [split $line :
+] 1]
+        lappend grepped_lines $gline
+
+    }
+    catch "close $f"
+    return $ll
+}
+
+proc grep_instances { sel pat } {
+ global grepped_lines
+ set grepped_lines ""
+ set mods [modules [filter proj $sel]]
+ sappend $mods [filter modules $sel]
+
+ set matched [new_set]
+ set unmatched ""
+ foreach mod $mods {
+     set lines [grep_one_file [fname $mod] $pat]
+     if {[llength $lines] > 0} {
+	 set inst  [instances $mod]
+         set num 1
+	 foreach line $lines {
+	     set cur_inst [filter "inst_line==$line" $inst]
+             if { [size $cur_inst] > 0  } {
+	        sappend $matched $cur_inst
+             } else {
+                set ngl 1
+                foreach gl $grepped_lines {
+                   if { $ngl == $num } {
+                     lappend unmatched $gl
+                     break
+                   }
+                   incr ngl
+                }
+              }
+              incr num
+	 }
+     }
+ }
+
+ if { [llength $unmatched] > 0 } {
+    puts "List of patterns that could not be matched to instances: "
+    foreach um $unmatched {
+      puts "   $um"
+    }
+    puts ""
+ }
+
+ return $matched
+}
+
+
+proc create_grep_instances { sel } {
+  set reg_exp [prompt -title "Grep Instances" "Enter regexp:"]
+  if { $reg_exp == "" } {
+    msg -error "Please specify non-empty regular expression"
+    return
+  }
+  if { [group exists instances_group] } {
+    group delete instances_group
+  }
+  group new instances_group [grep_instances $sel $reg_exp]
+}
+
+add_item Action "Grep Instances" create_grep_instances

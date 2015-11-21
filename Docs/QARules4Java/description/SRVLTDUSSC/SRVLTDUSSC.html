@@ -1,0 +1,38 @@
+<html>
+<body>
+
+<p><b>Servlet API - Do not use <i>SingleThreadModel</i> in a Servlet class</b></p>
+
+<p><i>javax.servlet.SingleThreadModel</i> is a tag interface that a servlet can implement to transfer
+its re-entrance problem to the servlet engine.  As such,
+<i>javax.servlet.SingleThreadModel</i> is part of the J2EE specification.  The
+application server's servlet engine handles the servlet's re-entrance problem by creating
+separate servlet instances for each user.  Because this causes a great amount
+of system overhead, <i>javax.servlet.SingleThreadModel</i> should be avoided.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+package com.swemancipation.servlet;<br>
+<br>
+import javax.servlet.http.*;<br>
+import java.beans.*;<br>
+<br>
+<font color='red'> public class STM extends HttpServlet implements SingleThreadModel {</font><br>
+&nbsp; // some code here.<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+<i>javax.servlet.SingleThreadModel</i> has been used typically to protect updateable
+servlet instances in a multithreaded environment. The better idea is to
+avoid using servlet instance variables that are updated from the servlet's
+service method.</p>
+
+<p><b>REFERENCE</b></p>
+<p>IBM WebSphere Application Server Standard and Advanced Editions<br>
+by Harvey W. Gunther Date: September 7, 2000<br>
+http://www-4.ibm.com/software/webservers/appserv/ws_bestpractices.pdf</p>
+
+</body>
+</html>

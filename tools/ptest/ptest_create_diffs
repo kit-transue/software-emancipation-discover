@@ -1,0 +1,129 @@
+#!/bin/sh
+
+[ -z "$1" ] &&
+{
+	echo "usage: $0"
+	echo " -outdir    directory /* These two args have to precede all others. */"
+	echo " -file1     first .hook file"
+	echo " -file2     second .hook file"
+	echo " -quiet /* turn output off  */" 
+	echo " -dirty /* removes nothing */"
+	exit 0
+}
+
+outdir="."
+file="hook"
+quiet="f" 
+dirty="f" 
+#
+# Get arguments.
+#
+while true 
+do
+
+if [ "$1" = "-outdir" ] ; then
+	[ -n "$2" ] && { outdir=$2; shift ; }
+	shift ;
+elif [ "$1" = "-file1" ] ; then
+	[ -n "$2" ] && { oldfile=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-file2" ] ; then
+	[ -n "$2" ] && { newfile=$2 ; shift ; }
+	shift ;
+else
+	break;
+fi
+
+done
+
+file=`basename $newfile ".hook"`
+difffile="$file.diff"
+sedfile1="$file.sed1"
+sedfile2="$file.sed2"
+echo "s/^\(# [0-9]* \"\)\(.*\".*\)/\1++:\2/" > $outdir/$sedfile2
+
+[ $quiet = "f" ] && echo "file1     = $oldfile"
+[ $quiet = "f" ] && echo "file2     = $newfile"
+[ $quiet = "f" ] && echo "difffile  = $difffile"
+[ $quiet = "f" ] && echo "outdir    = $outdir"
+#
+# If running in "standard" mode leave the header file names in various hooks.  This is neccessary
+# in order to identify the tokens.
+#
+echo 's/0x[0-9a-f]*//g
+s/^\[[0-9]*\]//' > $outdir/$sedfile1
+# 
+# This guy splits the sections. Very fuzzy code by Peter, but works. Names for different
+# sections (call_globals, ref_ids, etc.) are extracted from the .hook files, using nawk.
+# The result are 8 files, two of each .file_globals, .declspecs, .call_globals, .ref_ids.
+#
+# currFile is name of file that is currently being written (.file_globals, .ref_ids, etc.).
+# fileName is name of hook file being split.
+#
+split_sections ()
+{
+	fileName="$1"
+#
+# Before splitting the file remove all temp vars, and entries containing _ctor_arg.
+#
+	cat $fileName | grep -v "_ctor_arg" | sed -f $outdir/$sedfile1 | nawk ' 
+	{
+		if ( $1 == "------" ) 
+			currFile = sprintf("%s.%s.%s", file, $2, ext) ;
+		else if ( currFile != "" ) print > currFile ;
+	}' currFile="" file=$outdir/`basename $fileName` ext="$2"
+}
+#
+# Set differr to no errors found.
+#
+differr=1
+[ $quiet = "f" ] && echo "Splitting files..."
+#
+# one and two are necessary because split_sections does basename on $oldfile and $newfile
+# which would produce just one set of output files. 
+#
+split_sections $oldfile one
+split_sections $newfile two
+
+oldfile=`basename $oldfile`
+newfile=`basename $newfile`
+
+[ $quiet = "f" ] && echo "Diffing files..."
+
+ptest_diff $outdir/$oldfile.file_globals.one $outdir/$newfile.file_globals.two file_globals > $outdir/$difffile
+ptest_diff_decl_specs $outdir/$oldfile.declspecs.one $outdir/$newfile.declspecs.two declspecs >> $outdir/$difffile
+ptest_diff_call_globals $outdir/$oldfile.call_globals.one $outdir/$newfile.call_globals.two call_globals >> $outdir/$difffile
+ptest_diff $outdir/$oldfile.ref_ids.one $outdir/$newfile.ref_ids.two ref_ids >> $outdir/$difffile
+#
+# Ignore lines with ;.
+#
+#grep -v ";" $outdir/difffile > $outdir/difffile.filtered
+#mv $outdir/difffile.filtered $outdir/difffile
+#
+# ATTENTION: FOR GCC-2.6.3 TESTING, WARNINGS (TWO ASTERISKS) HAD TO BE CAUGHT AS WELL.
+# WHEN DONE, YOU MAY WISH TO RETURN TO NORMAL PROCESSING (ONLY ERRORS - THREE ASTERISKS 
+# - REPORTED).
+#
+#grep -s "^\*\*\*" $outdir/$difffile
+grep -s "^\*\*" $outdir/$difffile
+differr=$?
+
+if [ $differr -eq 0 ] ; then 
+	echo "Failed!" ; 
+	ex=1 ; 
+else
+	echo "Success!" ; 
+	ex=0 ;
+fi
+
+[ $dirty = "f" ] && rm -f $outdir/$oldfile.* $outdir/$newfile.* $outdir/$sedfile1 $outdir/$sedfile2 $outdir/$file*.s
+#
+# If test succeeded, remove all related files except original, .hook files.
+# 
+if [ "$ex" -eq 0 ] ; then
+	rm -f $outdir/$file.hook.*
+	rm -f $outdir/$file.diff
+fi
+
+exit $ex
+

@@ -1,0 +1,69 @@
+#!/bin/csh -f
+
+if ("$1" != "") then
+    if ( "$1" == "-help"  ||  "$1" == "-?" ) then
+echo ''
+echo 'Usage: ptest_continue [-help|-?] [Test] [Script]'
+echo ''
+echo 'Optional Test, Script - are Test and Script to continue from'
+echo 'If Test, Script are not specified takes it from Test and'
+echo 'Script that were executing by last ptest_all or ptest_continue'
+echo 'If PTEST_NEXT_SCRIPT environmental variable is installed'
+echo 'continues from the next Script in a specified Test'
+echo ''
+     	exit 0
+     else
+        source ${PROJ_ROOT}/tools/ptest/ptest_set_tmpdir
+
+        if ($status != 0) exit 1
+	echo "$1" > "$PTEST_TMPDIR/the_test"
+     endif
+
+     if ("$2" != "") then
+	echo "$2" > "$PTEST_TMPDIR/the_script"
+     else
+	\rm "$PTEST_TMPDIR/the_script"  >&! /dev/null
+     endif
+endif
+
+slay -9
+
+setenv PTEST_THE_TEST "$PTEST_TMPDIR/the_test"
+setenv PTEST_THE_SCRIPT "$PTEST_TMPDIR/the_script"
+
+if (! -f $PTEST_THE_TEST || -z $PTEST_THE_TEST) then
+       	echo "CONTINUE: file $PTEST_THE_TEST is empty or does not exist."
+	exit 1
+else
+	setenv PTEST_THE_TEST `cat $PTEST_THE_TEST`
+endif
+
+if (! -f $PTEST_THE_SCRIPT || -z $PTEST_THE_SCRIPT) then
+	setenv PTEST_THE_SCRIPT ""
+else
+	setenv PTEST_THE_SCRIPT `cat $PTEST_THE_SCRIPT`
+endif
+
+if ("$PTEST_THE_SCRIPT" == "") then
+	echo -n "CONTINUE: Take first script of $PTEST_THE_TEST [Y|n]? "
+	set answer = "$<"
+	if ( $answer == "n" ) then
+       		echo "CONTINUE: Rejected."
+		exit 1
+	endif
+else
+	echo -n "CONTINUE: Run from script $PTEST_THE_SCRIPT of $PTEST_THE_TEST [Y|n]? "
+	set answer = "$<"
+	if ( $answer == "n" ) then
+       		echo "CONTINUE: Rejected."
+		exit 1
+	endif
+endif
+
+setenv PTEST_CONTINUE yes
+echo "ptest_all $PTEST_THE_TEST $PTEST_THE_SCRIPT"
+ptest_all
+unsetenv PTEST_CONTINUE
+unsetenv PTEST_THE_TEST
+unsetenv PTEST_THE_SCRIPT
+

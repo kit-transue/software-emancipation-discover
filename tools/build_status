@@ -1,0 +1,309 @@
+#!/bin/sh 
+
+
+TIMESTAMP=/users/builder/States/TIMESTAMP
+export TIMESTAMP
+
+newer(){
+# check if $1 is newer than $2.
+if [  "`find $1 -newer $2 -print`" ] ; then
+	return 0
+else
+	return 1
+fi
+}
+
+modify_vars(){
+Platform=$1
+shift
+Execs="$*"
+
+for i in `echo $Execs`
+do
+	case $i in
+			aset) 		eval ISPSET$Platform="NO   " ;;
+			flex) 		eval ISFLX$Platform="NO    " ;;
+			paracancel) 	eval ISPC$Platform="NO    "  ;;
+			paratotal) 	eval ISPT$Platform="NO    "  ;;
+			'g++filt')      eval ISGPP$Platform="NO    " ;;
+			aset_cpp)	eval ISCPP$Platform="NO    " ;;
+			'c-parser') 	eval ISPRS$Platform="NO    " ;;
+			'pset-epoch')	eval ISPE$Platform="NO    "  ;;
+			'pset-gdb-4.11')eval ISPG1$Platform="NO    " ;;
+			'pset-gdb-4.12')eval ISPG2$Platform="NO    " ;;
+			cexec) 		eval ISCE$Platform="NO     " ;;
+			'frame_api') 	eval ISFA$Platform="NO     " ;;
+			'frame_srvr')	eval ISFS$Platform="NO     " ;;
+			configshell) 	eval ISCFS$Platform="NO    " ;;
+			configurator)   eval ISCF$Platform="NO    "  ;;
+			*)	
+		esac
+	done
+
+	}
+
+#
+# SUMMARY
+#
+
+SIS4="NO  " 
+SIS5="NO  "
+SIHP="NO  "
+STS4="NO  "
+STS5="NO  "
+STHP="NO  "
+SPBS4="NO   "
+SPBS5="NO   "
+SPBHP="NO   "
+SPIS4="OK   "
+SPIS5="NO   "
+SPIHP="NO   "
+SRS4="NO  "
+SRS5="NO  "
+SRHP="NO  "
+SILS4="NO  "
+SILS5="NO  "
+SILHP="NO  "
+
+#
+# Fill in the integration status
+#
+export SIS4
+for this in `(cd /users/builder/States; \
+ ls -lt | awk '{print $8}' | sed '/TIMESTAMP/,$d' | tail -r )` 
+do
+ case $this in
+	'sun4.build') SIS4="OK  "   ;;
+	'sun5.build') SIS5="OK  " ;;
+	'hp700.build') SIHP="OK  " ;;
+	'sun4.install') SILS4="OK  " ;;
+	'sun5.install') SILS5="OK  ";;
+	'hp700.install') SILHP="OK  ";;
+	'OK-sun4.test.begin') STS4='R*  ';;
+	'OK-sun5.test.begin') STS5='R*  ';;
+	'OK-hp700.test.begin') STHP='R*  ';;
+	'OK-sun4.test.end') STS4="OK  ";;
+	'OK-sun5.test.end') STS5="OK  ";;
+	'OK-hp700.test.end') STHP="OK  ";;
+	 *)  ;;
+ esac
+done
+#
+# Integration Status
+#
+VarsS5="ISPSETS5 ISFLXS5 ISPCS5 ISPTS5 ISPTS5 ISGPPS5 ISCPPS5 ISPRSS5 ISPES5 ISPG1S5 ISPG2S5 ISPSNFS5 ISCES5 ISFAS5 ISFSS5 ISCFSS5 ISCFS5" 
+VarsS4="ISPSETS4 ISFLXS4 ISPCS4 ISPTS4 ISPTS4 ISGPPS4 ISCPPS4 ISPRSS4 ISPES4 ISPG1S4 ISPG2S4 ISPSNFS4 ISCES4 ISFAS4 ISFSS4 ISCFSS4 ISCFS4" 
+VarsHP="ISPSETHP ISFLXHP ISPCHP ISPTHP ISPTHP ISGPPHP ISCPPHP ISPRSHP ISPEHP ISPG1HP ISPG2HP ISPSNFHP ISCEHP ISFAHP ISFSHP ISCFSHP ISCFHP" 
+
+for i in `echo $VarsS4 $VarsS5 $VarsHP`
+do
+eval $i="OK   "
+done
+
+#
+# Regression Test Results
+#
+rrs4="RCPS4 RCLSS4 RPTS4 RDBS4 RDSS4 RHLS4 RMRGS4 RFLS4 RGRPS4 RRELS4 RSTRS4 RSUBS4 RPDFS4 RSTS4 RSTXS4 RTCS4 RTTS4 RUTS4 RXIPS4 RMSS4"
+rrs5="RCPS5 RCLSS5 RPTS5 RDBS5 RDSS5 RHLS5 RMRGS5 RFLS5 RGRPS5 RRELS5 RSTRS5 RSUBS5 RPDFS5 RSTS5 RSTXS5 RTCS5 RTTS5 RUTS5 RXIPS5 RMSS5"
+rrhp="RCPHP RCLSHP RPTHP RDBHP RDSHP RHLHP RMRGHP RFLHP RGRPHP RRELHP RSTRHP RSUBHP RPDFHP RSTHP RSTXHP RTCHP RTTHP RUTHP RXIPHP RMSHP"
+
+for i in `echo $rrs4 $rrs5 $rrhp`
+do
+	eval $i="0    "
+done
+
+#
+# PDFS
+#
+PMFS4=" "
+PMFS5="N A"
+PMFHP="N A"
+PMDS4=" OK "
+PMDS5=" N A "
+PMDHP=" N A "
+
+# 
+# Now Reset any of the variables below
+#
+hpExecs="`find /net/loner/compile/release/hp700/install.new.tmp/hp700-O/bin '!' -newer $TIMESTAMP -print | awk -F\/ '{print $NF}'"
+s5Execs="` find /net/tweety/compile/release/sun5/install.new.tmp/sun5-O/bin '!' -newer $TIMESTAMP -print | awk -F\/ '{print $NF}'"
+s4Execs="`find /net/pragma/compile/release/sun4/install.new.tmp/sun4-O/bin '!' -newer $TIMESTAMP -print | awk -F\/ '{print $NF}'"
+
+modify_vars HP $hpExecs
+modify_vars S5 $s5Execs
+modify_vars S4 $s4Execs
+
+#
+#
+# Fill in the regression results as of now..if the regressions 
+# have started
+#
+for host in S4 S5 HP
+do
+	export host
+	analyze-results  $host > /tmp/$$.analyze.$host 
+        eval RCP$host=`cat /tmp/$$.analyze.$host | grep chprop | head -1 | awk '{print $2}'` 
+	eval RCLS$host=`cat /tmp/$$.analyze.$host | grep class | head -1 | awk '{print $2}'` 
+	eval RPT$host=`cat /tmp/$$.analyze.$host | grep ParaTutor| head -1 | awk '{print $2}'` 
+	eval RDB$host=`cat /tmp/$$.analyze.$host|grep -i debug | head -1 | awk '{print $2}'` 
+	eval RDS$host=`cat /tmp/$$.analyze.$host|grep -i doc_so | head -1 | awk '{print $2}'` 
+	eval RHL$host=`cat /tmp/$$.analyze.$host|grep -i help | head -1 | awk '{print $2}'` 
+	eval RMRG$host=`cat /tmp/$$.analyze.$host|grep -i merge | head -1 | awk '{print $2}'` 
+	eval RFL$host=`cat /tmp/$$.analyze.$host|grep -i new_file| head -1 | awk '{print $2}'` 
+	eval RGRP$host=`cat /tmp/$$.analyze.$host|grep -i group | head -1 | awk '{print $2}'` 
+	eval RREL$host=`cat /tmp/$$.analyze.$host|grep -i rela | head -1 | awk '{print $2}'` 
+	eval RSTR$host=`cat /tmp/$$.analyze.$host|grep -i struc | head -1 | awk '{print $2}'` 
+	eval RSUB$host=`cat /tmp/$$.analyze.$host|grep -i subsys | head -1 | awk '{print $2}'` 
+	eval RPDF$host=`cat /tmp/$$.analyze.$host|grep -i pdf| head -1 | awk '{print $2}'` 
+	eval RST$host=`cat /tmp/$$.analyze.$host|grep -i simple_junk|head -1|awk '{print $2}'` 
+	eval RSTX$host=`cat /tmp/$$.analyze.$host|grep -i struct_text|head -1|awk '{print $2}'`
+	eval RTC$host=`cat /tmp/$$.analyze.$host|grep -i templ_c| head -1 | awk '{print $2}'` 
+	eval RTT$host=`cat /tmp/$$.analyze.$host|grep -i ttt| head -1 | awk '{print $2}'` 
+	eval RUT$host=`cat /tmp/$$.analyze.$host|grep -i utilities|head -1 | awk '{print $2}'` 
+	eval RXIP$host=`cat /tmp/$$.analyze.$host|grep -i xip| head -1 | awk '{print $2}'` 
+	eval RMS$host=`cat /tmp/$$.analyze.$host|grep -i junk| grep -v simple_junk| head -1 | awk '{print $2}'` 
+done
+cat Tables.Frame.ps | 
+sed -e "s/SIS4/$SIS4/"  \
+ -e "s/SPBS4/$SPBS4/" \
+ -e "s/SPIS4/$SPIS4/" \
+ -e "s/SRS4/$SRS4/" \
+ -e "s/SILS4/$SILS4/" \
+ -e "s/ISPSETS4/$ISPSETS4/" \
+ -e "s/ISFLXS4/$ISFLXS4/" \
+ -e "s/ISPCS4/$ISPCS4/" \
+ -e "s/ISPTS4/$ISPTS4/" \
+ -e "s/ISPTS4/$ISPTS4/" \
+ -e "s/ISGPPS4/$ISGPPS4/" \
+ -e "s/ISCPPS4/$ISCPPS4/" \
+ -e "s/ISPRSS4/$ISPRSS4/" \
+ -e "s/ISPES4/$ISPES4/" \
+ -e "s/ISPG1S4/$ISPG1S4/" \
+ -e "s/ISPG2S4/$ISPG2S4/" \
+ -e "s/ISPSNFS4/$ISPSNFS4/" \
+ -e "s/ISCES4/$ISCES4/" \
+ -e "s/ISFAS4/$ISFAS4/" \
+ -e "s/ISFSS4/$ISFSS4/" \
+ -e "s/ISCFSS4/$ISCFSS4/" \
+ -e "s/ISCFS4/$ISCFS4/" \
+ -e "s/RCPS4/$RCPS4/" \
+ -e "s/RCLSS4/$RCLSS4/" \
+ -e "s/RPTS4/$RPTS4/" \
+ -e "s/RDBS4/$RDBS4/" \
+ -e "s/RDSS4/$RDSS4/" \
+ -e "s/RHLS4/$RHLS4/" \
+ -e "s/RMRGS4/$RMRGS4/" \
+ -e "s/RFLS4/$RFLS4/" \
+ -e "s/RGRPS4/$RGRPS4/" \
+ -e "s/RRELS4/$RRELS4/" \
+ -e "s/RSTRS4/$RSTRS4/" \
+ -e "s/RSUBS4/$RSUBS4/" \
+ -e "s/RPDFS4/$RPDFS4/" \
+ -e "s/RSTS4/$RSTS4/" \
+ -e "s/STS4/$STS4/" \
+ -e "s/RSTRS4/$RSTRS4/" \
+ -e "s/RSTXS4/$RSTXS4/" \
+ -e "s/RTCS4/$RTCS4/" \
+ -e "s/RTTS4/$RTTS4/" \
+ -e "s/RUTS4/$RUTS4/" \
+ -e "s/RXIPS4/$RXIPS4/" \
+ -e "s/RMSS4/$RMSS4/" \
+ -e "s/PMFS4/$PMFS4/" \
+ -e "s/PMDS4/$PMDS4/" \
+ -e "s/SIS5/$SIS5/" \
+ -e "s/SPBS5/$SPBS5/" \
+ -e "s/SPIS5/$SPIS5/" \
+ -e "s/SRS5/$SRS5/" \
+ -e "s/SILS5/$SILS5/" \
+ -e "s/ISPSETS5/$ISPSETS5/" \
+ -e "s/ISFLXS5/$ISFLXS5/" \
+ -e "s/ISPCS5/$ISPCS5/" \
+ -e "s/ISPTS5/$ISPTS5/" \
+ -e "s/ISPTS5/$ISPTS5/" \
+ -e "s/ISGPPS5/$ISGPPS5/" \
+ -e "s/ISCPPS5/$ISCPPS5/" \
+ -e "s/ISPRSS5/$ISPRSS5/" \
+ -e "s/ISPES5/$ISPES5/" \
+ -e "s/ISPG1S5/$ISPG1S5/" \
+ -e "s/ISPG2S5/$ISPG2S5/" \
+ -e "s/ISPSNFS5/$ISPSNFS5/" \
+ -e "s/ISCES5/$ISCES5/" \
+ -e "s/ISFAS5/$ISFAS5/" \
+ -e "s/ISFSS5/$ISFSS5/" \
+ -e "s/ISCFSS5/$ISCFSS5/" \
+ -e "s/ISCFS5/$ISCFS5/" \
+ -e "s/RCPS5/$RCPS5/" \
+ -e "s/RCLSS5/$RCLSS5/" \
+ -e "s/RPTS5/$RPTS5/" \
+ -e "s/RDBS5/$RDBS5/" \
+ -e "s/RDSS5/$RDSS5/" \
+ -e "s/RHLS5/$RHLS5/" \
+ -e "s/RMRGS5/$RMRGS5/" \
+ -e "s/RFLS5/$RFLS5/" \
+ -e "s/RGRPS5/$RGRPS5/" \
+ -e "s/RRELS5/$RRELS5/" \
+ -e "s/RSTRS5/$RSTRS5/" \
+ -e "s/RSUBS5/$RSUBS5/" \
+ -e "s/RPDFS5/$RPDFS5/" \
+ -e "s/RSTS5/$RSTS5/" \
+ -e "s/STS5/$STS5/" \
+ -e "s/RSTRS5/$RSTRS5/" \
+ -e "s/RSTXS5/$RSTXS5/" \
+ -e "s/RTCS5/$RTCS5/" \
+ -e "s/RTTS5/$RTTS5/" \
+ -e "s/RUTS5/$RUTS5/" \
+ -e "s/RXIPS5/$RXIPS5/" \
+ -e "s/RMSS5/$RMSS5/" \
+ -e "s/PMFS5/$PMFS5/" \
+ -e "s/PMDS5/$PMDS5/" \
+ -e "s/SIHP/$SIHP/" \
+ -e "s/SPBHP/$SPBHP/" \
+ -e "s/SPIHP/$SPIHP/" \
+ -e "s/SRHP/$SRHP/" \
+ -e "s/SILHP/$SILHP/" \
+ -e "s/ISPSETHP/$ISPSETHP/" \
+ -e "s/ISFLXHP/$ISFLXHP/" \
+ -e "s/ISPCHP/$ISPCHP/" \
+ -e "s/ISPTHP/$ISPTHP/" \
+ -e "s/ISPTHP/$ISPTHP/" \
+ -e "s/ISGPPHP/$ISGPPHP/" \
+ -e "s/ISCPPHP/$ISCPPHP/" \
+ -e "s/ISPRSHP/$ISPRSHP/" \
+ -e "s/ISPEHP/$ISPEHP/" \
+ -e "s/ISPG1HP/$ISPG1HP/" \
+ -e "s/ISPG2HP/$ISPG2HP/" \
+ -e "s/ISPSNFHP/$ISPSNFHP/" \
+ -e "s/ISCEHP/$ISCEHP/" \
+ -e "s/ISFAHP/$ISFAHP/" \
+ -e "s/ISFSHP/$ISFSHP/" \
+ -e "s/ISCFSHP/$ISCFSHP/" \
+ -e "s/ISCFHP/$ISCFHP/" \
+ -e "s/RCPHP/$RCPHP/" \
+ -e "s/RCLSHP/$RCLSHP/" \
+ -e "s/RPTHP/$RPTHP/" \
+ -e "s/RDBHP/$RDBHP/" \
+ -e "s/RDSHP/$RDSHP/" \
+ -e "s/RHLHP/$RHLHP/" \
+ -e "s/RMRGHP/$RMRGHP/" \
+ -e "s/RFLHP/$RFLHP/" \
+ -e "s/RGRPHP/$RGRPHP/" \
+ -e "s/RRELHP/$RRELHP/" \
+ -e "s/RSTRHP/$RSTRHP/" \
+ -e "s/RSUBHP/$RSUBHP/" \
+ -e "s/RPDFHP/$RPDFHP/" \
+ -e "s/RSTHP/$RSTHP/" \
+ -e "s/STHP/$STHP/" \
+ -e "s/RSTRHP/$RSTRHP/" \
+ -e "s/RSTXHP/$RSTXHP/" \
+ -e "s/RTCHP/$RTCHP/" \
+ -e "s/RTTHP/$RTTHP/" \
+ -e "s/RUTHP/$RUTHP/" \
+ -e "s/RXIPHP/$RXIPHP/" \
+ -e "s/RMSHP/$RMSHP/" \
+ -e "s/PMFHP/$PMFHP/" \
+ -e "s/PMDHP/$PMDHP/"  | 
+#
+# Fill in date! 
+#
+sed "s/DT8494/`date +%h-%d`/"  |  tee /tmp/Tables.Frame.out$$  > /dev/null
+lpr /tmp/Tables.Frame.out$$

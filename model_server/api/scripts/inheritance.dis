@@ -1,0 +1,216 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+source_dis require.dis
+
+require closure.dis
+
+proc closure_sub   { args } {eval closure_sub_or_super sub $args}
+proc closure_super { args } {eval closure_sub_or_super super $args}
+proc leaf_sub   { args } {eval leaf_sub_or_super sub $args}
+proc leaf_super { args } {eval leaf_sub_or_super super $args}
+
+proc closure_sub_or_super { which args } {
+    set res [new_set]
+    set args [eval set_copy $args]
+    set classes [filter {class || interface} $args]
+    set methods [filter method $args]
+    foreach el $classes {
+	set obj [set_copy $el]
+	sappend $res [query_closure 0 get_${which}_classes $obj]
+    }
+    foreach el $methods {
+	set obj [set_copy $el]
+	sappend $res [query_closure 0 "get_method $which" $obj]
+    }
+    set_unique $res
+}
+
+proc leaf_sub_or_super { which args } {
+    set res [new_set]
+    set args [eval set_copy $args]
+    set classes [filter {class || interface} $args]
+    set methods [filter method $args]
+    foreach el $classes {
+	set obj [set_copy $el]
+	sappend $res [query_leaf get_${which}_classes $obj]
+    }
+    foreach el $methods {
+	set obj [set_copy $el]
+	sappend $res [query_leaf "get_method $which" $obj]
+    }
+    set_unique $res
+}
+
+proc query_leaf { query objs } {
+    set res [new_set]
+    foreach el $objs {
+	set obj [set_copy $el]
+	set sups [eval $query $obj]
+	if {[size $sups]} {
+	    sappend $res [query_leaf $query $sups]
+	} else {
+	    sappend $res $obj
+	}
+    }
+    return $res
+}
+
+proc get_method { which args } {
+    set res [new_set]
+    foreach meth [eval filter method $args] {
+	sappend $res [get_sub_or_sup_method $which $meth]
+    }
+    set_unique $res
+}
+
+proc class_of_method { meth } {
+    set class [where declared $meth]
+    if {[size $class]==0} {
+	set class [filter {class || interface} [where used $meth]]
+    }
+    return $class
+}
+proc get_class_of_method { args } {
+    set res [new_set]
+    foreach meth [eval filter member $args] {
+	sappend $res [class_of_method $meth]
+    }
+    set_unique $res
+}
+
+proc get_sub_or_sup_method { which meth} {
+    set class [class_of_method $meth]
+    if {[destructor $meth]} {
+	set c [get_${which}_classes $class]
+	return [filter destructor [get_member_functions $c]]
+    } else {
+	set vn [vname $meth]
+	set subs [get_${which}_classes $class]
+	while {[size $subs]} {
+	    set m [filter "vname==\"$vn\"" [get_member_functions $subs]]
+	    if [size $m] {return $m}
+	    set subs [get_${which}_classes $subs]
+	}
+    }
+    return [new_set]
+}
+proc where_called_dtors { dtors } {
+    set vtors [query_closure 0 "get_sub_or_sup_method super" $dtors]
+    set calls [where used $vtors]
+    filter {function && !constructor && !destructor} $calls
+}
+
+proc where_called { args } {
+    set funs [eval filter function $args]
+    set virt [filter virtual $funs]
+    set dtor_flag 0
+    if [size $virt] {
+	set dtors [filter destructor $virt]
+	if [size $dtors] {
+	    set virt [filter !destructor $virt]
+	    set dcalls [where_called_dtors $dtors ]
+	    set dtor_flag [size $dcalls]
+	}
+	if [size $virt] {
+	    sappend $funs [query_closure 0 "get_sub_or_sup_method super" $virt]
+	}
+    }
+    set res [filter function [where used $funs]]
+    if $dtor_flag {
+	set res [set_union $res $dcalls]
+    }
+    return $res
+}
+proc class_accessible_methods {level class } {
+    set methods [sort [get_member_functions $class]]
+    if $level {
+	set filter [expr {$level==1 ? {!private} : {public}}]
+	set methods [filter $filter $methods]
+    }
+    foreach n [apply vname $methods] {
+	set overloads($n) 0
+    }
+    set superclasses [get_super_classes $class]
+    if [size $superclasses] {
+	set mmm [class_accessible_methods [incr level] $superclasses]
+	foreach method $mmm {
+	    set vname [vname $method]
+	    if ![info exists overloads($vname)] {
+		sappend $methods $method
+		set overloads($vname) 1
+	    }
+	}
+    }
+    return $methods
+}
+proc get_accessible_methods { args } {
+    set res [new_set]
+    foreach class [filter {class || interface} $args] {
+	sappend $res [class_accessible_methods 0 $class]
+    }
+    filter {!constructor && !destructor } [set_unique $res]
+}
+proc get_inherited_methods { args } {
+    set res [new_set]
+    foreach class [filter {class || interface} $args] {
+	sappend $res [ set_subtract \
+		[class_accessible_methods 0 $class] \
+		[get_member_functions $class]]
+    }
+    filter {!constructor && !destructor } [set_unique $res]
+}
+
+proc method_related { attr meth } {
+    set class [class_of_method $meth ]
+    set sub [query_closure 0 get_sub_classes $class]
+    set super [query_closure 0 get_super_classes $class]
+    set methods [get_member_functions $class $sub $super]
+    filter "$attr==\"[$attr $meth]\"" $methods
+}
+
+proc method_overrides { args } {
+    set res [new_set]
+    foreach el [eval filter method $args] {
+	sappend $res [method_related vname $el]
+    }
+    return $res
+}
+proc method_overloads { args } {
+    set res [new_set]
+    foreach el [eval filter method $args] {
+	sappend $res [method_related cname $el]
+    }
+    return $res
+}
+
+proc get_constructors { args } {
+    filter constructor [get_member_functions $args]
+}
+proc get_destructor { args } {
+    filter destructor [get_member_functions $args]
+}

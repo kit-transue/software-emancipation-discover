@@ -1,0 +1,77 @@
+3.000	ParaDEVELOP
+3.000	ParaREPORT
+3.000	ParaDEBUG
+3.000	ParaDOC
+3.000	ParaDESIGN
+3.000	ParaADMIN
+3.000	ParaREENGINEER
+
+4.000	SET.PROGRAM/sw
+4.000	SET.REPORT/sw
+4.000	SET.DESIGN/sw
+4.000	SET.DEBUG/sw
+4.000	SET.DEBUG+/sw
+4.000	SET.DOC/sw.FRAME
+4.000	SET.EXTRACT/sw
+4.000	SET.ADMIN/sw
+4.000	SET.PARTITION/sw
+4.000	SET.PACKAGE/sw
+4.000	SET.SIMPLIFY/sw
+4.000	SET.METRICS/sw
+4.000	SET.CLI/sw
+4.000	SET.TESTLINK/sw
+4.000	SET.COMPLIANCE/sw
+
+5.000	SET.Program/sw
+5.000	SET.AutoDoc/sw
+5.000	SET.Debug/sw
+5.000	SET.Build/sw
+5.000	SET.Summary/sw
+5.000	SET.DocLink/sw.Frame
+5.000	SET.Extract/sw
+5.000	SET.Admin/sw
+5.000	SET.ADMIN/sw
+5.000	SET.Partition/sw
+5.000	SET.Package/sw
+5.000	SET.Simplify.h/sw
+5.000	SET.Y2K/sw
+5.000	SET.Y2KFactory/sw
+5.000	SET.Y2K/TaskFlow
+5.000	SET.TPM/sw
+5.000	SET.Metrics/sw
+5.000	SET.Access/sw
+5.000	SET.TestLink/sw
+5.000	SET.Compliance/sw
+5.000	SET.Model/sw.ESQL
+5.000	SET.Dormant/sw
+
+6.000	Developer
+6.000	Engineer Developer
+6.000	Project_Leader Engineer Developer
+6.000	Architect Project_Leader Engineer Developer
+6.000	QA_Analyst Developer
+6.000	SET.Program/sw
+6.000	SET.AutoDoc/sw
+6.000	SET.Debug/sw
+6.000	SET.Build/sw
+6.000	SET.Summary/sw
+6.000	SET.DocLink/sw.Frame
+6.000	SET.Extract/sw
+6.000	SET.Admin/sw
+6.000	SET.DFA/sw
+6.000	SET.QAR/sw
+6.000	SET.Model/sw.Java
+6.000	SET.Model/sw.C
+6.000	SET.Partition/sw
+6.000	SET.Package/sw
+6.000	SET.Simplify.h/sw
+6.000	SET.Y2K/sw
+6.000	SET.Y2K/TaskFlow
+6.000	SET.TPM/sw
+6.000	SET.Metrics/sw
+6.000	SET.Access/sw
+6.000	SET.TestLink/sw
+6.000	SET.Compliance/sw
+6.000	SET.Model/sw.ESQL
+6.000	SET.Dormant/sw
+6.000	SET.DefectLink/sw

@@ -1,0 +1,11 @@
+CROOTS=\
+
+CXXROOTS=\
+	main \
+	node \
+	pathname \
+	pdf \
+	toplev_proj \
+	utils 
+
+

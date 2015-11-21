@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Navigation in Attribute Expressions</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {text-decoration: underline ; color: #ff6262}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 9.0px 'Times New Roman'}
+    span.s4 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Navigation in Attribute Expressions</b></p>
+<p class="p2"><span class="s1"><a href="../access_04_fundamentals/compound_attribute_expressions.html#XREF_Compound_Attribute">Compound Attribute Expressions</a></span> explains that there is a current element (each element passed to <span class="s2">apply</span>, or a node and each of its descendents in a <span class="s2"><b>tree find</b></span> command) against which each attribute in the attribute expression is applied.</p>
+<p class="p2">TPM introduces new attributes that have the side-effect of changing the element that the attributes in the attribute expression are applied against. This permits the creation of attribute expressions that can examine the context of a node, and not just the node itself.</p>
+<p class="p2">These attributes are:</p>
+<p class="p3">•<span class="s3">   </span><span class="s2">-&gt;</span> move down to current node’s first child</p>
+<p class="p3">•<span class="s3">   </span><span class="s2">&lt;-</span> move to current node’s parent</p>
+<p class="p3">•<span class="s3">   </span><span class="s2">,</span> move to current node’s next sibling</p>
+<p class="p3">•<span class="s3">   </span><span class="s2">-- </span>move to current node’s previous sibling</p>
+<p class="p2">Like all attributes, these return a value. All these navigation commands are booleans: they return one or zero to indicate success or failure. It is not considered a failure to move from a node that has no children to the node’s child, or to a parent node when there is no parent, or to a sibling node with no sibling. Such attempts simply change the current node to nil. Attempts to navigate from nil are considered failures.</p>
+<p class="p2">There are two navigation-related attributes:</p>
+<p class="p3">•<span class="s3">   </span><span class="s2">.</span> does not change current node. Succeeds if current node is non-nil</p>
+<p class="p3">•<span class="s3">   </span><span class="s2">nil</span> succeeds if current node is nil</p>
+<p class="p2">Following is an example of a TPM expression to find function declarations in <span class="s4">/xip</span> that take <span class="s2">int</span> as their first argument:</p>
+<p class="p4">tree find {function_decl -&gt; , type == "int"} /xip</p>
+<p class="p3">returns</p>
+<p class="p4">1 InterfaceInit function_decl 1966 26 ‘InterfaceInit (argc, argv)’<br>
+2 main function_decl 4743 17 ‘main (argc, argv)’<br>
+3 NewImageWin function_decl 7637 21 ‘NewImageWin(pipe_num)’<br>
+4 CanvasRectShadow function_decl 4410 39 ‘CanvasRectSha ... idth, height)’<br>
+5 CanvasLineShadow function_decl 4744 34 ‘CanvasLineSha ... y1 , x2, y2)’</p>
+<p class="p2">During evaluation of the attribute expression, most nodes are immediately thrown away since the attribute <span class="s2">function_decl</span> applied to them failed. For those that succeed, the current node is moved (via the <span class="s2">-&gt;</span> attribute) to the child of the function declaration: to the name of the function. The current node is again moved—this time via the comma attribute—to the first parameter of the function. The type of this parameter is compared to <span class="s2">"int"</span> and succeeds for those that match the criteria.</p>
+</body>
+</html>

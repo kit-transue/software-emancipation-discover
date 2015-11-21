@@ -1,0 +1,8 @@
+12c12
+<  * RCS: @(#) $Id: tkWin.h,v 1.6 1999/04/16 01:51:48 stanton Exp $
+---
+>  * RCS: @(#) $Id: tkWin.h 1.2 2001/10/30 10:21:37EST Sudha Kallem (sudha) Exp  $
+39a40,42
+> /* Jason */
+> #define PIPE_READY (WM_USER+7)
+> /* */

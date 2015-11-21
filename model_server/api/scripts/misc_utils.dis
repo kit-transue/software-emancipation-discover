@@ -1,0 +1,98 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+# proc get_related_classes x
+# Return all classes that are related to classes in a given set, including
+# those classes themselves.
+# Relations used here are exactly the same relations
+# that are listed as built in relations for ERD's. 
+# The puprose of this procedure is to make it more convinient to use ERD
+# The following relations are found:
+# 1. Has member of type (including return value of a method and type of a 
+#    method argument, covers pointers and references as well)
+# 2. Is type of member 
+# 3. Is superclass
+# 4. Is subclass
+# 5. Has friends
+# 6. Is friend of
+# 7. Has nested classes
+# 8. Is contained in
+
+proc get_related_classes args {
+  set results ""
+  
+  foreach x $args {
+    if { ![class $x] } continue
+
+    set member_of_type [filter class [get_decl_usage $x]]
+    set type_of_member [filter class [where used [filter member [where used $x]]]]
+    set super [get_super_classes $x]
+    set sub [get_sub_classes $x]	
+    set friends [filter class [get_friends $x]]
+    set friendof [filter class [friend_of $x]]
+    set nested [get_nested_classes $x]
+    set containing [get_containing $x]
+
+    set results [set_union $results $x $member_of_type $type_of_member $super $sub $friends $friendof $nested $containing]
+  }
+
+  return $results
+}
+
+#####################################################
+#                                                   #
+# where_used_local                                  #
+# input:  symbol(s) with kind DD_LOCAL - parameters #
+#         and local variables                       #
+# output: functions, where input is used            #
+#                                                   #
+#####################################################
+proc where_used_local { local_sym } {
+    set local_instances [ instances $local_sym ]
+    get_instance_scope $local_instances
+}
+
+#####################################################
+#                                                   #
+# uses_locals                                       #
+# input:  function(s)                               #
+# output: instances of local declarations for input #
+#                                                   #
+#####################################################
+proc uses_locals { functions } {
+    set res [new_set]
+    set f [filter funct $functions]
+    foreach n [apply name $f] { set cache($n) 1}
+    set def_file [ where defined $f ]
+    set decls [filter local [get_declarations $def_file]]
+    foreach d $decls {	
+	if [info exists cache([inst_scope $d])] {
+	    sappend $res $d 
+	}
+    }
+    return $res
+}

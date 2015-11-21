@@ -1,0 +1,43 @@
+<html>
+<body>
+
+<p><b>CPAMBF - Constant Private Attributes Must Be Final</b></p>
+
+<p>Private attributes that never get their values changed 
+must be declared <code>final</code>        
+  . By explicitly declaring them in such a way,
+a reader of the source code get some information of how the
+attribute is supposed to be used.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class CPAMBF {<br>
+&nbsp; &nbsp; int attr1 = 10;<br>
+&nbsp; &nbsp; <font color='red'>int attr2 = 20; </font><br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; attr1 = attr2;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(attr1); <br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b> Make <code>final</code>
+   all private attributes that never change.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class CPAMBF {<br>
+&nbsp; &nbsp; int attr1 = 10;<br>
+&nbsp; &nbsp; <font color='blue'>final int attr2 = 20; </font><br>
+&nbsp; &nbsp; void func () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; attr1 = attr2;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(attr1); <br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+#!/bin/sh
+cOrC="f"
+newParser=""
+oldParser=""
+
+while true 
+do
+
+if [ "$1" = "-test" ] ; then
+	[ -n "$2" ] && { test=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-cOrC" ] ; then
+	cOrC="t"
+	shift ;
+else
+	break;
+fi
+
+done
+
+[ -z "$test" ] && 
+{
+	echo "usage: $0"
+	echo " -cOrC  /* if .c use c-parser.  if .C use cp-parser */"
+	echo " -test directory"
+	echo " [other flags passed to ptest_hooks]"
+	exit 0;
+
+}
+
+startdate=`date`
+
+n=0;
+for file in `find $test -name "*.[cC]" -print`
+do
+	cmprfilename=`echo $file | sed -e 's/\.\///g' -e 's/^\///' -e 's/\//-/g'`
+	echo
+	echo "Testing file [$file] compressed name [$failed/$cmprfilename]..."
+
+	[ "$cOrC" = "t" ]  && {	
+	   if [ "`basename $file`" = "`basename $file .c`.c" ] ; then
+		newParser="-newParser $meg/c-parser"
+		oldParser="-oldParser $PSETHOME/bin/c-parser"
+	   else
+		newParser=""
+		oldParser=""
+	   fi
+	}
+	ptest_hooks $newParser $oldParser -file $cmprfilename $* $file 
+	n=`expr $n + 1`
+done
+
+echo "Tested $n files."
+echo "Started  test on: $startdate"
+echo "Finished test on: `date`"
+

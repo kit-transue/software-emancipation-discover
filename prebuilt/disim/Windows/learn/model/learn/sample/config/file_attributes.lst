@@ -1,0 +1,119 @@
+#project_name:/ROOT
+%sharedSrcRoot%/xip/src/pipeline.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/xlib.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/x11_intrinsic.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/xm/rowcolumn.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/extobject.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/displaybutton.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/displayscore.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/history.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/x11/x.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/display.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/tictactoemove.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/src/displayapp.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/src/displaycontrol.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/displayapp.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/displaycontrol.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/tictactoemove.h	1043326130	h		
+%sharedSrcRoot%/ttt/src/tictactoegame.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/displaystatus.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/x11/xresource.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/sys/stat.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/mycomputerplayer.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/src/gameboard.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/xm/baseclassi.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/libio.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/time.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/objectp.h	1043326128	h		
+%sharedSrcRoot%/xip/include/image_win.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/x11/rectobj.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/displaysquare.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/displaysquare.h	1043326130	h		
+%sharedSrcRoot%/xip/src/init.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/xip/include/stage.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/x11/vendor.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/xm.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/application.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/object.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/corep.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/move.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/move.h	1043326130	h		
+%sharedSrcRoot%/ttt/src/location.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/xosdefs.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/location.h	1043326130	h		
+%sharedSrcRoot%/ttt/src/game.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/xm/traversal.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/xmp.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/displayboard.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/src/color.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/color.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/intrinsicp.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/functypes.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/sys/stdtypes.h	1043326128	h		
+%sharedSrcRoot%/xip/src/image_win.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/mrm/mrmdecls.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/humanplayer.h	1043326130	h		
+%sharedSrcRoot%/ttt/src/board.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/mrm/mrmappl.h	1043326128	h		
+%sharedSrcRoot%/xip/src/stage.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/xm/pushb.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/string.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/stddef.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/_g_config.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/intrinsic.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/displaytictactoegame.h	1043326130	h		
+%sharedSrcRoot%/xip/include/canvas.h	1043326130	h		
+%sharedSrcRoot%/ttt/src/history.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/displaybutton.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/xutil.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/xfuncproto.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/display.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/stringdefs.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/rectobjp.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/stdlib.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/scrolledw.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/sys/types.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/stdio.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/sys/fcntlcom.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/iostream.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/sys/fcntl.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/displaystatus.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/mrm/mrmpublic.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/tictactoegame.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/xm/vendore.h	1043326128	h		
+%sharedSrcRoot%/xip/src/fonts.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/compositep.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/gameboard.h	1043326130	h		
+%sharedSrcRoot%/ttt/include/mycomputerplayer.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/xm/drawnb.h	1043326128	h		
+%sharedSrcRoot%/xip/include/xip.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/xm/bulletinb.h	1043326128	h		
+%sharedSrcRoot%/xip/include/externals.h	1043326130	h		
+%sharedSrcRoot%/ttt/src/player.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/player.h	1043326130	h		
+%sharedSrcRoot%/xip/include/dt.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/x11/composite.h	1043326128	h		
+%sharedSrcRoot%/xip/src/canvas.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/src/square.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/square.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/xm/frame.h	1043326128	h		
+%sharedSrcRoot%/xip/src/color.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/include/application.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/shell.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/stdarg.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/game.h	1043326130	h		
+%sharedSrcRoot%/sysinclude/x11/vendorp.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/form.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/streambuf.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/displayboard.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/constrainp.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/x11/constraint.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/mainw.h	1043326128	h		
+%sharedSrcRoot%/ttt/src/main.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/shellp.h	1043326128	h		
+%sharedSrcRoot%/xip/src/xip.c	1043326130	C	%sharedSrcRoot%/xip	--relative_path_base "%sharedSrcRoot%/xip" "-I%sharedSrcRoot%/xip/include" "-I%sharedSrcRoot%/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/ttt/src/humanplayer.cpp	1043326130	CPP	%sharedSrcRoot%/ttt	--relative_path_base "%sharedSrcRoot%/ttt" "-I%sharedSrcRoot%/ttt/include" "-I%sharedSrcRoot%/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w
+%sharedSrcRoot%/sysinclude/x11/core.h	1043326128	h		
+%sharedSrcRoot%/ttt/include/board.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/label.h	1043326128	h		
+%sharedSrcRoot%/sysinclude/xm/virtkeys.h	1043326128	h		

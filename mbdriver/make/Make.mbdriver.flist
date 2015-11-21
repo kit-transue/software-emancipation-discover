@@ -1,0 +1,16 @@
+CROOTS=
+
+
+CXXROOTS=\
+    guidriver \
+    lpdriver \
+    main \
+    mbdriver \
+    mbdriver_util \
+    model_server_utils \
+    model_server_driver \
+    model_server_msger \
+    svcnames \
+    util \
+    xmlstrs
+

@@ -1,0 +1,39 @@
+<html>
+<body>
+
+<p><b>UITI - Use <i>instanceof</i> Tests to an Interfaces</b></p>
+
+<p>Interface-based design is in general a good thing, because it allows for the
+flexible inclusion of different implementations.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class UITI {<br>
+&nbsp; private void method (Object o) {<br>
+&nbsp; &nbsp; <font color='red'> if (o instanceof ClassBase) </font>{ }<br>
+&nbsp; }<br>
+}<br><br>
+class ClassBase {}</code></p></nobr>
+
+<p><b>Tip:</b>
+Whenever possible, perform "instanceof" tests to an interface rather than a clas
+s.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class UITI {<br>
+&nbsp; private void method (Object o) {<br>
+&nbsp; &nbsp; <font color='blue'> if (o instanceof InterfaceBase) </font>{ }<br>
+&nbsp; }<br>
+}<br><br>
+interface InterfaceBase {}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Graig Larman, Rhett Guthrie: "Java 2 Performance and Idiom Guide"
+Prentice Hall PTR, 2000.  pp.207</p>
+
+</body>
+</html>

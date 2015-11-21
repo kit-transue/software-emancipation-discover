@@ -1,0 +1,31 @@
+#!/bin/sh
+nm=ptest_record
+if [ "$1" = "" ] ; then
+  dir=$PWD
+elif [ $1 -gt 100 ] ; then
+ dir=`ptest_create $1`
+elif [ -d $1 ] ; then
+ dir=$1
+else
+ echo "$nm: $1 is neither bug-number nor directory"
+ exit 1
+fi
+
+if [ "$2" != "" ] ; then
+  if [ -x $2 ] ; then
+     exec="-exec $2"
+  elif [ -x $meg/aset ] ; then
+     exec="-exec $meg/aset"
+  else
+     echo "$nm: cannot select executable aset"
+     exit 1
+  fi
+fi
+
+if [ $? -eq 0 ] ; then
+  cd $dir
+  echo "discover $exec -P test.pdf -prefs test.prefs"
+set -a
+PSETTEST=`pwd`
+  discover $exec -P test.pdf -prefs test.prefs
+fi

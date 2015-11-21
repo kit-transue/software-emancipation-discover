@@ -1,0 +1,62 @@
+extern void DI_object_create(DI_objectp  s);
+extern void DI_object_delete(DI_object s);
+extern void DI_object_append(DI_object source,DI_object target);
+extern void DI_object_copy(DI_object source,DI_object target);
+extern void DI_object_name(DI_object object,charp  name);
+extern void DI_object_lookup(DI_object object, int kind, charp  name, DI_object def_file);
+extern void DI_object_size(DI_object object,intp i);
+extern void DI_array_set(DI_object source, int position , DI_object target);
+extern void DI_array_get(DI_object source, int position , DI_object target);
+extern void DI_array_union(DI_object source, DI_object target);
+extern void DI_array_subtract(DI_object source, DI_object target);
+extern void DI_array_intersect(DI_object source, DI_object target);
+extern void DI_where_defined(DI_object source, DI_object target);
+extern void DI_where_referenced(DI_object source, DI_object target);
+extern void DI_files_where_included(DI_object source, DI_object target);
+extern void DI_where_used(DI_object source, DI_object target);
+extern void DI_uses_functions(DI_object source, DI_object target);
+extern void DI_uses_variables(DI_object source, DI_object target);
+extern void DI_uses_classes(DI_object source, DI_object target);
+extern void DI_uses_structures(DI_object source, DI_object target);
+extern void DI_uses_unions(DI_object source, DI_object target);
+extern void DI_uses_enums(DI_object source, DI_object target);
+extern void DI_uses_typedefs(DI_object source, DI_object target);
+extern void DI_uses_macros(DI_object source, DI_object target);
+extern void DI_show_include_files(DI_object source, DI_object target);
+extern void DI_show_member_functions(DI_object source, DI_object target);
+extern void DI_show_member_data(DI_object source, DI_object target);
+extern void DI_show_friends(DI_object source, DI_object target);
+extern void DI_show_super_classes(DI_object source, DI_object target);
+extern void DI_show_sub_classes(DI_object source, DI_object target);
+extern void DI_show_defined_as(DI_object source, DI_object target);
+extern void DI_show_decl_usage(DI_object source, DI_object target);
+extern void DI_show_associations(DI_object source, DI_object target);
+extern void DI_show_assocd_entities(DI_object source, DI_object target);
+extern void DI_show_documents(DI_object source, DI_object target);
+extern void DI_instance_of_template(DI_object source, DI_object target);
+extern void DI_template_of_instance(DI_object source, DI_object target);
+extern void DI_subsystems(DI_object source, DI_object target);
+extern void DI_find_child_projects(DI_object source, DI_object target);
+extern void DI_find_parent_project(DI_object source, DI_object target);
+extern void DI_defines_functions(DI_object source, DI_object target);
+extern void DI_defines_variables(DI_object source, DI_object target);
+extern void DI_defines_classes(DI_object source, DI_object target);
+extern void DI_defines_structures(DI_object source, DI_object target);
+extern void DI_defines_unions(DI_object source, DI_object target);
+extern void DI_defines_enums(DI_object source, DI_object target);
+extern void DI_defines_typedefs(DI_object source, DI_object target);
+extern void DI_defines_macros(DI_object source, DI_object target);
+extern void DI_find_files(DI_object source, DI_object target);
+extern void DI_open_view(DI_object it);
+
+
+
+
+
+
+
+
+
+
+
+

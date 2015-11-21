@@ -1,0 +1,114 @@
+include $(MAKELIB)/Make.general
+
+# This variable is used to interpret the list of targets below.  It's not dead.
+SC:=$(OBJ_ROOT)/$(ARCH)
+
+TARGET_OBJ:=$(foreach c, $(LLIST), $(c)/lib_$(LIB_NAME).o)
+
+# notes about the order of libraries:
+# on IRIX, $(LICSTAT) should come at (near) the end, or you get core dump
+#	in flex_get_num_modules (from lc_checkout)
+
+mrg_diff_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+mrg_ui_LIBS:=$(TKLIBS) $(XLIBS) $(TCLLIBS) $(SOCKETLIB) $(CXXLIBS) $(MATHLIB)
+mrg_update_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+aset_CCcc_LIBS:=$(SOCKETLIB) $(CXXLIBS) $(LICSTAT) $(MATHLIB)
+c-parser_LIBS:=$(CXXLIBS)
+cp-parser_LIBS:=$(CXXLIBS)
+paracancel_LIBS:=$(XLIBS) $(SOCKETLIB) $(CXXLIBS)
+aset_LIBS:=$(BIN_DIR)/WinHelp.o -L$(EXTLIB) $(TKLIBS) $(TCLLIBS) $(EXPATLIBS) $(XLIBS) $(SOCKETLIB) $(DBMLIB) $(CXXLIBS) $(LICSTAT) $(MATHLIB)
+model_server_LIBS:=$(CXXLIBS) $(TCLLIBS) $(EXPATLIBS) $(SOCKETLIB) $(DBMLIB) $(LICSTAT) $(MATHLIB)
+ifext_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+checklist_LIBS:=$(CXXLIBS)
+
+package_LIBS:=$(SOCKETLIB) $(CXXLIBS) $(LICSTAT)
+dis_sql_LIBS:=$(CXXLIBS)
+pksym.index_LIBS:=$(CXXLIBS)
+pksym.index.rtl_LIBS:=$(CXXLIBS)
+qvparser_LIBS:=$(CXXLIBS)
+pcparser_LIBS:=$(CXXLIBS)
+vcparser_LIBS:=$(CXXLIBS)
+helper_LIBS:=$(CXXLIBS) $(XLIBS) $(SOCKETLIB)
+tlhelper_LIBS:=$(CXXLIBS) $(XLIBS)
+testlink_LIBS:=$(SOCKETLIB) $(CXXLIBS) $(LICSTAT)
+if_parser_LIBS:=$(CXXLIBS)
+if_diff_LIBS:=$(CXXLIBS)
+simplify_LIBS:=$(CXXLIBS)
+gxpackage_LIBS:=$(XLIBS) $(SOCKETLIB) $(CXXLIBS) $(MATHLIB)
+sevreporter_LIBS:=$(CXXLIBS) $(MATHLIB)
+disperl_LIBS:=$(CXXLIBS)
+aset_jfe_LIBS:=$(SOCKETLIB) $(LICSTAT) $(CXXLIBS) $(MATHLIB)
+dismb_LIBS:=$(CXXLIBS)
+dis_path_LIBS:=$(CXXLIBS)
+scandsp_LIBS:=$(CXXLIBS)
+scanclrmake_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+pdfgen_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+parsercmd_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+mbdriver_LIBS:=$(SOCKETLIB) $(CXXLIBS) $(LICSTAT) $(THREADLIB)
+log_presentation_LIBS:=$(SOCKETLIB) $(CXXLIBS) $(MATHLIB) $(THREADLIB)
+qaengine_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+cmdriver_LIBS:=$(SOCKETLIB) $(XML_LIB) $(CXXLIBS)
+cmdish_LIBS:=$(SOCKETLIB) $(CXXLIBS)
+ci_environment_LIBS:=$(CXXLIBS)
+CIEClient_LIBS:=$(CXXLIBS) $(SOCKETLIB)
+ 
+
+# figure out if TCL is required:
+TCLFLAG:=$(shell echo $($(EXEC)_LIBS) | $(CHECK_FLAG) dis_tcl MAKE_TCL)
+
+# figure out if TK is required:
+TKFLAG:=$(shell echo $($(EXEC)_LIBS) | $(CHECK_FLAG) dis_tk MAKE_TK)
+
+# figure out if WINHELP is required:
+WINHELPFLAG:=$(shell echo $($(EXEC)_LIBS) | $(CHECK_FLAG) WinHelp.o MAKE_WINHELP)
+
+
+# decide whether to make build_date static:
+DATE_VISIBILITY:=static
+ifeq "$(EXEC)" "model_server"
+  DATE_VISIBILITY:=extern
+endif
+ifeq "$(EXEC)" "aset"
+  DATE_VISIBILITY:=extern
+endif
+
+DATE_SRC:=$(BIN_DIR)/$(TARGET)_date.c
+DATE_OBJ:=$(BIN_DIR)/$(TARGET)_date.o
+
+$(DATE_OBJ):
+	
+$(TARGET): $(TARGET_EXEC) $(VRFILES)
+$(TARGET_EXEC): $(TARGET_OBJ) $(TKFLAG) $(TCLFLAG) $(WINHELPFLAG)
+	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
+	echo '$(DATE_VISIBILITY) char const build_date[] = "'"`date`"'";' >$(DATE_SRC)
+	echo '$(DATE_VISIBILITY) char const build_version[] = "'"`cat $(MAKELIB)/../market_version`"'";' >>$(DATE_SRC)
+	echo '$(DATE_VISIBILITY) char const build_full_version[] = "$(VERSION)";' >>$(DATE_SRC)
+	echo 'static char const version[] = "@(#)$(EXEC) $(BUILDMODE) version $(VERSION)";'>>$(DATE_SRC)
+	cd $(BIN_DIR); $(CCC) -g -c $(DATE_SRC); rm $(DATE_SRC)
+	cd $(BIN_DIR); $(PURIFY) $(CCC) $(CCARCHFLAGS) $(CLDCTRL) -o $(TARGET) $(PRE_OBJ) $(DATE_OBJ) $(TARGET_OBJ) $($(EXEC)_LIBS) $(LDL) $(POST_OBJ) || (rm -f $(TARGET); false)
+	rm $(DATE_OBJ)
+
+
+MAKE_TCL:
+	mkdir -p $(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tcl; \
+	cd $(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tcl; \
+	$(GMAKE) -f $(BUILD_SRC_ROOT)/dis_tcl8.3/$(ARCH)/Makefile \
+	SRC_ROOT=$(BUILD_SRC_ROOT) \
+	VPATH=$(LOCAL_SRC_ROOT)/dis_tcl8.3/$(ARCH):$(BUILD_SRC_ROOT)/dis_tcl8.3/$(ARCH) libdis_tcl.a
+
+MAKE_TK: MAKE_TCL
+	mkdir -p $(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tk; \
+	cd $(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tk; \
+	$(GMAKE) -f $(BUILD_SRC_ROOT)/dis_tk8.3/$(ARCH)/Makefile \
+	TCL_LIB_DIR=$(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tcl \
+	SRC_ROOT=$(BUILD_SRC_ROOT) \
+	VPATH=$(LOCAL_SRC_ROOT)/dis_tk8.3/$(ARCH):$(BUILD_SRC_ROOT)/dis_tk8.3/$(ARCH) libdis_tk.a
+
+MAKE_WINHELP:
+	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
+	cd $(BIN_DIR); $(CC) -c $(CARCHFLAGS) $(WH_COMP_FLAGS) -D$(ARCH) \
+	-I$(LOCAL_SRC_ROOT)/Docs/hyperhelp/hyperhelp/WinHelp \
+	-I$(BUILD_SRC_ROOT)/Docs/hyperhelp/hyperhelp/WinHelp \
+	-I/usr/openwin/include -I/usr/include/X11 -I/usr/include/X11R5 \
+	$(BUILD_SRC_ROOT)/Docs/hyperhelp/hyperhelp/WinHelp/WinHelp.c
+

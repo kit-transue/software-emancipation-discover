@@ -1,0 +1,75 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Addendum to messages specification, based on coversation with M.G.
+30.Mar.98 Kit Transue
+
+
+Comments made by M.G. in information convesation 30.Mar.98.
+
+Type safety is highly desirable design element.
+
+Use of stream interface is non-intuitive because of the non-linear
+correlation between inserter calls and output (in the case of
+internationalization), and the additional characters to be typed.
+
+A preferable implementaion would be to provide an overloaded function
+taking between zero and ten arguments (besides the message identifier).
+The type of these arguments would be special type, for which constructors
+for all familiar types would be provided.  This would accomodate the
+type safety requirement.  Arguments requiring composition would need to
+be constructed outside the function call.
+
+Moving the help context outside the source code is very important.
+
+The long-term question of message handling was discussed.  There is an
+important design question about how to handle user input from message
+output.  This question is largely independent of the syntax issues
+raised here.  The question is whether the message system should return
+values, or whether it should perform its own actions (like calling
+abort() or throw exceptions).
+
+
+My response:
+
+I believe the stream interface presented in the specification is easier
+to understand than a system of conversions and variable arguments.  First,
+the fact that the output order may vary should not be of concern to the
+user of the class.  The fact that additional text may be inserted between
+arguments may present a minor surprise, but I do not think it would be
+that serious.  What is compelling is that formatted output (which this
+is), conventionally uses streams in C++.  The syntax suggested in the
+specification would continue to use the exact same inserters as the
+streams used, freeing the user from any doubt as to the existance of a
+suitable conversion operator or how to cast to obtain desired conversions.
+Likewise, the use of binary shift operators makes clear the arguments
+required for each function.  Finally, the construction of composite
+arguments does not required construction of an intermediate object and
+the associated syntax/constructors/destructors.  Although this is a
+rare case, the simplicity and natural C++-ness of it demonstrates why
+the stream syntax is so readily useful.
+

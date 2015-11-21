@@ -1,0 +1,90 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+##################################################################
+##	preprocess.dis --contains functions related to preprocessing
+##	C CPP ESQL_C and ESQL_CPP files
+##	Note: the associated menu item only appears if the preference
+##	DIS_c.Cpp_Logfile appears in your pref file and is non empty.
+##################################################################
+
+proc get_valid_preprocessing_filename {ttl} {
+	set cont 1
+	while {$cont >0} {
+		set cont 0
+		set myfilename [filesb -title $ttl]
+		if {$myfilename == ""} {return -1}
+		#check for duplicate file
+		if {[file exists $myfilename]} {
+			set x [question "File $myfilename already exists--replace it?" Yes No]
+			if {$x == "No" } {
+				set cont 1
+				continue
+			} elseif {$x != "Yes" } {
+				return -1
+			}
+		}
+		#check for valid file
+		set itworked 0
+		set itworked [catch {set myhandle [open $myfilename {RDWR CREAT TRUNC}] } badmsg]
+		if {$itworked >0 } {
+			msg error_sev "\$1 is not a valid file name. Please try again" "$myfilename"
+			set cont 1
+			set myfilename -1
+			continue
+		} else {
+			close $myhandle
+			file_rm $myfilename
+		}
+	}
+	return $myfilename
+}
+
+proc preprocess_item {sel} {
+	if { [size $sel] <=0 } {
+		msg error_sev "Nothing selected!"
+		return
+	}
+	foreach x $sel {
+		set mykind [kind $x]
+		if { $mykind != "module" } continue
+		set mylang [language $x]
+		set myname [fname $x]
+
+		#check file type
+		if { $mylang != "CPP" && $mylang != "C" && $mylang != "ESQL_C" && $mylang!= "ESQL_CPP" } {
+			msg error_sev "\$1 is the wrong file type!" "$myname"
+			continue
+		}	
+		set ttl "Preprocess $myname to:"		
+		set myfilename [get_valid_preprocessing_filename $ttl]
+		if {"$myfilename" == -1 } continue
+		dis_preprocess_edg_file $x $myfilename
+
+	}
+}		
+

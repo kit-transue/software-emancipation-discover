@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<p><b>RFDI - Replacement For Demand Imports</b></p>
+
+<p> Demand import-declarations must be replaced&nbsp;with a list of
+single import-declarations that are actually imported into
+the compilation unit. In other words, import-statements
+may not end with an asterisk.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+<font color='red'>import java.awt.*; </font> <br>
+<font color='red'>import javax.swing.*; </font> <br>
+class RFDI {<br>
+&nbsp; &nbsp; public static JFrame getFrame (Component com) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; while (com != null) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (com instanceof JFrame)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return (JFrame)com;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; com = com.getParent();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return null;<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+Replace demand imports with a list of
+single import declarations
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+<font color='blue'>import java.awt.Component;<br>
+import javax.swing.JFrame;</font><br>
+class RFDI {<br>
+&nbsp; &nbsp; public static JFrame getFrame (Component com) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; while (com != null) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (com instanceof JFrame)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return (JFrame)com;<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; com =
+        com.getParent();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return null;<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

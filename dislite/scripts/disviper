@@ -1,0 +1,3 @@
+DIS_EDITOR=3
+export DIS_EDITOR
+`dirname $0`/dislite $*

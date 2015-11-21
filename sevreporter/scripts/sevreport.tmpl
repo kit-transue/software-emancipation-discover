@@ -1,0 +1,1589 @@
+@@intro
+<TEXTMODE>
+This assessment of the overall quality of your 
+software is based on several application-specific categories. The
+individual quality scores for each of these categories and their
+constituent parts are combined according to the weights you specify
+to yield the total quality score for your application. The score for
+any specific item is a number from zero to one hundred, with one
+hundred being a perfect score.
+<P>
+The overall score for all of the modules analyzed was: <OVERALLQUALITY>.
+<P>
+The following modules were analyzed:
+<P>
+<INPUTS>
+<B>
+The target modules contain the following:
+<P>
+<INVENTORY>
+<P>
+The following graph shows your total quality score broken down by
+top-level category:
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<B>
+The remaining sections in this report describe in a hierarchical fashion
+the specific factors that contribute to your total quality score.
+<P>
+@@gen
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+This section measures the usage of questionable programming constructs
+that may be unsafe or conflict with site-specific programming guidelines.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@ass_cond
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The existence of an assignment within a conditional may be the result of
+a mis-typed comparison operator:
+<B>
+<CODEMODE>
+    int x = f1();
+    if (x = -1)   // always true, because -1 != 0
+      f2();
+<TEXTMODE>
+<B>
+Function f2 will execute regardless of what value function f1 returns.
+Additionally, an intentional assignment within a conditional may make
+your code more complicated than necessary by introducing a side-effect
+into the comparison expression:
+<B>
+<CODEMODE>
+    if ((x = f1()) == -1)
+      f2();
+<TEXTMODE>
+<P>
+@@empty_body
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Iteration statements that contain no body are usually programming
+errors. The following code prints  "10", instead of "0 1 2 3 ...":
+<B>
+<CODEMODE>
+    for (int x = 0; x < 10; x++);  // note the trailing semicolon
+      (void) printf("%d", x);
+<TEXTMODE>
+<P>
+@@goto
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Use of goto allows normal control flow to be interrupted, skipping potentially
+important initializations and making it less clear what code might be
+executed.
+<P>
+@@break_cont
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Use of break in a loop introduces an additional condition for loop
+termination--one that is not explicitly stated in the loop condition
+but which may be hidden in the loop body.
+<B>
+Continue introduces the possibility that code at the end of the loop body
+may not be executed for each iteration through the loop.
+<P>
+@@flow_intr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Abnormal control flow interruptions such as goto-statements,
+break-statements, and continue-statements can unnecessarily
+complicate the logical flow of a program and make it difficult
+to comprehend.
+<P>
+@@const_cond
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conditional expressions that can be evaluated at compile-time
+(that is, which are not dependent on the dynamic state of the program)
+are unnecessary and may indicate an error in logic. For example,
+the body of the following conditional will never be executed
+because the test condition is always false:
+<B>
+<CODEMODE>
+    #define X 1
+    /* ... */
+    if (X < 0)
+      f();
+<TEXTMODE>
+<P>
+@@sw_default
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+For switches, every possible value of the switch condition should be
+addressed by a case.  The use of a default guarantees that all values
+are covered.  Even if the default is no action, this should be articulated
+in the code.
+<P>
+@@sw_fall
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+"Fall-throughs", while sometimes intentional, are a common source of
+errors.
+<P>
+@@dang_ei
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Else-if structures are often used in place of a switch, but where the
+switch condition is more complicated than an integral value.  As in a switch, a
+default behavior should be indicated, even if the default behavior is to do
+nothing.
+<P>
+@@unused_local
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+An unused local variable is usually unnecessary, causing increased stack
+consumption, time spent initializing, and maintenance spent understanding
+why it's there.
+<P>
+@@unused_static
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See unused local variable.
+<P>
+@@nest_fun_decl
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+C and C++ compilers allow a declaration within a function
+to be inconsistent with the global symbol's definition.  Such
+an inner declaration risks
+being incorrect or non-portable.  Multiple, dispersed declarations
+are hard to maintain.
+<P>
+@@uns_cmp
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Comparison of unsigned types with negative numbers can be evaluated at
+compile time, and may indicate an error in logic.
+<B>
+<CODEMODE>
+    unsigned int x;  /* x is always >=0 */
+    /* ... */
+    if (x != -1)
+      f();
+<TEXTMODE>
+<P>
+@@discard_ret
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+When calling a non-void function, it is good practice
+to examine the return value. Often the return value
+contains an error code that must be dealt with or
+some other useful information that should be examined. 
+This query flags discarded return values in calls of
+functions defined in the model.  To intentionally discard
+the return value of a function, cast the call expression
+to void:
+<B>
+<CODEMODE>
+    char buf[1024];
+    while (getbuf(buf)) {
+      write(filedes, buf, sizeof(buf)); 
+      /* what if disk is full? */
+    }
+    /* intentionally discard return value: */
+    (void) printf("Done\n");
+<TEXTMODE>
+<P>
+@@discard_ret_external
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+When calling a non-void function, it is good practice
+to examine the return value. Often the return value
+contains an error code that must be dealt with or
+some other useful information that should be examined. 
+This query flags discarded return values in calls of
+functions not defined in the model.  To intentionally
+discard the return value of a function, cast the call
+expression to void:
+<B>
+<CODEMODE>
+    char buf[1024];
+    while (getbuf(buf)) {
+      write(filedes, buf, sizeof(buf)); 
+      /* what if disk is full? */
+    }
+    /* intentionally discard return value: */
+    (void) printf("Done\n");
+<TEXTMODE>
+<P>
+@@downcast
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The use of downcasts is frequently a sign of an improperly designed
+class hierarchy. When used incorrectly, downcasts can crash programs.
+More often, downcasts become a maintenance nightmare.
+<P>
+@@nv_dtor
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The destructors in a class hierarchy should be virtual in order
+to prevent unexpected behavior such as memory leaks. Run-time
+binding is not possible with non-virtual destructors. Consider
+the following code fragment:
+<B>
+<CODEMODE>
+    class B {
+      public:
+        B() {}
+        ~B() {}   // non virtual destructor
+    };
+
+    class D :public B {
+      public:
+        D() { cp = new char[1024]; }
+        ~D() { delete[] cp; }  
+      private:
+        char *cp;
+    };
+
+    void f()
+    {
+      B *p = new D();
+      /* ... */
+      delete p;
+    }
+<TEXTMODE>
+<B>
+The destructor for class D (D::~D()) never gets called. Instead
+the destructor for the base class B (B::~B()) is called, even
+though the storage being deleted contains an object of type D.
+This results in a memory leak. Without virtual destructors, the
+derived class cannot de-allocate its own resources.
+<P>
+@@init_glob
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Persistent variables should be intialized only once--when they are declared.
+It is better to indicate the compiler default than to depend on it implicitly.
+<B>
+<CODEMODE>
+    foo()
+    {
+        static int x;
+        x = 0;  /* bad, executed once for every call of foo */
+    }
+<TEXTMODE>
+<P>
+@@conv_num_narrow
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conversion to a less precise numeric type may cause a quiet loss
+of needed accuracy, or corruption of a value that is too large
+for the target type.
+<P>
+@@conv_intptr_narrow
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Use of a pointer which views the storage more narrowly is
+non-portable due to byte ordering variations.  It can also
+quietly misread a value that does not fit in the smaller type.
+<P>
+@@conv_intptr_widen
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Use of a pointer which views the storage more broadly is
+non-portable due to byte ordering variations.  Also, the
+extra bytes may be uninitialized, leading to corrupted values.
+<P>
+@@conv_numptr_compat
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The two numeric types involved in these conversions use
+incompatible storage formats.  One of them is incorrect.
+<P>
+@@conv_const
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Casting away const is dangerous--at its worst, it can cause errors; at
+best it indicates a failure of the type system.
+<P>
+@@conv_vol
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Casting away volatile is dangerous--at its worst, it can cause errors; at
+best it indicates a failure of the type system.
+<P>
+@@conv_uns
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conversion from a signed to an unsigned type may corrupt
+a negative value.  Conversion from an unsigned to a signed
+type may corrupt a value that is too large for the signed
+type.
+<P>
+@@conv_ptr_nonptr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conversion between pointer and non-pointer types is 
+non-portable.  Even the longest, most predictable integer types
+(such as long and unsigned int) fail in some environments
+to hold pointers.  Mappings from numeric values to pointers
+and vice versa are machine-dependent.
+<P>
+@@conv_ptr_depth
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conversion between pointer types of unequal depth often
+indicates a logic error or a non-portable assumption
+about where pointers are stored.
+<P>
+@@conv_ptr_rel
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conversion between unrelated pointer types at best becomes a
+source of confusion during program maintenance. 
+At worst it is non-portable.
+<P>
+@@side_effect_usage
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+When using operands with side-effects, it is important to remember that the
+order of evaluation of the operands in the expression is not generally
+defined.  As a result, expressions where the operand is used more than once
+have undefined behavior.  A couple of examples:
+<B>
+<CODEMODE>
+    int i = 0;
+    i = i++;           // assignment may come before or after post-increment.
+    if (i == ++i)...   // either left- or right- side may be evaluated first
+<TEXTMODE>
+<P>
+@@arith_sizeof
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Pointer arithmetic accounts for size and alignment requirements.  Additional
+compensation for type size is usually incorrect, causing accesses beyond
+the bounds of the allocated memory.
+<P>
+@@sidecast
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+A cast between pointers to two classes that are derived from a common
+base seems meaningful, when it acts on a pointer to an instance (i.e. an object) of the base class.
+Unfortunately, compilers do not support this usage for all types
+of class hierarchy.
+<P>
+@@ass_op_ret
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+An assignment operator should return a reference to its class,
+so that its class can support the idiom of chaining assignment statements.
+For example, a = b = c;
+<P>
+@@ass_op_self
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Most assignment operators defined by a program will go unpredictably wrong
+if they are invoked to assign an object to itself.
+Since the caller of an assignment often has little control over
+the objects which it needs to assign, the best practice is for
+the assignment operator itself to test for self-assignment and
+do nothing in that case.
+<P>
+@@const_ref_param
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+For maximum flexibility and efficiency, the parameter of
+a copy constructor or copy assignment operator should be a reference to const.
+<P>
+@@init_order
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Order of initialization is order of declaration.
+In a constructor initialization clause,
+the order of initializers can give a misleading sense
+of correctness, because the order of declaration is the
+overriding factor.
+One member should not be used in an initializer
+of another member that precedes it in declaration and initialization order.
+<P>
+@@virt_call
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+When constructing a derived class, the base class constructor will be
+called first.  During the base class's construction, the vtable will
+be set so base class implementations of virtual functions will be called.
+This can be the source of some confusion, especially if the base
+class contains pure-virtual functions that should not be called in
+the context of the base class.
+<P>
+@@mi_concrete
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+When a class is derived from distinct base classes that involve
+state, complications arise.  The multiple base objects
+often need to be independent of one another,
+while they must also appear as facets of a single derived object.
+A careful design resolves this dilemma using abstract classes.
+<P>
+@@ret_by_val
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Returning an object by value involves copying its members onto the stack
+and then removing them again; this can be a time-consuming operation.
+It is better to pass back an object using a reference parameter.
+<P>
+@@pass_by_val
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Passing an object argument by value involves copying its members onto the stack
+and then removing them; this can be a time-consuming operation.
+It is better to pass objects by reference.
+<P>
+@@temp_obj
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Creating a temporary object takes time.  Their use should be minimized.
+If creating the object is unavoidable, it is often more clear what
+the code is doing, if the object is declared explicitly.
+<P>
+@@fun_mismatch
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Function calls in non-ANSI C code whose arguments do not match the target 
+function's actual parameter list.
+<P>
+@@entity_case_clash
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Entities that have identical names except for casing. This makes porting 
+of code from a case sensitive platform to case insensitive platform
+difficult. 
+<P>
+@@without_braces
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Conditional and iteration statement bodies that have no enclosing braces.
+<CODEMODE>
+    for (int x = 0; x < 10; x++)
+      x++;
+    y=x+7; // not clear if this stmt should be part of for loop
+<TEXTMODE>
+<P>
+@@stackret
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+A stack violation occurs when a function returns a pointer to
+its own local stack. Subsequent function calls may overwrite the
+original function's stack, thus invalidating the returned data.
+The following code illustrates this:
+<B>
+<CODEMODE>
+    char *getname()
+    {
+      char name[10];
+      /* ... */
+      return name;
+    }
+
+    void printname()
+    {
+      char *name = getname();
+      if (valid(name))
+        printf("%s\n", name);    /* name may be corrupted */
+    }
+<TEXTMODE>
+<P>
+@@memleak
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+A memory leak occurs when storage is allocated but never
+de-allocated. Data flow analysis is used to track allocated
+data through various functions and files.
+<TEXTMODE>
+<P>
+@@port
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+This section measures the portability of your software
+and indicates some of the obstacles that may stand in
+the way of running your application on another platform
+or operating system.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@ansilim
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Because compiler resources are finite, the ANSI C and C++
+standards define guidelines for limiting the size and complexity
+of certain language constructs. Some compilers exceed these
+recommended values; consequently code that takes advantage of
+these compiler features is not guaranteed to be portable across
+all platforms.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@string_lim
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The ANSI standard recommends that compilers support a string
+literal length of at least 65,536 wide or ASCII characters
+(calculated after preprocessing and concatenation).
+<P>
+@@field_lim
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The ANSI standard recommends that implementations support a minimum of
+16,384 data members in a class, struct, or union.
+<P>
+@@enum_lim
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The ANSI standard recommends that compilers support at least 4,096 
+enumeration constants in a single enumeration.
+<P>
+@@nested_lim
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The ANSI standard recommends that implementations support at least 256
+levels of nesting control statements (i.e.: if, for, while, do-while,
+and switch). If your code exceeds this value, it is probably too
+complex.
+<P>
+@@block_lim
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The number of identifiers with block scope declared in one block
+should not exceed 1,024. If your code has this many identifiers,
+it may be extremely  difficult to understand and debug.
+<P>
+@@foreign_call
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Externally defined functions are those functions which are not defined in
+the Information Model. These include explicit calls to system APIs and external
+graphics, object, or communications libraries. In general, a lower number and
+greater localization of such calls is desirable. It is difficult to port an
+application that relies directly on third-party software and platform-specific
+functionality.
+<P>
+@@inline_asm
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Because inline assembly code is processor specific, it is inherently non-portable.
+<P>
+@@alignment
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Computer architecture imposes certain constraints upon the alignment of data.
+Most processors allow characters to be aligned on any byte, but some processors
+require that integers, structures, and pointers be aligned on an even byte
+boundary. Consequently, taking a character pointer, converting it to an integer
+pointer, and dereferencing it is inherently non-portable, as there is no mechanism
+to ensure the alignment of the data. For example:
+<CODEMODE>
+    char foo[8];
+    int *bar = (int *)(foo + 1);
+    int x = *bar + 1;   // bad -- bar isn't necessarily aligned
+<TEXTMODE>
+<P>
+@@char_sub
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Since the 'char' type may be signed or unsigned depending on the
+implementation, its use as an array subscript is not portable.
+<P>
+@@rshift
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Right shift of a signed type may not be portable.
+When a right shift is applied to a negative value, the
+result depends on the implementation.
+<P>
+@@float_eq
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Rounding and other inaccuracies of calculation imply
+that floating point values should be viewed as approximations.
+Floating point expressions should not be compared for equality.
+Instead, they should be tested for how close together they are.
+<P>
+@@glob
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+This section measures your application's conformance to guidelines for
+international software. Unsafe string manipulation and assumptions about
+character sets are flagged as suspect.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@str_arith
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+String based pointer arithmetic is often used in a language or locale
+specific way. In general, directly accessing the characters in a
+string using pointer arithmetic is not safe for international code.
+For example, some double byte character set (DBCS) encodings store
+their characters in a mixture of one and two byte blocks. If you have
+a string such as:
+<B>
+<CODEMODE>
+        32 | A5 B2 | 52 | 0
+<TEXTMODE>
+<B>
+where "|" denotes a character boundary, then accessing the third byte
+of the string using addition, subtraction, array reference, or
+incrementation brings you to the last half of a double byte character,
+not the third letter as you may have intended. This section measures
+your application's exposure to this type of non-portable string processing.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@arith_add
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See section heading for description.
+<P>
+@@arith_sub
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See section heading for description.
+<P>
+@@arith_post_incr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See section heading for description.
+<P>
+@@arith_post_decr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See section heading for description.
+<P>
+@@arith_pre_incr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See section heading for description.
+<P>
+@@arith_pre_decr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+See section heading for description.
+<P>
+@@arith_array
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Explicit character array references are frequently used to "pluck" a
+letter out of a character array. Since not all languages are phonetic,
+this approach can fail.  Even if all of the languages are phonetic, this
+approach can still have problems, as the following code sample illustrates:
+<B>
+<CODEMODE>
+    char *greeting = GetMessage(GREETING, time);
+    // greeting is "Good Morning" or "Good Night"
+    if (greeting[6] == 'M')
+      GoodMorning();
+    else
+      GoodNight();
+<TEXTMODE>
+<B>
+Now suppose that the message file is translated into Spanish. In the morning
+the message is "Buenos Dias", and in the evening it is "Buenos Noches". The 
+sixth character is always an 's', and the logic fails.
+<P>
+@@char_const
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The use of character constants may indicate a bias towards certain character sets.
+<P>
+@@stringl
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Hard-coded strings are frequently language specific, and should be externalized.
+As an example:
+<B>
+<CODEMODE>
+    printf("ERROR: Your hard disk is full.\n");
+<TEXTMODE>
+<B>
+makes little sense if the user's language is something other than English.
+If your code relies on macros to wrap string literals,
+turn off this query and enable the "String literals not in macros" query.
+<P>
+@@stringl_nomac
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+@@struct
+<TEXTMODE>
+This section measures your software's compliance to a
+set of metrics thresholds. Metrics can be used to locate
+unwieldy code and enforce site-specific coding policies.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@file_met
+<TEXTMODE>
+This section measures your software's compliance based upon file
+level metrics.
+<P>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<P>
+@@file_tloc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessively long files can easily become incomprehensible. Furthermore,
+the more functions a file has, the more time it takes to recompile,
+and the more likely it is to have to be recompiled.
+<P>
+@@file_uloc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The number of uncommented lines should not exceed a certain threshold.
+<P>
+@@file_xloc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The number of executable lines should not exceed a certain threshold.
+<P>
+@@file_incl
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessive use of #include directives increases inter-file dependencies,
+leads to unnecessary recompilation, slows down the programming cycle, and
+makes the code less malleable. (UPSPRING Software's Simplify.h
+product can eliminate unnecessary #include directives.)
+<P>
+@@fun_met
+<TEXTMODE>
+<QUALITYGRAPH>
+<B>
+<QUALITYTABLE>
+<B>
+This section measures your software's compliance based upon function level metrics.
+<P>
+@@fun_tloc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessively long functions are hard to understand and debug. The internal
+control flow can quickly become unmanageable as more and more code
+is added to the function.
+<P>
+@@fun_uloc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessively long functions are hard to understand and debug.
+<P>
+@@fun_xloc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessively long functions are hard to understand and debug.
+<P>
+@@fun_cc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Cyclomatic complexity (CC) is a measure of how complicated your code is. 
+Specifically, cyclomatic complexity measures the number of paths through
+your code. For example the following function has a CC of 3 because it
+has a three-way branch:
+<B>
+<CODEMODE>
+    int f(int x)
+    {
+      int nRet=0;
+
+      if (x < 0)
+        nRet=0;
+      else if (x==0)
+        nRet=1;
+      else
+        nRet=2;
+
+      return nRet;
+    }
+<TEXTMODE>
+<P>
+@@fun_mc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Myers' complexity is another measure of complexity; it is closely related to
+cyclomatic complexity. Like cyclomatic complexity, a lower number denotes a
+less complex function.
+<P>
+@@fun_nest
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessively nested statements are often a sign of an error in logic, or of
+a function that should be rewritten. Many organizations have coding standards
+which establish a maximum depth of nesting.
+<P>
+@@fun_ret
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Multiple return statements may complicate the logical flow of a function 
+and make it difficult to modify.
+<P>
+@@fun_loop
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessive numbers of loops in a function can slow your code down, introduce
+errors (particularly with starting or stopping conditions), or simply confuse
+programmers.
+<P>
+@@fun_sw
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The number of switches in a function should not exceed a certain threshold.
+<P>
+@@stats
+<TEXTMODE>
+This section is a metrics overview; it does not contribute
+to your total quality score.
+<P>
+@@file_stat
+<METRICTABLE>
+<P>
+@@fun_stat
+<METRICTABLE>
+<P>
+@@class_stat
+<METRICTABLE>
+<P>
+@@cle
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Avoid using complex expressions as repeat conditions within loops.
+<B>
+<CODEMODE>
+Wrong
+
+void oper () {
+    for (int i = 0; i < vector.size(); i++) { 
+        // do something
+    }
+    int size = vector.size();
+    for (int i = 0; i < size; i++) {
+        // do something
+    }
+} 
+
+Tip: Assign the expression to a variable before the loop and use that 
+variable instead. 
+
+Right
+
+void oper () {
+    int size = vector.size();
+    for (int i = 0; i < size; i++) { 
+        // do something
+    }
+    int size = vector.size();
+    for (int i = 0; i < size; i++) {
+        // do something
+    }
+} 
+
+Another Tip - Iterate Through Loops in Reverse Order.
+You may have access to elements of collection in reverse order, 
+if this way don't break logic of your application. 
+
+Right
+
+void oper () {
+    for (int i = list.length(); i >= 0; i--) { 
+        list.get(i).process();
+    }
+} 
+<TEXTMODE>
+<P>
+@@advil
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+This rule recommends to declare local variables outside the loops. <B>
+The reason: as a rule, declaring variables inside the loop is less efficient. 
+<B>
+<CODEMODE>
+Wrong
+
+for (int i = 0; i < 100; i++) {
+    int bad_var1 = 0;
+    // ...
+}
+while (true) {
+    int bad_var2 = 0;
+    // ...
+}
+do {
+    int bad_var3 = 0;
+    // ...
+} while (true); 
+
+Tip: Move variable declarations out of loop 
+
+Right
+
+int good_var1;
+for (int i = 0; i < 100; i++) {
+   good_var1 = 0;
+   // ...
+}
+int good_var2;
+while (true) {
+   good_var2 = 0;
+   // ...
+}
+int var3;
+do {
+   good_var3 = 0;
+   // ...
+} while (true); 
+<TEXTMODE>
+<P>
+@@atswl
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Performance enhancements can be obtained by replacing String operations with <B>
+StringBuffer operations if a String object is appended to within a loop.
+<B>
+<CODEMODE>
+Wrong
+
+public class ATSWL {
+    public String func () {
+        String bad_var = "var";
+        for (int i = 0; i < 10; i++) {
+            bad_var += (" " + i); 
+        }
+        return bad_var;
+    }
+} 
+
+Tip: Use StringBuffer class instead of String 
+
+Right
+
+public class ATSWL {
+    public String func () {
+        StringBuffer good_var = new StringBuffer("var");
+        for (int i = 0; i < 10; i++) {
+            good_var.append(" " + i); 
+        }
+        return good_var.toString();
+    }
+}
+<TEXTMODE>
+<P>
+@@dicfvh
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Expansion of Vector capacity involves allocating a larger array and copying <B>
+the contents of the old array to the new one. Eventually, the old array <B>
+object gets reclaimed by the garbage collector. Vector expansion is an <B>
+expensive operation. Same situation with HashTable. It is often the case <B>
+that the default 10-element capacity of a collection is not enough. <B>
+<B>
+<CODEMODE>
+Wrong
+
+public class DICFV {
+  public void addObjects (Object[] o) {
+    // if length > 10, Vector needs to expand
+    for (int i = 0; i < o.length;i++) {
+      v.add(o[i]);     // capacity before it can add more elements.
+    }
+  }
+  public Vector v = new Vector();     // no initialCapacity.
+}
+
+Tip: Often, you may have a pretty good guess for the expected size. Define 
+initialcapacity when known.
+
+   public Vector v = new Vector(20);
+   public Hashtable hash = new Hashtable(40); 
+
+Right
+
+public class DICFV {
+  public void addObjects (Object[] o) {
+    for (int i = 0; i < o.length;i++) {
+      v.add(o[i]);
+    }
+  }
+  public Vector v = new Vector(20);     // You set initialCapacity.
+}
+<TEXTMODE>
+<P>
+@@dis
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The 'StringBuffer' constructor will create a character array of a default <B>
+size, typically 16. If StringBuffer exceeds it's capacity, StringBuffer <B>
+has to allocate a new character array with a larger capacity, copy the <B>
+old contents into the new array, and eventually discard the old array. <B>
+In many situations you can tell in advance how big your StringBuffer is <B>
+likely to be. In that case, reserve enough capacity during construction <B>
+and prevent the StringBuffer from ever needing expansion.
+<B>
+<CODEMODE>
+Wrong
+
+public class DIS {
+  void oper () {
+    StringBuffer buffer = new StringBuffer(); 
+    buffer.append ("hello");
+  }
+} 
+
+Tip: Provide initial capacity for StringBuffer.
+
+Right
+
+public class DIS {
+  void oper () {
+    StringBuffer buffer = new StringBuffer(MAX);
+    buffer.append ("hello");
+  }
+  private final int MAX = 100;
+} 
+<TEXTMODE>
+<P>
+@@dntefnp
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Throwing an exception is costly and should be reserved for exceptional <B>
+situations. Something that you expect to happen normally during execution <B>
+of your code is not exceptional. For example, if you are writing validation <B>
+rules that either pass or fail, you should not generate an exception on <B>
+your rule failure. Control anything you can directly with code. Exceptions <B>
+are designed to handle situations for which you cannot possibly code.
+<B>
+<CODEMODE>
+Wrong
+
+try // DON'T DO IN THIS WAY 
+{
+    int i = 0;
+    while ( true ) 
+    {
+        process(array[i++]);
+    }
+} 
+catch (ArrayIndexOutOfBoundsException e) {} 
+<TEXTMODE>
+<P>
+@@ptcol
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Placing try/catch blocks inside loops can slow down the execution of code. <B>
+If the JIT compiler is turned off or if you are running a JVM without a JIT, <B>
+performance speed may decrease by about 21 percent.
+<B>
+<CODEMODE>
+Wrong
+
+public class PTCOL {
+  void oper (FileInputStream fis) {
+    for (int i = 0; i < size; i++) {
+      try {
+        _sum += fis.read();
+      } catch (Exception e) {}
+    }
+  }
+  private int _sum;
+}
+
+Tip: Place try/catch block outside of the loop.
+
+Right
+
+public class PTCOL {
+  void oper (FileInputStream fis) {
+    try {
+      for (int i = 0; i < size; i++) {
+        _sum += fis.read();
+      }
+    } catch (Exception e) {}
+  }
+  private int _sum;
+}
+<TEXTMODE>
+<P>
+@@ucisfsc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Instead of concatenating one-character String constants, replace them with<B>
+character constants for optimization.
+<B>
+<CODEMODE>
+Wrong
+
+public class UCISFSC {
+  public void oper(String s) {
+    String string = s + "d"; 
+  }
+}
+
+Tip: Replace them with character constants for optimization.
+
+Right
+
+public class UCISFSC {
+  public void oper(String s) {
+    String string = s + 'd'; 
+  }
+}
+<TEXTMODE>
+<P>
+@@ucis
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Using startsWith() with a one character argument works fine but from a <B>
+performance perspective this method is a misuse of the String API. <B>
+startsWith() makes quite a few computations preparing itself to compare <B>
+its prefix with another string.
+<B>
+<CODEMODE>
+Wrong
+
+public class UCIS {
+  private void method(String s) {
+    if (s.startsWith("a")) {
+      // ...
+    }
+  }
+}
+
+Tip: Replace 'startsWith()' with 'charAt()'.
+
+Right
+
+public class UCIS {
+  private void method(String s) {
+    if ('a' == s.charAt(0)) {
+      // ...
+    }
+  }
+}
+<TEXTMODE>
+<P>
+@@uarrcpy
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Don't using a loop to copy arrays. Use 'System.arraycopy ()' instead it.
+<B>
+<CODEMODE>
+Wrong
+
+void oper () {
+    int[] array1 = new int [100];
+    for (int i = 0; i < array1.length; i++) {
+      array1 [i] = i;
+    }
+    int[] array2 = new int [100];
+    for (int i = 0; i < array2.length; i++) {
+      array2 [i] = array1 [i];
+    }
+  }
+
+Tip: Use 'System.arraycopy ()' instead of using a loop to copy arrays. 
+'System.arraycopy ()' is much faster than using a loop to copy an array.
+
+Right
+
+void oper () {
+    int[] array1 = new int [100];
+    for (int i = 0; i < array1.length; i++) {
+     array1 [i] = i;
+    }
+    int[] array2 = new int [100];
+    System.arraycopy(array1, 0, array2, 0, 100);
+} 
+<TEXTMODE>
+<P>
+@@gcautcpts
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Java provides wrapping classes for primitive types. Those classes provide <B>
+a static method toString (...) to convert primitive types into their String<B>
+ equivalent. Use this method instead of creating an object of the wrapping <B>
+class and then using the instance toString () method.
+<B>
+<CODEMODE>
+Wrong
+
+public class AUTCPTS {
+  String operFoo (int var) {
+    return new Integer (var).toString ();
+  }
+}
+
+Tip: Use a static method toString (...) to convert primitive types into their 
+String equivalent.
+
+Right
+
+public class AUTCPTS {
+  String operFoo (int var) {
+    return Integer.toString (var);
+  }
+}
+<TEXTMODE>
+<P>
+@@gcasc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Static variables (Vector, Hashtable, etc) are able to hold large number of <B>
+objects are therefore candidates for memory leaks.
+<B>
+<CODEMODE>
+Wrong
+
+public class GCASC {
+  public static Vector vector = new Vector ();
+  void oper(Object o) {
+    vector.add(o);
+  }
+}
+
+Tip: If the static variable is necessary, set a maximum size and make sure that 
+Vector does not exceed that limit.
+
+Right
+
+public class GCASC {
+  public static void addVector(Object o) {
+    // checks size of the Vector before calling add().
+    if(vector.size() < MAX) {
+      vector.add(o);
+    }
+  }
+  void oper(Object o) {
+    addVector(o);
+  }
+  public static Vector vector = new Vector (5,5);
+  public static final int MAX = 5;
+} 
+<TEXTMODE>
+<P>
+@@gcfmul
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The finalize() method gets only called when there are no more references <B>
+to the object. If the listeners are removed in the finalize() method <B>
+the object will not be removed during garbage collection.
+<B>
+<CODEMODE>
+Wrong
+
+public class GCFMUL extends Panel {
+  public void finalize() {
+    remove (_button);
+    super.finalize();
+  }
+  private Button _button = new Button();
+}
+
+Tip: Do not call methods that remove listeners in the finalize() method body.
+<TEXTMODE>
+<P>
+@@gcgcb
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+The getClipBounds() method always returns a new rectangle, thereby allocating <B>
+more memory every time the method is called. This causes the garbage collector <B>
+to be very busy. NOTE: Only methods with more than one getClipBounds() call <B>
+will be reported.<B>
+<CODEMODE>
+Wrong
+
+public class GCGCB {
+  public void paint(Graphics g) {
+    int firstColLine = g.getClipBounds().x;
+    int lastColLine = g.getClipBounds().x + g.getClipBounds().width;
+  }
+} 
+
+Tip: Reuse objects.
+
+Right
+
+public class GCGCB {
+  public void paint(Graphics g) {
+    Rectangle rec = g.getClipBounds();       // instantiate an object, rec
+    int firstColLine = rec.x;                // reuse "rec"
+    int lastColLine = rec.x + rec.width;     // reuse "rec"
+  }
+} 
+<TEXTMODE>
+<P>
+@@mui
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Excessive use of instanceof will slow your programm, as will most <B>
+reflection operations.<B>
+<CODEMODE>
+Wrong
+
+  double annualCompensation = 0;
+  if (employee instanceof Contractor) { 
+    annualCompensation = 
+      ((Contractor)employee).getHourlyRate() * 2000;
+  } 
+  else 
+    if (employee instanceof Grunt) { 
+      annualCompensation = 
+        ((Grunt)employee).getMonthlySalary() * 12;
+    } 
+    else 
+      if (employee instanceof Manager) { 
+        annualCompensation = 
+          ((Manager)employee).getContractRate() * 
+          ((Manager)employee).getContractPeriod();
+      } 
+
+
+Tip: Rename packages, classes, members etc. in a proper way. 
+
+Right
+
+public class Contractor 
+{ 
+    // .... 
+    public double getAnnualCompensation() 
+    { 
+      return getHourlyRate() * 2000; 
+    }
+} 
+
+public class Grunt 
+{ 
+    // .... 
+    public double getAnnualCompensation() 
+    { 
+      return getMonthlySalary() * 12; 
+    }
+} 
+
+public class Manager 
+{ 
+    // .... 
+    public double getAnnualCompensation() 
+    { 
+      return getHContractRate() * 
+             getContractPeriod(); 
+    }
+} 
+<TEXTMODE>
+<P>
+@@muc
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Casting is not a free operation. Minimize using of castiong whenether it<B>
+will be possible.<B>
+<CODEMODE>
+Wrong
+
+    int length = ((String)object).length();
+    char ch1 = ((String)object).charAt(0);
+    char ch2 = ((String)object).charAt(length - 1);
+
+
+Tip: Do single cast only once through the use of temporary variable. 
+
+Right
+
+    String string = (String)object;
+    int length = string.length();
+    char ch1 = string.charAt(0);
+    char ch2 = string.charAt(length -1);
+<TEXTMODE>
+<P>
+@@gcncfe
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Calling finalize() method explicitly insures that finalize() is called, but <B>
+the Garbage Collection during runtime will call the finalize() method again <B>
+when the object is collected.
+<B>
+<CODEMODE>
+Wrong
+
+package com.swemancipation.gctest;
+
+class GCNCFE {
+  public void finalize() throws Throwable {
+    super.finalize();
+  }
+}
+class Test {
+  void closeTest () throws Throwable {
+    _test.finalize(); // this may get called again by Java Virtual Machine
+    _test = null;
+  }
+  private GCNCFE _test = new GCNCFE ();
+}
+
+Tip: Create a method to handle release of the memory then call this method 
+from a finalize() method before the calling of the super.finalize() method.
+
+Right
+
+package com.swemancipation.gctest;
+
+class GCNCFE {
+public void release() {
+  if (!closed) {
+    _test.finalize ();
+    closed = true;
+  }
+}
+public void finalize () throws Throwable {
+  release (); 
+  super.finalize();
+}
+<TEXTMODE>
+<P>
+@@gcoskr
+<TEXTMODE>
+<QUALITYRESULT>
+<P>
+Be aware of memory leaks due to 'ObjectStream' usage. ObjectInputStream and <B>
+ObjectOutputStream may cause memory leaks. ObjectStreams are designed to handle<B>
+the case of sending the same Object multiple times across a connection. For <B>
+this reason, ObjectStream classes keep a reference to all objects written or <B>
+read until the 'reset()' method is called. Thoes objects will not be garbage <B>
+collected until 'reset()' is called.
+<B>
+<CODEMODE>
+Wrong
+
+public class OSKR {
+  public void writeStringToStream(ObjectOutputStream os, String s)
+    throws IOException {
+    os.writeObject (s);     // possibly cause memory leaks here.
+  }
+}
+
+Tip: Use 'reset()' of ObjectOutputStream or Object InputStream class's method 
+to clear the list of Objects written to the Stream. Or, use DataStreams instead
+of ObjectStreams in terms of Strings or byte arrays for optimal performance. 
+
+Right
+
+public class OSKR {
+  public void writeStringToStream(ObjectOutputStream os, String s)
+    throws IOException {
+    os.writeObject (s);
+    os.reset();     // prevents memory leaks.
+    }
+}
+<TEXTMODE>
+<P>

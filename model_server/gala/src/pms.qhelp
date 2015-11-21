@@ -1,0 +1,19 @@
+
+#
+# File (master)
+#
+
+ dis_MenuAddMenuArgument AppFileMenu 			"qhelp="
+ dis_MenuAddItemArgument   FileQuit              "qhelp=Exit DISCOVER"
+#
+# Help
+#
+
+ dis_MenuAddMenuArgument HelpMenu				"qhelp="
+
+  dis_MenuAddItemArgument   HelpContentsItem	"qhelp=Display the main help file." 
+     
+
+  dis_MenuAddItemArgument   HelpAboutDiscover	"qhelp="
+
+

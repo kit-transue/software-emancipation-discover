@@ -1,0 +1,90 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: ServerStart - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x409 /fo"Debug/ServerStart.res" /d "_DEBUG" /d "_AFXDLL" "D:\rd\ci_emancipation\serverstart\ServerStart.rc"" 
+Creating temporary file "C:\DOCUME~1\jverne\LOCALS~1\Temp\RSP1DAA.tmp" with contents
+[
+/nologo /MDd /W3 /GX /ZI /Od /I "../gala/extern/osport/include" /I "../gala/ads/osport/include" /I "..\gala\extern\tset\include" /I "..\gala\extern\osport\include" /I "..\gala\extern\ads\include" /I "..\nameserver\include" /I "..\dish\include" /I "D:/rd/ci_emancipation\gala\extern\tset\include" /I "D:/rd/ci_emancipation\gala\extern\osport\include" /I "D:/rd/ci_emancipation\gala\extern\ads\include" /I "D:/rd/ci_emancipation\nameserver\include" /I "D:/rd/ci_emancipation\dish\include" /I ".\include" /D "_DEBUG" /D "PCxOS" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /Fo"Debug/" /Fd"Debug/" /FD /c 
+"D:\rd\ci_emancipation\gala\extern\osport\src\bitMEM.cxx"
+"D:\rd\ci_emancipation\gala\extern\tset\settings\item.cxx"
+"D:\rd\ci_emancipation\nameserver\src\nameServCalls.cxx"
+"D:\rd\ci_emancipation\gala\extern\ads\src\parray.cxx"
+"D:\rd\ci_emancipation\gala\extern\osport\src\pdufile.cxx"
+"D:\rd\ci_emancipation\gala\extern\osport\src\pduio.cxx"
+"D:\rd\ci_emancipation\gala\extern\osport\src\pdumem.cxx"
+"D:\rd\ci_emancipation\gala\extern\osport\src\pdupath.cxx"
+"D:\rd\ci_emancipation\gala\extern\osport\src\pdustring.cxx"
+"D:\rd\ci_emancipation\gala\extern\tset\settings\persistent.cxx"
+"D:\rd\ci_emancipation\gala\extern\osport\src\raFile.cxx"
+"D:\rd\ci_emancipation\serverstart\src\ServerStart.cpp"
+"D:\rd\ci_emancipation\serverstart\src\ServerStartDlg.cpp"
+"D:\rd\ci_emancipation\gala\extern\tset\settings\settings.cxx"
+"D:\rd\ci_emancipation\dish\src\SocketComm.cxx"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jverne\LOCALS~1\Temp\RSP1DAA.tmp" 
+Creating temporary file "C:\DOCUME~1\jverne\LOCALS~1\Temp\RSP1DAB.tmp" with contents
+[
+/nologo /MDd /W3 /GX /ZI /Od /I "../gala/extern/osport/include" /I "../gala/ads/osport/include" /I "..\gala\extern\tset\include" /I "..\gala\extern\osport\include" /I "..\gala\extern\ads\include" /I "..\nameserver\include" /I "..\dish\include" /I "D:/rd/ci_emancipation\gala\extern\tset\include" /I "D:/rd/ci_emancipation\gala\extern\osport\include" /I "D:/rd/ci_emancipation\gala\extern\ads\include" /I "D:/rd/ci_emancipation\nameserver\include" /I "D:/rd/ci_emancipation\dish\include" /I ".\include" /D "_DEBUG" /D "PCxOS" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /Fp"Debug/serverstart.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /c 
+"D:\rd\ci_emancipation\serverstart\src\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jverne\LOCALS~1\Temp\RSP1DAB.tmp" 
+Creating temporary file "C:\DOCUME~1\jverne\LOCALS~1\Temp\RSP1DAC.tmp" with contents
+[
+WSock32.lib /nologo /subsystem:windows /incremental:no /pdb:"Debug/serverstart.pdb" /debug /machine:I386 /out:"Debug/serverstart.exe" /pdbtype:sept 
+.\Debug\bitMEM.obj
+.\Debug\item.obj
+.\Debug\nameServCalls.obj
+.\Debug\parray.obj
+.\Debug\pdufile.obj
+.\Debug\pduio.obj
+.\Debug\pdumem.obj
+.\Debug\pdupath.obj
+.\Debug\pdustring.obj
+.\Debug\persistent.obj
+.\Debug\raFile.obj
+.\Debug\ServerStart.obj
+.\Debug\ServerStartDlg.obj
+.\Debug\settings.obj
+.\Debug\SocketComm.obj
+.\Debug\StdAfx.obj
+.\Debug\ServerStart.res
+]
+Creating command line "link.exe @C:\DOCUME~1\jverne\LOCALS~1\Temp\RSP1DAC.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+bitMEM.cxx
+item.cxx
+nameServCalls.cxx
+d:\rd\ci_emancipation\nameserver\src\nameservcalls.cxx(121) : warning C4244: 'initializing' : conversion from '__int64' to 'unsigned short', possible loss of data
+parray.cxx
+pdufile.cxx
+pduio.cxx
+pdumem.cxx
+pdupath.cxx
+pdustring.cxx
+persistent.cxx
+raFile.cxx
+ServerStart.cpp
+d:\rd\ci_emancipation\serverstart\src\serverstart.cpp(192) : warning C4018: '<' : signed/unsigned mismatch
+ServerStartDlg.cpp
+settings.cxx
+SocketComm.cxx
+Generating Code...
+Linking...
+LINK : warning LNK4075: ignoring /EDITANDCONTINUE due to /INCREMENTAL:NO specification
+
+
+
+<h3>Results</h3>
+serverstart.exe - 0 error(s), 3 warning(s)
+</pre>
+</body>
+</html>

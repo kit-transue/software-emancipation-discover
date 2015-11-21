@@ -1,0 +1,8 @@
+CPROOTS = \
+    mappedFile \
+    position \
+    region \
+    mapping \
+    mappingList \
+    elsMapper
+

@@ -1,0 +1,535 @@
+# This file is called from ma for each component
+
+include $(MAKELIB)/Make.general
+
+include $(FLIST)
+
+CFLAGS=$(CARCHFLAGS) $(DEBUG) $(CDEFINES) $(CINCLUDES) $(COUTPUT)
+CCFLAGS=$(CCARCHFLAGS) $(DEBUG) $(CCDEFINES) $(CCINCLUDES) $(COUTPUT)
+
+# Try not to use global defines.  We'd like to get to the point where we
+# have resuable libraries, and conditionally compiled code breaks this!
+EXECDEFINES:= 
+ifeq "$(EXEC_BRANCH)" "if_diff"
+  EXECDEFINES:= -DUSE_EXTERN_LIB
+endif
+ifeq "$(EXEC_BRANCH)" "if_parser"
+  EXECDEFINES:= -DUSE_EXTERN_LIB
+endif
+ifeq "$(EXEC_BRANCH)" "simplify"
+  EXECDEFINES:= -DUSE_EXTERN_LIB
+endif
+ifeq "$(EXEC_BRANCH)" "pbmb_ts"
+  EXECDEFINES:= -DTRANSPORT_SERVER -D_REENTRANT
+endif
+
+CDEFINES:= $(D)GCC2 $(D)_NO_PROTO $(D)FLAG_NO_PROTO $(D)$(DARCH) $(D)$(ARCHDEF) \
+       $(EXECDEFINES)
+CCDEFINES:=$(D)GCC2 $(D)NEWCPP $(D)cplusplus_3_0_1 $(D)$(DARCH) $(D)$(ARCHDEF) \
+       $(EXECDEFINES)
+
+ifeq "$(ARCH)" "sun5"
+  CDEFINES:= $(CDEFINES) -DSYSV -D__TIMEVAL__ -DUSE_SPARCWORKS
+  CCDEFINES:= $(CCDEFINES) -DSYSV -D__TIMEVAL__ -DUSE_SPARCWORKS -DSOLARIS -DISO_CPP_HEADERS
+  COUTPUT=
+endif
+
+ifeq "$(ARCH)" "hp10"
+  CCARCHFLAGS:= $(CCARCHFLAGS)
+  CDEFINES:= $(CDEFINES) -DONLY_INT_FIELDS -DNEWCPP -D_HPUX_SOURCE
+  CCDEFINES:= $(CCDEFINES) -DONLY_INT_FIELDS -DCANT_FWD_DECL_NESTED
+  COUTPUT=
+endif
+
+ifeq "$(ARCH)" "irix6"
+  CDEFINES:= $(CDEFINES)
+  CCDEFINES:= $(CCDEFINES) -DSYSV -DCANT_FWD_DECL_NESTED
+  COUTPUT=
+endif
+
+ifeq "$(ARCH)" "win32"
+  CDEFINES:= $(CDEFINES)
+  CCDEFINES:= $(CCDEFINES) /D "ISO_CPP_HEADERS" /D "_CONSOLE"
+  COUTPUT=/Fo$(*).o
+endif
+
+ifeq "$(COMPONENT)" "if_parser/src"
+  LEX=$(FLEX) -8 -Cfa
+endif
+
+# Target-specific stuff:
+
+
+ifeq "$(EXEC_BRANCH)" "aset"
+
+  CINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(CPP_INCLUDES) -I/usr/local/include  $(X_FLAG) $(UIMX_INC)
+
+  CCINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(CPP_INCLUDES) $(CPLUS_INC) $(IV2_FLAG) $(X_FLAG) $(UIMX_INC)
+
+  ifeq "$(COMPONENT)" "mrg_diff"
+    CCINCLUDES:= $(CCINCLUDES) \
+	-I$(LOCAL_SRC_ROOT)/mrg_diff/include \
+	-I$(BUILD_SRC_ROOT)/mrg_diff/include \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include
+  endif
+
+  ifeq "$(COMPONENT)" "model_server/uimx"
+    CINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(X_FLAG)
+    CDEFINES:= $(CDEFINES) -DRUNTIME -DMOTIF_WIDGETS -DSAFE_MALLOC \
+       -D_STREAM_DRIVER
+  endif
+	
+  ifeq "$(COMPONENT)" "model_server/iv_Dispatch"
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+  ifeq "$(COMPONENT)" "model_server/iv_Graphic"
+    #
+    # Graphic library belongs to IV 2.6
+    #
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV2_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+  ifeq "$(COMPONENT)" "model_server/iv_IV-2_6"
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+  ifeq "$(COMPONENT)" "model_server/iv_IV-X11"
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+  ifeq "$(COMPONENT)" "model_server/iv_IV-look"
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+  ifeq "$(COMPONENT)" "model_server/iv_InterViews"
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+  ifeq "$(COMPONENT)" "model_server/iv_OS"
+    CCINCLUDES:= $(CPP_INCLUDES) $(CPLUS_INC) -I. $(IV_FLAG) $(X_FLAG)
+    CCDEFINES:= $(CCDEFINES) -DAlphaSet
+  endif
+
+  ifeq "$(COMPONENT)" "model_server/smt"
+    ifeq "$(ARCH)" "irix6"
+      CARCHFLAGS:= $(CARCHFLAGS) -cckr
+    endif
+  endif
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "mrg_ui"
+  ifeq "$(COMPONENT)" "stream_message"
+    CCINCLUDES:= \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(CPP_INCLUDES)
+  endif
+
+  ifeq "$(COMPONENT)" "gen"
+    CCINCLUDES:= $(CCINCLUDES) \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/process/include \
+	-I$(BUILD_SRC_ROOT)/model_server/process/include
+  endif
+
+  ifeq "$(COMPONENT)" "machine"
+    CCINCLUDES:= $(CCINCLUDES) \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include
+  endif
+
+  ifeq "$(COMPONENT)" "mrg_ui"
+	  CINCLUDES:= -I. $(X_FLAG) $(UIMX_INC) $(GCC_INC) \
+	      -I/usr/local/include \
+	      -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	      -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	      -I$(LOCAL_SRC_ROOT)/gen/include \
+	      -I$(BUILD_SRC_ROOT)/gen/include \
+	      $(TCL_INC) $(TK_INC)
+	  CCINCLUDES:= $(CPLUS_INC) -I. $(IV2_FLAG) $(X_FLAG) $(UIMX_INC) \
+	       $(GCC_INC) \
+	       -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	       -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	       -I$(LOCAL_SRC_ROOT)/gen/include \
+	       -I$(BUILD_SRC_ROOT)/gen/include \
+	       -I$(LOCAL_SRC_ROOT)/machine/include \
+	       -I$(BUILD_SRC_ROOT)/machine/include \
+	       $(TCL_INC) $(TK_INC)
+  endif
+
+  ifeq "$(COMPONENT)" "template_dictionary"
+    CPP_INCLUDES:= $(CCINCLUDES) \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include
+  endif
+endif
+
+ifeq "$(EXEC_BRANCH)" "aset_CCcc"
+  CINCLUDES:= -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+              -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+              $(CPP_INCLUDES)
+  CCINCLUDES:= -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+               -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+               $(CPP_INCLUDES)
+
+  CDEFINES:= $(D)$(DARCH) $(D)SOFTWARE_EMANCIPATION_PARSER \
+       $(D)IL_SHOULD_BE_WRITTEN_TO_FILE
+  CCDEFINES:= $(CCDEFINES) $(D)SOFTWARE_EMANCIPATION_PARSER \
+       $(D)IL_SHOULD_BE_WRITTEN_TO_FILE
+
+  # platform-specific flags for aset_CCcc exec-branch:
+  ifeq "$(ARCH)" "hp10"
+    CDEFINES:= $(CDEFINES) -D_HPUX_SOURCE
+    CCDEFINES:= $(CCDEFINES) -D__ANSIC__
+  endif
+  ifeq "$(ARCH)" "irix6"
+    CARCHFLAGS:= $(CARCHFLAGS) -cckr
+  endif
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "aset_jfe"
+  CINCLUDES:= -I. \
+	      -I$(LOCAL_SRC_ROOT)/aset_jfe/include \
+	      -I$(BUILD_SRC_ROOT)/aset_jfe/include \
+	      -I$(LOCAL_SRC_ROOT)/md5/include \
+	      -I$(BUILD_SRC_ROOT)/md5/include \
+	      $(LIC_INC) \
+		  $(CPP_INCLUDES)
+  CCINCLUDES:= -I.  \
+	       -I$(LOCAL_SRC_ROOT)/aset_jfe/include \
+	       -I$(BUILD_SRC_ROOT)/aset_jfe/include \
+	       -I$(LOCAL_SRC_ROOT)/stream_message/include \
+	       -I$(BUILD_SRC_ROOT)/stream_message/include \
+		  $(CPP_INCLUDES)
+  CDEFINES:= -D$(ARCH) -DSOFTWARE_EMANCIPATION_PARSER \
+       -DDEFAULT_USE_CLASS_FILES -DGENERATE_CIL=FALSE \
+       -DBACK_END_IS_C_GEN_BE=FALSE -DHOST_BIG_ENDIAN=TRUE
+
+  ifeq "$(COMPONENT)" "xxinterface"
+    CPP_INCLUDES:= $(CCINCLUDES) \
+	$(I)$(LOCAL_SRC_ROOT)/FLEXlm/flexlm/current/machind \
+	$(I)$(BUILD_SRC_ROOT)/FLEXlm/flexlm/current/machind \
+	$(I)$(LOCAL_SRC_ROOT)/model_server/interface/include \
+	$(I)$(BUILD_SRC_ROOT)/model_server/interface/include \
+	$(I)$(LOCAL_SRC_ROOT)/model_server/ui/include \
+	$(I)$(BUILD_SRC_ROOT)/model_server/ui/include \
+	$(I)$(LOCAL_SRC_ROOT)/gen/include \
+	$(I)$(BUILD_SRC_ROOT)/gen/include \
+	$(LIC_INC)
+    CCINCLUDES:=$(CPP_INCLUDES)
+  endif
+
+  ifeq "$(COMPONENT)" "template_dictionary"
+    CPP_INCLUDES:= $(CCINCLUDES) \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include
+  endif
+
+  # platform-specific flags for aset_jfe exec-branch:
+  ifeq "$(ARCH)" "sun5"
+    CDEFINES:= $(CDEFINES) -DSOLARIS
+  endif
+
+  ifeq "$(ARCH)" "hp10"
+    CDEFINES:= $(CDEFINES) -D_HPUX_SOURCE
+    CC=c89
+    CARCHFLAGS:= -Wp,-H500000 +DAportable +DS2.0
+  endif
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "dismb"
+  CCINCLUDES:= -I. $(CPLUS_INC) -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+               -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include $(CPP_INCLUDES)
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "if_diff"
+  CINCLUDES:= -I. -I/paraset/src/paraset/els/if_parser/include
+  CCINCLUDES:= -I. $(CPLUS_INC) -I/usr/local/include \
+       -I/paraset/src/paraset/els/if_diff/include \
+       -I/paraset/src/paraset/els/if_parser/include \
+       -I/paraset/src/paraset/els/mapper/include \
+       -I/paraset/src/extern/osport/include \
+       -I/paraset/src/extern/ads/include
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "if_parser"
+  CINCLUDES:= -I. -I/paraset/src/paraset/els/if_parser/include
+  CCINCLUDES:= -I. $(CPLUS_INC) -I/usr/local/include \
+       -I/paraset/src/extern/tset/include \
+       -I/paraset/src/paraset/els/driver/include \
+       -I/paraset/src/paraset/els/if_parser/include \
+       -I/paraset/src/paraset/els/mapper/include \
+       -I/paraset/src/extern/osport/include \
+       -I/paraset/src/extern/ads/include
+
+  # defines for printing various bits of debugging information during running
+  #-DDEBUG_ELSMAPPING -DCOUNT_STRUCTS -DREPORT_SUMMARY -DPRINT_TO_SCREEN -DREPORT_DETAILED
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "pbmb"
+  CINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(CPP_INCLUDES)
+  CCINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+	$(CPP_INCLUDES)
+
+  ifeq "$(COMPONENT)" "template_dictionary"
+    CPP_INCLUDES:= -I$(LOCAL_SRC_ROOT)/pdfgen/include \
+	-I$(BUILD_SRC_ROOT)/pdfgen/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+	-I$(LOCAL_SRC_ROOT)/parsercmd/include \
+	-I$(BUILD_SRC_ROOT)/parsercmd/include
+  endif
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "pbmb_ts"
+  CINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(CPP_INCLUDES)
+  CCINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/log_presentation/include \
+	-I$(BUILD_SRC_ROOT)/log_presentation/include \
+	-I$(LOCAL_SRC_ROOT)/xxinterface/include \
+	-I$(BUILD_SRC_ROOT)/xxinterface/include \
+	-I$(LOCAL_SRC_ROOT)/md5/include \
+	-I$(BUILD_SRC_ROOT)/md5/include \
+	$(CPP_INCLUDES)
+  
+  ifeq "$(COMPONENT)" "template_dictionary"
+    CPP_INCLUDES:= \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+        -I$(LOCAL_SRC_ROOT)/log_presentation/include \
+	-I$(BUILD_SRC_ROOT)/log_presentation/include
+  endif
+
+  ifeq "$(COMPONENT)" "xxinterface"
+    CPP_INCLUDES:= $(CCINCLUDES) \
+	-I$(LOCAL_SRC_ROOT)/FLEXlm/flexlm/current/machind \
+	-I$(BUILD_SRC_ROOT)/FLEXlm/flexlm/current/machind \
+	-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+	-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+	-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+        -I$(LOCAL_SRC_ROOT)/xxinterface/include \
+	-I$(BUILD_SRC_ROOT)/xxinterface/include \
+        -I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include
+  endif
+
+  ifeq "$(ARCH)" "irix6"
+    CCARCHFLAGS:= $(CCARCHFLAGS) -exceptions
+    CDEFINES:=$(CDEFINES) -D_REENTRANT
+    CCDEFINES:=$(CCDEFINES) -D_REENTRANT
+  endif
+else
+  ifeq "$(ARCH)" "irix6"
+    CARCHFLAGS:= $(CARCHFLAGS) -n32
+    CCARCHFLAGS:= $(CCARCHFLAGS) -n32
+  endif
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "dis_sql"
+  # sql.y and sybase.y in dis_sql rely on redefining YYLEX.  We modify bison.simple to allow this:
+  BISON_SIMPLE=${BUILD_SRC_ROOT}/dis_sql/src/bison.simple.no_yylex
+  export BISON_SIMPLE
+
+  CINCLUDES:= -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	      -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	      $(CPP_INCLUDES)
+  CCINCLUDES:= -I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	       -I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	       $(CPP_INCLUDES)
+
+  CDEFINES:= -D$(ARCH)
+  #LEX=/usr/local/bin/flex -i
+  LEX=${OS_SHARED_DIR}/local/bin/flex -i
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "sev"
+  CINCLUDES:= -I. \
+        -I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+        -I$(LOCAL_SRC_ROOT)/gala/extern/osport/include \
+	-I$(BUILD_SRC_ROOT)/gala/extern/osport/include \
+        -I$(LOCAL_SRC_ROOT)/gala/extern/ads/include \
+	-I$(BUILD_SRC_ROOT)/gala/extern/ads/include \
+	-I$(LOCAL_SRC_ROOT)/sevreporter/include \
+	-I$(BUILD_SRC_ROOT)/sevreporter/include \
+        -I$(LOCAL_SRC_ROOT)/sevreporter/gd/include \
+	-I$(BUILD_SRC_ROOT)/sevreporter/gd/include \
+        -I$(LOCAL_SRC_ROOT)/sevreporter/gdchart/include \
+	-I$(BUILD_SRC_ROOT)/sevreporter/gdchart/include
+  CCINCLUDES:= -I. $(CPLUS_INC) \
+        -I$(LOCAL_SRC_ROOT)/machine/include \
+	-I$(BUILD_SRC_ROOT)/machine/include \
+        -I$(LOCAL_SRC_ROOT)/gala/extern/osport/include \
+	-I$(BUILD_SRC_ROOT)/gala/extern/osport/include \
+        -I$(LOCAL_SRC_ROOT)/gala/extern/ads/include \
+	-I$(BUILD_SRC_ROOT)/gala/extern/ads/include \
+	-I$(LOCAL_SRC_ROOT)/sevreporter/include \
+	-I$(BUILD_SRC_ROOT)/sevreporter/include \
+        -I$(LOCAL_SRC_ROOT)/sevreporter/gd/include \
+	-I$(BUILD_SRC_ROOT)/sevreporter/gd/include \
+        -I$(LOCAL_SRC_ROOT)/sevreporter/gdchart/include \
+	-I$(BUILD_SRC_ROOT)/sevreporter/gdchart/include
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "simplify"
+  # defines for printing various bits of debugging information during running
+  #-DDEBUG_ELSMAPPING -DCOUNT_STRUCTS -DREPORT_SUMMARY -DPRINT_TO_SCREEN -DREPORT_DETAILED
+
+  CINCLUDES:= -I. \
+	-I${LOCAL_SRC_ROOT}/machine/include \
+	-I${BUILD_SRC_ROOT}/machine/include \
+	-I${LOCAL_SRC_ROOT}/els/if_parser/include \
+	-I${BUILD_SRC_ROOT}/els/if_parser/include
+  CCINCLUDES:= -I. $(CPLUS_INC) -I/usr/local/include \
+	-I${LOCAL_SRC_ROOT}/machine/include \
+	-I${BUILD_SRC_ROOT}/machine/include \
+	-I${LOCAL_SRC_ROOT}/gala/extern/tset/include \
+	-I${BUILD_SRC_ROOT}/gala/extern/tset/include \
+	-I${LOCAL_SRC_ROOT}/els/driver/include \
+	-I${BUILD_SRC_ROOT}/els/driver/include \
+	-I${LOCAL_SRC_ROOT}/els/if_parser/include \
+	-I${BUILD_SRC_ROOT}/els/if_parser/include \
+	-I${LOCAL_SRC_ROOT}/els/mapper/include \
+	-I${BUILD_SRC_ROOT}/els/mapper/include \
+	-I${LOCAL_SRC_ROOT}/gala/extern/osport/include \
+	-I${BUILD_SRC_ROOT}/gala/extern/osport/include \
+	-I${LOCAL_SRC_ROOT}/gala/extern/ads/include \
+	-I${BUILD_SRC_ROOT}/gala/extern/ads/include \
+	-I${LOCAL_SRC_ROOT}/simplify/include \
+	-I${BUILD_SRC_ROOT}/simplify/include \
+	$(ASET_INC)
+endif
+
+
+ifeq "$(EXEC_BRANCH)" "qaengine"
+  CCINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include \
+	-I/usr/include \
+	$(XML_INC)
+  
+    ifeq "$(COMPONENT)" "template_dictionary"
+    CPP_INCLUDES:= \
+	-I$(LOCAL_SRC_ROOT)/qaengine/include \
+	-I$(BUILD_SRC_ROOT)/qaengine/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include
+  endif
+endif
+
+ifeq "$(EXEC_BRANCH)" "cmdriver"
+  CCINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/cmdriver/CmXml/include \
+	-I$(BUILD_SRC_ROOT)/cmdriver/CmXml/include \
+	-I$(LOCAL_SRC_ROOT)/nameserver/include \
+	-I$(BUILD_SRC_ROOT)/nameserver/include \
+	-I$(LOCAL_SRC_ROOT)/DevXLauncher/include \
+	-I$(BUILD_SRC_ROOT)/DevXLauncher/include \
+	$(CPLUS_INC) \
+	$(XML_INC)
+endif
+
+ifeq "$(EXEC_BRANCH)" "cmdish"
+  CCINCLUDES:= -I. \
+	-I$(LOCAL_SRC_ROOT)/nameserver/include \
+	-I$(BUILD_SRC_ROOT)/nameserver/include \
+	-I$(LOCAL_SRC_ROOT)/DevXLauncher/include \
+	-I$(BUILD_SRC_ROOT)/DevXLauncher/include \
+	$(CPLUS_INC)
+endif
+
+ifeq "$(EXEC_BRANCH)" "cieclient"
+  CINCLUDES:= -I. \
+        $(C_INCLUDES)
+  CCINCLUDES:= -I. \
+	 -I$(LOCAL_SRC_ROOT)/ci_environment/include \
+        -I$(BUILD_SRC_ROOT)/ci_environment/include \
+        -I$(LOCAL_SRC_ROOT)/DevXLauncher/include \
+        -I$(BUILD_SRC_ROOT)/DevXLauncher/include \
+        -I$(LOCAL_SRC_ROOT)/stream_message/include \
+        -I$(BUILD_SRC_ROOT)/stream_message/include \
+        -I${LOCAL_SRC_ROOT}/machine/include \
+        -I${BUILD_SRC_ROOT}/machine/include \
+	$(CPP_INCLUDES) \
+	$(CXX_INCLUDES)
+endif
+
+ifeq "$(COMPONENT)" "template_dictionary"
+  ifeq "$(ARCH)" "sun5"
+    CCARCHFLAGS:=-instances=global -template=wholeclass
+    CCINCLUDES:=-I. \
+	-I$(LOCAL_SRC_ROOT)/$(COMPONENT)/include \
+	-I$(BUILD_SRC_ROOT)/$(COMPONENT)/include \
+	$(CPP_INCLUDES)
+    CCDEFINES:=$(CCDEFINES) -D_RWSTD_COMPILE_INSTANTIATE
+  endif
+endif
+
+include $(MAKELIB)/targets.mk
+
+
+
+
+
+

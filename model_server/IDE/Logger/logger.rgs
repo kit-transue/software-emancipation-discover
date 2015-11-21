@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		{62432511-1A4F-11D1-96A6-00A0245836D0} = s 'Logger'
+		'Logger.EXE'
+		{
+			val AppID = s {62432511-1A4F-11D1-96A6-00A0245836D0}
+		}
+	}
+}

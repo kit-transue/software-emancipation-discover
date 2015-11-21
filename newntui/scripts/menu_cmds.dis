@@ -1,0 +1,477 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc add_menu { args } {
+set command "add_menu"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+proc remove_menu { args } {
+set command "remove_menu"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+
+proc add_item { args } {
+set command "add_item"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+proc remove_item { args } {
+set command "remove_item"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+
+proc prompt {args} {
+set command "prompt"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+proc list_selection { args } {
+set command "list_selection"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+
+#########################################################################################################
+# open_window <submission_check>
+#########################################################################################################
+proc open_window {args} {
+set command "open_window"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+#########################################################################################################
+
+
+#########################################################################################################
+# question <-title title> message <btn1 btn2 btn3>
+#
+#########################################################################################################
+proc question {args} {
+set command "question"
+set separator "\3"
+set comm ""
+
+   append comm $command
+   foreach x $args {
+       # transform newlines into spaces
+       append comm $separator
+       append comm $x
+   }
+   return [send_notification $comm]
+}
+
+
+proc browser {args} {
+set command "browser"
+set separator "\3"
+set comm ""
+global notification_var_lock
+
+   append comm $command
+   if { [lindex $args 0] == "set" } {
+      if { [llength $args] < 2 } {
+	      set results "Wrong number of arguments"
+	      return -errorinfo $results
+	  }
+	  set notification_var_lock [set_copy [lindex $args end]]
+   }
+   foreach x $args {
+       append comm $separator
+       append comm $x
+   }
+   return  [send_notification $comm]
+}
+
+proc set_result { x } {
+   browser set results $x
+}
+
+proc load_src { sel } {
+    set xxx [ filter {mod && match("*.dis")} $sel]
+    if { [size $xxx ] > 0 } {
+	foreach el $xxx {
+	    source [name $el]
+	}
+    } else {
+	set el [prompt -title "Load .dis Script" "Enter filename:"]
+	if { "$el" != "" } {
+	    source $el
+	}
+    }
+}
+
+proc print_cmd { sel } {
+    set file [prompt -title "Print to file" "Print to file:"]
+	eval [prompt printformat]
+    if { "$file" != "" } {
+	> $file {print $sel}
+    }
+}
+
+proc access_command { } {
+    return [eval [prompt -title "Access Command" "Enter command:" ]]
+}
+
+proc query_command { sel } {
+    return [eval [prompt -title "Access Command" "Enter command:" ] $sel]
+}
+
+
+proc gen_filter { sel } {
+    set fff [prompt -title "Create Filter" "Enter filter:"]
+    if { "$fff" != "" } {
+	add_item Filter $fff "filter $fff"
+	return "Created filter $fff"
+    }
+    return "no filter created"
+}
+
+proc filter_def { fil proj } {
+    filter $fil [defines $proj]
+}
+
+proc gen_category {} {
+    set fff [prompt -title "Create Category" "Enter Filter:\ne.g: macro||(func&&&&!member)"]
+    if { "$fff" != "" } {
+	add_item Category $fff "filter_def $fff"
+	return "Created category $fff"
+    }
+    return "no category created"
+}
+
+proc add_cat_fil { fil } {
+    add_item Category $fil "filter_def  $fil"
+}
+
+proc query_def { q } {
+    set len [string length $q ]
+    set op 0
+    set cl 0;  
+    for {set i 0} { $i < $len } {incr i} {
+	set ch [string index $q $i]
+	if { $ch == "\[" } {
+	    incr op
+	} elseif { $ch == "\]" } {
+	    incr cl
+	}
+    }
+    set dif [expr $op - $cl]
+    if { $dif == 0 } {
+	return $q
+    } elseif { $dif < 0 } {
+	return ""
+    }
+
+    append q { $__sel }
+    for { set i 0 } { $i < $dif } { incr i } {
+	append q "\]"
+    }
+    list "lambda" "__sel"  $q
+}
+
+proc gen_query {} {
+    set fff [prompt -title "Create Query" "Enter query:\ne.g: filter fun \[where used\n\or\nlambda x {filter fun \[where used \$x\]}"]
+    if { "$fff" != "" } {
+	set q [query_def $fff]
+        if {"$q" != "" } {
+	    add_item Query $fff $q
+	    return "Created query $fff"
+	}
+    }
+    return "no query created"
+}
+
+proc fun_lookup { sel } {
+    set nm [prompt -title "Cname Pattern" "Enter pattern:"]
+    if { "$nm" != "" } {
+	set ls [defines -functions $sel]
+	return [filter "match(@$nm,cname)" $ls]
+    } else {
+	return [nil_set]
+    }
+}
+
+
+proc proj_leaves { proj } {
+    set proj [set_copy $proj]
+    set x [new_set]
+    foreach el $proj {
+	set y [filter project [contents $el]]
+	if [size $y] {
+	    sappend $x [ proj_leaves $y]
+	} else {
+	    sappend $x $el
+	}
+    }
+    return $x
+}
+
+proc filterprojname { name proj } {
+    if { [size $proj] == 0 } { return [new_set]}
+    set yes [filter $name $proj]
+    if [size $yes] {
+	return $yes
+    } else {
+	set proj [filter project [contents $proj]]      
+	return [filterprojname $name $proj]
+    }
+}
+
+proc find_project { name proj } {
+
+    set newname [string trimright $name /]
+
+    if {[string first * $newname] >= 0 } {
+	if { [string index $newname 0] != "/" } {
+	    set newname "/*$newname"
+	}
+	set filter "match(\"$newname\", name)"
+    } elseif {$newname == $name } { 
+	set filter "strstr(name,\"$newname\")"
+    } else {  
+	set len [string length $newname]
+	set filter "name + (strlen(name)-$len) == @$newname"
+    }
+    filterprojname $filter $proj
+}
+
+proc find_proj { name } {  find_project $name / }
+
+proc get_instances_for_attribute_editor { sel } {
+    global tmp_RESULT
+    set tmp_RESULT [viewable_instances $sel]
+}
+
+proc recursive_include_report {sel} {
+
+    # This is temporary file for creating report.
+    set reportFile [els_tmpfilename]
+    append reportFile ".IncludeReport.txt"
+
+    # If projects were passed -> get their contents.
+    set InputProjects [filter project $sel]
+    set InputFiles [filter -file $sel]
+    if {[size $InputProjects] != 0} {
+        sappend $InputFiles [defines -files $InputProjects]
+    }
+
+    if {[size $InputFiles] == 0} {
+        return "This operation requires selection of at least one file."
+    } else {
+
+        doRecursiveIncludesReport "$reportFile" $InputFiles
+
+        # Edit file with the report in external editor.
+        set cmd "edit_file"
+        append cmd "\3"
+        append cmd $reportFile
+
+        return [send_notification $cmd]
+    }
+} ;# recursive_include_report
+
+proc inventory_report {sel} {
+
+    # This is temporary file for creating report.
+    set reportFile [els_tmpfilename]
+    append reportFile ".InventoryReport.txt"
+
+    # If projects were passed -> get their contents.
+    set InputProjects [filter project $sel]
+    set InputFiles [filter -file $sel]
+    if {[size $InputProjects] != 0} {
+        sappend $InputFiles [defines -files $InputProjects]
+    }
+
+    if {[size $InputFiles] == 0} {
+        return "This operation requires selection of at least one file."
+    } else {
+
+        doCreateInventoryList "$reportFile" $InputFiles
+
+        # Edit file with the report in external editor.
+        set cmd "edit_file"
+        append cmd "\3"
+        append cmd $reportFile
+
+        return [send_notification $cmd]
+    }
+} ;# inventory_report
+
+
+add_menu Category -scope
+add_menu Query -optional
+add_menu Action
+add_menu Filter -filter
+add_menu Project
+add_menu Report -optional
+
+add_item Query  "Create" gen_query -none
+add_item Query  "Copy"   return
+add_item Query  "Apply Access Command" query_command
+
+add_item Category "Create" gen_category -none
+add_item Category "Copy" set_copy 
+add_item Category Operator    "filter_def  operator"
+add_item Category Constructor "filter_def  constructor"
+add_item Category "Cname Match"  fun_lookup
+
+
+add_item Action "Access Command" access_command -none
+add_item Action "Load .dis Script" load_src -opt
+add_item Action "Print to File"  print_cmd
+
+
+add_item Filter "Create" gen_filter -optional
+add_item Filter Operator "filter operator"
+add_item Filter Public "filter public"
+add_item Filter Constructor "filter constructor"
+add_item Filter Destructor "filter destructor"
+
+
+add_item Project Home   "home_proj" -none
+add_item Project Writable {filter writable [roots]} -none
+add_item Project Roots roots -none
+add_item Project Parent parent
+add_item Project Contents contents
+add_item Project Modules    modules
+
+
+add_item Report "Recursive Include Report" recursive_include_report
+add_item Report "Inventory Report" inventory_report
+
+
+if { [license wb feature] } {
+   add_menu TPM -opt
+   add_item TPM "Files With Diffs"  chprop_find_files_with_diffs
+   add_item TPM "View/Merge Diffs"  chprop_view_diffs
+   add_item TPM "Apply Diffs"       chprop_apply_diffs
+   add_item TPM "Remove Diffs"      chprop_remove_diffs
+}
+
+proc describe { pat } {
+    foreach att [info attribute $pat] {
+	if {[info kind $att] != ""} {
+	    puts "entity kind: \t$att"
+	} elseif {[info astcode $att] != ""} {
+	    puts "ast code: \t$att"
+	} elseif {[info astcat $att] != ""} {
+	    puts "ast category: \t$att"
+	} elseif {[string first "ast_" $att] == 0} {
+	    puts "ast attribute: \t$att"
+	} else {
+	    puts "\nentity attribute: \t$att"
+	    describe_one $att
+	}
+    }
+    foreach cmd [info discover $pat] {
+	puts "\ndiscover command: $cmd"
+	describe_one $cmd
+    }
+}
+
+proc describe_one { command } {
+    set fn [source_find _help.dis]
+    if { $fn == ""} {
+	puts "cannot find help file"
+	return
+    }
+    set f [open $fn  "r"] 
+    set found 0
+    while { [gets $f line] >= 0 } {
+	if { [string trim $line] == "$command" } {
+	    set found 1
+	    break
+	}	
+    }
+    if $found { 
+	while { [gets $f line] >= 0 } {
+	    if {[string first "\t" $line] == 0}  break
+	    puts $line
+	}
+    }
+
+    close $f
+}

@@ -1,0 +1,2095 @@
+/<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>DIScover </title>
+  <meta name="Author" content="tatiana">
+  <meta name="LastAuthor" content="tatiana">
+  <meta name="Company" content="Software Emancipation Technology">
+  <meta name="CreationTime" content="2001-08-20T18:23:00Z">
+  <meta name="ModificationTime" content="2001-08-20T18:23:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 18.0px Arial}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Arial}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px 'Times New Roman'}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Arial; min-height: 14.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Arial}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 36.0px; font: 12.0px 'Times New Roman'}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 36.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Arial}
+    p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'}
+    p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Arial}
+    p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Arial; min-height: 10.0px}
+    p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Arial; min-height: 16.0px}
+    p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #000000}
+    p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times}
+    p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Times New Roman'; min-height: 16.0px}
+    p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: right; font: 8.0px Arial; color: #000000}
+    p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px Arial; color: #000000}
+    p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 2.2px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    span.s1 {font: 14.0px Arial}
+    span.s2 {font: 12.0px Arial; text-decoration: underline ; color: #0433ff}
+    span.s3 {font: 12.0px 'Times New Roman'}
+    span.s4 {font: 12.0px 'Times New Roman'; text-decoration: underline ; color: #0433ff}
+    table.t1 {border-collapse: collapse}
+    td.td1 {min-width: 139.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td2 {min-width: 338.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td3 {min-width: 139.5px; border-style: solid; border-width: 1.2px 1.0px 4.5px 8.8px; border-color: #cbcbcb #cbcbcb #00fdff #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td4 {min-width: 338.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #0433ff #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td5 {min-width: 140.4px; border-style: solid; border-width: 1.0px 13.5px 4.5px 2.8px; border-color: #cbcbcb #ff40ff #0433ff #000000; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td6 {min-width: 338.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #000000 #000000 #000000 #000000; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td7 {min-width: 140.4px; border-style: solid; border-width: 1.2px 1.0px 4.5px 8.8px; border-color: #cbcbcb #cbcbcb #00fdff #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td8 {min-width: 140.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td9 {min-width: 45.9px; min-height: 5.2px; border-style: solid; border-width: 4.5px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #00fdff; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td10 {min-width: 45.0px; min-height: 5.2px; border-style: solid; border-width: 1.4px 1.0px 1.4px 1.0px; border-color: #ff40ff #cbcbcb #011993 #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td11 {min-width: 54.0px; min-height: 5.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td12 {min-width: 333.9px; min-height: 5.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td13 {min-width: 41.4px; min-height: 6.0px; border-style: solid; border-width: 2.8px 13.1px 13.5px 4.5px; border-color: #000000 #ff40ff #fffb00 #0433ff; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td14 {min-width: 49.5px; min-height: 6.0px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #000000 #000000 #000000 #000000; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td15 {min-width: 54.0px; min-height: 6.0px; border-style: solid; border-width: 1.0px 0.0px 5.2px 1.0px; border-color: #cbcbcb transparent #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td16 {min-width: 333.9px; min-height: 6.0px; border-style: solid; border-width: 4.5px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #00fdff; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td17 {min-width: 41.4px; border-style: solid; border-width: 4.5px 0.0px 0.0px 14.2px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td18 {min-width: 49.5px; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td19 {min-width: 54.0px; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td20 {min-width: 333.9px; border-style: solid; border-width: 1.0px 6.4px 6.2px 1.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td21 {min-width: 41.4px; border-style: solid; border-width: 4.5px 0.0px 0.0px 14.1px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td22 {min-width: 54.0px; border-style: solid; border-width: 1.8px 7.4px 7.2px 2.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td23 {min-width: 333.9px; border-style: solid; border-width: 9.2px 0.0px 0.0px 10.1px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td24 {min-width: 41.4px; border-style: solid; border-width: 4.5px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td25 {min-width: 49.5px; border-style: solid; border-width: 1.0px 12.6px 12.5px 1.8px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td26 {min-width: 54.0px; border-style: solid; border-width: 14.5px 0.0px 0.0px 15.2px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td27 {min-width: 333.9px; border-style: solid; border-width: 0.0px 2.0px 1.9px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td28 {min-width: 54.0px; border-style: solid; border-width: 0.0px 7.4px 7.2px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td29 {min-width: 333.9px; border-style: solid; border-width: 9.2px 15.6px 15.5px 10.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td30 {min-width: 49.5px; border-style: solid; border-width: 7.2px 15.6px 15.5px 7.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td31 {min-width: 54.0px; border-style: solid; border-width: 0.0px 7.5px 1.0px 1.0px; border-color: transparent #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td32 {min-width: 333.9px; border-style: solid; border-width: 13.9px 0.0px 0.0px 14.0px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td33 {min-width: 41.4px; border-style: solid; border-width: 4.5px 13.6px 13.5px 7.2px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td34 {min-width: 49.5px; border-style: solid; border-width: 15.5px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td35 {min-width: 333.9px; border-style: solid; border-width: 0.0px 2.4px 2.2px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td36 {min-width: 41.4px; border-style: solid; border-width: 4.5px 0.0px 0.0px 10.0px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td37 {min-width: 41.4px; border-style: solid; border-width: 4.5px 0.0px 0.0px 11.4px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td38 {min-width: 54.0px; border-style: solid; border-width: 0.0px 1.0px 1.0px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td39 {min-width: 333.9px; border-style: solid; border-width: 2.6px 9.4px 9.2px 3.2px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td40 {min-width: 54.0px; border-style: solid; border-width: 0.0px 4.2px 4.1px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td41 {min-width: 333.9px; border-style: solid; border-width: 6.1px 10.9px 10.8px 6.9px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td42 {min-width: 49.5px; border-style: solid; border-width: 0.0px 4.8px 4.6px 1.0px; border-color: transparent #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td43 {min-width: 54.0px; border-style: solid; border-width: 6.6px 11.0px 10.9px 7.5px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td44 {min-width: 333.9px; border-style: solid; border-width: 12.9px 0.0px 0.0px 13.6px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td45 {min-width: 41.4px; border-style: solid; border-width: 4.5px 5.1px 4.1px 4.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td46 {min-width: 49.5px; border-style: solid; border-width: 7.2px 9.6px 8.9px 8.8px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td47 {min-width: 54.0px; border-style: solid; border-width: 11.2px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td48 {min-width: 333.9px; border-style: solid; border-width: 0.0px 1.0px 0.0px 0.0px; border-color: transparent #cbcbcb transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td49 {min-width: 45.9px; min-height: 5.2px; border-style: solid; border-width: 4.5px 2.1px 1.0px 1.0px; border-color: #00fdff #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td50 {min-width: 45.0px; min-height: 5.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td51 {min-width: 45.9px; min-height: 7.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td52 {min-width: 45.0px; min-height: 7.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td53 {min-width: 54.0px; min-height: 7.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td54 {min-width: 333.9px; min-height: 7.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td55 {min-width: 45.9px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td56 {min-width: 45.0px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td57 {min-width: 54.0px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td58 {min-width: 333.9px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td59 {min-width: 45.9px; min-height: 6.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td60 {min-width: 45.0px; min-height: 6.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td61 {min-width: 54.0px; min-height: 6.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td62 {min-width: 333.9px; min-height: 6.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td63 {min-width: 45.9px; border-style: solid; border-width: 4.5px 13.5px 13.4px 6.2px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td64 {min-width: 45.0px; border-style: solid; border-width: 0.0px 5.8px 0.0px 0.0px; border-color: transparent #cbcbcb transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td65 {min-width: 333.9px; border-style: solid; border-width: 0.0px 13.0px 5.6px 5.5px; border-color: transparent #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td66 {min-width: 45.9px; border-style: solid; border-width: 4.5px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td67 {min-width: 45.0px; border-style: solid; border-width: 0.0px 6.4px 5.6px 5.5px; border-color: transparent #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td68 {min-width: 54.0px; border-style: solid; border-width: 8.1px 13.9px 13.1px 13.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td69 {min-width: 333.9px; border-style: solid; border-width: 15.6px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td70 {min-width: 45.9px; min-height: 8.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td71 {min-width: 45.0px; min-height: 8.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td72 {min-width: 54.0px; min-height: 8.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td73 {min-width: 333.9px; min-height: 8.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td74 {min-width: 45.9px; min-height: 7.6px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td75 {min-width: 45.0px; min-height: 7.6px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td76 {min-width: 54.0px; min-height: 7.6px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td77 {min-width: 333.9px; min-height: 7.6px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td78 {min-width: 45.9px; border-style: solid; border-width: 4.5px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #00fdff; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td79 {min-width: 45.0px; border-style: solid; border-width: 4.5px 3.0px 0.0px 13.5px; border-color: #0433ff #000000 transparent #fffb00; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td80 {min-width: 54.0px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #000000 #000000 #000000 #000000; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td81 {min-width: 333.9px; border-style: solid; border-width: 1.0px 1.0px 0.0px 5.2px; border-color: #cbcbcb #cbcbcb transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td82 {min-width: 45.0px; border-style: solid; border-width: 8.1px 10.5px 9.8px 8.9px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td83 {min-width: 333.9px; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td84 {min-width: 45.0px; border-style: solid; border-width: 0.0px 7.5px 7.4px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td85 {min-width: 54.0px; border-style: solid; border-width: 9.1px 13.5px 13.4px 10.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td86 {min-width: 333.9px; border-style: solid; border-width: 15.1px 0.0px 0.0px 15.9px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td87 {min-width: 45.9px; min-height: 9.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td88 {min-width: 45.0px; min-height: 9.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td89 {min-width: 54.0px; min-height: 9.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td90 {min-width: 333.9px; min-height: 9.4px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td91 {min-width: 45.9px; border-style: solid; border-width: 4.5px 14.0px 13.9px 3.8px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td92 {min-width: 45.0px; border-style: solid; border-width: 15.6px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td93 {min-width: 333.9px; border-style: solid; border-width: 0.0px 3.6px 3.5px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td94 {min-width: 45.9px; border-style: solid; border-width: 4.5px 0.0px 0.0px 12.8px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td95 {min-width: 45.0px; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td96 {min-width: 54.0px; border-style: solid; border-width: 1.0px 9.2px 9.1px 1.1px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td97 {min-width: 333.9px; border-style: solid; border-width: 15.9px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td98 {min-width: 54.0px; border-style: solid; border-width: 1.0px 3.1px 2.5px 1.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td99 {min-width: 333.9px; border-style: solid; border-width: 10.8px 13.4px 12.6px 11.5px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td100 {min-width: 45.9px; min-height: 5.2px; border-style: solid; border-width: 4.5px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td101 {min-width: 45.0px; min-height: 5.2px; border-style: solid; border-width: 0.0px 5.8px 5.6px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td102 {min-width: 54.0px; min-height: 5.2px; border-style: solid; border-width: 7.6px 11.9px 11.8px 8.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td103 {min-width: 333.9px; min-height: 5.2px; border-style: solid; border-width: 13.8px 0.0px 0.0px 14.1px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td104 {min-width: 45.9px; border-style: solid; border-width: 1.0px 1.0px 1.0px 4.5px; border-color: #0433ff #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td105 {min-width: 54.0px; border-style: solid; border-width: 1.0px 0.0px 1.0px 1.0px; border-color: #cbcbcb transparent #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td106 {min-width: 333.9px; border-style: solid; border-width: 0.0px 1.0px 1.0px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td107 {min-width: 45.9px; border-style: solid; border-width: 4.5px 9.5px 9.4px 1.8px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td108 {min-width: 45.0px; border-style: solid; border-width: 11.4px 0.0px 0.0px 12.1px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td109 {min-width: 333.9px; border-style: solid; border-width: 0.0px 6.8px 6.6px 0.0px; border-color: transparent #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td110 {min-width: 45.0px; border-style: solid; border-width: 1.0px 9.1px 9.0px 1.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td111 {min-width: 54.0px; border-style: solid; border-width: 11.0px 0.0px 0.0px 11.8px; border-color: #cbcbcb transparent transparent #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td112 {min-width: 45.9px; border-style: solid; border-width: 4.5px 9.1px 9.0px 0.0px; border-color: #cbcbcb #cbcbcb #cbcbcb transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td113 {min-width: 45.0px; border-style: solid; border-width: 0.0px 8.2px 0.0px 0.0px; border-color: transparent #cbcbcb transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td114 {min-width: 333.9px; border-style: solid; border-width: 7.6px 0.0px 0.0px 0.0px; border-color: #cbcbcb transparent transparent transparent; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td115 {min-width: 45.9px; border-style: solid; border-width: 4.5px 1.0px 1.0px 5.4px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td116 {min-width: 45.0px; border-style: solid; border-width: 7.6px 1.0px 1.0px 1.0px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td117 {min-width: 54.0px; border-style: solid; border-width: 1.0px 14.5px 1.0px 1.0px; border-color: #cbcbcb #fffb00 #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td118 {min-width: 333.9px; border-style: solid; border-width: 10.2px 13.9px 4.0px 10.2px; border-color: #cbcbcb #cbcbcb #cbcbcb #cbcbcb; padding: 0.0px 5.0px 0.0px 5.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>DIScover Release Notes</b><br>
+<span class="s1">Version 7.3(Beta)</span></p>
+<p class="p2">August 2001</p>
+<p class="p5"><b></b><br></p>
+<p class="p6"><b>Contents</b></p>
+<p class="p7"><br></p>
+<p class="p8">DIScover 7.3</p>
+<p class="p8">DIScover 7.3</p>
+<p class="p8">Hardware and Software Requirements</p>
+<p class="p8">Customer Support</p>
+<p class="p8">Problems Fixed</p>
+<p class="p9"><br></p>
+<p class="p10"><b>DIScover 7.3</b></p>
+<p class="p7"><br></p>
+<p class="p11"><b>DIScover 7.3</b> is the latest version of the DIScover product family.<span class="Apple-converted-space"> </span></p>
+<p class="p7"><br></p>
+<p class="p11">New features in DIScover 7.3 include:</p>
+<p class="p7"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="bottom" class="td1">
+        <p class="p12"><b>C/C++/Java parser improvements</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Realize a 30% improvement in build time on small models and up to 60% on larger models<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="bottom" class="td1">
+        <p class="p13"><br></p>
+        <p class="p13"><br></p>
+        <p class="p13"><br></p>
+        <p class="p13"><br></p>
+        <p class="p13"><br></p>
+        <p class="p12"><b>Impact analysis</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Additional tools for understanding the impact of change to software<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Assists developers in reviewing the points of concern related to a given change<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Additional tools for understanding the impact of change to software<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Assists developers in reviewing the points of concern related to a given change<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">New reporting capabilities<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Documentation explaining the different ways the impact of a change is tracked<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="bottom" class="td1">
+        <p class="p13"><b></b><br></p>
+        <p class="p13"><b></b><br></p>
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Change Phase I, GUI, wizards, etc.</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Create Tree Pattern Matching expressions with new graphical assistant (representation of syntax tree)<span class="Apple-converted-space"> </span></p>
+        <p class="p6">Smart listing of available attributes<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Ability to convert text selection to expression<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">"Apply" feature for testing new expressions<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Save and restore expressions<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Assistance in node marking for transformation<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p13"><b></b><br></p>
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Licensing (use license key manager)</b></p>
+      </td>
+      <td valign="bottom" class="td4">
+        <p class="p6">Choose between named-user licensing, concurrent (floating) license, or site license options when purchasing DIScover. Flexible licensing allows organizations to choose licensing model that best suits their needs<span class="Apple-converted-space"> </span></p>
+        <p class="p6">Improved ease of deployment<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Minimal contact required to evaluate product<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Facilitate volume distribution<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p12"><b>Context sensitive help facility</b></p>
+      </td>
+      <td valign="bottom" class="td4">
+        <p class="p6">Gain information on the task at hand without having to read the entire manual<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Model build Project editor</b></p>
+      </td>
+      <td valign="bottom" class="td4">
+        <p class="p6">Improved ease of evaluation and use<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Opens up the product to all Java code<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Modify imported flags<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Small to midsize projects may now be configured by hand<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p12"><b>Basic SIS support (c-i, c-o, re-sync)</b></p>
+      </td>
+      <td valign="bottom" class="td4">
+        <p class="p6">Provides the convenience of checking source in and out from DIScover<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p12"><b>ClearMake support</b></p>
+      </td>
+      <td valign="bottom" class="td4">
+        <p class="p6">Improved integration into ClearCase environment for building models<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Bundling demo model in distribution</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Provide users with a sample model to quickly try out the product without having to use their own code<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Provide users with firewall difficulty a way to easily evaluate the product<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Provide a base model for sales/training material<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td3">
+        <p class="p12"><b>Build Model in batch mode</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">New ability to run model builds in background<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Helps ensure the model will be always up to date<span class="Apple-converted-space"> </span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p14"><b></b><br></p>
+<p class="p10"><b>DIScover 7.3</b></p>
+<p class="p7"><br></p>
+<p class="p11"><b>DIScover 7.3</b> is the latest version of the DIScover product family.<span class="Apple-converted-space"> </span></p>
+<p class="p7"><br></p>
+<p class="p11">New features in DIScover 7.3 include:</p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="bottom" class="td5">
+        <p class="p12"><b>C/C++/Java parser improvements</b></p>
+      </td>
+      <td valign="top" class="td6">
+        <p class="p6">Realize a 30% improvement in build time on small models and up to 60% on larger models<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td7">
+        <p class="p13"><b></b><br></p>
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Trends</b></p>
+      </td>
+      <td valign="bottom" class="td2">
+        <p class="p6">Track changes in various metrics over time<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Align processes with SEI CMM<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">New graphing mechanism<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">New ability to export to html and Microsoft Excel<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Improved documentation and new context sensitive help<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td7">
+        <p class="p13"><b></b><br></p>
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Licensing (use license key manager)</b></p>
+      </td>
+      <td valign="bottom" class="td2">
+        <p class="p6">Choose between named-user licensing, concurrent (floating) license, or site license options when purchasing DIScover. Flexible licensing allows organizations to choose licensing model that best suits their needs<span class="Apple-converted-space"> </span></p>
+        <p class="p6">Improved ease of deployment<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Minimal contact required to evaluate product<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Facilitate volume distribution<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td7">
+        <p class="p12"><b>Context sensitive help facility</b></p>
+      </td>
+      <td valign="bottom" class="td2">
+        <p class="p6">Gain information on the task at hand without having to read the entire manual<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td8">
+        <p class="p12"><b>Model build Project editor</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Improved ease of evaluation and use<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Opens up the product to all Java code<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Modify imported flags<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Small to midsize projects may now be configured by hand<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td8">
+        <p class="p12"><b>Java quality filters</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Initial Java-specific offering<span class="Apple-converted-space"> </span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td8">
+        <p class="p12"><b>Basic SIS support (c-i, c-o, re-sync)</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Provides the convenience of checking source in and out from Source Analysis<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td8">
+        <p class="p12"><b>ClearMake support</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Improved integration into ClearCase environment for building models<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td8">
+        <p class="p13"><b></b><br></p>
+        <p class="p12"><b>Bundling demo model in distribution</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Provide users with a sample model to quickly try out the product without having to use their own code<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Provide users with firewall difficulty a way to easily evaluate the product<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+        <p class="p6">Provide a base model for sales/training material<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td8">
+        <p class="p12"><b>Caliper driver re-implementation</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p6">Significantly improved performance for QAR and Trends products<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+<p class="p6"><b>Hardware and Software Requirements</b></p>
+<p class="p7"><br></p>
+<p class="p15">DIScover works on the following platforms:</p>
+<p class="p15">Windows NT</p>
+<p class="p15">Windows 2000</p>
+<p class="p15">This version of DIScover has the following minimum system requirements:</p>
+<p class="p15">Pentium 200 with 128 megs of memory</p>
+<p class="p15">Microsoft Visual C++, version 5.x, 6.x, or 7.x</p>
+<p class="p15">Editor support:</p>
+<p class="p15">Microsoft Visual C++</p>
+<p class="p15">Emacs</p>
+<p class="p15">VIM</p>
+<p class="p15">JBuilder 3.5, 4.0, 5.0</p>
+<p class="p7"><br></p>
+<p class="p11"><b>Customer Support</b></p>
+<p class="p14"><b></b><br></p>
+<p class="p7"><br></p>
+<p class="p5"><b></b><br></p>
+<p class="p6"><b>Problems Fixed</b></p>
+<p class="p17"><br></p>
+<p class="p11">The table below document issues that were fixed in the DIScover 7.3 release.<span class="Apple-converted-space"> </span></p>
+<p class="p11">For convenience, the following abbreviations are used in this table</p>
+<p class="p11">ROVER — DIScover Browser</p>
+<p class="p11">QC — DIScover Tools</p>
+<p class="p11">PARSER/PBMB –DIScover modelbuild</p>
+<p class="p7"><br></p>
+<p class="p11">All Closed and Submitted bugs reported by customers</p>
+<p class="p7"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="top" class="td9">
+        <p class="p18"><b>Problem</b></p>
+      </td>
+      <td valign="top" class="td10">
+        <p class="p19"><b>Status</b></p>
+      </td>
+      <td valign="top" class="td11">
+        <p class="p19"><b>Subsystem</b></p>
+      </td>
+      <td valign="top" class="td12">
+        <p class="p19"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="bottom" class="td13">
+        <p class="p18">19214</p>
+      </td>
+      <td valign="top" class="td14">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td15">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td16">
+        <p class="p19">Client fails with 4GB free</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td17">
+        <p class="p18">19251</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">QC</p>
+      </td>
+      <td valign="top" class="td20">
+        <p class="p19">QAR Cannot adjust threshold for Inline function XLOC</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td17">
+        <p class="p18">19254</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td20">
+        <p class="p19">duplicate parameter names not accepted by our PARSER</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td17">
+        <p class="p18">19284</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td20">
+        <p class="p19">PARSER error - problem with type inference</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td17">
+        <p class="p18">19309</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td20">
+        <p class="p19">Cannot change CM button until mode set to transform</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td17">
+        <p class="p18">19321</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td20">
+        <p class="p19">No flags currently to handle these template parsing errors</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19337</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td22">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td23">
+        <p class="p19">support for # pragma ASM directives</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19343</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td22">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="bottom" class="td23">
+        <p class="p19">GUI for creating PDF</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19377</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td22">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td23">
+        <p class="p19">#pragma pack 4<span class="Apple-converted-space">  </span>issues error</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19408</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td22">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td23">
+        <p class="p19">qualified name not allowed<span class="Apple-converted-space">  </span>std vector</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19418</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td22">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td23">
+        <p class="p19">template problem</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">19536</p>
+      </td>
+      <td valign="top" class="td25">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td26">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td27">
+        <p class="p19">gcc PARSER<span class="Apple-converted-space">  </span>accepts structure declared without fields. EDG does not</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">19619</p>
+      </td>
+      <td valign="top" class="td25">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td26">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td27">
+        <p class="p19">Gcc PARSER <span class="Apple-converted-space">  </span>accepts declaring arrays of 0 lenght</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">19643</p>
+      </td>
+      <td valign="top" class="td25">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td26">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="middle" class="td27">
+        <p class="p19">Scandsp doesn't get CPP configuration.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">19644</p>
+      </td>
+      <td valign="top" class="td25">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td26">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td27">
+        <p class="p19">GCC treats std and global namespaces identically</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">19666</p>
+      </td>
+      <td valign="top" class="td25">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td26">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td27">
+        <p class="p19">IF generation error</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19671</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td28">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td29">
+        <p class="p19">Namespacing aliasing not supported by IF generation</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19675</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td28">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td29">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>Selection not preserved when backing up a query and returning to original guery</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19695</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td28">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td29">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>User built 2 models. No matter which model he chooses he gets the same<span class="Apple-converted-space">  </span>one</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19701</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td28">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td29">
+        <p class="p19">Warn before overwriting model with new build</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td21">
+        <p class="p18">19702</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td28">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td29">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>50% of time 1st model is started instead of 2nd</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">19703</p>
+      </td>
+      <td valign="top" class="td30">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="middle" class="td31">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td32">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>Model contains files that VC doesn't build</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20210</p>
+      </td>
+      <td valign="top" class="td30">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td31">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td32">
+        <p class="p19">Not able to parse an sql file</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20212</p>
+      </td>
+      <td valign="top" class="td30">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td31">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="bottom" class="td32">
+        <p class="p19">pset_server crashes if you specify model directory wil a // e.g C/temp//model</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20229</p>
+      </td>
+      <td valign="top" class="td30">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td31">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td32">
+        <p class="p19">Need to be able to parse external makefiles</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20329</p>
+      </td>
+      <td valign="top" class="td30">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td31">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td32">
+        <p class="p19">Discover depends on $HOME, $HOMEDRIVE, $HOMEPATH</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td33">
+        <p class="p18">20337</p>
+      </td>
+      <td valign="top" class="td34">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="middle" class="td35">
+        <p class="p19">Printing to text driver truncates filenames</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td33">
+        <p class="p18">20358</p>
+      </td>
+      <td valign="top" class="td34">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="middle" class="td35">
+        <p class="p19">Want way to export group to file</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td33">
+        <p class="p18">20369</p>
+      </td>
+      <td valign="top" class="td34">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="middle" class="td35">
+        <p class="p19">progress_bar_log_out_of_sync</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td33">
+        <p class="p18">20370</p>
+      </td>
+      <td valign="top" class="td34">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">QC</p>
+      </td>
+      <td valign="middle" class="td35">
+        <p class="p19">QFS filter - Conversion loses const qualifier - is giving unexpected results</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td33">
+        <p class="p18">20390</p>
+      </td>
+      <td valign="top" class="td34">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td35">
+        <p class="p19">MSVC ignores extra token in &lt;class FOO T&gt; template parameter</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td36">
+        <p class="p18">20405</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td35">
+        <p class="p19">PARSER error - #pragma pack 4 and Sub check fails</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td36">
+        <p class="p18">20423</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td35">
+        <p class="p19">#pragma pack 4 issues error</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td36">
+        <p class="p18">20435</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td35">
+        <p class="p19">Including .c file from other .c file problems</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td36">
+        <p class="p18">20436</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td35">
+        <p class="p19">bogus "uses" relations</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td36">
+        <p class="p18">20472</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td35">
+        <p class="p19">Update pass fails</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td37">
+        <p class="p18">20477</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td38">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td39">
+        <p class="p19">Problem with one or more enums with the same name</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td37">
+        <p class="p18">20478</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td38">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td39">
+        <p class="p19">Template not in Model</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td37">
+        <p class="p18">20516</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td38">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td39">
+        <p class="p19">Please remove 500KLOC limitation</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td37">
+        <p class="p18">20547</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td38">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td39">
+        <p class="p19">Interface Stops at 33%</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td37">
+        <p class="p18">20556</p>
+      </td>
+      <td valign="middle" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="middle" class="td38">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td39">
+        <p class="p19">Parse Errors not in log file</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20558</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td40">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td41">
+        <p class="p19">Code ROVER - publish model from one location to another</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20559</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td40">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td41">
+        <p class="p19">Build Performance is horrible on codeROVER/nt</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20560</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td40">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td41">
+        <p class="p19">Search does not find all</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20561</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td40">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td41">
+        <p class="p19">Incremental model build for codeROVER /discover</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20562</p>
+      </td>
+      <td valign="top" class="td18">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td40">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td41">
+        <p class="p19">Horizontal scrollbar in browser</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20564</p>
+      </td>
+      <td valign="middle" class="td42">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td43">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="bottom" class="td44">
+        <p class="p19">scandsp fails on DSW file</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20567</p>
+      </td>
+      <td valign="middle" class="td42">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td43">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td44">
+        <p class="p19">incomplete type parse error</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20573</p>
+      </td>
+      <td valign="middle" class="td42">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td43">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="bottom" class="td44">
+        <p class="p19">Intermittent PARSER <span class="Apple-converted-space">              </span>Crash</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20581</p>
+      </td>
+      <td valign="middle" class="td42">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td43">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td44">
+        <p class="p19">"Cannot connect to the server"</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td24">
+        <p class="p18">20583</p>
+      </td>
+      <td valign="middle" class="td42">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td43">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td44">
+        <p class="p19">need to view instantiations of template</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td45">
+        <p class="p18">20592</p>
+      </td>
+      <td valign="top" class="td46">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td47">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="middle" class="td48">
+        <p class="p19">support for #import statements in CodeROVER<span class="Apple-converted-space">  </span>for C++ is missing</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td45">
+        <p class="p18">20594</p>
+      </td>
+      <td valign="top" class="td46">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td47">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td48">
+        <p class="p19">parse error for template declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td45">
+        <p class="p18">20615</p>
+      </td>
+      <td valign="top" class="td46">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td47">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td48">
+        <p class="p19">crash during IF generation</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td45">
+        <p class="p18">20725</p>
+      </td>
+      <td valign="top" class="td46">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td47">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="middle" class="td48">
+        <p class="p19">Parse summary doesn't show files not built with catastrophic errors</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td45">
+        <p class="p18">20739</p>
+      </td>
+      <td valign="top" class="td46">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td47">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td48">
+        <p class="p19">EDG PARSER gives error which sparc compiler handler</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p11">Opened bugs reported by customers</p>
+<p class="p20"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="top" class="td49">
+        <p class="p18"><b>Problem</b></p>
+      </td>
+      <td valign="bottom" class="td50">
+        <p class="p19"><b>Status</b></p>
+      </td>
+      <td valign="top" class="td11">
+        <p class="p19"><b>Subsystem</b></p>
+      </td>
+      <td valign="top" class="td12">
+        <p class="p19"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td51">
+        <p class="p18">19732</p>
+      </td>
+      <td valign="top" class="td52">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td53">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td54">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>Right panel not updating properly</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="bottom" class="td55">
+        <p class="p18">19733</p>
+      </td>
+      <td valign="top" class="td56">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td57">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td58">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>Source code window not positioned properly</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td59">
+        <p class="p18">19741</p>
+      </td>
+      <td valign="top" class="td60">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td61">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td62">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>Remove NIF array messages from build display/log</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="bottom" class="td55">
+        <p class="p18">19794</p>
+      </td>
+      <td valign="top" class="td56">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td57">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td58">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>build target relies on CFG setting in DSP</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="bottom" class="td55">
+        <p class="p18">19795</p>
+      </td>
+      <td valign="top" class="td56">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td57">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td58">
+        <p class="p19">Model messaging reports parsing DSP when DSW was selected</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td63">
+        <p class="p18">19797</p>
+      </td>
+      <td valign="middle" class="td64">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td65">
+        <p class="p19">BETA<span class="Apple-converted-space">  </span>When user double clicks on function or class name, please display the entity's code at the top of DevStudio window</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td63">
+        <p class="p18">19801</p>
+      </td>
+      <td valign="middle" class="td64">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td19">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td65">
+        <p class="p19">Environment vars not expanded in /I's.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td63">
+        <p class="p18">19803</p>
+      </td>
+      <td valign="middle" class="td64">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td65">
+        <p class="p19">TYPE coulumn should be changed to return type</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td63">
+        <p class="p18">19816</p>
+      </td>
+      <td valign="middle" class="td64">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td65">
+        <p class="p19">Select a row and the total rows vanishes at the bottom</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td63">
+        <p class="p18">19818</p>
+      </td>
+      <td valign="middle" class="td64">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td19">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td65">
+        <p class="p19">parse fails with env var 'include'</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19819</p>
+      </td>
+      <td valign="top" class="td67">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td68">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td69">
+        <p class="p19">Page up/page down don't work in source view until click in source</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td70">
+        <p class="p18">19909</p>
+      </td>
+      <td valign="top" class="td71">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td72">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td73">
+        <p class="p19">The back button loses its selection</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td74">
+        <p class="p18">19913</p>
+      </td>
+      <td valign="top" class="td75">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td76">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td77">
+        <p class="p19">class or struct?</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td78">
+        <p class="p18">19915</p>
+      </td>
+      <td valign="top" class="td79">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td80">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td81">
+        <p class="p19">Only one codeROVER<span class="Apple-converted-space">  </span>startup GUI should appear at a time</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td78">
+        <p class="p18">19916</p>
+      </td>
+      <td valign="top" class="td79">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td80">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td81">
+        <p class="p19">Problem with constuctor initialization</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td78">
+        <p class="p18">19917</p>
+      </td>
+      <td valign="top" class="td79">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td80">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td81">
+        <p class="p19">Function return problem</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19929</p>
+      </td>
+      <td valign="top" class="td82">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td83">
+        <p class="p19">Crash when you try parse a file - At end of source internal error Dignal received</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19930</p>
+      </td>
+      <td valign="top" class="td82">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td83">
+        <p class="p19">Does not build a file because of a link</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19940</p>
+      </td>
+      <td valign="top" class="td82">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td83">
+        <p class="p19">With the -I- flag the edg PARSER does not look at the current directory</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19960</p>
+      </td>
+      <td valign="top" class="td82">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td83">
+        <p class="p19">need -I- to do less</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19961</p>
+      </td>
+      <td valign="top" class="td82">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="middle" class="td83">
+        <p class="p19">/Tp option not handled</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19962</p>
+      </td>
+      <td valign="middle" class="td84">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td85">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td86">
+        <p class="p19">Decreasing performance, 'out of memory' message, CodeROVER crashes</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19975</p>
+      </td>
+      <td valign="middle" class="td84">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td85">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td86">
+        <p class="p19">Not able to install codeROVER as he has no Dev Studio</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td87">
+        <p class="p18">19989</p>
+      </td>
+      <td valign="top" class="td88">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td89">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td90">
+        <p class="p19">Macro expansion problem</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td91">
+        <p class="p18">20006</p>
+      </td>
+      <td valign="top" class="td92">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td93">
+        <p class="p19">occasional slowness</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td91">
+        <p class="p18">20016</p>
+      </td>
+      <td valign="top" class="td92">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td93">
+        <p class="p19">IF generation error - 1 unmatched statement levels in block statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td91">
+        <p class="p18">20021</p>
+      </td>
+      <td valign="top" class="td92">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="middle" class="td93">
+        <p class="p19">Catastrophic PARSER<span class="Apple-converted-space">  </span>error</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td91">
+        <p class="p18">20035</p>
+      </td>
+      <td valign="top" class="td92">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="middle" class="td93">
+        <p class="p19">Install procedure problem if jbuilder is not there</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td91">
+        <p class="p18">20055</p>
+      </td>
+      <td valign="top" class="td92">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="middle" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="middle" class="td93">
+        <p class="p19">Will not build if the variable CODE_ROVER_HOME has a trailing slash</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td94">
+        <p class="p18">20059</p>
+      </td>
+      <td valign="top" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td96">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td97">
+        <p class="p19">Warn Integrity users of not enough info if they try to pick locked Integrity tab</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td94">
+        <p class="p18">20060</p>
+      </td>
+      <td valign="top" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td96">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td97">
+        <p class="p19">Rowcount with a variable problem</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td94">
+        <p class="p18">20065</p>
+      </td>
+      <td valign="top" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td96">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td97">
+        <p class="p19">hang in preprocessing</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td94">
+        <p class="p18">20068</p>
+      </td>
+      <td valign="top" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td96">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td97">
+        <p class="p19">PARSER failed for the project with 2 spaces in it's path</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td94">
+        <p class="p18">20099</p>
+      </td>
+      <td valign="top" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td96">
+        <p class="p19">PARSER</p>
+      </td>
+      <td valign="top" class="td97">
+        <p class="p19">IF screwy for bad function decls</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">20111</p>
+      </td>
+      <td valign="middle" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td98">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td99">
+        <p class="p19">CodeROVER has problems with UNC paths</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">20141</p>
+      </td>
+      <td valign="middle" class="td95">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="bottom" class="td98">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td99">
+        <p class="p19">pmod_server.exe, nameserve.exe and qar_driver.exe remain after CodeRover is shutdown</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td70">
+        <p class="p18">20179</p>
+      </td>
+      <td valign="top" class="td71">
+        <p class="p19">[open]</p>
+      </td>
+      <td valign="top" class="td72">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td73">
+        <p class="p19">JBuilder did not install integration jar properly for JBuilder4</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p11">Closed Internal bugs that exist in previous product</p>
+<p class="p7"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="top" class="td100">
+        <p class="p18"><b>Problem</b></p>
+      </td>
+      <td valign="top" class="td101">
+        <p class="p19"><b>Status</b></p>
+      </td>
+      <td valign="top" class="td102">
+        <p class="p19"><b>Subsystem</b></p>
+      </td>
+      <td valign="top" class="td103">
+        <p class="p19"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td100">
+        <p class="p18">19493</p>
+      </td>
+      <td valign="top" class="td101">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td102">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td103">
+        <p class="p19">Source works incorrectly if the computer has small available disk space.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td104">
+        <p class="p18">19555</p>
+      </td>
+      <td valign="top" class="td56">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td105">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td106">
+        <p class="p19">Automatic expansion of trees with errors bad during parsing</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td104">
+        <p class="p18">19569</p>
+      </td>
+      <td valign="top" class="td56">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td105">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td106">
+        <p class="p19">Code Rover makes new request, when I add any attribute.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td107">
+        <p class="p18">19631</p>
+      </td>
+      <td valign="bottom" class="td108">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td109">
+        <p class="p19">Cancel button not aligned</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td107">
+        <p class="p18">19677</p>
+      </td>
+      <td valign="bottom" class="td108">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td109">
+        <p class="p19">Need to prohibit "Append selection" to group if nothing is selected.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td107">
+        <p class="p18">19694</p>
+      </td>
+      <td valign="bottom" class="td108">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td109">
+        <p class="p19">Edit/Search for text mode.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td107">
+        <p class="p18">19713</p>
+      </td>
+      <td valign="bottom" class="td108">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">QC</p>
+      </td>
+      <td valign="top" class="td109">
+        <p class="p19">QA Caliper doesn't work with Browser selection.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td107">
+        <p class="p18">19714</p>
+      </td>
+      <td valign="bottom" class="td108">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">QC</p>
+      </td>
+      <td valign="top" class="td109">
+        <p class="p19">"Del" button should be grayed if user can't edit selected attribute.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19783</p>
+      </td>
+      <td valign="middle" class="td110">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td111">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td83">
+        <p class="p19">QA tab not available if you do not select checkbox on build.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19812</p>
+      </td>
+      <td valign="middle" class="td110">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td111">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td83">
+        <p class="p19">CM does not understand filename with the spaces.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19920</p>
+      </td>
+      <td valign="middle" class="td110">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td111">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td83">
+        <p class="p19">Profusion of packages is perplexing</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19943</p>
+      </td>
+      <td valign="middle" class="td110">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td111">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td83">
+        <p class="p19">&lt;JAVA&gt; "struct" as result of "Info" query for external java classes in the editors</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td66">
+        <p class="p18">19947</p>
+      </td>
+      <td valign="middle" class="td110">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td111">
+        <p class="p19">QC</p>
+      </td>
+      <td valign="top" class="td83">
+        <p class="p19">"Edit" menu stays active for empty policy in QA Administrator.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td112">
+        <p class="p18">19970</p>
+      </td>
+      <td valign="top" class="td113">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td114">
+        <p class="p19">&lt;JAVA&gt; "Where referenced" query works incorrectly for &lt;anonymous&gt; functions and classes</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td112">
+        <p class="p18">19971</p>
+      </td>
+      <td valign="top" class="td113">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td114">
+        <p class="p19">&lt;JAVA&gt; Incorrect "Inheritance" view for &lt;anonymous&gt; classes.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td112">
+        <p class="p18">19973</p>
+      </td>
+      <td valign="top" class="td113">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="bottom" class="td114">
+        <p class="p19">&lt;JAVA&gt; "Show nested classes" works incorrectly.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td112">
+        <p class="p18">20018</p>
+      </td>
+      <td valign="top" class="td113">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">QC</p>
+      </td>
+      <td valign="bottom" class="td114">
+        <p class="p19">"Error generating report" if we have "New Folder","New Query" after "Statistics".</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td112">
+        <p class="p18">20034</p>
+      </td>
+      <td valign="top" class="td113">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="top" class="td19">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="bottom" class="td114">
+        <p class="p19">&lt;JAVA&gt; Sometimes parser incorrectly recognizes functions.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td115">
+        <p class="p18">20040</p>
+      </td>
+      <td valign="top" class="td116">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td117">
+        <p class="p19">PBMB</p>
+      </td>
+      <td valign="top" class="td118">
+        <p class="p19">&lt;JAVA&gt; "Where declared" for interface's method should return the interface</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td115">
+        <p class="p18">20069</p>
+      </td>
+      <td valign="top" class="td116">
+        <p class="p19">[closed]</p>
+      </td>
+      <td valign="bottom" class="td117">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td118">
+        <p class="p19">When you install caliper the start menu says browser</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td115">
+        <p class="p18">20112</p>
+      </td>
+      <td valign="top" class="td116">
+        <p class="p19">[submit]</p>
+      </td>
+      <td valign="bottom" class="td117">
+        <p class="p19">ROVER</p>
+      </td>
+      <td valign="top" class="td118">
+        <p class="p19">connecting to models throws java.lang.OutofMemoryError</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p7"><br></p>
+</body>
+</html>

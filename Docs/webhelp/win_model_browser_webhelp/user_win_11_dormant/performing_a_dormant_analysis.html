@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Performing a Dormant Analysis</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 48.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p6 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p8 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 12.0px 'Courier New'}
+    span.s4 {font: 12.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Performing a Dormant Analysis</b></p>
+<p class="p2"><span class="s1"><b>1</b></span><span class="s2"><b>   </b></span>Do one of the following:</p>
+<p class="p3">•<span class="s2">   </span>From the <b>Projects</b> tab, select projects that encompass the full scope of your application’s source code and header files.</p>
+<p class="p3">•<span class="s2">   </span>From the Results window, select root entities that refer (directly or indirectly) to the greatest number of lower-level application entities.</p>
+<p class="p2"><span class="s1"><b>2</b></span><span class="s2"><b>   </b></span>Do one of the following:</p>
+<p class="p3">•<span class="s2">   </span>Select <b>Tools &gt; Reengineer &gt; Dormant</b>.</p>
+<p class="p3">•<span class="s2">   </span>Click <img src="./tmp11976.jpg" alt="tmp11976.jpg">.</p>
+<p class="p2">A <b>Dormant Code Analysis</b> window appears with the selected entities.</p>
+<p class="p4"><br></p>
+<p class="p5"><img src="./tmp119761.jpg" alt="tmp119761.jpg"></p>
+<p class="p6"> </p>
+<p class="p2"><span class="s1"><b>3</b></span><span class="s2"><b>   </b></span>Click <b>Run Dormant Analysis</b>.</p>
+<p class="p2">Dormant begins the analysis, indicating its progress in a dialog box. During the first phase, Dormant parses the selected entities and creates a temporary database.</p>
+<p class="p2">If two or more entities have the same name, Dormant <i>aliases</i> them, and for the purposes of the analysis, considers them to be the same entity (more specifically, when two or more entities have the same name, Dormant considers a reference to any one of the entities to be a reference to all of them). This does not delete or rename entities in your source code.</p>
+<p class="p2">If Dormant find entities with the same name, the <b>Aliased Entities</b> dialog box identifies the entities to be aliased.</p>
+<p class="p2"><span class="s1"><b>4</b></span><span class="s2"><b>   </b></span>Click <b>OK</b>.</p>
+<p class="p2">During the second phase of the analysis, Dormant assesses the database created during the first phase. It identifies the relationships (if any) between the selected root entity and each entity in the database. The second phase takes considerably longer than the first phase</p>
+<p class="p2">Once the Dormant analysis is complete, a dialog box appears prompting you to use the group manager to browse the results.</p>
+<p class="p2"><span class="s1"><b>5</b></span><span class="s2"><b>   </b></span>Click <b>OK</b>.</p>
+<p class="p2"><span class="s1"><b>6</b></span><span class="s2"><b>   </b></span>Click the <b>Groups</b> tab.</p>
+<p class="p2">Dormant stores the results of its analysis in groups named <span class="s3">dormant-code-auto-<i>n</i></span>, where <span class="s3"><i>n</i></span> is a number that starts at <span class="s4">0</span> and increments with each dormant code analysis.</p>
+<p class="p2"><span class="s1"><b>7</b></span><span class="s2"><b>   </b></span>Select <span class="s3">dormant-code-auto-0</span> (or the desired dormant subsystem if you have done more than one analysis).</p>
+<p class="p2">The Results window displays every entity in the selected project that the root entities do not refer to, either directly or indirectly.</p>
+<p class="p7"> </p>
+<p class="p8"> </p>
+</body>
+</html>

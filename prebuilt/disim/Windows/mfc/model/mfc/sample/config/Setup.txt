@@ -1,0 +1,64 @@
+
+
+
+
+#Any Files from a Directory Structure
+#Model the source files within a directory.
+BUILD=FileListFromFileSystem(CL,0,%sharedSrcRoot%/mfc,"-I%sharedSrcRoot%\INCLUDE" "-I%sharedSrcRoot%\MFC\INCLUDE" "-I%sharedSrcRoot%\ATL\INCLUDE",c cxx cpp,%sharedSrcRoot%/mfc)
+
+
+
+#Compile Extensions
+#
+EXTENSION=CompileFiles:c cxx cpp cc C java sql
+
+#Parallel parse
+#
+PARALLEL_PARSE=$HOST:1
+
+#Specific Compiler Commands
+#
+
+
+#Specify extra flags for compilers below (if necessary)
+#See the documentation for details.
+EXTRA_FLAGS=ntclcpp:-D_DEBUG -D_MBCX -D_X86_ -D_MT -D_DLL -D_WINDLL -D_AFXDLL -D_AFX_PORTABLE -D_AFX_CORE_IMPL -D_AFX_OLE_IMPL -D_AFX_DB_IMPL -D_AFX_NET_IMPL -D_MSC_VER="1200" -D__cplusplus="1"
+
+
+#Test Method
+#
+VAR=AutomaticAnalysis:TS
+
+#Force publish
+#
+VAR=PublishIfIdentical:yes
+
+
+##############################################################################
+# Set the server to the host for this model.
+# How many models to retain on disk, and how many model servers to run.
+##############################################################################
+WINDOW=server:KeepLatest:3
+WINDOW=server:ServeLatest:2
+
+##############################################################################
+# Leave the rest of the values alone,
+# except that NT_sharedSrcRoot should agree with
+# the drive containing sources (if applicable).
+##############################################################################
+VAR=sharedSrcRoot:/
+VAR=privateSrcRoot:$HOME/CODEINTEGRITY/$MODELNAME/$USER/src
+VAR=sharedModelRoot:$ADMINDIR/model
+VAR=privateModelRoot:$HOME/CODEINTEGRITY/$MODELNAME/$USER
+VAR=NT_sharedSrcRoot:C:\Program Files\Microsoft Visual Studio\VC98
+VAR=NT_sharedModelRoot:%ADMINDIR%\model
+VAR=NT_privateSrcRoot:C:\TEMP
+VAR=NT_privateModelRoot:C:\TEMP
+VAR=SUN5_PATH:$PSETHOME/bin:$PATH
+VAR=HP10_PATH:$PSETHOME/bin:$PATH
+VAR=IRIX_PATH:$PSETHOME/bin:$PATH
+VAR=cCompiler:C
+VAR=cPlusCompiler:CPP
+VAR=NT_cCompiler:CL
+VAR=NT_cPlusCompiler:CL
+#VAR=auto_multiple_IFFs:no

@@ -1,0 +1,51 @@
+M_BADFLOWCHART:%s: empty file. Cannot build Flowchart view.
+M_BADPROJHIER:Some modules exist above project %s in the project hierarchy.
+M_BADSWITCHPOS:The command line switch: %s is illegal after %s
+M_CANNOTPASTE:Cannot paste in this view
+M_CANTCREATEPMODDIR:Cannot make directory for pmod 
+M_CANTFINDFIIEWSEL:Cannot find file containing selection.
+M_CANTFINDXREFINFO:Cannot find cross-reference information for file %s.
+M_CANTGENUNIQUENAME:Cannot generate unique name for link node; link not established.
+M_CANTOPEN:Cannot open '%s'.
+M_CANTRESTORE:Cannot restore file '%s'
+M_CANTWRITETOSUBSYSDIR:Unable to write to the subsystem directory %s.\nPlease exit DISCOVER, remedy this situation, and restart.
+M_CREATEDSUBSYSDIR:Created subsystem directory %s.
+M_EACCES_ON_PMOD:DISCOVER does not have write access to the model file:\n %s\nPlease change the permissions on this file and rerun DISCOVER.
+M_ERROR_ACCESS_DIR:Error while accessing directory:\n%s
+M_FAILED_CREATING_DIR:Failed to create directory:\n%s
+M_FAILOPENTREE:Cannot open call tree on selected object.
+M_FAILOPENVIEW:failed open view.
+M_FATALERROR:All changes to model made in this session are lost. Please exit and redo.
+M_FATAL_ERROR::An unexpected error occured in:\n\tFile: \"%s\"\n\tLine: %d.\n\nPlease notify technical support.
+M_FILEDOESNOTEXIST:File %s does not exist.\n
+M_FILENOTASCII:File \'%s\' is not ASCII.
+M_FRAME_CANTATTACHEXTERNOBJECT:Failed to attach DISCOVER ID to the external object
+M_HELPCONTEXTNOTFOUND:Help context not found - %s
+M_HELPSYSTEMUNAVAILABLE:The help system is unavailable.
+M_INCOMPLETE:The symbol cannot be selected because of incomplete information.\nTry recreating the view
+M_LOADRAWVIEWONLY:Loading raw view only. Rev '%d' .pset files are incompatible with this release of DISCOVER.
+M_NOEMACS:Emacs is not loaded. Cannot view ascii files. To load Emacs, restart DISCOVER with the discover script.
+M_NOSELECTIONCOPY:Nothing appropriate is selected to copy
+M_NOSELECTIONCUT:Nothing appropriate is selected to cut
+M_NOTACLASS:%s is not a class and cannot be opened into an inheritance view
+M_NOTALLSELWEREMEMBERS2:Only %d of the %d selected entities were members of the selected subsystem
+M_NOTHINGONCLIPB:Nothing on the clipboard
+M_NO_MAPPING_PP:No mapping for %s in project %s
+M_PROJNOTEXIST:Project %s does not exist.
+M_PUTINPROGRESS:Please wait... file '%s' is being checked in.
+M_SCALEWILLBESETTO:Scale will be set to %d\n
+M_SPECIFIEDSUBSYSDIRISBAD:Bad subsystem directory: %s.\nDirectory does not exist; unable to create it.
+M_STE_BAD_OPEN:View is not correctly opened
+M_STE_NO_SHMEM:Failed allocating shared memory.
+M_SUBCHK_DUPLIB:Cannot install duplicate user library: \"%s\" (\"%s\").\n
+M_SUBCHK_USERLIB:Failed to install user library: \"%s\" (\"%s\").\n
+M_SUBSYS_DUPRECOVER:Subsystem with name \"%s\" already exists. Using default name: \"%s\".
+M_TARGETGROUPDOESNTEXST:You must select an existing subsystem to move the elements to. %s does not exist
+M_TASK_ERRLOADFILE:Cannot load task definition file: \"%s\".\n
+M_TASK_LOAD:Loading task: \"%s\"...\n
+M_TASK_OPEN:Failed to open file: \"%s\".
+M_TASK_SAVE:Saving task: \"%s\"...\n
+M_WFTREE_MAPPING:No mapping for logical file: %s. Your PDF must contain a subsystems rule.
+M_WFTREE_OPEN:Loading queries: %s...\n
+M_WFTREE_SAVE:Saving queries: %s...\n
+M_GRAPH_NOTBUILT:Unable to find calls sequence connecting selected functions.\n

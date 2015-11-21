@@ -1,0 +1,78 @@
+CROOTS=\
+
+
+CPROOTS=\
+    Browser_Display_Selection.h \
+    Browser_Explode.h \
+    Browser_Member_Sorting_Order.h \
+    Builtin_DC_Relations.h \
+    Builtin_Relations.h \
+    DC_Display_Selection.h \
+    Filter_Relations.h \
+    oodt_class_member_sorter.h
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/cmd/include \
+-I$(BUILD_SRC_ROOT)/model_server/cmd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/gra/include \
+-I$(BUILD_SRC_ROOT)/model_server/gra/include \
+-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ldr/include \
+-I$(BUILD_SRC_ROOT)/model_server/ldr/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_cm/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_cm/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_pdf/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_pdf/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/save/include \
+-I$(BUILD_SRC_ROOT)/model_server/save/include \
+-I$(LOCAL_SRC_ROOT)/model_server/search/include \
+-I$(BUILD_SRC_ROOT)/model_server/search/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ste/include \
+-I$(BUILD_SRC_ROOT)/model_server/ste/include \
+-I$(LOCAL_SRC_ROOT)/model_server/style/include \
+-I$(BUILD_SRC_ROOT)/model_server/style/include \
+-I$(LOCAL_SRC_ROOT)/model_server/subsystem/include \
+-I$(BUILD_SRC_ROOT)/model_server/subsystem/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_browser/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_browser/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_viewer/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_viewer/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view/include \
+-I$(BUILD_SRC_ROOT)/model_server/view/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view_rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/view_rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/gt/include \
+-I$(BUILD_SRC_ROOT)/gt/include \
+-I$(LOCAL_SRC_ROOT)/gtxm/include \
+-I$(BUILD_SRC_ROOT)/gtxm/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/paracancel/include \
+-I$(BUILD_SRC_ROOT)/paracancel/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \
+

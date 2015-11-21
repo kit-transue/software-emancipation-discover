@@ -1,0 +1,151 @@
+mfc  :  C:/  <->  /mfc  {
+  "d_drive/program files/swemancipation"  :  "$PSETHOME/.."  <->  "d_drive/program files/swemancipation"  {
+	include  {
+    	  *.h
+	}
+  }
+  "c_drive/program files/microsoft visual studio/vc98"  :  "$sharedSrcRoot"  <->  "c_drive/program files/microsoft visual studio/vc98"  {
+      mfc  {
+        src  {
+          ^CTLINTL.CPP
+          *.cpp
+          *.h
+        }
+        include  {
+          ^AFXBLD_.H
+          ^AFXDLLX.H
+          ^AFXV_CFG.H
+          ^AFXV_CPU.H
+          ^WINRES.H
+          *.h
+          *.inl
+        }
+      }
+      atl/include  {
+        atlbase.h
+        atlcom.h
+        atlconv.h
+        atldbcli.h
+        atldef.h
+        atliface.h
+      }
+      include  {
+        basetsd.h
+        cderr.h
+        cguid.h
+        comcat.h
+        commctrl.h
+        commdlg.h
+        crtdbg.h
+        ctl3d.h
+        ctype.h
+        daogetrw.h
+        dbdaoerr.h
+        dbdaoid.h
+        dbdaoint.h
+        dde.h
+        ddeml.h
+        dlgs.h
+        docobj.h
+        eh.h
+        errno.h
+        excpt.h
+        exdisp.h
+        fcntl.h
+        float.h
+        httpext.h
+        httpfilt.h
+        imagehlp.h
+        imm.h
+        initguid.h
+        io.h
+        isguids.h
+        limits.h
+        malloc.h
+        mapi.h
+        math.h
+        mcx.h
+        msdadc.h
+        msdaguid.h
+        msdasc.h
+        msxml.h
+        multimon.h
+        new.h
+        oaidl.h
+        objbase.h
+        objidl.h
+        ocidl.h
+        ole2.h
+        oleauto.h
+        olectl.h
+        oledb.h
+        oledlg.h
+        oleidl.h
+        poppack.h
+        process.h
+        prsht.h
+        pshpack1.h
+        pshpack2.h
+        pshpack4.h
+        pshpack8.h
+        richedit.h
+        richole.h
+        rpc.h
+        rpcasync.h
+        rpcdce.h
+        rpcdcep.h
+        rpcndr.h
+        rpcnsi.h
+        rpcnsip.h
+        rpcnterr.h
+        servprov.h
+        shellapi.h
+        shlguid.h
+        shlobj.h
+        shlwapi.h
+        sql.h
+        sqlext.h
+        sqltypes.h
+        sqlucode.h
+        stdarg.h
+        stddef.h
+        stdio.h
+        stdlib.h
+        string.h
+        tchar.h
+        time.h
+        transact.h
+        unknwn.h
+        urlmon.h
+        winbase.h
+        wincon.h
+        windef.h
+        windows.h
+        winerror.h
+        wingdi.h
+        wininet.h
+        winnetwk.h
+        winnls.h
+        winnt.h
+        winreg.h
+        winsock.h
+        winspool.h
+        winsvc.h
+        winuser.h
+        winver.h
+        wtypes.h
+        zmouse.h
+        sys  {
+          stat.h
+          types.h
+        }
+      }
+  }
+}
+__rules  :  /  <->  /__rules  {
+  ""  :  $PSETHOME/(**)/(*)/%/.pset  =>  $ADMINDIR/model/pset/d_drive/program files/swemancipation/(1)/(2).pset
+  ""  :  $PSETHOME/(**)/(*)/%/.make  =>  ""$PSETHOME/bin/disperl" "$PSETHOME/mb/cr_GetFlags.pl"  "$PSETHOME/(1)/(2)"  "
+  ""  :  $sharedSrcRoot/(**)/(*)/%/.pset  =>  $ADMINDIR/model/pset/c_drive/program files/microsoft visual studio/vc98/(1)/(2).pset
+  ""  :  $sharedSrcRoot/(**)/(*)/%/.make  =>  ""$PSETHOME/bin/disperl" "$PSETHOME/mb/cr_GetFlags.pl"  "$sharedSrcRoot/(1)/(2)"  "
+  ""  :  C:/(*).pmod/%/.pmoddir  =>  $ADMINDIR/model/pmod/(1).pmod
+}

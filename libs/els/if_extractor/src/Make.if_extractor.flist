@@ -1,0 +1,27 @@
+CPROOTS = \
+     extrAst \
+     extrErr \
+     extrFctns \
+     extrKeyword \
+     extrRel \
+     extrSmt \
+     extrSym \
+     extractor \
+     extractorArgs \
+     ifExtractor \
+     if_extractor_CBS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

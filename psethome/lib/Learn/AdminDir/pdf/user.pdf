@@ -1,0 +1,94 @@
+(1)_private : $privateSrcRoot/(extract) [[ W ]] <-> /(1) {
+
+  **.[cChH]
+
+} 
+
+(1)_private : $privateSrcRoot/(xip) [[ W ]] <-> /(1) {
+
+  **.[cChH]
+
+} 
+
+(1)_private : $privateSrcRoot/(ttt) [[ W ]] <-> /(1) {
+
+  **.[cChH]
+
+} 
+
+(1)_private : $privateSrcRoot/(package) [[ W ]] <-> /(1) {
+ 
+  **.[cChH]
+ 
+}
+
+(1)_private : $privateSrcRoot/(xcalentool) [[ W ]] <-> /(1)
+{
+
+  **.c **.cursor **.el **.h **.icon **.xbm
+
+}
+
+(1)_shared : $sharedSrcRoot/(extract) [[ R ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(xip) [[ R ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(ttt) [[ R ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(package) [[ R ]] <-> /(1) {
+  * {
+    *.[cChH]
+  }
+}
+
+(1)_shared : $sharedSrcRoot/(xcalentool) [[ R ]] <-> /(1) {
+  * {
+    *.c *.cursor *.el *.h *.icon *.xbm
+  }
+}
+
+(1) : $PSETHOME/lib/Learn/src/(sysinclude) [[ R ]] <-> /(1) {
+  *
+  * {
+    *
+    * {
+      *
+    }
+  }
+}
+
+__ruleShared : $sharedSrcRoot <-> /__ruleShared {
+  $sharedSrcRoot/(1)/(2)	: $sharedSrcRoot/(**)/(*)/*.([chCH])/%/.make
+    => "$ADMINDIR/bin/get_flags (1) (3)"
+
+  ""	: $sharedSrcRoot/(**)/(src)/(*).([chCH])/%/.pset	=> $sharedModelRoot/pset/(1)/(2)/(3).(4).pset
+  ""	: $sharedSrcRoot/(**)/(*).([chCH])/%/.pset		=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  ""	: $PSETHOME/lib/Learn/src/(**)/(*).([chCH])/%/.pset	=> $sharedModelRoot/pset/(1)/(2).(3).pset
+  ""	: $sharedSrcRoot/(**)/(*).(cursor|el|icon|xbm)/%/.pset	=> $sharedModelRoot/pset/(1)/(2).(3).pset
+
+  ""	: $sharedSrcRoot/(**).pmod/%/.pmoddir			=> $sharedModelRoot/pmod/(1).pmod
+  ""	: $PSETHOME/lib/Learn/src/(**).pmod/%/.pmoddir		=> $sharedModelRoot/pmod/(1).pmod
+}
+
+__rulePrivate : $privateSrcRoot <-> /__rulePrivate {
+  $privateSrcRoot/(1)/(2)	: $privateSrcRoot/(**)/(*)/*.([chCH])/%/.make
+    => "$ADMINDIR/bin/get_flags (1) (3)"
+
+  ""	: $privateSrcRoot/(**)/(src)/(*).([chCH])/%/.pset	=> $privateModelRoot/pset/(1)/(2)/(3).(4).pset
+  ""	: $privateSrcRoot/(**)/(*).([chCH])/%/.pset		=> $privateModelRoot/pset/(1)/(2).(3).pset
+  "" 	: $privateSrcRoot/(**)/(*).(cursor|el|icon|xbm)/%/.pset	=> $privateModelRoot/pset/(1)/(2).(3).pset
+
+  ""	: $privateSrcRoot/(**).pmod/%/.pmoddir			=> $privateModelRoot/pmod/(1).pmod
+}

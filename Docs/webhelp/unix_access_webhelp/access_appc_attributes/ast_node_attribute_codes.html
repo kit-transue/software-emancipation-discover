@@ -1,0 +1,1029 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>AST_node Attribute Codes</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 172.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 205.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 172.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 205.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>AST_node Attribute Codes</b></p>
+<p class="p2"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3"><b>Attribute Code</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p3"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">[list_decl]</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">list declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">addr_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">take the address of an object</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">alshift_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">shift left and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">alshift_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">shift left expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">anonymous_class</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">anonymous class (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">array_ref</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">array reference</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">arshift_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">arithmetic (sign extend) shift right and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">arshift_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">arithmetic (sign extend) shift right expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">asm_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">embedded assembly language statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">simple assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ast_block</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">body inside braces { } for function, class, enum, if statement, .... For SQL usually points to any body between keywords “BEGIN” and “END” or inside parentheses ().</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ast_declspec</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">type declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ast_root</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">node for file</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ast_superclass</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">class or list of classes from which original class is derived</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_and_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">bitwise AND and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_and_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">bitwise AND expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_field_ref</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">field reference (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_ior_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">bitwise inclusive OR expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_xor_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">bitwise exclusive OR and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_ior_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">bitwise inclusive OR and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">bit_xor_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">bitwise exclusive OR expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">call_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">call expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">case_default</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">default case</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">case_label</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">label of case</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">case_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">case statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">case_value</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">value of case</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">catch</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">catch or microsoft finally expressions</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">class_literal</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">reference to the specified class (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">component_ref</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">component reference</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">compound_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">sequence (comma) operator</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">cond_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">conditional expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">const_decl</p>
+        <p class="p4">or</p>
+        <p class="p4">const_id</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">constant identifier or declaration (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">convert_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">conversion of value of an operand from one type to another</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ctor_init</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">constructor initialization</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">cursor_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">(SQL only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">cursor_def</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">(SQL only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">dimensions</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">array size declaration (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">div_assign_expr</p>
+        <p class="p4">or</p>
+        <p class="p4">trunc_div_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">integer divide and assign</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">div_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">divide expression (SQL only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">dl_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">delete expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">do_while_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">do while expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">dynamic_init</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">dynamic initialization</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">easy_new</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">create an object of the type_name to which it is applied (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">eq_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">equal expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">exit_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">break or continue statement (loop exits)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">expr_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">expression statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">field_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">field declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">finally</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">finally expression (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">for_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">for expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">function_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">function declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">function_def</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">function definition</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ge_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">greater than or equal expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">global_id</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">global identifier</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">goto_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">goto statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">gt_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">greater than expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">if_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">if statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">implements</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">interfaces that original class implements (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">in_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">SQL in</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">indirect_ref</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">indirect reference</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">initialization_block</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">initialization block (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">inner_join_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">SQL inner join</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">instanceof</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">instanceof (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">java_component_ref</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">component reference for JAVA</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">java_vec_new</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">create vector of the type_name to which it is applied (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">label_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">pointer to label declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">le_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">less than or equal expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">left_join_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">(SQL only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">local_id</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">local identifier</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">lrshift_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">logical (zero pad) right shift and assignment expr. (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">lrshift_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">logical (zero pad) right shift expression (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">lt_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">less than expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">microsoft_try</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">Microsoft-style try block</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">minus_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">subtract and assign expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">minus_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">subtract (minus) expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">mod_assign_expr</p>
+        <p class="p4">or</p>
+        <p class="p4">trunc_mod_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">modulo and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">mult_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">multiply and assignment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">mult_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">multiply expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">name_clause</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">name for class, enum, ...</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">namespace_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">namespace declaration (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">ne_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">not equal expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">negate_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">unary minus expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">no_operand</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">placeholder when function has no return type, as in constructors</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">nw_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">call to new</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">parens</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">parentheses (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">parm_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">parameter declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">plus_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">add and assign expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">plus_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">add (plus) expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">pm_field_ref</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">pointer to member implicit field</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">postdecrement_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">post-decrement expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">postincrement_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">post-increment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">predecrement_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">pre-decrement expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">preincrement_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">pre-increment expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">rdif_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">floating point divide expressions</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">rdiv_assign_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">floating point divide and assign</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">return_stmt</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">return statement</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">super</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">reference to the parent class through super (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">template_body</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">function or class template body (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">template_class</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">template class</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">template_fcn</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">template function (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">template_static_data_mbr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">template static data members (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">template_struct</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">template structure (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">template_union</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">template union (C++ only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">this</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">use of the this pointer/object reference</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">throw_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">throw exception</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">throw_spec</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">throw exception declaration in the function signature (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">trunc_div_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">integer divide expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">trunc_mod_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">modulo (remainder) expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">truth_and_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">logical AND for SQL</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">truth_andif_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">logical AND for if expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">truth_not_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">not expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">truth_or_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">logical inclusive OR for SQL source code</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">truth_orif_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">logical inclusive OR for if expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">try_block</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">try block</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">type_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">declaration for class, structure enum, ...</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">type_decl_modified</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">class declaration (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">typespec</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">type declaration (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">unary_plus</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">unary plus expression (appears only in Java)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">using_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">import class declaration using in the original class (Java only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">var_decl</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">variable declaration</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">vec_dl_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">vector delete expression</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">vec_nw_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">create vector of the type_name to which it is applied</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">where</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">(SQL only)</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p4">while_expr</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p5">while expression</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p2"><br></p>
+</body>
+</html>

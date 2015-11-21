@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Tree Subcommands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Tree Subcommands</b></p>
+<p class="p2">In the preceding book, the <span class="s1"><b>apply</b></span> command was used to access the attributes of the <span class="s1">function_def</span> node associated with the symbol “main”. In this case, the AST node for this <span class="s1">function_def</span> was readily available by converting the symbol “main”. However, for most of the nodes in the tree, such a ready conversion from the indexed, pre-related world of symbols is not available. Instead, queries on AST nodes typically involve navigating a portion of the AST looking for nodes of interest. The <span class="s1"><b>tree</b></span> command provides an interface for examining all the nodes in a subtree, starting with a defined node and visiting all of its descendants.</p>
+<p class="p2">If passed something other than an AST node (or set of AST nodes), the <span class="s1"><b>tree</b></span> command attempts to convert its arguments into AST nodes prior to navigating the subtrees.</p>
+<p class="p3"><b>tree print</b></p>
+<p class="p4">tree print ast_nodes</p>
+<p class="p2">This command, already introduced, navigates the tree starting with the node it is passed. It formats the output to show the tree structure, with increasing levels of indentation to indicate children, and vertical lines tying together siblings.</p>
+<p class="p3"><b>tree find</b></p>
+<p class="p2"><span class="s1"><b>tree find</b></span> is the workhorse of TPM. Its syntax is:</p>
+<p class="p4">tree find attribute-expression ast_nodes</p>
+<p class="p2"><span class="s1"><b>tree find</b></span> examines the AST nodes in <span class="s1">ast_nodes</span> and all of their descendants. It applies the attribute expression to each node, and if the <span class="s1">attribute-expression</span> returns true, that node is added to the return set.</p>
+<p class="p2">Before using <span class="s1"><b>tree find</b></span> in an interactive session, set the <span class="s1">printformat</span> to ast_info:</p>
+<p class="p4">printformat %s ast_info</p>
+<p class="p2">This makes the results returned in interactive Access sessions much more readable.</p>
+<p class="p2">From the index, you can determine that <span class="s1">main</span> uses a number of functions:</p>
+<p class="p4">uses -functions [data symbol main]</p>
+<p class="p2">returns 21 functions.</p>
+<p class="p2">But using the <span class="s1"><b>tree find</b></span> command, you can find those exact calls:</p>
+<p class="p4">tree find call_expr [data node main]</p>
+<p class="p5">returns</p>
+<p class="p4">1 call_expr 14095 17 ‘basename(argv[0])’<br>
+2 call_expr 14128 16 ‘strlen(progname)’<br>
+3 call_expr 0 0 ‘’<br>
+. . .<br>
+34 call_expr 17301 14 ‘do_exit(ERROR)’<br>
+35 call_expr 17637 74 ‘fprintf(stder ...,progname)’<br>
+36 call_expr 17795 80 ‘fprintf(stder ... name,optarg)’<br>
+37 call_expr 17885 14 ‘do_exit(ERROR)’<br>
+38 call_expr 18530 26 ‘treat_file(argv[optind++])’<br>
+39 call_expr 18597 13 ‘treat_stdin()’<br>
+40 call_expr 18663 15 ‘do_list(-1, -1)’<br>
+41 call_expr 18709 18 ‘do_exit(exit_code)’</p>
+<p class="p2">There are some things to note about this output. First, the number of call expressions is greater than the number of functions called. In this excerpt, there are two calls to <span class="s1">fprintf</span> and three calls to <span class="s1">do_exit</span>. This should not be surprising in light of the differences between the symbols in the index and the detail in the AST. Second, the third <span class="s1">call_expr</span> has no starting offset and no length: it cannot be mapped to the source text. In this case, this is because the function call is the result of the expansion of the macro “strequ”. This does not imply that no information is available about that call. In fact, the opposite is true:</p>
+<p class="p4">tree print 3<br>
+call_expr 0 0<br>
+global_id 0 0<br>
+minus_expr 14226 18 : ‘progname+proglen-4’<br>
+| plus_expr 14226 16 : ‘progname+proglen’<br>
+| | global_id 14226 8 : ‘progname’<br>
+| | local_id 14235 7 : ‘proglen’<br>
+| global_id 14243 1 : ‘4’<br>
+convert_expr 0 0<br>
+global_id 0 0</p>
+<p class="p2">The first child—the <span class="s1">global_id</span>—is the function called; its <span class="s1">cname</span> attribute is interesting. While easier ways of getting at this node are presented shortly, it is already possible to obtain (albeit imprecisely) the attribute for this node (and a few others):</p>
+<p class="p4">printformat %s%s cname ast_info<br>
+tree find global_id 3</p>
+<p class="p5">returns</p>
+<p class="p4">1 strcmp global_id 0 0 ‘’</p>
+<p class="p4">2 progname global_id 14226 8 ‘progname’</p>
+<p class="p4">3 4 global_id 14243 1 ‘4’</p>
+<p class="p4">4 .exe global_id 0 0 ‘’</p>
+<p class="p3"><b>tree filter</b></p>
+<p class="p2">The syntax for <span class="s1"><b>tree filter</b></span> is the same as <span class="s1"><b>tree find:</b></span> <span class="s1">tree filter attribute-expression scope</span>, and its semantics are quite similar: it returns a set of nodes that match the attribute expression. However, unlike <span class="s1"><b>tree find</b></span>, <span class="s1"><b>tree filter</b></span> does not consider the descendents of scope: it only considers those nodes that are explicitly passed.</p>
+<p class="p2">The only difference between <span class="s1"><b>filter</b></span> and <span class="s1"><b>tree filter</b></span> is that <span class="s1"><b>tree filter</b></span> converts its arguments to AST nodes before filtering through application of the attribute expression.</p>
+<p class="p3"><b>tree navigate</b></p>
+<p class="p2"><span class="s1"><b>tree navigate</b></span> is very similar to <span class="s1"><b>tree filter</b></span>; it applies <span class="s2">attribute-expression</span> to each node in <span class="s1"><b>scope</b></span>, and returns a node for each time the attribute-expression succeeds. The <span class="s1">navigate</span> comes in because the returned node may not be a node in <span class="s1"><b>scope</b></span>, but instead may be related to it in a way described by an extended attribute expression. The semantics of tree navigate are discussed later in this book.</p>
+</body>
+</html>

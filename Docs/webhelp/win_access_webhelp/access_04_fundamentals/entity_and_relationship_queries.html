@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Entity and Relationship Queries</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 4.0px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px 'Courier New'}
+    span.s3 {text-decoration: underline ; color: #ff6262}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Entity and Relationship Queries</b></p>
+<p class="p2">The most familiar queries are those that are used in scan mode queries, or those not about the project structure but about the project contents and the relationships between entities that make up the projects:</p>
+<p class="p3">defines and uses<br>
+defines /ttt_shared<br>
+uses main</p>
+<p class="p2"><span class="s1"><b>defines</b></span> and <span class="s1"><b>uses</b></span> take a selector: a list of data kind(s) prefixed with “<span class="s2">-</span>”. See the table of <span class="s1">kind</span> attributes in <a href="../access_appc_attributes/ast_node_attributes.html#XREF_5_Command_Line_Interface"><span class="s3">AST_node Attributes</span></a>. At present, only the first three characters are significant, meaning that it is possible to use queries that are similar to the Browser. The selector <span class="s1">-all</span>, which returns all kinds, is the default.</p>
+<p class="p3">uses -functions main</p>
+<p class="p2">However, it is best to use the names listed in the <span class="s1">kinds</span> table.</p>
+<p class="p2">Multiple kinds may be specified:</p>
+<p class="p4"><b>uses -macro -funct main</b></p>
+<p class="p4">1 (funct) fprintf</p>
+<p class="p4">2 (macro) NULL</p>
+<p class="p4">3 (funct) fopen</p>
+<p class="p4">4 (funct) write_ct_file</p>
+<p class="p4">5 (funct) getenv</p>
+<p class="p4">6 (funct) strcpy</p>
+<p class="p4">7 (macro) stderr</p>
+<p class="p4">8 (funct) fclose</p>
+<p class="p4">9 (funct) exit</p>
+<p class="p4">10 (funct) read_mt_file</p>
+<p class="p4">11 (funct) strcat</p>
+<p class="p5"><b>Note: </b>Non-symbol kinds (data cells, AST nodes, instances, and so on.) are not indexed, and so uses/defines queries on these kinds does not return results.</p>
+</body>
+</html>

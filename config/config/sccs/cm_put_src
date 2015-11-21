@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_beforeput ] ; then
+  $cm_optscripts/cm_beforeput
+  if [ $? -ne 0 ] ; then 
+      echo "%% beforeput failed" >&2
+      exit 1
+  fi
+fi
+
+if [ ! -f $cm_revision_file ]; then
+  $PSETCFG/cm_create
+  if [ $? -ne 0 ]; then
+    echo "%% create failed" >&2
+    exit 1
+  fi
+  rm -f $cm_workfile
+else
+  # Prep the comment description file:
+  oridiscfile="${cm_description:=/dev/null}"
+  tmpdiscfile="${TMPDIR:=/usr/tmp}/cm_description.$$"
+  # Make sure the file has a final CR or sed will not print the last line
+  echo "" >> $oridiscfile
+  # Put a \ on the end of each line so that SCCS will take milti-line comments
+  sed 's%$%\\%' < $oridiscfile > $tmpdiscfile
+
+  cd `dirname $cm_workfile`
+  echo "sccs delta -s $cm_options $cm_workfile < $tmpdiscfile"
+        sccs delta -s $cm_options $cm_workfile < $tmpdiscfile
+  rm $tmpdiscfile
+  if [ $? -ne 0 ]; then
+    echo "%% put failed" >&2
+    exit 1
+  fi
+fi
+  
+# Check out in pending/system area
+cd `dirname $cm_sysfile`
+echo "sccs get -s $cm_revision_file"
+      sccs get -s $cm_revision_file
+if [ $? -ne 0 ]; then
+    echo "%% getafterput failed" >&2
+    exit 1
+fi
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_afterput ] ; then
+  $cm_optscripts/cm_afterput &
+fi
+
+exit 0

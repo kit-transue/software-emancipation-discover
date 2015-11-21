@@ -1,0 +1,41 @@
+*psetPrefs.pdfFileBuild:			%ADMINDIR%\pdf\adminDLL.pdf
+*psetPrefs.pdfFileUser:				%ADMINDIR%\pdf\userDLL.pdf
+*psetPrefs.defaultPDF:				%ADMINDIR%\pdf\userDLL.pdf
+*psetPrefs.ELS.EDG:				yes
+
+*psetPrefs.ADMINDIR:				%PSETHOME_LOCAL%\prebuilt\xercesJavaParser
+*psetPrefs.projectHome:				/xercesJavaParser
+*psetPrefs.projectList:				/xercesJavaParser
+
+*psetPrefs.sharedModelRoot:			%ADMINDIR%\model
+*psetPrefs.privateSrcRoot:			%ADMINDIR%\source\private
+*psetPrefs.privateModelRoot:			%ADMINDIR%\model
+*psetPrefs.groupsPath:			      %ADMINDIR%\groups
+*psetPrefs.sharedSrcRoot:                 %ADMINDIR%\source\shared
+*psetPrefs.configurator:                  C:\DISCOVER/bin/configurator
+*psetPrefs.makePath:				"C:\Program Files\DevStudio\VC\BIN\NMAKE.EXE"
+
+*psetPrefs.ELS.List:                      java
+
+*psetPrefs.ELS.java.Flags:                -w --jdk --classpath D:\ProgramFiles\jdk1.3.1_02\jre\lib\rt.jar;%ADMINDIR%\source\shared
+
+*psetPrefs.doPassDependency:			yes
+*psetPrefs.doPassHeaders:			yes
+*psetPrefs.doPassSaveProj:			yes
+*psetPrefs.doPassSaveRoot:			yes
+*psetPrefs.doBuildDFA:	                  no
+
+*psetPrefs.acceptSyntaxErrors:		yes
+
+*psetPrefs.logFileCreate:			yes
+*psetPrefs.logFileDir:				%ADMINDIR%\log
+*psetPrefs.logFileMonitor:			yes
+
+*psetPrefs.DIS_misc_BuildMetrics:		1
+*psetPrefs.DIS_misc_StoreMetrics:		1
+*psetPrefs.DIS_model.SaveMetrics:		1
+
+*psetPrefs.DIS_model.GenerateY2KInfo:	0
+
+
+

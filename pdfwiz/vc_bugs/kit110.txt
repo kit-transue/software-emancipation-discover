@@ -1,0 +1,72 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+// The following code causes internal compiler error
+// using MSVC 11.00.7022 (VC5.0, Service Pack 3, on NT 4.0, no patches)
+
+// kit transue
+// ktrans@setech.com / ph: 781-359-3320
+
+#ifdef SIMPLE_STRING_CAUSES_PROBLEM
+	// life isn't that simple, but I tried this:
+	template <typename CharT, int N = 0>
+	class basic_string{
+	public:
+		CharT data;
+		basic_string substr(int = 0, int = 1) const;
+	};
+	typedef basic_string<char> string;
+#else
+	// apologies, folks, but I don't have the patience to deal with expanded headers:
+	#include <string>
+	using namespace std;
+#endif
+
+
+class file_table 
+{
+public:
+	file_table();
+};
+
+void insert(string const &key, string const &value);
+// insert was originally a member of file_table, but it doesn't make a difference!
+
+file_table::file_table()
+{
+	// only happens in constructor!
+	// rename this to file_table::file_table1, and all's well!
+	string line;
+	insert(line.substr(0, 2),
+		line.substr(1));
+	// note about this function call:
+	// you must have two calls to substr() in the argument list
+	// AND: one must supply both parameters, and the other must
+	// use a default parameter.  If both use default or both supply
+	// both parameters, all is well.
+}
+

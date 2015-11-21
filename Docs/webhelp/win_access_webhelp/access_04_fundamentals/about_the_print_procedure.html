@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>About the Print Procedure</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>About the Print Procedure</b></p>
+<p class="p2">In pure Tcl interactive interpreters, the interpreter prints the string value of the last statement before returning to the interactive prompt. DISH, the DIScover interpreter, overrides this behavior, so if the last command returned is an Access set, the interpreter prints a representation of the set’s contents using the Access <span class="s1"><b>print</b></span> procedure. The output of the print procedure may be modified using the <span class="s1"><b>printformat</b></span> command.</p>
+<p class="p2">The print procedure is perhaps unconventional in that it does not return the string it prints: its operation is entirely a side effect. As a result, it is not possible to capture a formatted string by running the print procedure. Although its output can be redirected to a file using “<span class="s1">&gt;</span>” or “<span class="s1">&gt;&gt;</span>”, the fact that the print command is sensitive to state set by <span class="s1"><b>printformat</b></span> means that it is unreliable for production output—it is better used for diagnostics in an interactive session. If programs need to capture information about an element or set of elements, it is better to do so explicitly by querying the members’ attributes.</p>
+</body>
+</html>

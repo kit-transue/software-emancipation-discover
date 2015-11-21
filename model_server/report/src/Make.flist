@@ -1,0 +1,10 @@
+CROOTS=\
+
+
+CPROOTS=\
+    ast_report \
+    scrapbook-report \
+    soft-report \
+    ste-report \
+
+

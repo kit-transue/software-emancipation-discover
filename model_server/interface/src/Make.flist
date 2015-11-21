@@ -1,0 +1,12 @@
+CPROOTS=\
+	New_RTL_apl\
+	assocbridge\
+	dd_do_refs\
+	dis_view_create\
+        errorBrowser.h\
+        extract\
+	messages\
+        prompt\
+        question\
+	statistics\
+

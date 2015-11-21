@@ -1,0 +1,567 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+This text is an attempt to explain main ideas from document ALPHASET
+DATA ARCHITECTURE, originally written by Mike Miller.  The text
+ALPHASET DATA ARCHITECTURE is somewhat out of date, however most of
+the assertions contained therein still hold.
+
+Written by Ljubomir Buturovic, October 1994 - .
+
+1. The parametric model is stored in two sets of files, called pmod
+files and pset files. There are three pmod files per
+project. Their names are project_name.pmod.sym, project_name.pmod.lin and
+project_name.pmod.ind. The source code symbols are stored in ind file.
+The names of the symbols (since they can be of variable lengths) are
+stored in sym file and links of symbols are stored in lin file. All
+symbols stored in ind file are of constant length i.e. sizeof(xrefSymbol).
+The other important set of files which is part of parametric
+model of the project, are pset files. There is one pset file per
+source code file.
+
+2. The pmod files for discover projects can be found in directory
+/paraset/pmod. There are, of course, three pmod files per project
+(project_name.pmod.ind project_name.pmod.lin and project_name.pmod.sym).
+ Note that in our particular environment the sys project is further 
+divided into multiple subprojects and therefore there are no sys.pmod.* 
+files - rather, there are three pmod files per subproject.  However local
+project is not divided into subprojects, so there are files
+local.pmod.sym local.pmod.lin and local.pmod.ind.
+
+3. The structure of pmod files is the following.  Each pmod.ind file 
+consists of symbols and the set of links associated with each
+symbol are stored in lin file. Link is a block of four bytes which contains
+three-character index of another symbol which is in certain relationship with
+the first one.  The first byte indicates type of link.  There are different 
+types of links, for example defined_in, is_defining, is_using, is_including, 
+has_subclass, etc. The remaining three bytes of the link structure store the
+index of the symbol, which it is related to, in pmod.ind file of the same 
+project.
+
+Link types are defined in file
+/paraset/src/paraset/dd/include/ddKind.h, via enumeration type
+linkType.
+
+Following is an illustration of pmod.ind file structure. xrefSymbol
+is a fixed length structure. pmod.ind file is nothing but an array of 
+xrefSymbols.
+                         
+
+
+                  |                    |	 
+                  |       ...          |	 
+                  +====================+	 
+                  |   flags_byte       | unsigned char 
+                  +--------------------+
+                  |   attr_byte_0      | unsigned char
+                  |   attr_byte_1      | unsigned char
+                  |   attr_byte_2      | unsugned char
+                  +--------------------+
+                  |   index_byte_0     | unsigned char
+                  |   index_byte_1     | unsigned char
+                  |   index_byte_2     | unsigned char
+                  +--------------------+
+                  |   kind             | unsigned char
+                  +--------------------+
+                  |                    |
+                  |offset_to_start_link| unsigned int 
+                  |                    |
+                  |                    |
+                  +--------------------+
+                  |                    |
+                  |   name_offset      | unsigned int
+                  |                    |
+                  |                    | 
+                  +--------------------+
+                  |                    |
+                  |   hash_value       | unsigned int 
+                  |                    |  
+                  |                    |
+                  +====================+
+                  |        ...         |	         
+                  |                    |	         
+
+                         Fig. 1
+
+
+Bold lines (=) indicate symbol boundaries.
+
+Follows a graphical representation of the logical structure of two
+pmods for simple example whose source code is given below. The exact
+structure, byte-wise, is as given in Fig. 1.
+
+a.c:                b.c:
+
+void b();           void b()
+                    {
+a()                 }
+{                   
+ b();               
+}
+
+Assume that file a.c is part of project A, whereas file b.c is part of
+project B. This will result in the following two pmod.ind and pmod.lin files 
+(plus their .sym counterparts, not shown):
+
+
+
+
+   |     A.pmod.ind     |                            |     A.pmod.lin     |
+   |                    |	                     |                    |
+   +====================+offset to first link        +====================+
+   |                    |--------------------------->|    is_defining     |
+   |   data of symbol   |	 +-------------------|                    |
+   |                    |<-------+------------+      +--------------------+
+   |        a.c         |        |            |      |    is_using        |
+   |                    |        | +----------+------|                    |
+   |                    |  	 | |          |      +--------------------+
+   +====================+        | |          |      |    ...             |  
+   |                    |--------+-+----------+-+    |                    |  
+   |  data of symbol    |        | |          | |    +--------------------+
+   |                    |<-------+ |	      |	|    |    lt_last         |
+   |       a()          |	   |	      |	|    |                    |
+   |                    |<---------+--------+ | |    +====================+ 
+   |                    |	   |	    | |	+--->|    is_using        |  
+   +====================+          | +------+-+------|                    |
+   |                    |----------+-+------+-+-+    +--------------------+
+   |  data of symbol	|	   | |	    | |	|    |    is_defined_in   |
+   |			|<---------+ |      | +-+----|			  |
+   |	  b()   	|<-----------+	    |	|    +--------------------+
+   |			|		    |	|    |    ...   	  |
+   |			|		    |	|    |			  |
+   +====================+		    |	|    +--------------------+
+   |			|		    |	|    |    lt_last         |
+   |			|		    |	|    |                    |
+   |			|		    |	|    +====================+
+   |			|		    |   +--->|	  used_by	  |
+   |			|		    +--------|		  	  |
+   |			|			     +--------------------+
+   +====================+			     |    ...		  |
+   |			|			     |			  |
+   |			|			     +--------------------+
+   |			|			     |	  lt_last         |
+   |			|			     |			  |
+   |			|			     +====================+
+  						     |   ...		  |
+
+
+
+
+
+
+   |     B.pmod.ind     |                            |     B.pmod.lin     |
+   |                    |	                     |                    |
+   +====================+offset to first link        +====================+
+   |                    |--------------------------->|    is_defining     |
+   |   data of symbol   |	 +-------------------|                    |
+   |                    |<-------+------------+      +--------------------+
+   |        b.c         |        |            |      |      ...           |
+   |                    |        |            |      |                    |
+   |                    |  	 |            |      +--------------------+
+   +====================+        |            |      |    lt_last         |  
+   |                    |--------+------------+-+    |                    |  
+   |  data of symbol    |        |            | |    +====================+
+   |                    |<-------+ 	      |	+--->|    is_defined_in   |
+   |       b()          |	   	      +------|                    |
+   |                    |                            +--------------------+ 
+   +====================+          		     |     ...            |
+   |                    |			     |                    |
+   | 			|	   		     +--------------------+
+   |			|	      		     |	  lt_last	  |
+   |	         	|			     |                    |
+   |			|		   	     +====================+
+   |			|		    	     |			  |
+
+
+Not all links are shown - just a subset, for demonstration.  
+
+Observe that links point to symbols within the same pmod file _only_.
+If the user requests (for example, in Scan mode), to find out where
+function b() is defined, and currently his home project is A, discover
+will first determine that there is no link of type is_defined_in
+emanating from b() symbol in A.pmod.lin, and then search the remaining
+pmods (in this case, just B.pmod.ind) for symbol b() and link
+is_defined_in.
+
+4. The pmod.lin file stores links of symbols in a sequential manner. The
+offset at which a symbol's first link starts is stored in field 
+offset_to_start_link of xrefSymbol. The end of links is marked by link 
+lt_last. New links created on symbols are not stored in pmod.lin file right
+away. A table of genArrOf(Link) (symbolIndex_table) is created in XrefTable 
+and new links are added to this table. In the destructor of XrefTable_local 
+all the new links are flushed out to the pmod.lin file so that all links of
+a symbol are all still together. And offsets stored in the xrefSymbols for 
+start_link are updated appropriately.
+ 
+5. A number of classes within discover deal with contents of pmod. One
+such class is Xref; another is XrefTable. A short description of Xref,
+taken from file xref.h, follows.
+
+Correction: as of 10/02/1995, the text that follows has been moved to
+file /paraset/src/paraset/dd/include/xrefSymbol.h.
+
+=============================================================================
+
+xrefSymbol is the primary data structure found in a *pmod.ind file. The
+data items are defined here as unsigned char, because there are no
+alignment restrictions, and the Sparc architecture at least will complain
+if we try to read unaligned data.
+
+Consequently, only the member functions should be used to access the data
+in the structure.  These member functions fetch the numeric fields assuming
+that a positive integer is at least 16 bits, and is stored in conventional
+form, permitting operators <<, >> and | to work as expected.  They also
+assume that the char size is 8 bits.  They do *not* assume that the machine
+is big-endian, though the data in the structure is.
+
+Other structures used in the pmod.ind file are defined in xref_priv.h.
+These include HeaderInfo, and SymHeaderInfo for header information, and
+Link, used to attach variable length information to the xrefSymbols.
+
+Many other classes deal with these primitives, and most of these are also
+located in xref_priv.h.  But the most visible of these are Xref (defined
+here) and XrefTable.  A projNode points to a single Xref, which may have an
+XrefTable.  The XrefTable constructor attaches the pmod files, optionally
+creating them, and/or copying them to /usr/tmp or other designated temp
+location.
+
+Related enums are ddKind and linkType, both defined in dd/include/ddKind.h.
+
+Another important class is symbolPtr.  A symbolPtr may represent either an
+Obj* item or an xrefSymbol.  The way it represents an xrefSymbol is via a
+pointer to an Xref, and an offset within the mapped pmod file.  This
+symbolPtr remains valid when the pmod grows and gets remapped.  Any
+xrefSymbol* become invalid after such a remapping.  The remapping may
+happen any time that make_room() is called, such as at the beginning of an
+insert_module(), or a copy_module().  Class symbolPtr has a few member
+functions to deal with xrefSymbols, but it also has the operator ->
+function, which converts to an xrefSymbol*, and calls the appropriate
+member function of xrefSymbol.
+
+=============================================================================
+6. The meanings of the fields of xrefSymbol are as follows:
+
+   The MSb of the flags_byte indicates whether the xrefSymbol has definition 
+file or not. The rest of the seven bits are not yet used.
+
+   The three attributes bytes, attr_byte_0, attr_byte_1 and attr_byte_2 
+contain attributes of this xrefSymbol. Meaning of these bits can be inferred
+from the file /paraset/src/paraset/dd/include/ddKind.h, via definition
+of enumeration type symAtt. In short, they indicate, through setting
+of the bit fields, whether the symbol in question is a class method,
+whether it is private, static, virtual, pure virtual, const, pointer,
+reference, subsystem, whether it is compiler generated entity (such as
+default member functions), etc. Of course, the relevant bits will be
+zero for symbols which don't possess these attributes as well as for
+those for which these attributes do not apply.
+
+   The next three bytes, index_byte_0, index_byte_1 and index_byte_2 contain 
+the index of this symbol. The index gives the number of this symbol in the 
+array of symbols stored in pmod.ind file. The index starts at 1, with the 
+first symbol in the pmod getting index 1 and the second symbol getting index 
+2 and so on.
+
+   The seventh byte contains kind of symbol. That is a field of type 
+unsigned char. Possible values for this field are defined in file
+/paraset/src/paraset/dd/include/ddKind.h, via enumeration type
+ddKind. Some of the values are: 5 (DD_FUNC_DECL), 9 (DD_CLASS), 17
+(DD_MODULE), etc.
+
+   offset_to_start_link stores the offset of the first link of this symbol 
+in pmod.lin file. All the links of a symbol are stored continuously ending 
+with lt_last link.
+
+   name_offset stores the offset of the symbol name in pmod.sym file. Since 
+names can of variable lengths, they are not stored as part of xrefSymbol. 
+
+   The last field hash_val stores the hash value of symbol name. This is 
+used in creating hash table which is used to quickly get to the symbol from 
+its name.
+
+7. There is a "pseudolink" associated with some types of
+symbols. This "link" actually does not point to another xrefSymbol, like 
+other links, but rather contains attributes of this xrefSymbol. As in 
+all links, there are 24 bits allocated for this description. This link type 
+is lt_filetype. It is used for DD_MODULE and DD_SEMTYPE kinds of symbols 
+only. For DD_MODULE symbols, the offset of this link indicates whether 
+the symbol is a C or C++ source file. For DD_SEMTYPE symbols, the offset 
+indicates data type (integer, void, long integer, etc.). The list of data 
+types is given in enum type smode_datatype, file
+/paraset/src/paraset/style/include/smode_categories.h.
+
+8. Contents of the pmod.sym, pmod.lin and pmod.ind files is mapped to memory
+using system call mmap, in constructor function for class XrefTable.
+The address of the memory region which is mapped to the symbol part of
+pmod.ind file is kept in data member ind_addr of this class. The
+address of the memory region which is mapped to the header of the
+pmod.ind file is kept in data member ind_header. Equivalent
+information for pmod.sym and pmod.lin files is kept in data members sym_addr 
+, sym_header and link_addr and link_header.
+
+8a. The xrefSymbols are never deleted from the pmod files. Consider
+the following example. Say you built a model (i.e. pmod files) for a
+project, and then delete a symbol from the source code (delete a
+function, or a class, or a global variable), and update the model (but
+not build from scratch; update from the existing model - this
+operation is called "incremental build"). The structure corresponding
+to the deleted symbol will remain in pmod. However it will have
+special link assigned to it. The type of this link indicates that the
+symbol is no longer part of the model. Of course, if the model is
+deleted and then build again (this process is called "full build"),
+then the deleted symbols will of course not be present in the pmod
+files, since they are simply not part of the code.
+
+The -tidy command line option for DISCOVER is designed to remove these
+obsolete symbols and compact pmod files.
+
+8b. In principle, users should not be concerned with the difference
+between incremental and full build, since these two operations are in
+theory the same: they update the existing model with all changes that
+were done after the model has last been built. The only difference is
+that in case of full build there is no model to start with, so _all_
+"changes" are put into the model (pmod files).
+
+In practice, the users do observe the difference because during
+incremental build obsolete (deleted or renamed) symbols are not
+deleted, but specially marked, and ignored in DISCOVER operation.
+This operation (marking and/or ignoring the marked symbols) is not
+entirely reliable at present, and after a couple of incremental build
+sessions the errors start to appear. They are first reported by
+-checkpmod utility, and then are observed in Scan mode and elsewhere
+within DISCOVER. Currently the way to resolve this issue is to rebuild
+the model from scratch (full build), which will get rid of all
+obsolete symbols in pmod files. 
+
+The long term solution is: 1. make sure that -tidy runs reliably, and
+run -tidy after each incremental build, and/or 2. provide that
+obsolete symbols are indeed ignored by DISCOVER in all modes of
+operation.
+
+9. ddElement is an important class in the system. Apparently (according to
+the slightly obsolete ALPHASET DATA ARCHITECTURE document) there is one
+object of this class for each external declaration, argument of a function
+definition and member of a global class. The class is defined in
+/paraset/src/paraset/dd/include/ddict.h.
+
+The classes xrefSymbol and ddElement are related. They both describe
+objects (names) in the source code. The relationship between ddElement and
+xrefSymbol seems to be the following: there is one ddElement object per
+file per name. For example: if a function is called in five different files
+(all five files belonging to the same project), there will be five
+ddElement objects created, one per file (if a function is called multiple
+times in a file, there will still be just one ddElement object created for
+all these calls). xrefSymbol is created on a per project basis. So, there
+will be exactly one xrefSymbol for this function in the project, no matter
+how many times in a project it is declared and/or called (however if the
+xrefSymbol is referenced in other projects, it will be part of their pmods
+as well).
+
+Both ddElement and xrefSymbol objects have an attribute called kind
+associated with them. The list of all allowed kinds of those objects
+can be found in file ddKind.h, inside ddKind enumeration type.  Both
+classes have a field reserved for the type: inside xrefSymbol, it is
+
+unsigned char kind;
+
+while in ddElement it is
+
+ddKind kind;
+
+ddElement class inherits this field from class ddSymbol.
+
+10. The relationship between ddElement and xrefSymbol resembles the
+relationship between .pset and .pmod files, to some extent. Indeed,
+ddElement objects and .pset files are created on a per file basis,
+i.e.  considering one source file at a time. As opposed to that, .pmod
+files and xrefSymbol objects are created on a project basis, i.e. by
+considering the whole project at once.
+
+11. Let us consider now the sequence of actions when a user
+double-clicks on an identifier inside source code (in Epoch),
+indicating desire to see its definition in the minibuffer. We will
+describe the events using the following two files as example:
+
+foo.c:                        bar.c:
+
+void foo()                    void bar()
+{                             {
+  bar();                      }
+}
+
+The first step in building the model of this small project is creation
+of Source Mode Trees (SMT) for these two files - one per file. The
+SMTs may resemble like parse trees, and indeed in this trivial example
+they would be very similar, but there is an important difference in
+general case: parse tree is created after expansion (preprocessing) of
+the original source code file (i.e. expansion of macros and #include,
+#ifdef etc. directives), while SMT is a representation of the original
+source code of the file (_before_ expansion).
+
+In addition to SMT tree, a related data structure called data
+dictionary (dd) for each file is also created. Here is discover's
+internal representation of SMT and data dictionary for the first file,
+foo.c:
+
+
+                                 smtHeader
+                                     |
+                                     |
+            +------------------------+------------------------+
+            |                                                 |
+            |                                                 |
+            v                                                 v
+         smtTree                                            ddRoot
+            |                                                 |
+            |                                                 |                has_type
+            v                                                 +-->(func, foo) ---------+
+      smtTree_fdef                                            |                        |
+            |                                                 |                        |
+            |                                                 |                        |
+       +----+------------------------------+              +---+-->(func, bar)          |
+       |                                   |              |   |                        |
+       |                                   |              |   |                        |
+       v                                   v              |   |                        |
+  smtTree_fdecl                       smtTree_body        |   +-->(SEMTYPE, void) <----+
+       |                                   |              |   |
+       |                            +------+------+       |   |
+       +------------------+         |      |      |       |   +-->(module, foo.c)
+       |                  |         v      |      v       |
+       v                  v         {      |      }       |
+smtTree_decl_spec   smtTree_title          |              |
+       |              |   |   |            v              |
+       |              |   |   |       smtTree_stmt        |
+       v              v   v   v        |        |         |
+      void           foo  (   )        |        |         |
+                                       |        v         |
+                                       |        ;         |
+                                       |                  |
+                                       v                  |
+                               smtTree_call_expr          |
+                                 |    |    |              |
+                                 |    |    |              |
+                                 v    v    v              |
+                                bar   (    )              |
+                                 ^                        |
+                                 |                        |
+                                 |                        |
+                                 +------------------------+
+                                      ref_smt_of_dd
+
+
+Please observe the following important conventions used in drawing the
+figure: 1) arrows designate pointers. 2) all nodes in smtTree are
+objects of the same class, smtTree. However to distinguish them, and
+emphasize their kind, a designator (fdecl, call_expr, stmt, etc.), has
+been added to ``smtTree'' string, separated by _. 3) all tokens,
+although also objects of class smtTree, are represented by their
+names/language symbols. 4) ddElement objects (nodes of ddRoot tree)
+are represented as pairs (type, name). 5) for clarity, only a small
+number of relationships between smtTree/ddElements is shown.
+
+As indicated, these two structures (SMT and dd) are pointed to by an
+object of class smtHeader through two intermediate nodes, objects of
+classes smtTree and ddRoot. The smtTree object pointed to by smtHeader
+is simply another smtTree object corresponding to the file (module)
+for which the SMT is built. In contrast, ddRoot object pointed to by
+smtHeader is a special class designed to point to ddElement
+objects. In addition, note that the ddElements are organized basically
+in an array, unlike smtTree objects, which form a tree. smtHeader
+object has pointer to buffer which contains the source code of the
+file.
+
+Nodes of dd ``tree'' are objects of class ddElement.  Each external
+declaration in a file has an object of class ddElement. In contrast,
+each group of tokens in a file has an object of class smtTree
+describing that group of tokens. smtTree objects and ddElement objects
+are related in the following sense. For each identifier for which
+there is an external declaration (and only for them ddElements are
+created), there is a relation (pointer) from smtTree object
+corresponding to that identifier to the ddElement object corresponding
+to its external declaration. However for those identifiers which do
+not correspond to external declarations (such as local declarations)
+there is no ddElement, but there is a relation to the smtTree object
+which corresponds to its (block local) declaration.
+
+Here is tabular presentation of the above relations (ref_id is just an
+occurence of an identifier).
+
+
+
+   type of ref_id               smtTree        ddElement       relation            name
+
+---------------------------------------------------------------------------------------------
+
+external declaration               +               +       smtTree->ddElement   dd_of_smt
+
+external definition                +               +       smtTree->ddElement   def_dd_of_smt
+
+reference to external id           +               -       smtTree->ddElement   ref_dd_of_smt
+
+---------------------------------------------------------------------------------------------
+
+declaration of block-local id      +               -       smtTree->smtTree     def_dd_of_smt
+
+definition of block-local id       +               -       smtTree->smtTree     def_dd_of_smt
+
+reference to block-local id        +               -       smtTree->smtTree     def_dd_of_smt
+
+---------------------------------------------------------------------------------------------
+
+The leaves of SMT are file tokens.  Sets of tokens, obviously,
+correspond to a ddElement. For example, for statement
+
+const int i;
+
+the tokens corresponding to this definition of i are 'const', 'int',
+'i' and ';'.  Their smtTree objects all point to ddElement for i. If
+later in the code there is a statement
+
+i = 1;
+
+then the token for this reference to i (itself another smtTree object)
+would point to the same ddElement. Therefore multiple smtTree objects
+point to the same ddElement, which makes sense, since ddElement is
+just one per file. The pointer (relation) from smtTree object to
+corresponding ddElement must describe the kind of relationship - for
+example definition, declaration, reference to external identifier,
+etc.
+
+11. smtHeader class object discussed above is actually an in-memory
+copy of the header of .pset file. One of its data members is a pointer
+to data buffer which holds complete source code file. Let us therefore
+summarize here the structure of .pset files. They consist of four
+parts. The first part is the contents of an object of class
+smtHeader. Second part is source code buffer. The third part is Source
+Mode Tree.
+
+When you check out a source code file, the corresponding pset file
+also gets checked out.  When you update (i.e.  reparse) source code
+file interactively from discover, your own copy of pset file will be
+updated. The pset files are in the directory
+/paraset/pmod/paraset/project_name/src. If you take a look in that
+directory, the pset files corresponding to the source code files that
+you checked out will have write permissions on them.

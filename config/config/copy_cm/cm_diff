@@ -1,0 +1,2 @@
+#!/bin/sh
+diff $cm_workfile $cm_sysfile

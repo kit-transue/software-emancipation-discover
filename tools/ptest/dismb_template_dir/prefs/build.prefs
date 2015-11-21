@@ -1,0 +1,35 @@
+*psetPrefs.pdfFileBuild:		$ADMINDIR/pdf/build.pdf
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/build.pdf
+
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src
+*psetPrefs.privateSrcRoot:		$ADMINDIR/src
+*psetPrefs.sharedModelRoot:		$ADMINDIR/src
+*psetPrefs.privateModelRoot:		$ADMINDIR/src
+
+*psetPrefs.projectList:			/proj
+
+*psetPrefs.ELS.List:			java
+*psetPrefs.ELS.java.flags: --classpath .:/job1/tests/regression/java/classes_1.1.zip
+*psetPrefs.ELS.EDG:			yes
+*psetPrefs.cDefines:			-D__sparc -D__STDC__
+*psetPrefs.cPlusDefines:		-D__sparc -D__STDC__ -D_WCHAR_T
+*psetPrefs.cIncludes:			-I/job1/include
+*psetPrefs.cPlusIncludes:		-I/job1/include/CC -I/job1/include
+*psetPrefs.cFlags:
+*psetPrefs.cPlusFlags:
+*psetPrefs.configuratorSystem:	
+
+*psetPrefs.cCompiler:			cc
+*psetPrefs.cPlusCompiler:		CC
+
+*psetPrefs.DIS_model.Strings_Enabled:	1
+*psetPrefs.DIS_model.LocalVars_Enabled:	1
+*psetPrefs.DIS_model.Instances_Enabled:	1
+*psetPrefs.DIS_model.Ast_Enabled:	1
+
+*psetPrefs.msgLogger:			yes
+*psetPrefs.DIS_msg.UseMsgLogger:	1
+
+*psetPrefs.acceptSyntaxErrors:		no
+
+*psetPrefs.doBuildDFA:			yes

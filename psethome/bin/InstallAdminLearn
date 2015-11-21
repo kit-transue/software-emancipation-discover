@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# This script does the following:
+#   1. If PSETHOME_ADMIN is undefined, set it to PSETHOME. If PSETHOME
+#      is also undefined, report an error and exit.
+#   2. If $HOME/CODEINTEGRITY/AdminLearn already exists, report an error and
+#      exit.
+#   3. If $PSETHOME_ADMIN/lib/AdminLearn doesn't exist, report an error and
+#      exit.
+#   4. If $HOME/CODEINTEGRITY doesn't exist, create it.
+#   5. Copy $PSETHOME_ADMIN/lib/AdminLearn into $HOME/CODEINTEGRITY
+#   6. If $HOME/CODEINTEGRITY/AdminLearn/AdminDir is not found after installation
+#      was attempted, report an error.
+
+
+_self=$0
+
+# Step 1
+if [ -z "$PSETHOME_ADMIN" ] ; then
+    if [ -z "$PSETHOME" ] ; then
+        echo $_self": Fatal error: PSETHOME and PSETHOME_ADMIN are both undefined."
+        echo $_self":              You must define at least one of them."
+        exit 1
+    else
+        PSETHOME_ADMIN=$PSETHOME
+    fi
+fi
+
+# Step 2
+if [ -d $HOME/CODEINTEGRITY/AdminLearn ] ; then
+    echo $_self": Fatal error: $HOME/CODEINTEGRITY/AdminLearn already exists."
+    exit 1
+fi
+
+# Step 3
+if [ ! -d $PSETHOME_ADMIN/lib/AdminLearn ] ; then
+    echo $_self": Fatal error: $PSETHOME_ADMIN/lib/AdminLearn not found."
+    exit 1
+fi
+
+# Step 4
+if [ ! -d $HOME/CODEINTEGRITY ] ; then
+    echo $_self: Creating $HOME/CODEINTEGRITY...
+    mkdir $HOME/CODEINTEGRITY
+fi
+
+# Step 5
+echo $_self: Installing AdminLearn in $HOME/CODEINTEGRITY...
+cd $PSETHOME_ADMIN/lib
+tar cf - AdminLearn | (cd $HOME/CODEINTEGRITY; tar xvf -)
+chmod -R u+w $HOME/CODEINTEGRITY/AdminLearn
+
+# Step 6
+if [ ! -d $HOME/CODEINTEGRITY/AdminLearn/AdminDir ] ; then
+    echo $_self": Fatal error: Installation of AdminLearn failed."
+    exit 1
+else
+    echo $_self": Installation of AdminLearn completed."
+    exit 0
+fi
+
+    
+   
+
+
+  

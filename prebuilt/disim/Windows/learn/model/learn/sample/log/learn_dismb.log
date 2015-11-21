@@ -1,0 +1,854 @@
+
+                     ===== disMB init start Apr22-2003 13:56:26=====
+
+env: PSETHOME= D:/Program Files/swemancipation
+env: ADMINDIR= C:/TEMP/learn/sample
+env: DISMBDIR= D:/Program Files/swemancipation/mb
+env: TMPDIR= C:/TEMP
+env: DISBUILD_TMPDIR= C:/TEMP/learn/sample/tmp/disbuild
+env: USER= tatiana
+env: PLATFORM= 
+env: DISCOVER releaseID= Not found
+Specified command line options:
+      -message_group 	0
+      -compilation_units_message_group 	5
+      -prefs 	C:/TEMP/learn/sample/prefs/build.prefs
+      -MBdoPassCache 	no
+      -MBincludeAllHdrs 	yes
+      -lpservice 	Build:lp2080
+      -MBgeneratePdf 	yes
+      -stdout 	
+Work prefs: C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs
+Fixed log: C:/TEMP/learn/sample/log/tatiana_dismb.log 
+PDF environment variables:
+      ENV : sharedSrcRoot 	D:\Program Files\swemancipation/prebuilt/source/learn 	(same Prefs and ENV)
+      ENV : sharedModelRoot 	C:/TEMP/learn/sample/model 	(same Prefs and ENV)
+      ENV : privateSrcRoot 	C:/TEMP 	(same Prefs and ENV)
+      ENV : privateModelRoot 	C:/TEMP 	(same Prefs and ENV)
+Full model build, cleaning up any old model files.
+disMB passes: analysis parse update finalize
+
+                     =====  disMB init end Apr22-2003 13:56:29=====
+
+
+                     =====  disMB start Apr22-2003 13:56:29 =====
+
+
+                     =====  ANALYSIS start Apr22-2003 13:56:29 =====
+
+Start analysis TATIANA2K:1 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_analysis/TATIANA2K_1.log
+
+                     ===== TATIANA2K:1 local analysis start Apr22-2003 13:56:29 =====
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp => d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/canvas.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/color.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/color.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/fonts.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/image_win.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/init.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/init.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/stage.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/src/xip.c => d:/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c
+Total number of source files to be parsed: 30
+
+                     ===== TATIANA2K:1 local analysis end Apr22-2003 13:56:30 =====
+
+
+                     =====  ANALYSIS end Apr22-2003 13:56:30 =====
+
+
+                     =====  PARSE start Apr22-2003 13:56:30 =====
+
+parallel MB: MBparallelHosts= TATIANA2K:4
+Fork is not supported.
+Parallel parse TATIANA2K:1 cmd: disperl "D:/Program Files/swemancipation/mb/dismb_remote.pl" TATIANA2K 1 parse NULL NULL C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_1.log.lck -lpservice Build:lp2080 -message_group 271 -stdout log: C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_1.log
+Parallel parse TATIANA2K:2 cmd: disperl "D:/Program Files/swemancipation/mb/dismb_remote.pl" TATIANA2K 2 parse NULL NULL C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_2.log.lck -lpservice Build:lp2080 -message_group 274 -stdout log: C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_2.log
+Parallel parse TATIANA2K:3 cmd: disperl "D:/Program Files/swemancipation/mb/dismb_remote.pl" TATIANA2K 3 parse NULL NULL C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_3.log.lck -lpservice Build:lp2080 -message_group 276 -stdout log: C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_3.log
+Parallel parse TATIANA2K:4 cmd: disperl "D:/Program Files/swemancipation/mb/dismb_remote.pl" TATIANA2K 4 parse NULL NULL C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_4.log.lck -lpservice Build:lp2080 -message_group 278 -stdout log: C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_4.log
+Done  parse TATIANA2K:1 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_1.log
+Done  parse TATIANA2K:2 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_2.log
+Done  parse TATIANA2K:3 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_3.log
+Done  parse TATIANA2K:4 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_parse/TATIANA2K_4.log
+All parse processes are complete.
+
+                     ===== TATIANA2K:1 local parse start Apr22-2003 13:56:34 =====
+
+     Pref file C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs: 273 values, 273 empty line, 0 comments
+PDF environment variables:
+      ENV : sharedSrcRoot 	D:\Program Files\swemancipation/prebuilt/source/learn 	(same Prefs and ENV)
+      ENV : sharedModelRoot 	C:/TEMP/learn/sample/model 	(same Prefs and ENV)
+      ENV : privateSrcRoot 	C:/TEMP 	(same Prefs and ENV)
+      ENV : privateModelRoot 	C:/TEMP 	(same Prefs and ENV)
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 60 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/square.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/square.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/color.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/color.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/X.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/x.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xfuncproto.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xfuncproto.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xosdefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xosdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xutil.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xutil.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xresource.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xresource.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/string.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/string.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Core.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/core.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Composite.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/composite.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Constraint.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constraint.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Object.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/object.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObj.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobj.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Xm.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xm.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Vendor.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendor.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VirtKeys.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/virtkeys.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VendorE.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/vendore.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ExtObject.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/extobject.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Shell.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shell.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/libio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/libio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/_G_config.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/_g_config.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 32 all files, 1 up to date, 31 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 60
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ExtObject.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/extobject.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Composite.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/composite.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Intrinsic.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsic.h.pset.iff
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/square.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/square.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xutil.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xutil.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Object.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/object.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Shell.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shell.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xfuncproto.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xfuncproto.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/X.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/x.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xosdefs.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xosdefs.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VendorE.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/vendore.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xresource.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xresource.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/color.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/color.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Constraint.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constraint.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/libio.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/libio.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObj.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobj.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Core.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/core.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VirtKeys.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/virtkeys.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Vendor.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendor.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/string.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/string.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xlib.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xlib.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Xm.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xm.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/_G_config.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/_g_config.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/square.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 26 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayButton.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaybutton.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/PushB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/pushb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Label.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/label.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/display.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/display.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Form.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/form.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BulletinB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/bulletinb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Frame.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/frame.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/RowColumn.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/rowcolumn.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/application.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/application.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/funcTypes.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/functypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/location.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/location.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 36 all files, 25 up to date, 11 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 26
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayButton.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displaybutton.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Frame.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/frame.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/display.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/display.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Form.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/form.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/funcTypes.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/functypes.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Label.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/label.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BulletinB.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/bulletinb.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/PushB.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/pushb.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/RowColumn.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/rowcolumn.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaybutton.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 12 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 4 all files, 3 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 12
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/application.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 21 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayApp.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayapp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayControl.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaycontrol.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/board.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/board.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displaySquare.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaysquare.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/DrawnB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/drawnb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayStatus.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaystatus.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayScore.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayscore.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 52 all files, 45 up to date, 7 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 21
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayScore.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displayscore.h.pset.iff
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayApp.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displayapp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayStatus.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displaystatus.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayBoard.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displayboard.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/DrawnB.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/drawnb.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displaySquare.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displaysquare.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayapp.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 34 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 33 all files, 32 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 34
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaystatus.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 16 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 30 all files, 29 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 16
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/color.cpp complete. See "compilation units" section for details.
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 72 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/Dt.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/dt.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmAppl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmappl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/StringDefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/stringdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/XmP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xmp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/IntrinsicP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsicp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CoreP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/corep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CompositeP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/compositep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ConstrainP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constrainp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ObjectP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/objectp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObjP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobjp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Traversal.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/traversal.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ShellP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shellp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/VendorP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendorp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BaseClassI.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/baseclassi.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmPublic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmpublic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmDecls.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmdecls.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 40 all files, 39 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c.pset.iff.ext -lp_service Build:lp2080 -message_group 72
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/fonts.c complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 43 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/humanPlayer.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/humanplayer.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/player.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/player.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/move.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/move.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 38 all files, 37 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 43
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/humanplayer.cpp complete. See "compilation units" section for details.
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/init.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 78 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/init.c"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988 40 all files, 39 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_1.1988/tmpif.1988  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/init.c.pset.iff.ext -lp_service Build:lp2080 -message_group 78
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/init.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/init.c.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/init.c complete. See "compilation units" section for details.
+
+                     ===== TATIANA2K:1 local parse end Apr22-2003 13:57:23 =====
+
+
+                     ===== TATIANA2K:2 local parse start Apr22-2003 13:56:34 =====
+
+     Pref file C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs: 273 values, 273 empty line, 0 comments
+PDF environment variables:
+      ENV : sharedSrcRoot 	D:\Program Files\swemancipation/prebuilt/source/learn 	(same Prefs and ENV)
+      ENV : sharedModelRoot 	C:/TEMP/learn/sample/model 	(same Prefs and ENV)
+      ENV : privateSrcRoot 	C:/TEMP 	(same Prefs and ENV)
+      ENV : privateModelRoot 	C:/TEMP 	(same Prefs and ENV)
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 57 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/player.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/player.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/application.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/application.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/string.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/string.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/color.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/color.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/X.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/x.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xfuncproto.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xfuncproto.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xosdefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xosdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xutil.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xutil.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xresource.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xresource.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Core.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/core.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Composite.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/composite.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Constraint.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constraint.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Object.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/object.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObj.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobj.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Xm.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xm.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Vendor.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendor.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VirtKeys.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/virtkeys.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VendorE.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/vendore.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ExtObject.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/extobject.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Shell.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shell.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/libio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/libio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/_G_config.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/_g_config.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/move.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/move.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/location.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/location.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/board.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/board.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/square.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/square.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 37 all files, 31 up to date, 6 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 57
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/board.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/board.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/location.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/location.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/application.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/application.h.pset.iff
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/player.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/player.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/move.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/move.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/player.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 41 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/history.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/history.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 10 all files, 8 up to date, 2 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 41
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/history.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/history.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/history.cpp complete. See "compilation units" section for details.
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/color.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 70 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/color.c"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/Dt.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/dt.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmAppl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmappl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/StringDefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/stringdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/XmP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xmp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/IntrinsicP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsicp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CoreP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/corep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CompositeP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/compositep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ConstrainP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constrainp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ObjectP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/objectp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObjP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobjp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Traversal.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/traversal.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ShellP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shellp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/VendorP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendorp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BaseClassI.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/baseclassi.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmPublic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmpublic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmDecls.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmdecls.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 40 all files, 39 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/color.c.pset.iff.ext -lp_service Build:lp2080 -message_group 70
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/color.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/color.c.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/color.c complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 52 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 6 all files, 5 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 52
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/move.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 65 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeMove.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoemove.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 7 all files, 5 up to date, 2 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 65
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeMove.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoemove.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoemove.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 36 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/game.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/game.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/gameBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/gameboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/time.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/time.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayApp.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayapp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Form.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/form.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BulletinB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/bulletinb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/display.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/display.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Label.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/label.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Frame.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/frame.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/RowColumn.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/rowcolumn.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayControl.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaycontrol.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayButton.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaybutton.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/PushB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/pushb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/funcTypes.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/functypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displaySquare.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaysquare.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/DrawnB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/drawnb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayStatus.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaystatus.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayScore.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayscore.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 59 all files, 53 up to date, 6 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 36
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h.pset.iff
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/gameBoard.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/gameboard.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/game.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/game.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/time.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/time.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/game.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 55 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/myComputerPlayer.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/mycomputerplayer.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 39 all files, 37 up to date, 2 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 55
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/myComputerPlayer.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/mycomputerplayer.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/mycomputerplayer.cpp complete. See "compilation units" section for details.
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 75 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/xip.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/xip.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/stage.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/stage.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/image_win.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/image_win.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 43 all files, 42 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c.pset.iff.ext -lp_service Build:lp2080 -message_group 75
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/image_win.c complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 32 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076 44 all files, 43 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_2.5076/tmpif.5076  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 32
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaysquare.cpp complete. See "compilation units" section for details.
+
+                     ===== TATIANA2K:2 local parse end Apr22-2003 13:57:23 =====
+
+
+                     ===== TATIANA2K:3 local parse start Apr22-2003 13:56:34 =====
+
+     Pref file C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs: 273 values, 273 empty line, 0 comments
+PDF environment variables:
+      ENV : sharedSrcRoot 	D:\Program Files\swemancipation/prebuilt/source/learn 	(same Prefs and ENV)
+      ENV : sharedModelRoot 	C:/TEMP/learn/sample/model 	(same Prefs and ENV)
+      ENV : privateSrcRoot 	C:/TEMP 	(same Prefs and ENV)
+      ENV : privateModelRoot 	C:/TEMP 	(same Prefs and ENV)
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 68 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/xip.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/xip.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/Dt.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/dt.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmAppl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmappl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/X.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/x.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xfuncproto.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xfuncproto.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xosdefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xosdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xutil.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xutil.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xresource.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xresource.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/string.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/string.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Core.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/core.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Composite.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/composite.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Constraint.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constraint.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Object.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/object.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObj.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobj.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/StringDefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/stringdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Shell.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shell.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/XmP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xmp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Xm.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xm.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Vendor.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendor.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VirtKeys.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/virtkeys.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VendorE.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/vendore.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ExtObject.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/extobject.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/IntrinsicP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsicp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CoreP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/corep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CompositeP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/compositep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ConstrainP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constrainp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ObjectP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/objectp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObjP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobjp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Traversal.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/traversal.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ShellP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shellp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/VendorP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendorp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BaseClassI.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/baseclassi.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmPublic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmpublic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmDecls.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmdecls.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/stage.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/stage.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/image_win.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/image_win.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/canvas.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/canvas.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 45 all files, 38 up to date, 7 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c.pset.iff.ext -lp_service Build:lp2080 -message_group 68
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/canvas.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/include/canvas.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmPublic.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmpublic.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/image_win.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/include/image_win.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/XmP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xmp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ConstrainP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constrainp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/canvas.c complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 30 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayControl.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaycontrol.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/RowColumn.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/rowcolumn.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/display.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/display.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Label.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/label.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Form.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/form.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BulletinB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/bulletinb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Frame.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/frame.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/application.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/application.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayButton.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaybutton.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/PushB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/pushb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/funcTypes.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/functypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/location.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/location.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 37 all files, 35 up to date, 2 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 30
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayControl.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displaycontrol.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displaycontrol.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 25 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/board.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/board.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/square.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/square.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/color.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/color.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/libio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/libio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/_G_config.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/_g_config.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displaySquare.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaysquare.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/DrawnB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/drawnb.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 46 all files, 45 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 25
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/displayboard.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 39 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/gameBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/gameboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/time.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/time.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 38 all files, 37 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 39
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/gameboard.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 49 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeGame.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoegame.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/MainW.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/mainw.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ScrolledW.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/scrolledw.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/game.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/game.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/player.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/player.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/move.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/move.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayApp.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayapp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayStatus.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaystatus.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayScore.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayscore.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeMove.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoemove.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/humanPlayer.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/humanplayer.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/history.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/history.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/myComputerPlayer.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/mycomputerplayer.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 66 all files, 65 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 49
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/main.cpp complete. See "compilation units" section for details.
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 84 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904 43 all files, 42 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_3.904/tmpif.904  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c.pset.iff.ext -lp_service Build:lp2080 -message_group 84
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/stage.c complete. See "compilation units" section for details.
+
+                     ===== TATIANA2K:3 local parse end Apr22-2003 13:57:24 =====
+
+
+                     ===== TATIANA2K:4 local parse start Apr22-2003 13:56:34 =====
+
+     Pref file C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs: 273 values, 273 empty line, 0 comments
+PDF environment variables:
+      ENV : sharedSrcRoot 	D:\Program Files\swemancipation/prebuilt/source/learn 	(same Prefs and ENV)
+      ENV : sharedModelRoot 	C:/TEMP/learn/sample/model 	(same Prefs and ENV)
+      ENV : privateSrcRoot 	C:/TEMP 	(same Prefs and ENV)
+      ENV : privateModelRoot 	C:/TEMP 	(same Prefs and ENV)
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 81 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/xip.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/xip.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/Dt.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/dt.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmAppl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmappl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/types.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stdtypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/X.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/x.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xfuncproto.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xfuncproto.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xosdefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xosdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stddef.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xutil.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xutil.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Xresource.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/xresource.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/string.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/string.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Core.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/core.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Composite.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/composite.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Constraint.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constraint.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Object.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/object.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObj.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobj.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/StringDefs.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/stringdefs.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Shell.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shell.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/XmP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xmp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Xm.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/xm.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/Vendor.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendor.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VirtKeys.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/virtkeys.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/VendorE.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/vendore.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ExtObject.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/extobject.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/IntrinsicP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsicp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CoreP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/corep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CompositeP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/compositep.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ConstrainP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/constrainp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ObjectP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/objectp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObjP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobjp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Traversal.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/traversal.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ShellP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shellp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/VendorP.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendorp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BaseClassI.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/baseclassi.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmPublic.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmpublic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmDecls.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmdecls.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/stage.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/stage.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/image_win.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/image_win.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/externals.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/externals.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 44 all files, 26 up to date, 18 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c.pset.iff.ext -lp_service Build:lp2080 -message_group 81
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/RectObjP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/rectobjp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CoreP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/corep.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/StringDefs.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/stringdefs.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/stdio.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/VendorP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/vendorp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Traversal.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/traversal.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/IntrinsicP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/intrinsicp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/CompositeP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/compositep.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BaseClassI.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/baseclassi.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ObjectP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/objectp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/X11/ShellP.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/x11/shellp.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/xip.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/include/xip.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmDecls.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmdecls.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Mrm/MrmAppl.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/mrm/mrmappl.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/stage.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/include/stage.h.pset.iff
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/externals.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/include/externals.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/Dt.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/include/dt.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/pipeline.c complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 19 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/display.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/display.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/x11_intrinsic.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Label.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/label.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Form.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/form.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/BulletinB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/bulletinb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/Frame.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/frame.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/RowColumn.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/rowcolumn.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdarg.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/application.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/application.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 32 all files, 31 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 19
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/display.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 46 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/location.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/location.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 2 all files, 1 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 46
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/location.cpp complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 63 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeGame.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoegame.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/stdlib.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/iostream.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/streambuf.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/libio.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/libio.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/_G_config.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/_g_config.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/MainW.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/mainw.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ScrolledW.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/scrolledw.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/funcTypes.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/functypes.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/game.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/game.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/stat.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/gameBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/gameboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntl.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/sys/fcntlcom.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/time.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/time.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/board.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/board.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/square.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/square.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/color.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/color.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/player.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/player.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/move.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/move.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayApp.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayapp.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayControl.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaycontrol.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayButton.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaybutton.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/PushB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/pushb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayBoard.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayboard.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displaySquare.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaysquare.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/DrawnB.h => d:/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/drawnb.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayStatus.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaystatus.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayScore.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displayscore.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeMove.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoemove.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/humanPlayer.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/humanplayer.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/history.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/history.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/myComputerPlayer.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/mycomputerplayer.h
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayTicTacToeGame.H => d:/program files/swemancipation/prebuilt/source/learn/ttt/include/displaytictactoegame.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 67 all files, 61 up to date, 6 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 63
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/displayTicTacToeGame.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/displaytictactoegame.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/ScrolledW.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/scrolledw.h.pset.iff
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/TicTacToeGame.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/tictactoegame.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/sysinclude/Xm/MainW.h  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/sysinclude/xm/mainw.h.pset.iff
+extracted: D:/Program Files/swemancipation/prebuilt/source/learn/ttt/include/humanPlayer.H  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/include/humanplayer.h.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/tictactoegame.cpp complete. See "compilation units" section for details.
+Parsing C file: 'd:/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/xip"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 86 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/xip" "-ID:/Program Files/swemancipation/prebuilt/source/learn/xip/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --c -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c"
+
+dis_path: D:/Program Files/swemancipation/prebuilt/source/learn/xip/include/canvas.h => d:/program files/swemancipation/prebuilt/source/learn/xip/include/canvas.h
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 46 all files, 45 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c.pset.iff.ext -lp_service Build:lp2080 -message_group 86
+extracted: d:/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/xip/src/xip.c complete. See "compilation units" section for details.
+Parsing CPP file: 'd:/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp'
+cd "D:/Program Files/swemancipation/prebuilt/source/learn/ttt"
+aset_CCcc.exe --IF_file C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 --checksum --GNU_compatible_AST --lp_service Build:lp2080 --message_group 13 --relative_path_base "D:/Program Files/swemancipation/prebuilt/source/learn/ttt" "-ID:/Program Files/swemancipation/prebuilt/source/learn/ttt/include" "-ID:/Program Files/swemancipation/prebuilt/source/learn/sysinclude" --no_wchar_t_keyword -D__DISCOVER__ -D_DEBUG -D_WIN32 -D__i386__ -D_POSIX_SOURCE -D_GCC_SIZE_T -D_PTRDIFF_T -D_WCHAR_T -D__STDC__ -w "d:/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp"
+
+Scanned C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516 34 all files, 33 up to date, 1 to extract, 0 foreign
+D:/Program Files/swemancipation/bin/ifext.exe C:/TEMP/mbtmp_parse__TATIANA2K_4.4516/tmpif.4516  -f c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp.pset.iff.ext -lp_service Build:lp2080 -message_group 13
+extracted: d:/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp  c:/temp/learn/sample/model/pset/d_drive/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp.pset.iff
+Parse of d:/program files/swemancipation/prebuilt/source/learn/ttt/src/board.cpp complete. See "compilation units" section for details.
+
+                     ===== TATIANA2K:4 local parse end Apr22-2003 13:57:23 =====
+
+  ===================== Parse Summary ======================
+    Projects                           Needed  Parsed  Missing
+    /ROOT                              118     118     0
+    Total IFFs: needed 118, parsed 118, missing 0
+                Total           include         src
+    needed      118             88              30
+    parsed      118             88              30 (forgiven 0)
+    missing     0               0               0
+  ==========================================================
+
+                     =====  PARSE end Apr22-2003 13:57:31 =====
+
+
+                     =====  UPDATE start Apr22-2003 13:57:31 =====
+
+Running pdf generator: D:/Program Files/swemancipation/bin/pdfgen.exe -project ROOT -src_root C:/ -ifflist C:/TEMP/learn/sample/tmp/disbuild/iff_files.lst -pdf C:/TEMP/learn/sample/pdf/build.pdf -server_pdf C:/TEMP/learn/sample/pdf/server.pdf -lpservice Build:lp2080 -message_group 1053
+Start update TATIANA2K:1 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_update/TATIANA2K_1.log
+
+                     ===== TATIANA2K:1 local update start Apr22-2003 13:57:32 =====
+
+
+TATIANA2K:1 Running: model_server.exe -batch -pdf C:/TEMP/learn/sample\pdf\build.pdf -prefs C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs -lpservice Build:lp2080 -message_group 1051 -update /ROOT
+DISCOVER Version:        _
+Built on:                Apr 16 2003 21:05
+c:\temp\mbtmp_update__tatiana2k_1.2496\discover-04-22.1\SharedMem06000 - Access is denied.
+TATIANA2K:1 SUCCEEDED model_server.exe -batch -pdf C:/TEMP/learn/sample\pdf\build.pdf -prefs C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs -lpservice Build:lp2080 -message_group 1051 -update /ROOT
+
+                     ===== TATIANA2K:1 local update end Apr22-2003 13:57:47 =====
+
+  ===================== Update Summary =====================
+    Projects                           Needed  Updated
+    /ROOT                              118     118
+    Total: needed 118, Updated 118, Removed 0
+  ==========================================================
+
+                     =====  UPDATE end Apr22-2003 13:57:48 =====
+
+
+                     =====  FINALIZE start Apr22-2003 13:57:48 =====
+
+Start finalize TATIANA2K:1 ; log C:/TEMP/learn/sample/tmp/disbuild/mblog_finalize/TATIANA2K_1.log
+
+                     ===== TATIANA2K:1 local finalize start Apr22-2003 13:57:48 =====
+
+
+TATIANA2K:1 Running: model_server.exe -batch -pdf C:/TEMP/learn/sample\pdf\build.pdf -prefs C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs -lpservice Build:lp2080 -message_group 1322 -save_proj
+DISCOVER Version:        _
+Built on:                Apr 16 2003 21:05
+TATIANA2K:1 SUCCEEDED model_server.exe -batch -pdf C:/TEMP/learn/sample\pdf\build.pdf -prefs C:\\TEMP\\learn\\sample\\tmp\\disbuild\\mb.prefs -lpservice Build:lp2080 -message_group 1322 -save_proj
+
+                     ===== TATIANA2K:1 local finalize end Apr22-2003 13:57:48 =====
+
+  ===================== Finalize Summary ===================
+    Total PRJs: needed 1, finalized 1
+  ==========================================================
+
+                     =====  FINALIZE end Apr22-2003 13:57:48 =====
+
+Fixed log: C:/TEMP/learn/sample/log/tatiana_dismb.log

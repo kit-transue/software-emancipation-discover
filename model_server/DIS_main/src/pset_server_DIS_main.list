@@ -1,0 +1,31 @@
+
+TARGETS =
+ 	prefs.o
+        projscope.o
+        extfile.o
+
+VPATH =
+	/paraset/src/paraset/DIS_main/src
+
+CCINCLUDES =
+	/paraset/src/paraset/machine/include
+	/paraset/src/paraset/communications/include
+	/paraset/src/paraset/gen/include
+	/paraset/src/paraset/obj/include
+	/paraset/src/paraset/interface/include
+	/paraset/src/paraset/project/include
+	/paraset/src/paraset/ui/include
+	/paraset/src/paraset/nihcl/include
+	/paraset/src/paraset/dd/include
+	/paraset/src/paraset/rtl/include
+	/paraset/src/paraset/xref/include
+	/paraset/src/paraset/gt/include
+	/paraset/src/paraset/subsystem/include
+	/paraset/src/paraset/smt/include
+	/paraset/src/paraset/to_cpp/include
+	/paraset/src/paraset/driver/include
+	/paraset/src/paraset/ste/include
+	/paraset/src/paraset/api/include
+	/paraset/src/paraset/demangler/include
+	/paraset/src/tcl7.6/generic
+	${GALAXYHOME}/include

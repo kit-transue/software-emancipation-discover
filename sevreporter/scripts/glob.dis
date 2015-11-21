@@ -1,0 +1,278 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+##############################################################################
+
+#
+# Helper function to determine if a given
+# node has type pointer to char:
+#
+
+proc ischarptr { node } {
+
+  if { [ typeinfo $node info ] != "" } {
+    if { $info(level) == 1 && \
+         ($info(basename) == "char" || \
+          $info(basename) == "unsigned char") } {
+      return 1
+    }
+  } else {
+    return 0
+  }
+
+}
+
+##############################################################################
+
+#
+# Character pointer addition.
+#
+
+proc glob:arith_add { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ tree find -ignore \
+    { (plus_expr || plus_assign_expr) ->. lhs: [ ischarptr $lhs ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Character pointer subtraction.
+#
+
+proc glob:arith_sub { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ tree find -ignore \
+    { (minus_expr || minus_assign_expr) ->. lhs: [ ischarptr $lhs ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Character pointer postfix increment.
+#
+
+proc glob:arith_post_incr { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ tree find -ignore { postincrement_expr ->. trg: [ ischarptr $trg ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Character pointer postfix decrement.
+#
+
+proc glob:arith_post_decr { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ tree find -ignore { postdecrement_expr ->. trg: [ ischarptr $trg ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+ }
+}
+
+##############################################################################
+
+#
+# Character pointer prefix increment.
+#
+
+proc glob:arith_pre_incr { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ tree find -ignore { preincrement_expr ->. trg: [ ischarptr $trg ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Character pointer prefix decrement.
+#
+
+proc glob:arith_pre_decr { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ tree find -ignore { predecrement_expr ->. trg: [ ischarptr $trg ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+ }
+}
+
+##############################################################################
+
+#
+# Character array reference.
+#
+
+proc glob:arith_array { src args } {
+  set res [ tree find -ignore { array_ref ->. trg: [ ischarptr $trg ] } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+}
+
+##############################################################################
+
+#
+# Character constants.
+#
+
+proc glob:char_const { src args } {
+  set res [ tree find -ignore { constant match("'[^']*'",name) } "$src" ]
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+}
+
+##############################################################################
+
+#
+# All string literals.
+#
+
+proc glob:stringl { src args } {
+  set inst [ instances "$src" ]
+  set res [ filter string $inst ]
+  return $res
+}
+
+##############################################################################
+
+#
+# Internal procedure -- macro-aware string retrieval.
+#
+
+proc _glob_get_strings { src macroflag } {
+
+  set res [ nil_set ]
+
+  set inst [ instances "$src" ]
+  set strings [ filter string $inst ]
+
+  foreach str $strings {
+    set smt_ref [ get_smt $str ]
+    set done 0
+    set in_macro 0
+    set depth 0
+    if { $smt_ref == "" } {
+      # We want to exclude strings with no SMT, so . . .
+      set in_macro -1
+    } else {
+      while { 1 } {
+	if { $smt_ref == "" } {
+	  # If the string had SMT, but we do not find the types we
+	  # were looking for, assume the string is not in a macro
+	  set in_macro 0
+	} else {
+	set type [ smt_type $smt_ref ]
+	if { $type == "SMT_macrocall" } {
+	set in_macro 1
+	break
+	} elseif { $type == "SMT_file" || $type == "" } {
+	set in_macro 0
+	break
+	} elseif { $depth >= 1024 } {
+	set in_macro 0
+	break
+	}
+	set smt_ref [ smt_parent $smt_ref ]
+	incr depth
+	}
+      }
+    }
+    if { $in_macro == $macroflag } {
+      sappend $res $str
+    }
+  }
+
+  return $res
+}
+
+##############################################################################
+
+#
+# String literals not in macros.
+#
+
+proc glob:stringl_nomac { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ _glob_get_strings "$src" 0 ]
+  return $res  
+
+ }
+}
+
+##############################################################################
+
+#
+# [OPTIONAL] String literals in macros.
+#
+
+proc glob:stringl_inmac { src args } {
+
+#workaround for now. right fixes will be in sev.dis.
+ if { ! [ string match -nocase "java" [language $src] ] } {	
+
+  set res [ _glob_get_strings "$src" 1 ]
+  return $res
+
+ }
+}

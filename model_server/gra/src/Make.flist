@@ -1,0 +1,14 @@
+CROOTS=\
+
+
+CPROOTS=\
+    gra_ivInterface.h \
+    graAction.h \
+    graDragSymbol \
+    graSymbol.h \
+    graTools \
+    graWindow.h \
+    graWorld_sym \
+    rubberGraphic.h \
+
+

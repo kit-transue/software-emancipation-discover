@@ -1,0 +1,83 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+			Project Server (Save/Restore)
+			Fri Jun  7 16:20:48 EDT 1996
+
+Objective: DISCOVER supports Project Save/Restore functionality
+	   starting from aset version 5.0.0.52. The project provides
+	   ability to save Project structure in ASCII format and to
+	   restore the Project structure while expanding instead of
+	   reading real File System information.
+
+Conventions:
+
+	PRJ file	  - ASCII file with Project structure
+	PMOD file	  - Project DISCOVER MODEL file ( .sym file )
+	ROOT project 	  - top level PDF project, that does not have PMOD file
+	ROOT-PMOD project - top level PDF project that has PMOD file
+	PMOD project	  - PDF subproject, that has PMOD file
+
+Functional Specifications:
+
+	Project structure for project "/a" is saved in the PRJ file "a.pmod.prj"
+        at the same directory where the file "a.pmod.sym" would appear. 
+
+	PMOD projects are saved in the separate PRJ file, that contains the
+	complete Project structure.
+
+	ROOT projects are saved in the separate PRJ file, that contains the Project
+	structure from the top to PMOD projects (if any). If there are no PMOD 
+	projects under the ROOT project, than the PRJ file contains the complete
+	project structure.
+
+	DISCOVER renames an existing PRJ file into <filename>.bak
+
+Project Save Commands:
+
+	discover -batch -pdf <PDF> -save_proj [project_name]
+
+	Without the parameter saves all ROOT and PMOD projects from the PDF.
+	The parameter must be either ROOT project or PMOD project.
+
+	discover -batch -pdf <PDF> -save_root [project_name]
+
+	Saves PMOD Projects that do not have PRJ files or the PRJ files are outdated.
+	The PRJ file is considered outdated, if the date stamp on the .sym file
+	is later than on .prj file. For the PMOD projects there is an additional
+	checking added in interactive DISCOVER session: whether the real .sym file
+	size is different from the size, stored in the PRJ file.
+	Always saves ROOT projects.
+
+User Environment Variables:
+
+	DIS_NOPRJ  	- turns off the Project restore from prj files
+
+Debug Environment Variables:
+
+	DIS_PRJ_FILE	- saves PRJ file into value of the variable.
+	DIS_PRJ_DEBUG	- turns on additional output on standard output.

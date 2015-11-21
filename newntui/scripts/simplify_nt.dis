@@ -1,0 +1,161 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc run_simplify {args} {
+global env 
+global SimplifyPipe
+	
+    set num_args [llength $args]
+    if { $num_args < 1} {
+ 	return "dis_simplify: file name is missing"
+    }
+
+    set ln [lindex $args [expr $num_args-1]]
+    set options [lrange $args 0 [expr $num_args-2]]
+
+    set lang [language ${ln}]
+    if { ($lang != "C") && ($lang != "CPP") } {
+	if {[string compare $lang "ELS"] == 0} {
+	    set lang [els language [fname ${ln}]]
+	}
+	return "cannot simplify $lang files"
+    }
+
+    set fn [fname ${ln}]
+   
+    set cpp_parms  [parms_cpp  ${ln}]
+    set comp_parms [parms_comp ${ln}]
+
+    # Hack around mangling of
+    #      --preinclude "D:\codeintegrity/include/dis_nt.h"
+    # into --preinclude {"D:\codeintegrity/include/dis_nt.h"}
+    set adjusted_comp_parms ""
+    foreach parm $comp_parms {
+	# TCL does commands right; we can examine the arg directly!
+	# If the arg has quotes, trim them.
+	if [regexp {^"(.*)"$} $parm dupeparm unquoted] {
+	    set parm $unquoted
+	}
+	lappend adjusted_comp_parms $parm
+    }
+
+    set all_parms "$cpp_parms $adjusted_comp_parms"
+    set lang [language ${ln}]
+    if { $lang == "C" } {
+	set all_parms " --c $all_parms"
+    } elseif { $lang == "CPP" } {
+	set all_parms " --c++ $all_parms"
+    } 
+
+    # Get proper working directory
+    set path_base [els_get_relative_path_base $all_parms]
+    set dir ""
+    if {$path_base != ""} {
+        set dir $path_base
+    } else {
+        set dir [els_cd $fn]
+    }
+    set iff [els_tmpname {$fn}]
+
+    set code [catch { > $iff "" } msg]
+    if $code {
+	     return "cannot create $iff: $msg"
+    }
+
+	set CCcc $env(PSETHOME)/bin/aset_CCcc
+    set simp $env(PSETHOME)/bin/simplify
+
+    puts "\nParsing $lang file: \'$fn\'..."
+        
+    # Change working directory:
+    set dir [ ospath $dir ]
+    puts_verbose "cd $dir"
+    set cwd [ pwd ]
+    catch { cd $dir }
+
+    #run aset_CCcc
+    set cmd "{${CCcc}} --IF_file \{$iff\} --GNU_compatible_AST $all_parms \{$fn\} 2> \{$iff.err\}"
+	puts $cmd
+    set status [exec_cmd $cmd]
+
+    # Restore working directory:
+    catch { cd $cwd }
+
+    if $status {
+	   return "$CCcc failed, exit status $status \nCannot simplify files with parsing errors."
+    }
+    puts "Done\n";
+
+    puts "\nSimplifying...";
+
+    # Change working directory:
+    puts_verbose "cd $dir"
+    catch { cd $dir }
+
+    #run simplify
+    set cmd "|{${simp}} -query $options $cpp_parms \{$iff\}"
+	set SimplifyPipe [open $cmd r+]
+
+    # Restore working directory:
+    catch { cd $cwd }
+	return ""
+}
+
+
+
+proc query_simplify {} {
+global SimplifyPipe
+
+	set result ""
+	set nodeline ""
+	while { $nodeline != "-1" } {
+	   set nodeline [gets $SimplifyPipe]
+	   set result [append result $nodeline "\n"]
+    }
+
+	return $result
+}
+
+proc tell_simplify { fileID } {
+global SimplifyPipe
+       puts $SimplifyPipe $fileID
+}
+
+proc save_and_quit_simplify  {} {
+global SimplifyPipe
+
+      puts $SimplifyPipe 0
+	  close $SimplifyPipe
+}
+
+
+proc quit_simplify  {} {
+global SimplifyPipe
+
+      puts $SimplifyPipe 0
+	  close $SimplifyPipe
+}

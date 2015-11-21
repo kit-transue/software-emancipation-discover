@@ -1,0 +1,16 @@
+VPATH=/paraset/src/extern/osport/source
+
+TARGETS=\
+	bitMEM.o \
+        dirFSet.o \
+        pdudir.o \
+        pdufile.o \
+	pduio.o \
+        pdumem.o \
+        pdupath.o \
+	pduproc.o \
+        pdustring.o \
+        pdutime.o \
+        raFile.o
+
+L_CCINCLUDES=-I/paraset/src/extern/osport/include

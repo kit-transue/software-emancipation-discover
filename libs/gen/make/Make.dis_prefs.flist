@@ -1,0 +1,11 @@
+
+CXXROOTS=\
+    genError.h \
+    genString \
+    genWild.h \
+    globals \
+    psetmem \
+    regexp \
+    trace \
+
+

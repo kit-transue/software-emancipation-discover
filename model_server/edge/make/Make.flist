@@ -1,0 +1,54 @@
+CROOTS=\
+
+
+CXXROOTS=\
+    aset_graph \
+    aset_node \
+    constr_topsort \
+    edge \
+    interface \
+    matrix \
+    node \
+    set_constraints \
+    sugilevel \
+    sugitopsort \
+    treelayout \
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/gedge/include \
+-I$(BUILD_SRC_ROOT)/model_server/gedge/include \
+-I$(LOCAL_SRC_ROOT)/model_server/gra/include \
+-I$(BUILD_SRC_ROOT)/model_server/gra/include \
+-I$(LOCAL_SRC_ROOT)/model_server/graGala/include \
+-I$(BUILD_SRC_ROOT)/model_server/graGala/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ldr/include \
+-I$(BUILD_SRC_ROOT)/model_server/ldr/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ste/include \
+-I$(BUILD_SRC_ROOT)/model_server/ste/include \
+-I$(LOCAL_SRC_ROOT)/model_server/style/include \
+-I$(BUILD_SRC_ROOT)/model_server/style/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui_OODT/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui_OODT/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view/include \
+-I$(BUILD_SRC_ROOT)/model_server/view/include \
+-I$(LOCAL_SRC_ROOT)/model_server/view_rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/view_rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \

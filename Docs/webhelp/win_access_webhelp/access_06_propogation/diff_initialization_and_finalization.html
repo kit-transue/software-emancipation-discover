@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Diff Initialization and Finalization</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 2.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 12.0px Courier}
+    span.s3 {font: 9.0px 'Times New Roman'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Diff Initialization and Finalization</b></p>
+<p class="p2">The actual diff commands to request modification operate on global structures. Each structure is capable of accepting requests for modification of a single file at a time; requests to modify nodes in a different file are silently ignored.</p>
+<p class="p2">Initialization of the internal data structure requires two commands:</p>
+<p class="p3"><b>diff_new <i>file</i></b></p>
+<p class="p2">This command returns a handle to the internal structure. You then need to open the diff file and associate it with the handle using <span class="s1"><b>diff_start</b></span>.</p>
+<p class="p3"><b>diff_start <i>diff_handle change-id file</i></b></p>
+<p class="p2"><span class="s1">Change-id</span> is a comment used to identify the changes and must be supplied to the <span class="s1"><b>diff_finish</b></span> command.</p>
+<p class="p2">After running the <span class="s1"><b>diff*</b></span> commands to make the changes, this file must be closed before going on to the next file.</p>
+<p class="p3"><b>diff_finish <i>diff_handle change-id file</i></b></p>
+<p class="p2"><span class="s1"><b>diff_finish</b></span> returns the number of changes recorded for the file, or a negative value on error.</p>
+<p class="p2">You can reduce the memory requirements of your TPM/CP session by unloading the pset after analyzing the file using <span class="s1">src_unload</span><span class="s2"> </span><span class="s1"><i>file</i></span>.</p>
+<p class="p2">For example:</p>
+<p class="p4">set diff_data [diff_new $file]<br>
+set diff_comment “remove unused declarations”<br>
+diff_start $diff_data $diff_comment $file<br>
+# perform diff_commands for $file here<br>
+set diff_status [diff_finish $diff_data $diff_comment $file<br>
+if {$diff_status &lt; 0} {<br>
+<span class="s3">   </span>puts "error applying diffs for file [name $file]"<br>
+} else {<br>
+<span class="s3">   </span>puts "made $diff_status changes to [name $file]"<br>
+}<br>
+src_unload $file</p>
+<p class="p2">All these steps are performed automatically when using the <span class="s1"><b>diff_tpm_all</b></span> command.</p>
+</body>
+</html>

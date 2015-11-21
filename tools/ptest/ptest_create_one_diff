@@ -1,0 +1,102 @@
+#!/bin/sh
+#
+# Almost identical to ptest_create_all_diffs except that this one processes just a
+# given file. 
+#
+# Example invocation of this script:
+#
+# ptest_create_one_diff 
+# -file1 /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/gcc-2.6.0/CVSCC-Sec5-5_7-ptr_add.C.hook
+# -file2 /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/gcc-2.6.3/CVSCC-Sec5-5_7-ptr_add.C.hook
+# -outdir /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/diffs
+#
+# or, in relative paths, from directory /net/homer/home/local/pmod_test/sun4/CVSCC.sun4,
+#
+# ptest_create_one_diff -file1 gcc-2.6.0/CVSCC-Sec5-5_7-ptr_add.C.hook 
+# -file2 gcc-2.6.3/CVSCC-Sec5-5_7-ptr_add.C.hook -outdir diffs
+#
+# The resulting .diff file is placed in 
+#
+# /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/diffs
+#
+# directory for the above example. Output directory defaults to current.
+#
+# If any of the two .hook files for the source file is missing, the script exits. 
+#
+outdir=""
+while true 
+do
+
+if [ "$1" = "-file1" ] ; then
+	[ -n "$2" ] && { infile1=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-file2" ] ; then
+        [ -n "$2" ] && { infile2=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-outdir" ] ; then
+        [ -n "$2" ] && { outdir=$2 ; shift ; }
+        shift ;
+else
+	break;
+fi
+
+done
+
+[ -z "$infile1" -o -z "$infile2" ] && 
+{
+	echo "usage: $0"
+	echo " -file1 first_hook_file"
+        echo " -file2 second_hook_file"
+	echo " -outdir output_directory"
+	exit 0;
+}
+#
+# Create absolute paths and workspace.
+#
+[ -z "$outdir" ] &&
+{
+	outdir=`pwd`
+}
+current=`pwd`
+abs_path=`echo $infile1 | grep "^/"`
+[ "`echo $abs_path`" != "`echo $infile1`" ] &&
+{
+	infile1=`pwd`/$infile1
+}
+abs_path=`echo $infile2 | grep "^/"`
+[ "`echo $abs_path`" != "`echo $infile2`" ] &&
+{
+	infile2=`pwd`/$infile2
+}
+abs_path=`echo $outdir | grep "^/"`
+[ "`echo $abs_path`" != "`echo $outdir`" ] &&
+{
+	outdir=`pwd`/$outdir
+}
+logname=`basename $infile1`
+
+if [ ! -d $outdir ] ; then 
+	echo "Making output directory $outdir"
+	mkdir $outdir || exit 1;
+else
+	rm -f $outdir/$logname.log
+fi
+
+startdate=`date`
+
+n=0;
+[ -f $infile1 -a -f $infile2 ] &&
+{
+echo "Comparing hooks [$infile1] and [$infile2]..."
+#
+# Call ptest_create_diffs to compare the two .hook files.
+#
+ptest_create_diffs -outdir $outdir -file1 $infile1 -file2 $infile2 > $outdir/diff_log 2>&1
+cp $outdir/diff_log $outdir/$logname.log 
+rm $outdir/diff_log
+n=`expr $n + 1`;
+}
+
+echo "Compared $n files."
+echo "Started  test on: $startdate"
+echo "Finished test on: `date`"

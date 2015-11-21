@@ -1,0 +1,303 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+source_dis require.dis
+require tpm_util.dis
+
+proc chprop_file_has_diffs { mod } {
+    set flist [diff_list_list $mod]
+    if [llength $flist] { 
+	return $mod 
+    } else {
+	return ""
+    }
+}
+
+proc chprop_find_files_with_diffs { scope } {
+    if [catch diff_file_dir] {return Cancelled}
+    if { [size $scope] == 0} {
+	set scope [get_scope]
+    }
+    apply_per_file "Files With Diffs" chprop_file_has_diffs $scope
+}
+
+proc chprop_view_diffs { scope } {
+    if [catch diff_file_dir] {return Cancelled}
+    set mods [chprop_find_files_with_diffs $scope ]
+    global apply_per_file_status apply_per_file_current
+    if $apply_per_file_status {return "Cancelled at $apply_per_file_current"}
+    if [size $mods] {
+       mrg_diffs $mods "" 0
+    } else {
+       msg warning_sev "No .diff files in scope \$1" [apply name $scope]
+    }
+}
+
+proc chprop_apply_diffs { scope } {
+    if [catch diff_file_dir] {return Cancelled}
+    set mods [chprop_find_files_with_diffs $scope ]
+    global apply_per_file_status apply_per_file_current
+    if $apply_per_file_status {return "Cancelled at $apply_per_file_current"}
+    if [size $mods] {
+	mrg_modules $mods
+    } else {
+       msg warning_sev "No .diff files in scope \$1" [apply name $scope]
+    }
+}
+
+proc chprop_remove_diffs { scope } {
+    if [catch diff_file_dir] {return Cancelled}
+    if { [size $scope] == 0} {
+	set scope [get_scope]
+    }
+    diff_cleanup $scope
+}
+set always_skip 0
+proc chprop_skip_outdated files {
+    global always_skip
+    if $always_skip {return 1}
+    set as "Always Skip"
+    set title "*** Outdated Files ***"
+    set quest [join [apply lname $files] "\n"]
+    set answer [question -title $title $quest Skip $as]
+    if { $answer==""} {
+	return 0
+    } 
+    if {$answer=="$as" } {
+	set always_skip 1
+    }
+    return 1
+}
+
+proc chprop_prepare_input { scope } {
+    if [catch diff_file_dir] {return ""}
+    set scope [defines -files $scope]
+    set scope [filter {language!="UNKNOWN"} $scope]
+    set outdated [filter outdated $scope]
+    if [size $outdated] {
+	set skip [chprop_skip_outdated $outdated]
+	if {!$skip} {
+	    browser set elements $outdated
+	    return ""
+	} 
+	
+	set scope [set_subtract $scope $outdated]
+    } 
+    if [size $scope] {
+	return $scope
+    } else {
+	return
+    }
+}
+
+#-------------------------------------------------------------
+
+proc current_diff_list_get {} {
+  getvar CURRENT_DIFF_LIST
+}
+proc current_diff_list_reset {} {
+  setvar CURRENT_DIFF_LIST ""
+}
+proc current_diff_list_add { args } {
+  set x [getvar CURRENT_DIFF_LIST]
+  foreach el $args {
+      lappend x $el
+  }
+  setvar CURRENT_DIFF_LIST $x
+}
+
+proc current_diff_list_rm { } {
+  set x [getvar CURRENT_DIFF_LIST]
+  eval file_rm $x
+  setvar CURRENT_DIFF_LIST ""
+}
+
+proc diff_cleanup { scope } {
+    if [catch diff_file_dir] {return Cancelled}
+    apply_per_file "Remove Diffs in [apply name $scope]" diff_cleanup_file $scope
+}
+proc diff_cleanup_file { mod } {
+    set flist [diff_list_list $mod]
+    if { [llength $flist] > 0 } {
+	msg normal_sev "file_rm \$1" "$flist"
+	eval file_rm $flist
+    }
+}
+
+if {[info commands status_bar_msg] == ""} {
+    proc status_bar_msg args {}
+}
+proc prompt_for_dir { msg } {
+    set dir [prompt -title "Specify Diff Directory" $msg]
+    if {$dir==""} {
+	status_bar_msg Cancelled
+	return -code error
+    }
+    return $dir
+}
+proc diff_file_dir {} {
+    set dir [getvar diff_file_root]
+    if {[file exists $dir]} {
+	return $dir
+    }
+
+    set dir [ get_pref_value TPM.diffFileRoot ]
+    set old_pref $dir
+    if { $dir == "" } {
+	set dir [prompt_for_dir "Specify TPM.diffFileRoot preference"]
+    }
+    while  1  {
+	if {![file exists $dir]} {
+	    if [catch {file mkdir $dir} msg] {
+		set dir [prompt_for_dir $msg]
+		continue;
+	    }
+	}
+	if ![file writable $dir] {
+	    set msg "$dir is not writable"
+	    set dir [prompt_for_dir $msg]
+	    continue;
+	}
+	break
+    }
+    if [string compare $dir $old_pref] {
+	set_pref_value TPM.diffFileRoot $dir
+    }
+    setvar diff_file_root $dir
+    return $dir
+}
+proc diff_file_root { mod } {
+    set diff_root [diff_file_dir]
+    set fname [ file root [ name $mod ] ]
+    regsub -all {/|\\|:|\ } $fname _ mapped_fname
+    set root $diff_root/$mapped_fname
+    return $root
+}
+proc diff_list_list { mod } {
+    set root [diff_file_root $mod]
+    set list [glob -nocomplain $root.diff.*\[0-9\]]
+    set mrg  "$root.mrg"
+    if [file exists $mrg] {lappend list $mrg }
+    return $list
+}
+
+proc diff_new { mod } { 
+    set root [diff_file_root $mod]
+    set i 1
+    while {[file exists $root.diff.$i] || [file exists $root.diff.$i#]} {
+	incr i
+    }
+    set file $root.diff.$i
+    return $file
+}
+
+proc diff_list { mod } {
+    set list [diff_list_list $mod]
+    lappend list {}
+    return [join $list "\n"]
+}
+
+proc diff_tpm_all {tpm args} {
+    set files [chprop_prepare_input $args]
+    if { $files == "" } { return Cancelled }
+
+    current_diff_list_reset
+    apply_per_file "Generate TPM Diff Files" [list diff_tpm_file $tpm] $files
+}
+
+proc diff_tpm_file { tpm obj} {
+    set mod [where defined $obj 1]
+    set out [diff_new $mod]
+    set name [name $mod]
+    if {$out == ""} {
+	msg error_sev "no pset file for \$1" "$name"
+	return [new_set] 
+    }
+    
+    if [catch { diff_start $out $tpm $mod } ] {
+	return [new_set]
+    } else {
+	set result [tree find -ignore $tpm $obj]
+	set no_recs [diff_finish $out $tpm $mod]
+	
+	if { $no_recs > 1 } {
+	    msg normal_sev "\$1 changes stored in \$2" "$no_recs" "$out"
+	    current_diff_list_add $out
+	} elseif { $no_recs == 1 } {
+	    msg normal_sev "1 change stored in \$2" "$out"
+	} elseif { $no_recs == 0 } {
+	    msg normal_sev "no changes found in \$2" "$name"
+	} else {
+	    msg error_sev "error writing to \$1; no changes made for \$2" "$out" "$name"
+	}
+	return $result
+    }
+}
+
+proc apply_diffs_to_module {tpm_list sel} {
+  set result [new_set]
+  foreach el $tpm_list {
+      set tpm [lindex $el 2]
+      sappend $result [diff_tpm_file $tpm $sel]
+  }
+  return $result
+}
+
+proc apply_pattern_diff { patt sel} {
+    set files [chprop_prepare_input $sel]
+    if { $files == "" } { return }
+
+    set pattern_list [load_pattern $patt]
+    set len [llength $pattern_list]
+    if { $len < 3 } { 
+	msg warning_sev "pattern \$1 is empty" "$patt"
+	return 
+    }
+    set pattern_list [lrange $pattern_list 2 end]
+
+    set cmd [list apply_diffs_to_module $pattern_list]
+    current_diff_list_reset
+    apply_per_file "Generate TPM Diff Files" $cmd $files
+}
+
+proc Y2K_tpm_diff_node { patt merge view sel} {
+    set res [apply_pattern_diff $patt $sel]
+    if [size $res]  {
+	set modules [where defined $res]
+	if $merge {
+	    mrg_diffs $modules "" 1
+	    set res [mrg_files_with_conflicts]
+	}
+	if $view {
+	    mrg_diffs $modules "" 0
+	}
+    }
+    uplevel [list set Y2K_RESULTS $res]
+    return $res
+}
+

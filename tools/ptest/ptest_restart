@@ -1,0 +1,7 @@
+source ${PROJ_ROOT}/tools/ptest/ptest_set_tmpdir
+
+if ($status != 0) exit 1
+
+setenv PTEST_THE_TEST `cat $PTEST_TMPDIR/the_test`
+setenv PTEST_THE_SCRIPT `cat $PTEST_TMPDIR/the_script`
+setenv PTEST_CONTINUE yes

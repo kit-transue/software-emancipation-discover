@@ -1,0 +1,336 @@
+#
+# -- DLL targets (MONOLITHIC=0; mutually exclusive):
+#	1. dll.db: 	DLLDB.CPP 	(mfc/db, mfc/dao)
+#	2. dll.net:	DLLNET.CPP	(mfc/sockets)
+#	3. dll.ole:	DLLOLE.CPP	(mfc/ole, mfc/ole.ctl)
+# -- LIB targets (MONOLITHIC=0; mutually exclusive):
+#	1. lib.isapi:	INETCALL.CPP
+#			ISAPI.CPP
+#	2. lib.mfc:	all projects but dll.*
+#			APP3DS.CPP
+#			APPMODUL.CPP
+#			DLLMODUL.CPP
+#			NOLIB.CPP
+#			OLEEXP.CPP
+#			DUMPSTAK.CPP
+#			STDAFX.CPP
+#			undefine: _DLL, _WINDLL, _AFXDLL
+# -- EXCLUDED:
+#	1. for Px86:	CTLINTL.CPP
+#
+
+mfc : %sharedSrcRoot% <-> /mfc
+{
+# -- include files
+	inc	: include <-> include {
+		*.H
+	}
+# -- inline functions
+	inc.inl	: include <-> include {
+		*.INL
+	}
+# -- source include files
+	inc.src	: SRC <-> source {
+		*.H
+	}
+# -- COLL1 target
+	afxcol.1: SRC <-> source {
+		ARRAY_B.CPP
+		ARRAY_D.CPP
+		ARRAY_P.CPP
+		ARRAY_O.CPP
+		ARRAY_S.CPP
+		ARRAY_U.CPP
+		ARRAY_W.CPP
+		LIST_O.CPP
+		LIST_P.CPP
+		LIST_S.CPP
+	}
+# -- COLL2 target
+	afxcol.2: SRC <-> source {
+		MAP_PP.CPP
+		MAP_PW.CPP
+		MAP_SO.CPP
+		MAP_SP.CPP
+		MAP_SS.CPP
+		MAP_WO.CPP
+		MAP_WP.CPP
+		PLEX.CPP
+	}
+# -- APPLICATION target
+	app	: SRC <-> source {
+		THRDCORE.CPP
+		APPCORE.CPP
+		APPINIT.CPP
+		APPTERM.CPP
+		APPUI.CPP
+		APPUI1.CPP
+		APPUI2.CPP
+		APPUI3.CPP
+		APPGRAY.CPP
+		APPDLG.CPP
+		APP3D.CPP
+		APPPRNT.CPP
+		APPHELP.CPP
+		APPHELPX.CPP
+		FILELIST.CPP
+	}
+# -- DAO target
+	dao	: SRC <-> source {
+		DAOCORE.CPP
+		DAODFX.CPP
+		DAOVIEW.CPP
+		VIEWOLED.CPP
+	}
+# -- DB target
+	db	: SRC <-> source {
+		DBCORE.CPP
+		DBRFX.CPP
+		DBVIEW.CPP
+		DBFLT.CPP
+		DBLONG.CPP
+		DBVAR.CPP
+	}
+# -- DIALOG target
+	dialog	: SRC <-> source {
+		WINCTRL1.CPP
+		WINCTRL2.CPP
+		WINCTRL3.CPP
+		WINCTRL4.CPP
+		WINBTN.CPP
+		DLGCORE.CPP
+		DLGDATA.CPP
+		DLGFLOAT.CPP
+		DLGPROP.CPP
+		DLGCOMM.CPP
+		DLGFILE.CPP
+		DLGPRNT.CPP
+		DLGCLR.CPP
+		DLGFNT.CPP
+		DLGFR.CPP
+		CCDATA.CPP
+		DLGTEMPL.CPP
+		WINCTRL6.CPP
+		WINCTRL7.CPP
+	}
+# -- DLL targets (MONOLITHIC=1): MFCDLL, MFCDB, MFCNET, MFCOLE, MFCISAPI
+	dll.mfc	: SRC <-> source {
+		DLLINIT.CPP
+	}
+# -- DOCVIEW target
+	docview	: SRC <-> source {
+		CMDTARG.CPP
+		DOCCORE.CPP
+		DOCTEMPL.CPP
+		DOCSINGL.CPP
+		DOCMULTI.CPP
+		DOCMGR.CPP
+		VIEWCORE.CPP
+		VIEWPRNT.CPP
+		WINSPLIT.CPP
+		VIEWSCRL.CPP
+		VIEWFORM.CPP
+		VIEWEDIT.CPP
+		VIEWPREV.CPP
+		VIEWCMN.CPP
+		DOCMAPI.CPP
+	}
+# -- INLINES target
+	inlines	: SRC <-> source {
+		AFXINL1.CPP
+		AFXINL2.CPP
+		AFXINL3.CPP
+	}
+# -- INTERNET target
+	internet: SRC <-> source {
+		INET.CPP
+		FILEFIND.CPP
+		ISAPIMIX.CPP
+	}
+# -- FILES target
+	files	: SRC <-> source {
+		FILECORE.CPP
+		FILETXT.CPP
+		FILEMEM.CPP
+		FILESHRD.CPP
+		FILEX.CPP
+		FILEST.CPP
+	}
+# -- MISC target
+	misc	: SRC <-> source {
+		STRCORE.CPP
+		STREX.CPP
+		TIMECORE.CPP
+		AFXDBCS.CPP
+		AFXSTATE.CPP
+		AFXTLS.CPP
+		FIXALLOC.CPP
+		MTCORE.CPP
+		MTEX.CPP
+	}
+# -- WINMISC target
+	misc.win: SRC <-> source {
+		WINGDI.CPP
+		WINGDIX.CPP
+		WINSTR.CPP
+		WINMENU.CPP
+		AUXDATA.CPP
+		AFXCRIT.CPP
+		AFXTRACE.CPP
+		WINUTIL.CPP
+		WINOCC.CPP
+	}
+# -- OBJECT target
+	obj	: SRC <-> source {
+		OBJCORE.CPP
+		EXCEPT.CPP
+		VALIDADD.CPP
+		DUMPCONT.CPP
+		DUMPFLT.CPP
+		ARCCORE.CPP
+		ARCOBJ.CPP
+		ARCEX.CPP
+		ARCSTRM.CPP
+	}
+# -- OBJDIAG target
+	obj.diag: SRC <-> source {
+		DUMPINIT.CPP
+		DUMPOUT.CPP
+		AFXASERT.CPP
+		AFXMEM.CPP
+		AFXABORT.CPP
+	}
+# -- OLE target
+	ole	: SRC <-> source {
+		OLEINIT.CPP
+		OLECLI1.CPP
+		OLECLI2.CPP
+		OLECLI3.CPP
+		OLECNVRT.CPP
+		OLEDOBJ1.CPP
+		OLEDOBJ2.CPP
+		OLEDISP1.CPP
+		OLEDISP2.CPP
+		OLEDLGS1.CPP
+		OLEDLGS2.CPP
+		OLEDLGS3.CPP
+		OLEDATA.CPP
+		OLEVAR.CPP
+		OLEVAR1.CPP
+		OLEDOC1.CPP
+		OLEDOC2.CPP
+		OLEDROP1.CPP
+		OLEDROP2.CPP
+		OLEMSGF.CPP
+		OLEENUM.CPP
+		OLEFACT.CPP
+		OLEIPFRM.CPP
+		OLELINK.CPP
+		OLEMISC.CPP
+		OLESTRM.CPP
+		OLESVR1.CPP
+		OLESVR2.CPP
+		OLEREG.CPP
+		OLETSVR.CPP
+		OLEUI1.CPP
+		OLEUI2.CPP
+		OLEUNK.CPP
+		OLEVERB.CPP
+		OLECALL.CPP
+		VIEWRICH.CPP
+		OLEDLL.CPP
+		OLETYPLB.CPP
+		OLEMON.CPP
+		WINCTRL5.CPP
+		VIEWHTML.CPP
+		OCCMGR.CPP
+		OCCEVENT.CPP
+		OCCCONT.CPP
+		OCCSITE.CPP
+		OCCLOCK.CPP
+		OCCDDX.CPP
+		OCCDDXF.CPP
+		OCCDLG.CPP
+		OLEDOCVW.CPP
+		OLEDOCOB.CPP
+		OLEDOCTG.CPP
+		OLEDOCIP.CPP
+		OLEDOCCL.CPP
+		OLEASMON.CPP
+		OLEBAR.CPP
+	}
+# -- OLECTL target
+	ole.ctl	: SRC <-> source {
+		CTLCACHE.CPP
+		CTLCORE.CPP
+		CTLCONN.CPP
+		CTLDATA.CPP
+		CTLEVENT.CPP
+		CTLMODUL.CPP
+		CTLFRAME.CPP
+		CTLFONT.CPP
+		CTLINPLC.CPP
+		CTLLIC.CPP
+		OLECONN.CPP
+		CTLOBJ.CPP
+		CTLPICT.CPP
+		CTLPROPX.CPP
+		CTLPPG.CPP
+		CTLPROP.CPP
+		CTLPSET.CPP
+		CTLPSTG.CPP
+		CTLPSTM.CPP
+		CTLREFL.CPP
+		CTLREG.CPP
+		CTLTRACK.CPP
+		CTLVIEW.CPP
+		OLEPSET.CPP
+		CTLPBAG.CPP
+		CTLQUICK.CPP
+		CTLNOWND.CPP
+		PPGCOLOR.CPP
+		PPGFONT.CPP
+		PPGPICT.CPP
+		PPGSTOCK.CPP
+		# -- /D DEBUG
+		CTLINL.CPP
+	}
+# -- OLEREQ target
+	ole.req	: SRC <-> source {
+		OLELOCK.CPP
+	}
+# -- SOCKETS target
+	sockets	: SRC <-> source {
+		SOCKCORE.CPP
+	}
+# -- WINDOWS target
+	windows	: SRC <-> source {
+		WINCORE.CPP
+		WINFRM.CPP
+		WINFRM2.CPP
+		WINFRMX.CPP
+		WINMDI.CPP
+		TOOLTIP.CPP
+		WINMINI.CPP
+		WINHAND.CPP
+		WINMAIN.CPP
+		BARCORE.CPP
+		BARTOOL.CPP
+		BARDLG.CPP
+		BARSTAT.CPP
+		BARDOCK.CPP
+		DOCKCONT.CPP
+		DOCKSTAT.CPP
+		DCPREV.CPP
+		DCMETA.CPP
+		TRCKRECT.CPP
+		BARCOOL.CPP
+	}
+}
+
+__rule001 : / <-> /__rule001
+{
+	"" : %sharedSrcRoot%/(**).pmod/%/.pmoddir => %sharedModelRoot%/pmod/(1).pmod
+	"" : %sharedSrcRoot%/(**)/(*)/%/.pset => %sharedModelRoot%/pset/(1)/(2).pset
+	.  : %sharedSrcRoot%/**/(*).CPP/%/.make => "echo CL (1).obj"
+}

@@ -1,0 +1,754 @@
+
+AUTO TEST TOOL						January 11, 1993
+
+
+    The auto test tool allows you to write scripts in English for automatically
+testing ParaSet.  With it you can push menu buttons, select list items,
+type into editors, and other actions.  For example, if you want to 
+    								
+
+USING THE TOOL:
+
+    Typing "-test" followed by a file name will run the tool on the file.
+Example:
+	aset -test /users/oak/as/auto_test/src/menubar_test
+
+Unfortunately ParaSet will only take one file name after any extension.  To
+run more than one file sequentially use the RUN command described later in
+the grammar section.  
+
+
+THE AUTO TEST LANGUAGE:
+
+    The lexer and parser recognize the following words and grammars with
+one command per line.  
+	
+    Reserve Words (Case insensitive):
+	all 		back		browser 	button 		clear
+	click 		column 		control 	debug		dialog
+	drag		editor 		enter 		file 		from
+	go		goto 		horizontal 	in 		item
+	list 		lock 		mb1 		mb2 		mb3
+	menubar 	meta 		mouse 		move 		on
+	print		project 	push 		run		select
+	set 		shell 		shift 		speed		text
+ 	times 		to 		tree		type		unselect
+ 	vertical 	viewer 		viewershell
+
+    Strings
+	Anything enclosed in double quotes and residing on one line.
+	Examples: Goto project browser "Test Project"
+		  Type "/users/aset-integ/ui/browser\n"
+
+    Ordinal Numbers
+	Any number followed by "rd", "st", "nd", or "th".  Whatever is 
+	correct given the last digit in the number.  
+	Examples: 1st 2ND 3rD 4Th
+
+    Whole Numbers
+	0, 1, 2, 3, ...
+
+    Comments:
+	/**** C comments on multiple lines ****/
+	// C++ comments.
+
+    Grammar:
+	EOL, an end of line.
+	STRING, a string in double quotes.
+	NTH, an ordinal number.
+	NUMBER, a whole number.
+	All other words in capital letters are reserved words.
+
+	command:	location_command EOL    
+		|	action_command EOL	
+
+	location_command:  GOTO location	
+    		|	GOTO NTH location    	
+
+	location:	BROWSER		
+		|	VIEWER 	
+		|	VIEWERSHELL	
+		|	LIST		
+    		|	DIALOG STRING    	
+		|	STRING	
+
+	action_command:  DEBUG
+		|	PRINT TREE
+		|	PUSH BUTTON STRING
+		|	CLICK ON STRING	
+		|	CLICK MOUSEBUTTON number_of_clicks	
+		|	MOVE MOUSE TO NUMBER ',' NUMBER		
+		|	DRAG MOUSEBUTTON TO NUMBER ',' NUMBER		
+		|	SET SPEED TO NUMBER
+		|	menubar_command push_command_list	
+		|	SELECT STRING 	
+		|	SELECT NTH STRING
+		|	SELECT FROM NTH STRING TO NTH STRING 
+		|	UNSELECT ALL	
+		|	IN LIST SELECT STRING	
+		|	IN LIST SELECT NTH ITEM	
+		|	IN TEXT EDITOR STRING ENTER STRING
+		|	CLEAR TEXT EDITOR STRING
+		|	TYPE modifier_key_list STRING	
+		|	RUN STRING	
+		;
+
+	menubar_command:	IN MENUBAR PUSH STRING 
+
+	push_command_list:	/* empty */
+    		|	push_command_list PUSH STRING	
+		;
+
+	modifier_key_list:	/* empty */
+		|	modifier_key_list SHIFT	
+    		|	modifier_key_list LOCK		
+    		|	modifier_key_list CONTROL	
+    		|	modifier_key_list META		
+    		;
+
+	number_of_clicks:	/* empty */		
+		|	NUMBER TIMES			
+		;
+
+
+
+FLOW OF CONTROL:
+
+   The parser grammar rules are divided into location commands and
+action commands.  
+   Location commands move the focus up and down in the user interface widget 
+tree.  To effectively take visible location names and get the desired widgets
+the parser uses the GOTO NTH command and a visible path lookup table.  It also
+keeps track of the current widget top level, the current visible
+path, and the widget index.  
+
+Say we execute the following commands (the indentation is unnecessary):
+
+	Goto Browser
+		Goto "Group List"
+		Go back
+	Go back
+	Goto 1st ViewerShell
+		Goto 1st viewer
+
+The Parser recognizes this as the following:
+
+GOTO BROWSER 	Points all actions to the Browser window. 
+
+GOTO STRING	Points actions to the location given by string.  
+
+GO BACK		Pops the last location off the visible path stack.  In this
+		case we go back to the Browser.  The last location on the
+		stack is always an invisible pointer to the top level of 
+		the application.  It is never popped off the list.
+
+GO BACK		This call is good style but unnecessary.  The following commands
+		clear the visible path before executing:
+			GOTO BROWSER
+			GOTO NTH BROWSER
+			GOTO VIEWERSHELL
+			GOTO NTH VIEWERSHELL
+
+
+GOTO NTH VIEWERSHELL 	Points action to the nth viewerShell in order of creation. 
+			In this case the "1st" field was unnecessary.
+
+GOTO NTH VIEWER 	Points action to the nth viewer.
+
+
+   Action commands use or reference widgets that are at or below the 
+current top level. 
+Examples:
+	Set speed to 100
+	In menubar push "View", push "New Viewer"
+
+SET SPEED TO NUMBER	Sets the speed of the mouse.
+
+IN MENUBAR PUSH STRING ',' PUSH STRING ',' PUSH STRING	Makes choices in the
+							menubar.
+
+Since the user interface has many duplicates, you must use location 
+commands to move you to the area to work in.  Here are the same location
+commands and action commands in a working script:
+
+	Set speed to 100
+	Goto Browser
+		In menubar push "View", push "New Viewer"
+	Go back
+	Goto 1st ViewerShell
+		Goto 2nd viewer
+
+
+EXAMPLE FILE
+
+    This example file is taken from /users/oak/test_scripts/hyperlinks.auto
+and is the beginning of the hot links demo.  Unfortunately at the
+time of writting, importing to a project does not work so this file
+is dependent on the project in /users/oak/junk/.  Note that the 
+indentation in the file is not necessary.
+
+/*_______________________________________________________________________
+!
+! hyperlinks.auto
+!
+! Synopsis:	Tests the hot links.
+!
+_______________________________________________________________________*/
+
+Set speed to 100 // Slow enough to see.
+
+//
+// Bring up requirements.txt in a viewer.
+//
+Goto Browser
+//	Click on "Project Editor"
+//	Clear text editor "Project Editor"
+//	Type "/local/junk\n"
+
+	Goto "Project List"
+		Goto "List"
+			Move mouse to 10,10
+			Click mb1 2 times
+			Click mb1 2 times
+			Go back
+		In list select 3rd item
+		Go back
+	In menubar push "View", push "Text"
+	Go back
+Goto ViewerShell
+	Goto viewer
+		Goto view
+			Select "Description"
+			Select from 1st "X" to 1st "Requirements"
+			Go back
+		Go back
+	In menubar push "File", push "Close Window"
+	Go back
+Goto Browser
+	In menubar push "Browser", push "Quit ParaSET"
+	Goto dialog "Save Files"
+		Push button "Save"
+
+
+
+VISIBLE NAMES
+
+    Some controls in the system have no obvious names, such as
+the small text editor under the directory label in the browser.
+So, we have given names to most of these widgets.  The following 
+is a list of all visible names in the system and where they lie
+in the hierarchy.  The most current list can always be found
+in $(INTEGROOT)/cmd/include/cmd_menu_names.h.
+
+      BrowserShell
+      
+      // Dialogs under the browser shell.
+         Configurator
+              SetUp
+                Path
+                Stat
+                Lock
+                Unlock
+                Commit
+                Maker
+                Make
+                Import
+                Export
+                Diff
+                OK
+                Store
+                Reset
+                Cancel
+          Create File
+              File Area
+                External Files
+                In Project
+              Language
+                C Source Code
+                C++ Source Code
+                Structured Text
+                Makefile
+                Raw Text
+              Enter complete path name
+              OK
+              Cancel
+              Help
+          Directory
+              Directory
+              OK
+              Cancel
+              Help
+          Directory Filter
+              Show
+              Hide
+              Sort By
+                Name
+                Type
+                Modified
+              Show All Directories
+              OK
+              Apply
+              Cancel
+              Help
+         Define Relation
+              OK
+              Applpy
+              Cancel
+              Help
+          Filter List
+              Show entries matching regexp
+              Hide entries matching regexp
+              Format list entries by field and width
+                Object Name
+              Predefined Filters
+                Configure
+                Generic
+              Sort By
+                Formatted String
+                Ascending
+              OK
+              Applpy
+              Cancel
+         New Project
+              Enter name for new project:
+              Cancel
+              OK
+              Help
+         Open Project
+              List
+              Horizontal Scrollbar
+              Vertical Scrollbar
+              OK
+              Cancel
+              Help
+         Preferences
+              Installation Directory
+              Shadow Directory
+              Default Window Layout
+              Makefile directory
+              GDB Debugger
+              C Language
+                 #define (-D Flags)
+                 #include (-l Flags)
+                 File Suffix
+                 Other Flags
+                 Output Style
+                   ANSII
+                   K&R
+              C++ Language
+                 #define (-D Flags)
+                 #include (-l Flags)
+                 File Suffix
+                 Other Flags
+              Structured Text
+                 Full Suffix
+              Cross-Reference Exclude Directories
+              OK
+              Store
+              Reset
+              Cancel
+         Question Popup
+              OK
+              Cancel
+              Help
+         Save Files
+              Select From Modified Entities
+              These Entities Will Be Saved
+              Save
+              Cancel
+                   Open Project
+                      List
+                      Cancel
+                      OK
+                   Remove Project
+                      List
+                      Cancel
+                      OK
+                      Help
+                   Error Browser
+                      Show
+                      Done
+                      Help
+                   Define Class
+                      Header File Directory
+                      Source File Directory
+                      Class Name
+                      Class Name Alias
+                      Description
+                      Responsibilities
+                      Search Noun-List
+                      OK
+                      Apply
+                      Cancel
+                      Help
+                   Create Scrapbook
+                      Enter a name for the scrapbook
+                      Cancel
+                      OK
+                      Help
+          System Messages
+              Main Options
+                        Create Log Files
+                        Quick Help
+              Message Filters
+                        Error
+                        Warning
+                        Informative
+                        Diagnostic
+              Job Categories
+                        Importing Files
+                        Compilation
+                        Propagation
+              OK
+              Cancel
+              Apply
+              Help
+
+      // Menus
+         Browser
+              New Browser
+              Close
+              Open Layout
+              Save Layout
+              Preferences
+              Configurator
+              Messages
+              Quit ParaSET
+         File
+              Save All Files
+              New File
+              New Directory
+              Delete
+              Preload
+              Unload
+              Language
+              Update Directories
+         Manage
+              Home Project
+              New Project
+              Load Project
+              Unload Project
+              Get
+              Put
+              Lock
+              Unlock
+         View
+              New Viewer
+              Text
+              Outline
+              Call Tree
+              Inheritance
+              Relationships
+              Structures
+              Subsystems
+              Master Diagram
+         Utility
+              Query
+              Association Editor
+              Error Browser
+              Extract Subsystems
+              Find Dormant Code
+              New Struct
+              New Class
+              New Relation
+              New Subsystem
+              New Scrapbook
+         Journal
+              New Journal
+              Insert Command
+              Save Journal
+              Save Journal As
+              Execute
+         Debug
+              Break
+              Print Node
+              Follow
+                   0
+                   1
+                   2
+                   3
+                   3
+                   5
+                   6
+                   7
+                   8
+                   9
+              Print Tree
+              Start Metering
+              Stop Metering
+              Suspend Metering
+              Resume Metering
+              Edit Help Index
+              Reset Help Index
+              Enable Quickhelp
+              Toggle Help Pathnames
+              Clear All Selections
+         Help
+              Topics
+              On Files
+              On Projects
+              Index
+         File Editor
+         Filter Files
+         Directory
+              Horizontal Scrollbar
+              Vertical Scrollbar
+              List
+              Filter List
+         Project Editor
+         
+         // project browser
+         Browse
+         Query
+         Global
+         Local
+         Up
+         Reset
+         New Group
+         Project List
+              Vertical Scrollbar
+              Horizontal Scrollbar
+              List
+              Filter List
+         Group
+              Vertical Scrollbar
+              Horizontal Scrollbar
+              List
+              Filter List
+         Domain
+              Vertical Scrollbar
+              Horizontal Scrollbar
+              List
+              Filter List
+         Show
+              Vertical Scrollbar
+              Horizontal Scrollbar
+              List
+              Filter List
+         Result
+              Vertical Scrollbar
+              Horizontal Scrollbar
+              List
+              Filter List
+
+// Viewer Shell
+      ViewerShell
+         Question Popup
+              OK
+              Cancel
+              Help
+         Add
+         Remove
+         Normal
+         Run
+         Step
+         Next
+         Continue
+         Jump
+         Finish
+         Up
+         Down
+         Where
+         Halt
+         Stop at
+         Print
+         Search
+         Back
+         History
+         Previous
+         Next
+         Edit
+         1:1
+         1:n
+         n:1
+         n:n
+         Thumb
+         Status
+         Menubar
+              File
+                   Open Selected
+                   Open ERD
+                   Open Call Tree
+                   Save
+                   Save As
+                   Save Window Setup
+                   Close Current View
+                   Print Current View
+                   Close Window
+              Edit
+                   Undo
+                   Cut
+                   Copy
+                   Paste
+                   Delete
+                   Reference
+                   Search
+                   Replace
+                   Rename
+                   Change Arguments
+                   Formatted
+                   Unformatted
+                   Clear Selection
+              View
+                   Collapse
+                   Expand
+                   Collapse To
+                        1st Level
+                        2nd Level
+                        3rd Level
+                        4th Level
+                        5th Level
+                   Expand To
+                        1st Level
+                        2nd Level
+                        3rd Level
+                        4th Level
+                        5th Level
+                   Zoom In
+                   Zoom Out
+                   Zoom To Fit
+                   Reset Zoom
+                   Split Viewer
+                   Remove Viewer
+                   Show Mode Buttons
+                   Show Custom Buttons
+                   Decorate Source
+                   View Preferences
+              Annotation
+                   Note
+                        Insert
+                        Edit
+                        Delete
+                   Delete All Nodes
+                   Next Mark
+                   Previous Mark
+                   Traverse Marks
+                        Search Hits
+                        Items To Change
+                        Execution Points
+                        Breakpoints
+                        Compiler Errors
+                   Show Keywords
+                   Edit Keywords
+                   Create Keywords
+                   Create Indexed Words
+              Link
+                   Hotlink
+                   Next Section
+                   Previous Section
+                   Start Hotlink
+                   Start Section Link
+                   Close Link
+                   Remove Hyper Links
+                   Soft Associate
+                   Hard Associate
+                   Remove Hard Association
+              Debugger
+                   Run With Arguments
+                   Set Program
+                   Attach To Process
+                   Interpreted Functions
+                   Interpreted Files
+                   Trace Interpreted Code
+                        0
+                        2
+                        4
+                        6
+                        8
+                        10
+                        12
+                        14
+                        16
+                        18
+                        20
+                   Breakpoints
+                        At Selection
+                        In Function
+                        Show
+                        Remove All
+                        Remove Selected
+                   Watch Variables
+                   Kill Process
+                   Start Debugger
+              Help
+                   Topics
+                   On Viewers
+                   Index
+              Category
+                   Create
+                   Assign
+                   De-assign
+                   Modify
+                   Select
+                   Show
+                   Hide
+                   Remove
+                   Set Active
+                   Unset Active
+              Style
+                   Create
+                   Assign
+                   De-assign
+                   Modify
+                   Remove
+                   Indentation
+                        Indented
+                        Extented
+                        K & R Style
+              Insert
+                   Variable
+                   Case
+                   Loop
+                   If
+                   Statement
+              Aliases
+                   Highlighted
+                   All Nouns
+                   Created Class
+              General
+                   Highlight
+                        Character
+                        Word
+                   Title<->Paragraph
+                   Show Marks
+              Display
+                   Related Entities
+                   Members
+                   Sort Members
+                   Expert Mode
+                   Attributes
+                   Operations
+                   Built-in Relations
+                   Relations
+                   Members
+                   Add Classes
+                   Add new class
+                   Remove Class
+                   Select Related
+                   Select Contents
+                   Sort Contents
+                   Select Related
+                   Select Contents
+                   Sort Contents
+                   Attributes
+                   Operations
+                   Built-in Relations
+                   Relations
+                   Members
+                   Add Structs
+                   Add New Struct
+                   Remove Struct
+              Modify
+                   Change Attributes
+                   Add Member
+                   Add Superclass
+                   Add Subclass
+                   Add Relation
+              viewer
+                   Reparse
+                   Horizontal Scrollbar
+                   Vertical Scrollbar
+                   view
+              Sash
+      
+

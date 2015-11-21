@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>SMT Navigation</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 12.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>SMT Navigation</b></p>
+<p class="p2">Compared to navigation of the AST, navigation of the SMT is primitive. Tree navigation is accomplished through Tcl procedures that act as iterators, instead of through attributes functioning in an attribute expression. Because attribute-expressions cannot be used, there is no “find” functionality—if you are looking for a particular type of node, you need to walk the tree using TPM.</p>
+<p class="p3"><b>smt_first</b></p>
+<p class="p4">smt_first smt_node</p>
+<p class="p2">Returns the first child of <span class="s1">smt_node</span>. If <span class="s1">smt_node</span> has no children, <span class="s1"><b>smt_first</b></span> returns nothing.</p>
+<p class="p3"><b>smt_last</b></p>
+<p class="p4">smt_last smt_node</p>
+<p class="p2">Returns the last child of <span class="s1">smt_node</span><span class="s2"><i>.</i></span> If <span class="s1">smt_node </span>has no children<span class="s1">, smt_last</span> returns nothing.</p>
+<p class="p3"><b>smt_next</b></p>
+<p class="p4">smt_next smt_node</p>
+<p class="p2">Returns the next sibling of <span class="s1">smt_node</span>.</p>
+<p class="p3"><b>smt_parent</b></p>
+<p class="p4">smt_parent smt_node</p>
+<p class="p2">Returns the parent smt node of <span class="s1">smt_node</span>.</p>
+<p class="p3"><b>smt_prev</b></p>
+<p class="p4">smt_prev smt_node</p>
+<p class="p2">Returns the previous sibling of <span class="s1">smt_node</span>.</p>
+<p class="p3"><b>smt_root</b></p>
+<p class="p4">smt_root smt_node</p>
+<p class="p2">Returns the root node representing the entire file <span class="s1">smt_node</span> appears in.</p>
+</body>
+</html>

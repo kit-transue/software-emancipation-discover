@@ -1,0 +1,15 @@
+<!-- Test of:
+        unrecognized="error"
+-->
+<!-- Try with:
+        x.c -u
+     Result is:
+        -u
+     Error is reported.
+     Also try with
+        --unrecognized no_message
+     on the command line to suppress the reporting of the error.
+-->
+<cmdline nameintro="-" unrecognized="error">
+ <translate unrecognized="1"/>
+</cmdline>

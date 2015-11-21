@@ -1,0 +1,20 @@
+
+TARGETS =
+	asyncHandler.o
+	commChannel.o
+	commChannelAsync.o
+	commFDIO.o
+	commFDIO3.o
+	commFDPipe.o
+	commFDPipe3.o
+	systemAsyncWatcher.o
+
+VPATH =
+	/paraset/src/extern/osport/ipc
+
+CCINCLUDES =
+	/paraset/src/extern/osport/include
+	/paraset/src/extern/ads/include
+
+NT_CCFLAGS +=
+	/Ob1

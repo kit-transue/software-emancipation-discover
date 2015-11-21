@@ -1,0 +1,690 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+##############################################################################
+
+#
+# Equality test for sets:
+#
+
+proc seteq { a b } {
+
+  set ret 0
+
+  set sz_a [ size $a ]
+  set sz_b [ size $b ]
+  if { $sz_a == $sz_b } {
+    set diff [ set_subtract $a $b ]
+    if { [ size $diff ] == 0 } {
+      set ret 1
+    }
+  }
+
+  return $ret
+}
+
+##############################################################################
+
+#
+# Find a type in the cache:
+#
+
+proc typefind { elem kind etag infovar } {
+
+  set ret 0
+
+  upvar $infovar info
+
+  set bucket _SEV_CACHE_TYPEINFO_$kind
+  global $bucket
+
+  if { [ info exists ${bucket}($etag) ] } {
+    eval array set info $${bucket}(\$etag)
+    set ret 1
+  } else {
+    set ret 0
+  }
+
+}
+
+#
+# Store a type in the cache:
+#
+
+proc typestore { elem kind etag infovar } {
+
+  upvar $infovar info
+
+  set bucket _SEV_CACHE_TYPEINFO_$kind
+  global $bucket
+
+  set size [ array size $bucket ]
+  if { $size >= 8192 } {
+    unset $bucket
+  }
+
+  set ${bucket}($etag) [ array get info ]
+
+}
+
+#
+# Get type information about an entity:
+#
+
+global _SEV_TYPE_KINDS
+set _SEV_TYPE_KINDS { semtype struct class union enum typedef }
+
+proc typeinfo { elem args } {
+
+  set cacheall ""
+  if { [ llength $args ] } {
+    set infovar [ lindex $args 0 ]
+    upvar $infovar info
+    array set info {}
+    set cacheall [ lindex $args 1 ]
+  }
+
+  if { [ size $elem ] <= 0 } { return "" }
+  set el_kind [ kind $elem ]
+  set el_etag [ etag $elem ]
+
+  global _SEV_TYPE_KINDS
+  if { [ lsearch -exact $_SEV_TYPE_KINDS $el_kind ] == -1 } {
+    # cache lookup of non-type entity:
+    if { [ typefind $elem $el_kind $el_etag info ] } { return $info(real) }
+    set type [ typesym $elem ]
+    if { [ size $type ] > 0 } {
+      set t_kind [ kind -ignore $type ]
+      set t_etag [ etag -ignore $type ]
+      if { [ typefind $type $t_kind $t_etag info ] } {
+        if { $cacheall == "1" } { typestore $elem $el_kind $el_etag info }
+        return $info(real)
+      }
+      set elem_is_type 0
+      set facade $type
+    } else {
+      return ""
+    }
+  } else {
+    set type $elem
+    if { [ typefind $type $el_kind $el_etag info ] } { return $info(real) }
+    set elem_is_type 1
+  }
+
+  set fulltype $type
+  set name [ name $type ]
+  set real $name
+
+  set typedef 0
+  set chain [ nil_set ]
+  set level 0
+  set reference 0
+  set const 0
+  set innerconst ""
+  set volatile 0
+  set innervolatile ""
+
+  while { [ size $type ] > 0 } {
+    sappend $chain $type
+    set kind [ kind $type ]
+    if { $kind == "typedef" } {
+      incr typedef
+    } else {
+      if { [ pointer $type ] == "1" } { incr level }
+      if { [ reference $type ] == "1" } { set reference 1 }
+      if { [ const $type ] == "1" } { lappend innerconst $level }
+      if { [ volatile $type ] == "1" } { lappend innervolatile $level }
+    }
+    set type [ typesym $type ]
+  }
+
+  if { $innerconst != "" && [ lindex $innerconst end ] == $level } {
+    set innerconst [ lreplace $innerconst end end ]
+    set const 1
+  }
+
+  if { $innervolatile != "" && [ lindex $innervolatile end ] == $level } {
+    set innervolatile [ lreplace $innervolatile end end ]
+    set volatile 1
+  }
+
+  set sz [ size $chain ]
+  if { $sz > 0 } {
+    set base [ set_copy $chain $sz ]
+    set basetag [ etag $base ]
+  } else {
+    set base [ nil_set ]
+    set basetag ""
+  }
+  set basename [ name $base ]
+
+  if { $typedef > 0 } {
+    set real $basename
+    set tail ""
+    set qualfirst 0
+    set addedconst 0
+    for { set i 0 } { $i < $level } { incr i } {
+      set tail "*$tail"
+      if { [ lsearch -exact $innerconst [ expr $i + 1 ] ] >= 0 } {
+        set tail "const$tail"
+        set addedconst 1
+        set qualfirst 1
+      } else {
+        set addedconst 0
+      }
+      if { [ lsearch -exact $innervolatile [ expr $i + 1 ] ] >= 0 } {
+        if { $addedconst } { set tail "volatile $tail" } else { set tail "volatile$tail" }
+        set qualfirst 1
+      }
+    }
+    if { $qualfirst } { append real " $tail" } else { append real $tail }
+    if { $reference } { append real & }
+    if { $const } { set real "const $real" }
+    if { $volatile } { set real "volatile $real" }
+  }
+
+  set info(level) $level
+  set info(reference) $reference
+  set info(const) $const
+  set info(innerconst) $innerconst
+  set info(volatile) $volatile
+  set info(innervolatile) $innervolatile
+  set info(real) $real
+  set info(name) $name
+  set info(typedef) $typedef
+  set info(chain) $chain
+  set info(base) $base
+  set info(basetag) $basetag
+  set info(basename) $basename
+  set info(fulltype) $fulltype
+
+  # cache store:
+  if { $elem_is_type } {
+    typestore $elem $el_kind $el_etag info
+  } else {
+    typestore $facade $t_kind $t_etag info
+    if { $cacheall == "1" } { typestore $elem $el_kind $el_etag info }
+  }
+
+  return $real
+
+}
+
+#
+# Debugging output:
+#
+
+proc typeprint { elem } {
+
+  set ret ""
+
+  typeinfo $elem info
+
+  foreach field [ array names info ] {
+    append ret "$field: $info($field)\n"
+  }
+ 
+  return $ret
+
+}
+
+#
+# Get the real type of an entity (canonical name):
+#
+
+proc realtype { elem } {
+
+  set real [ typeinfo $elem ]
+  return $real
+
+}
+
+#
+# Compare type names:
+#
+
+proc typecmp { elem name } {
+  set ret 0
+  set real [ typeinfo $elem ]
+  if { $real == $name } {
+    set ret 1
+  }
+  return $ret
+}
+
+##############################################################################
+
+#
+# Loop through all of the conversion expressions:
+#
+
+proc itercon { src infovar body } {
+  
+  upvar $infovar info
+
+  global __CACHE_CONVERSIONS
+
+  set usecache 0
+
+  if { [ info exists __CACHE_CONVERSIONS(src) ] && \
+       [ seteq $__CACHE_CONVERSIONS(src) "$src" ] } {
+    set usecache 1
+  }
+
+  if { $usecache == 0 } {
+
+    if { [ info exists __CACHE_CONVERSIONS ] } { unset __CACHE_CONVERSIONS }
+    set __CACHE_CONVERSIONS(src) [ set_copy -ignore "$src" ]
+    #set exprs [ tree find -ignore convert_expr "$src" ]
+    # ignore constants:
+    set exprs [ tree find -ignore { convert_expr !(-> global_id constant) } "$src" ]
+    set sz [ size $exprs ]
+    set nelem 0
+
+    for { set i 0 } { $i < $sz } { incr i } {
+      set tnode [ set_copy -ignore $exprs [ expr $i + 1 ] ]
+      set fnode [ tree navigate -> $tnode ]
+      if { ([ typeinfo $tnode to ] != "") && ([ typeinfo $fnode from ] != "") } {
+        set to(node) $tnode
+        set from(node) $fnode
+        set list ""
+        foreach item { from to } {
+          foreach subitem [ array names $item ] {
+            lappend list "$item,$subitem"
+            eval lappend list $${item}(\$subitem)
+          }
+        }
+        if { $list != "" } {
+          lappend list expr
+          lappend list $tnode
+          set __CACHE_CONVERSIONS($nelem) $list
+        }
+        incr nelem
+      }
+    }
+    set __CACHE_CONVERSIONS(nelem) $nelem
+  }
+
+  set sz $__CACHE_CONVERSIONS(nelem)
+  for { set i 0 } { $i < $sz } { incr i } {
+    # info exists __CACHE_CONVERSIONS($i)
+    array set info $__CACHE_CONVERSIONS($i)
+    uplevel $body
+  }
+
+}
+
+#
+# Clear the conversion expression cache:
+#
+
+proc iterconclr {} {
+
+  global __CACHE_CONVERSIONS
+  if { [ info exists __CACHE_CONVERSIONS ] } { unset __CACHE_CONVERSIONS }
+
+}
+
+##############################################################################
+
+#
+# Name to symbol mapping cache:
+#
+
+proc sev_cache_name_to_sym { name } {
+
+  global _SEV_CACHE_NAME_TO_SYM
+
+  if { ! [ info exists _SEV_CACHE_NAME_TO_SYM($name) ] } {
+    set size [ array size _SEV_CACHE_NAME_TO_SYM ]
+    if { $size >= 2048 } {
+      unset _SEV_CACHE_NAME_TO_SYM
+    }
+    set _SEV_CACHE_NAME_TO_SYM($name) [ data symbol -ignore $name ]
+  }
+
+  return $_SEV_CACHE_NAME_TO_SYM($name)
+}
+
+##############################################################################
+
+#
+# Element pool cache:
+#
+
+proc sev_elem_pool { src args } {
+
+  set res [ nil_set ]
+
+  global _SEV_CACHE_POOL
+
+  set usecache 0
+  if { [ info exists _SEV_CACHE_POOL(src) ] } {
+    set old $_SEV_CACHE_POOL(src)
+    if { [ seteq $old "$src" ] } {
+      set usecache 1
+      puts_verbose "sev: using cache: sev_elem_pool"
+    }
+  }
+
+  if { $usecache != "1" } {
+    puts_verbose "sev: sev_elem_pool: rebuilding cache"
+    if { [ info exists _SEV_CACHE_POOL ] } { unset _SEV_CACHE_POOL }
+    set _SEV_CACHE_POOL(defines) [ defines -all "$src" ]
+    set _SEV_CACHE_POOL(uses)    [ uses -all "$src" ]
+    set _SEV_CACHE_POOL(all)     [ set_union $_SEV_CACHE_POOL(defines) $_SEV_CACHE_POOL(uses) ]
+    set _SEV_CACHE_POOL(src)     [ set_copy "$src" ]
+  }
+
+  set domain [ lindex $args 0 ]
+  set attr [ lindex $args 1 ]
+
+  if { $domain != "" } {
+    if { [ info exists _SEV_CACHE_POOL($domain) ] } {
+      set res [ set_copy $_SEV_CACHE_POOL($domain) ]
+      if { $attr != "" } {
+        set res [ filter $attr $res ]
+      }
+    }
+  }
+
+  return $res
+
+}
+
+##############################################################################
+
+#
+# Class inheritance cache:
+#
+
+proc get_supers_closure { class etag args } {
+
+  set res [ nil_set ]
+
+  if { [ llength $args ] } {
+    set rootsvar [ lindex $args 0 ]
+    upvar $rootsvar roots
+  }
+
+  global _SEV_CACHE_RELATIONS_SUPERS
+
+  if { ! [ info exists _SEV_CACHE_RELATIONS_SUPERS($etag,syms) ] } {
+    set roots [ nil_set ]
+    set supers [ get_super_classes $class ]
+    while { [ size $supers ] > 0 } {
+      sappend $res $supers
+      set roots $supers
+      set supers [ get_super_classes $supers ]
+    }
+    if { [ array size _SEV_CACHE_RELATIONS_SUPERS ] > 4096 } {
+      unset _SEV_CACHE_RELATIONS_SUPERS
+    }
+    set _SEV_CACHE_RELATIONS_SUPERS($etag,syms) $res
+    set _SEV_CACHE_RELATIONS_SUPERS($etag,roots) $roots
+  } else {
+    set res $_SEV_CACHE_RELATIONS_SUPERS($etag,syms)
+    set roots $_SEV_CACHE_RELATIONS_SUPERS($etag,roots)
+  }
+
+  return $res
+
+}
+
+proc get_subs_closure { class etag } {
+
+  set res [ nil_set ]
+
+  global _SEV_CACHE_RELATIONS_SUBS
+
+  if { ! [ info exists _SEV_CACHE_RELATIONS_SUBS($etag) ] } {
+    set subs [ get_sub_classes $class ]
+    while { [ size $subs ] > 0 } {
+      sappend $res $subs
+      set subs [ get_sub_classes $subs ]
+    }
+    if { [ array size _SEV_CACHE_RELATIONS_SUBS ] > 4096 } {
+      unset _SEV_CACHE_RELATIONS_SUBS
+    }
+    set _SEV_CACHE_RELATIONS_SUBS($etag) $res
+  } else {
+    set res $_SEV_CACHE_RELATIONS_SUBS($etag)
+  }
+
+  return $res
+
+}
+
+proc class_relationship { x y xtag ytag args } {
+
+  if { [ llength $args ] } { upvar [ lindex $args 0 ] share }
+
+  set rel unknown
+
+  global _SEV_CACHE_RELATIONS_INFO
+
+  if { $xtag != "" && $ytag != "" } {
+    if { ! [ info exists _SEV_CACHE_RELATIONS_INFO($xtag,$ytag,rel) ] } {
+      set share [ nil_set ]
+      if { ([ size $x ] > 0) && ([ size $y ] > 0) } {
+        set xkind [ kind $x ]; set xobj 0
+        set ykind [ kind $y ]; set yobj 0
+        if { $xkind == "struct" || $xkind == "class" || $xkind == "union" } { set xobj 1 }
+        if { $ykind == "struct" || $ykind == "class" || $ykind == "union" } { set yobj 1 }
+        if { $xobj && $yobj } {
+          if { ([ size [ where defined $x ] ] > 0) && \
+               ([ size [ where defined $y ] ] > 0) } {
+            if { [ size [ set_intersect $x $y ] ] <= 0 } {
+              set xsup [ get_supers_closure $x $xtag xroots ]
+              if { [ size [ set_intersect $xsup $y ] ] <= 0 } {
+                set xsub [ get_subs_closure $x $xtag ]
+                if { [ size [ set_intersect $xsub $y ] ] <= 0 } {
+                  set ysup [ get_supers_closure $y $ytag yroots ]
+                  set share [ set_intersect $xroots $yroots ]
+                  if { [ size $share ] > 0 } {
+                    set rel cousin
+                  } else {
+                    set rel none
+                  }
+                } else {
+                  set rel parent
+                }
+              } else {
+                set rel child
+              }
+            } else {
+              set rel same
+            }
+          } else {
+            # unknown
+          }
+        } elseif { $xobj || $yobj } {
+          set rel none
+        }
+      } else {
+        # unknown
+      }
+      if { [ array size _SEV_CACHE_RELATIONS_INFO ] > 4096 } {
+        unset _SEV_CACHE_RELATIONS_INFO
+      }
+      set _SEV_CACHE_RELATIONS_INFO($xtag,$ytag,rel) $rel
+      set _SEV_CACHE_RELATIONS_INFO($xtag,$ytag,share) $share
+    } else {
+      set rel $_SEV_CACHE_RELATIONS_INFO($xtag,$ytag,rel)
+      set share $_SEV_CACHE_RELATIONS_INFO($xtag,$ytag,share)
+    }
+  }
+
+  return $rel
+
+}
+
+##############################################################################
+
+#
+# Clear the cache:
+#
+
+proc sev_clear_cache {} {
+
+  global _SEV_CACHE_NAME_TO_SYM
+  if { [ info exists _SEV_CACHE_NAME_TO_SYM ] } { unset _SEV_CACHE_NAME_TO_SYM }
+
+  global _SEV_CACHE_ATTR
+  if { [ info exists _SEV_CACHE_ATTR ] } { unset _SEV_CACHE_ATTR }
+
+  global _SEV_CACHE_POOL
+  if { [ info exists _SEV_CACHE_POOL ] } { unset _SEV_CACHE_POOL }
+
+  foreach pat { _SEV_CACHE_TYPEINFO_* _SEV_CACHE_RELATIONS_* } {
+    set vars [ info global $pat ]
+    foreach var $vars {
+      global $var
+      unset $var
+    }
+  }
+
+  iterconclr
+
+}
+
+##############################################################################
+
+proc expression_is_constant { node } {
+
+  set ret 0
+
+  set dynamic [ tree find -ignore { !(ast_expr || (global_id constant)) } $node ]
+  if { [ size $dynamic ] == 0 } {
+    set ret 1
+  }
+
+  return $ret
+}
+
+proc expression_is_boolean { node } {
+
+  set ret 1
+
+  set parent [ tree filter -ignore \
+    { (convert_expr \
+      (<- (truth_or_expr || truth_not_expr || truth_andif_expr || \
+           truth_xor_expr || truth_orif_expr || truth_and_expr))) || \
+      ((-- nil) <- if_stmt) || ((-- nil) <- cond_expr) || \
+      ((-- nil) <- while_stmt) || ((-- -- nil) <- for_stmt) || \
+      ((-- nil) <- do_while_stmt) } $node ]
+
+  if { [ size $parent ] <= 0 } {
+    set child [ tree navigate -ignore { r(->) !convert_expr } $node ]
+    set child [ tree filter -ignore \
+      { truth_or_expr || truth_not_expr || truth_andif_expr || \
+        truth_xor_expr || truth_orif_expr || eq_expr || ne_expr } $child ]
+    if { [ size $child ] <= 0 } {
+      set ret 0
+    }
+  }
+
+  return $ret
+
+}
+
+##############################################################################
+
+#
+# Get a number corresponding to the node's position rank:
+#
+
+proc getsrcindex { node } {
+
+  return [ ast_offset $node ]
+
+}
+
+##############################################################################
+
+#
+# Queries that take a limit should use this to
+# extract the limit arg:
+#
+
+proc getqlim { list default } {
+  set lim [ lindex $list 0 ]
+  if { $lim == "" } {
+    set lim $default
+  }
+  return $lim
+}
+
+#
+# Find the line closest to an entity:
+#
+
+proc nearline { el } {
+
+  set line 0
+
+  if { [ ast $el ] } {
+    set node [ tree navigate { r(<-) ast_offset != 0 } $el ]
+    if { [ size $node ] > 0 } {
+      set line [ line $node ]
+    }
+  } else {
+    set line [ line $el ]
+  }
+
+  return $line
+}
+
+#
+# Format a single diagnostic:
+#
+
+proc qdiagfmt { el msg } {
+
+  set file [ fname $el ]
+  set list [ list $file [ nearline $el ] $msg ]
+  return $list
+
+}
+
+#
+# Format a group of diagnostics and store them:
+#
+
+proc qdiag { elems msg } {
+
+  global QUERYDIAG
+
+  if { [ size $elems ] > 1 } {
+    foreach el $elems {
+      lappend QUERYDIAG(text) [ qdiagfmt $el $msg ]
+    }
+  } elseif { [ size $elems ] == 1 } {
+    lappend QUERYDIAG(text) [ qdiagfmt $elems $msg ]
+  }
+
+}

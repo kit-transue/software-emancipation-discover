@@ -1,0 +1,8 @@
+#!/bin/sh
+
+lockfile="`dirname $cm_revision_file`/p.`basename $cm_workfile`"
+rm -f $lockfile
+if [ -f $lockfile ] ; then
+    echo "Could not unlock $cm_workfile"
+    exit 1
+fi

@@ -1,0 +1,424 @@
+<head>
+<title>PBMB Log Presentation</title>
+</head>
+<body bgcolor="white">
+<h2 align="center">Log Presentation
+              <br>for Push Button Model Build</h2>
+<table>
+<tr><td align="right">From:<td width="2%"><td>Scott Turner
+<tr><td align="right">To:<td width="2%"><td>Peter Goodrich
+<tr><td align="right">Date:<td width="2%"><td>2000 April 26, revised May 30
+</table>
+<h3>Purpose</h3>
+<p>The purpose of the "log presentation" is to organize
+the messages and logs produced by various phases and
+processes of model build, to make the information 
+available in a useful and rational form.</p>
+
+<p>Currently, most of the model build status and error
+information is dumped into a log file, which is
+difficult to deal with because:
+<ul>
+<li>The final status
+   of the model build does not really indicate
+   whether the model is valid.
+   
+<li>   Statistical summaries are hard to interpret.
+
+<li>   The log showing the detection of a problem can
+   be far removed from the summary which reports
+   the failure.
+
+<li>   The detail which the user must deal with is 
+   controlled only by the DISCOVER_VERBOSE flag.
+
+<li>  Sometimes it is necessary to  set DISCOVER_VERBOSE
+   and start the model build over from the beginning.
+</ul>
+</p>
+
+<p>"Log presentation" improvement will analyze and provide
+structure to the information which currently goes into
+the log.  
+
+<ol>
+<li>The overall structure is a tree.  When the tree is completely
+   collapsed to 1 message (the root), that message gives the
+   overall status of the model build.  More information
+   is available as subnodes of the root.
+
+<li>Most of the tree's structure is derived from the
+   message database.  The database will indicate the
+   hierarchy of one process invoking another, such as
+   the driver running the parse phase, or the parse
+   phase invoking aset_CCcc to parse 1 file.  For a
+   given phase there will typically be two levels in
+   the tree hierarchy: the terse, qualitative overall
+   status, and a summary of progress (e.g. parse statistics).
+
+<li>"Log presentation" will adapt the structure of the message
+   database, to highlight overriding aspects of progress.
+   For example, the summary of overall model build progress
+   would ordinarily be backed up by the results of various
+   phases of the model build.  But if the model build ran
+   out of disk space, the lack of disk space would show up
+   as more important than the phase structure of the model
+   build.  
+
+<li>Every node in the structure will have a severity level,
+   so that more severe messages can be highlighted to catch
+   the eye in the GUI.
+   <ul>
+    <li>catastrophe: step could not be completed
+    <li>error: step complete, but not successful
+    <li>warning: potentially related to understanding an error
+    <li>normal: step complete and valid
+    <li>unknown: unknown severity
+   </ul>
+<li>"Log presentation" will provide additional analysis of
+model build progress.  The ultimate status code will reflect
+the whole model build process. 
+</ol>
+This structure and analysis addresses the log shortcomings as
+follows:
+<ul>
+<li>The final status reflects the whole model build.
+<li>Summaries are backed up by contributory details,
+in a way that is easy to navigate.
+<li>The information which is currently exposed by
+DISCOVER_VERBOSE will always be logged, so the
+environment variable is no longer used.
+<li>The user has direct control over what detail to view.
+</ul>
+</p>
+
+<h3>Fitting It Together</h3>
+<p>Improvements to log presentation will take place
+in the context of Kit's &amp; Sudha's log creation,
+and a GUI front end for the push button model build.
+Log presentation is handled by a module which is in between
+these two.
+<table border>
+<tr><td>Model Build / Logger &nbsp; ==> &nbsp; Log Presentation &nbsp; ==> &nbsp; GUI
+</table>
+Log Presentation will be implemented in C++ as a separate executable.
+Its input and ouput will be through sockets/pipes rather than
+by physical file, because the model build, the log presentation,
+and the GUI must run simultaneously.
+</p>
+
+<h3>Implementation Methodology</h3>
+<p>Implementing good log presentation will require feedback from
+users. Since the goal is to give users the information they
+need at the time they are looking for it, we need to focus
+on the most common impediments to a successful model build.
+I will seek out user experience through in-house QA and through
+trials at customer sites, noting what is available in the log
+and what information the user needs to see.
+This user experience imposes requirements on the log presentation.
+I am hopeful that by handling 10 or so different user scenarios well,
+we can provide a smooth and pleasant user experience 90% of the time.
+</p>
+<p>Some enhancements to log presentation will require
+better structuring. These can be handled partly in the
+log presentation module and partly in the parser driver, by
+providing more structure (using more process ids for chunks
+of the processing).
+Other enhancements will require revising the information going
+into the log. And some can be addressed by intelligent
+analysis of the log and the build environment.
+</p>
+
+<h3>Configurability</h3>
+<p>If log presentation needs to detect messages in the
+log based on their text, it should use a configuration file
+for this purpose, so that it can be readily updated if
+the messages should change.
+</p>
+
+</h3>
+<h3>Communication With Logger</h3>
+<p>Messages from the logger include
+<ul>
+<li>severity
+<li>parent id
+<li>type of message (see below)
+    <ul>
+    <li>spawn
+    <li>finish
+    <li>summary
+    <li>other
+    </ul>
+<li>message body/text
+</ul>
+The messages will be passed using XML syntax, for example,
+<pre>
+    &lt;msg sev="normal" parent="95" finish&gt;The model build is done.&lt;/msg&gt;
+    &lt;msg sev="catastrophe" parent="127"&gt;
+          The file $1 could not be opened.
+          &lt;arg num="1"&gt;bleaugh&lt;/arg&gt;&lt;/msg&gt;
+    &lt;spawn child="131" parent="95"&gt;C++ Parser&lt;/spawn&gt;
+    &lt;msg sev="normal" parent="97" summary&gt;
+  ===== Update Summary project /ttt =====
+    24 	modules succeeded update
+    24 	modules needed update for project /ttt
+    0 	modules failed update&lt;/msg&gt;
+</pre>
+</p>
+<p>In addition, "log presentation" requires the following from
+the log maker:
+<ol>
+<li>All messages from the pbmb-driver and the dismb code which
+it invokes must be logged, in addition to messages from aset/pset_server and
+the parsers.
+<li>When a parser or a model build phase is invoked,
+a fresh message group id is assigned to that phase.
+This id is referred to as "parent"
+by any messages originating during that phase
+(except when the phase is refined into more detailed sub-groups).
+The assigned ids should not be re-used after a phase
+terminates.  (This is to enable the parent to be
+identified easily and without possibility of confusion.)
+<li>A distinct "spawn" message indicates the relationship
+of parent to child group.  It also includes a title
+for the child group, suitable for progress/status messages.
+<li>A phase may log when it is finished, with an
+appropriate severity indicating success or lack thereof.
+<li>Messages which provide a summary upon completion of a
+phase, a parse, etc. are so identified.
+</ol>
+</p>
+<p>The message bodies passed from logger to presentation
+are expected to evolve, to become ASCII message identifiers.
+They are taken verbatim from the source code.  
+Log presentation  will look them up in a translation table for an appropriate language.
+Note that the "Update Summary" example above is <em>not</em>
+ready for translation.  It is acceptable right now,
+but will need to change eventually.
+</p>
+<h4>XML Spec</h4>
+<p>
+There are three elements types.
+<ul>
+<li>msg
+    <br>The msg element is at the top level of the comm stream.
+    <br>It may contain arg elements as children.
+    <br>Its text is the message, containing parameters such as $2.
+    <br>Its attributes are:
+    <ul>
+    <li>The sev attribute can be "normal", "warning", "error", or "catastrophe".
+    <li>The parent attribute is a non-negative integer id, either 0
+       or a previously spawned id.
+    <li>The finish attribute is optional, with no value.
+    <li>The summary attribute is optional, with no value.
+    </ul>
+<li>arg
+    <br>The arg element is a child of a msg element.
+    <br>Its text is the value to be substituted.
+    <br>Its only attribute is num, which indicates the parameter to substitute for.
+<li>spawn
+    <br>The spawn element is at the top level of the comm stream.
+    <br>Its text is a noun phrase identifying 
+        the grouping of subordinate messages.
+    <br>Its attributes are:
+    <ul>
+    <li>The parent attribute is a non-negative integer id, either 0 or
+       a previously spawned id.
+    <li>The child attribute is a positive integer id for the spawned
+        message group.
+    </ul>
+</ul>
+</pre>
+</p>
+<h3>Communication With GUI</h3>
+<p>
+Communication from "log presentation" to the Java GUI
+consists of (1) the structured log and (2) progress fraction
+updates.  Both the progress number and the
+structured log are available as soon as the 
+push-button-model-build starts.
+Dynamic updates are particularly interesting
+for the tree-structured log.
+</p>
+<p>
+The messages from "log presentation" to GUI use XML as follows:
+<table border>
+<tr><th>message type<th>parameters<th>example
+<tr><td>progress<td>percent done, title of current phase
+    <td>&lt;progress done="24%" title="model build"/&gt;
+<tr><td>done (no more progress)<td><td>&lt;done/&gt;
+<tr><td>new message (tree) node<td>node id, severity, help id, body/text
+    <td>&lt;message node="527" severity="catastrophe" help="259"&gt;Out of memory.&lt;/message&gt;
+<tr><td>revise message (tree) node<td>node id, severity, help id, body/text
+    <td>&lt;message node="527" severity="catastrophe" help="259"&gt;Out of memory.&lt;/message&gt;
+<tr><td>append child<td>parent node id, child node id
+    <td>&lt;append node="527" parent="525"/&gt;
+<tr><td>prepend child<td>parent node id, child node id
+    <td>&lt;prepend node="527" parent="525"/&gt;
+<tr><td>append to sibling<td>id of base sibling, id of new sibling
+    <td>&lt;append node="527" sibling="526"/&gt;
+<tr><td>prepend to sibling<td>id of base sibling, id of new sibling
+    <td>&lt;prepend node="527" sibling="526"/&gt;
+<tr><td>delete node<td>
+    <td>&lt;delete node="527"/&gt;
+</table>
+With the above definition, it takes 2 commands to add a message to the displayed
+log: a "message" which creates the node, and an "append" which
+places it within the visible structure.
+Yuri persuaded me that with XML, it would be better to use a
+single element per action. The following is proposed, but has
+not yet been reviewed by Alex Z.
+<table border>
+<tr><th>action<th>parameters<th>example
+<tr><td>progress<td>percent done, title of current phase
+    <td>&lt;progress done="24%" title="model build"/&gt;
+<tr><td>done (no more progress)<td><td>&lt;done/&gt;
+<tr><td>new message<td>node id, severity, help id, position, body/text
+    <td>&lt;message node="527" severity="catastrophe" help="259" parent="525"
+                    &gt;Out of memory.&lt;/message&gt;
+<tr><td>move message to last top-level position<td>node id, position (implicit)
+    <td>&lt;move node="527"/&gt;
+<tr><td>move message to first top-level position<td>node id, position
+    <td>&lt;move node="527" prepend/&gt;
+<tr><td>move message to last child of given parent<td>node id, position
+    <td>&lt;move node="527" parent="635"/&gt;
+<tr><td>move message to first child of given parent<td>node id, position
+    <td>&lt;move node="527" parent="635" prepend/&gt;
+<tr><td>move message to follow a given sibling<td>node id, position
+    <td>&lt;move node="527" sibling="529"/&gt;
+<tr><td>move message to precede a given sibling<td>node id, position
+    <td>&lt;move node="527" sibling="529" prepend/&gt;
+<tr><td>revise message (tree) node<td>node id, any changed parameters, (no position)
+    <td>&lt;revise node="527" severity="catastrophe" help="259"&gt;Out of memory.&lt;/message&gt;
+<tr><td>delete node and all descendants<td>node id
+    <td>&lt;delete node="527"/&gt;
+<tr><td>delete all descendants of a node<td>parent node id
+    <td>&lt;delete parent="525"/&gt;
+</table>
+</p>
+<p>Notes:
+<ul>
+<li>The body/text of a message node includes
+all relevant details.
+When the message is due to a parser, it
+includes file name, line, and column indication.
+The model build phase is inherent in the
+tree structure.
+<li>The structural append/prepend/move messages are not intended to
+position a node
+simultaneously in more than one location of the tree.
+They may be applied to a node which already has a
+position in the tree, to move it to a new position.
+<li>If need arises for a "message id" attribute to support filtering,
+it will be easy to add an attribute to the XML.
+<li>It was agreed on May 8 that for the time being,
+log presentation will avoid sending any "move messagge" directives
+to the GUI.
+</ul>
+</p>
+<h3>PBMB Driver</h3>
+<p>
+Discover will install a push button in MS Visual Studio.
+When the user clicks the button, it will invoke
+an executable that's part of Discover.
+This executable is not the Java GUI, because
+Java can't start the other pieces of the 
+push-button-model-build.
+It is a small coordinator which starts the Java GUI,
+and which afterward receives communications from the Java GUI.
+</p>
+<p>To start the push-button-model-build executable,
+MS Visual Studio finds it via the environment variable DIS_PBMB.
+It passes one argument, indicating the current project.
+(The driver actually needs the pathname of the project's
+DSP file, but as far as we know this is not in the public
+interface for Visual Studio plug-ins.)
+This driver executable
+<ul>
+<li>Registers its communications socket with the name server.
+<li>Starts the Java GUI, supplying as an argument the name of the current Visual Studio project.
+<li>Receives communications from the Java GUI (the commands described above).
+<li>Starts the Perl model build driver (currently known as <code>parser_driver.pl</code>).
+<li>Starts the log presentation process.
+</ul>
+</p>
+<p>Note that having Visual Studio active is not
+really important for the pushbutton model build, 
+because the user still gets to select the DSP file 
+in the Java GUI. 
+The driver and the Java GUI should be robust to
+start up successfully even if a project name is
+not supplied.
+</p>
+<h3>Java GUI</h3>
+<p>The Java GUI sends the following messages (in XML) to the 
+push-button-model-build engine.
+<table border>
+<tr><th>message type<th>description<th>example
+<tr><td>Start &amp; Run<td>i.e. start model build and run Code Rover
+    <td>&lt;start/&gt;
+<tr><td>Build<td>and not start Code Rover
+    <td>&lt;build/&gt;
+<tr><td>Cancel<td>
+    <td>&lt;cancel/&gt;
+<tr><td>DSP<td>Set location to find DSP file.
+    <td>&lt;dsp&gt;f:\discover\src\discovermdi\discovermdi.dsp&lt;/dsp&gt;
+<tr><td>Output<td>Set location on for ADMINDIR &amp; model.
+    <td>&lt;output&gt;f:\discover\src\discovermdi\model&lt;/output&gt;
+</table>
+</p>
+<p>The Java GUI can have a visual arrangement such as:
+<br>
+<img src="pbmbGUI.gif">
+<ul>
+<li>The "Select DSP" combo box defaults to Visual Studio's 
+current project, and might also list projects from
+Visual Studio's list of recent projects.
+<li>The "Select Output" combo box defaults to the location 
+of the DSP file (once a DSP file has been selected).
+<li>Each combo box has a "browse..." button.
+<li>There's an area for displaying the tree-structured log.
+<li>The "Build" and "Run" pushbuttons both initiate a model
+build. The "Run" button also starts Code Rover.
+<li>A menu item will save the log to a file, using XML.
+</ul>
+</p>
+<p>
+The GUI supports a command, by which the user
+can dump the XML log to a file.  A stylesheet suitable
+for viewing the XML log will be supplied with the push-button-model-build.
+</p>
+<h4>Help</h4>
+<p>Clicking on a log message should
+pop up a help window describing possible solutions. 
+(This is not a first cut feature.)
+</p>
+<h3>Communications API and XML</h3>
+<p>The XML communications API for C++ will be built on
+IBM's XML4C.  To send an XML element, it is constructed
+by a sequence of member function calls which add the
+element tag, attributes, and text.
+Upon receiving an XML element, member functions allow
+access to the tag and text. Another member function
+supports lookup of attributes.
+</p>
+<p>This API may be based on a portable, template-based
+library for strings and containers, or it may be
+based on the standard C++ library.
+</p>
+<p>The use of an industrial strength implementation of
+XML will allow for eventual translation of messages
+to any language.
+</p>
+
+<h3>Issues</h3>
+<p>More details of how the logger is embodied, and how it
+communicates with the log presentation process.
+</p>
+<p>Would it make more sense for message translation to
+take place in the Java GUI?</p>
+<p>It might be preferable to do message translation lookup
+and parameter subsititution in the Java GUI.
+That way the C++ code of the log presentation need not
+be concerned with character sets and Unicode.</p>
+</body>

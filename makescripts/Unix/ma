@@ -1,0 +1,530 @@
+#!/bin/sh
+
+Timestamp()
+{
+	date +"make_${EXEC} $1 on %D at %T"
+}
+
+trap 'Timestamp exiting' 0
+
+# preserve positional parameters since /bin/sh functions destroy them 
+#pgm=$0
+opts=$*
+#bn=`basename ${pgm}`
+#targ=`echo ${bn} | sed 's/^make.//'`
+#targ=`echo ${targ} | sed 's/.sh//'`
+
+case ${targ} in
+	aset|model_server)
+		EXEC=${targ}
+		EXEC_BRANCH=aset
+		EXEC_MAKE=model_server
+		LIB_NAME=aset
+                FLIST_NAME="";;
+	ifext|paracancel|mrg_diff|mrg_update|dis_path)
+		EXEC=${targ}
+		EXEC_BRANCH=aset;;
+	package|qvparser|pcparser|vcparser)
+		EXEC=${targ}
+		EXEC_BRANCH=package;;
+	index|index.rtl)
+		EXEC=pksym.${targ}
+		EXEC_BRANCH=package ;;
+	if_parser|if_diff|simplify|dis_sql|testlink|helper|gxpackage)
+		EXEC=${targ}
+		EXEC_BRANCH=${targ};;
+ 	aset_CCcc)
+		EXEC=${targ}
+		EXEC_BRANCH=${targ};;
+ 	aset_jfe|dis_prefs|mrg_ui)
+		EXEC=${targ}
+		EXEC_BRANCH=${targ};;
+	sevreporter)
+		EXEC=sevreporter
+		EXEC_BRANCH=sev;;
+	disperl|dismb)
+		EXEC=${targ}
+		EXEC_BRANCH=dismb;;
+	checklist)
+		EXEC=checklist
+		EXEC_BRANCH=aset;;
+	parsercmd|pdfgen|scanclrmake|scandsp|ci_environment)
+		EXEC=${targ}
+		EXEC_BRANCH=pbmb;;
+	log_presentation|mbdriver)
+		EXEC=${targ}
+		EXEC_BRANCH=pbmb_ts;;
+        qaengine)
+                EXEC=${targ}
+                EXEC_BRANCH=qaengine;;
+        cmdriver)
+                EXEC=${targ}
+                EXEC_BRANCH=cmdriver;;
+        cmdish)
+                EXEC=${targ}
+                EXEC_BRANCH=cmdish;;
+        CIEClient)
+                EXEC=${targ}
+                EXEC_BRANCH=cieclient
+		EXEC_MAKE=adminui/native;;
+esac
+
+FLIST_NAME=${FLIST_NAME-${EXEC}}
+LIB_NAME=${LIB_NAME-${EXEC}}
+EXEC_MAKE=${EXEC_MAKE-${EXEC}}
+
+if [ "$*" = "-srcdir" ] ; then
+  BASE=\$SRC_ROOT/src
+  echo $BASE
+  trap 0
+  exit 0
+fi
+
+if [ "$*" = "-env" ] ; then
+  echo "EXEC=\"$EXEC\" ; export EXEC ;"
+  echo "EXEC_BRANCH=\"$EXEC_BRANCH\" ; export EXEC_BRANCH ;"
+  echo "FLIST_NAME=\"$FLIST_NAME\" ; export FLIST_NAME ;"
+  trap 0
+  exit 0
+fi
+
+make_component=Make.component
+make_link=Make.link
+
+Timestamp started
+
+OS="Unix"
+
+tooldir=../../makescripts/${OS}
+config=${tooldir}/make_exec.cf
+setarch=${tooldir}/set_arch.sh
+
+. ${setarch}
+. ${config}
+
+if [ ! -d ${admin_root} ] ; then
+	echo "Error: Can't access build scripts"
+	exit 1
+fi
+
+export EXEC LOCAL_SRC_ROOT BUILD_SRC_ROOT OBJ_ROOT OBJ_RT INC_ROOT ARCH ARCHV VARIANT COMPONENT VERSION LLIST BUILDMODE MAKELIB TOOLDIR TARGET EXEC_BRANCH LIB_NAME FLIST_NAME PURIFY GMAKE PATH2BS YACC BISON_SIMPLE BISON_HAIRY
+
+TARGET=${EXEC}
+
+version_file=${admin_root}/../version
+comp_list_file=${LOCAL_SRC_ROOT}/${EXEC_MAKE}/make/Unix/${EXEC}_comp_list
+if [ -f ${comp_list_file} ]; then
+  comp_list=`cat ${comp_list_file}`
+else
+  comp_list=`cat ${BUILD_SRC_ROOT}/${EXEC_MAKE}/make/Unix/${EXEC}_comp_list`
+fi
+
+# Skip galaxy stuff if we don't want it:
+if [ "${MOTIF_UI=0}" = "1" ] ; then 
+  echo "Skipping galaxy code..."
+  comp_list=`cat ${admin_root}/${EXEC}_comp_list`
+  comp_list=`for i in $comp_list ; do echo $i ; done | egrep -v 'DIS_|communications' `
+fi
+
+llist_config=${ASET_LINK_CONFIG:-${BUILD_SRC_ROOT}/${EXEC}_link_config}
+
+# see "Phase III - Final linking procedures" for this variable:
+SYS_TREE="\$(SC)"
+
+def_variant="-O"
+def_tree=""
+selected_g=""
+selected_O=""
+failed_list=""		# list of failed components when building comp libs
+phase1=1
+phase2=1
+phase3=1
+
+Usage()
+{
+	echo Usage: ....
+	exit 1
+}
+
+List_components()
+{
+	echo "${comp_list}"
+}
+
+Run_make()
+{
+	makefile=$1
+	shift
+	args=$*
+	if [ ! -f ${makefile} ]
+	then
+		makefile=${MAKELIB}/`basename ${makefile}`
+	fi
+	echo "${GMAKE} -f ${makefile} -r ${makeflags} ${args}"
+	if ${GMAKE} -f ${makefile} -r ${makeflags} ${args}
+	then
+		true
+	else
+		failed_list="${failed_list} ${COMPONENT}"
+		echo "failed_list=${failed_list}"
+		false
+	fi
+}
+
+# Set_variant - set variant for a component
+Set_variant()
+{
+	VARIANT=${def_variant}
+	if [ "${selected_g}" ]
+	then
+		for c1 in ${selected_g}
+		do
+			if [ $1 = ${c1} ]
+			then
+				VARIANT="-g"
+				return
+			fi
+		done
+	fi
+	if [ "${selected_O}" ]
+	then
+		for c1 in ${selected_O}
+		do
+			if [ $1 = ${c1} ]
+			then
+				VARIANT="-O"
+				return
+			fi
+		done
+	fi
+}
+
+Ill_select()
+{
+	echo "Illegal build option: ${1}"
+	exit 1
+}
+
+# debug - to be deleted
+
+# end of debug
+
+#########################################################
+# Main - Parse the command line
+#########################################################
+
+makeflags=""
+BUILDMODE=local
+
+optlist=""
+for A in ${opts}
+do
+	case ${A} in
+
+	-loc*)
+		BUILDMODE=local;;
+	-sys*)
+		BUILDMODE=system;;
+	-x)
+		set -x;;
+	-pure)
+		TARGET=${TARGET}.pure
+		PURIFY="/usr/local/bin/purify -best-effort -optimize-save-o7=no";;
+	-cov)
+		PURIFY="/usr/local/bin/purecov";;
+	-quant*)
+		PURIFY="/usr/local/bin/quantify -windows=no";;
+	-noco*)
+		phase1=""; phase2="";;
+	-nolink)
+		phase3="";;
+	-clean)
+		p1_mode=clean;;
+	-cleanlib)
+		p1_mode=cleanlib;;
+	-li*)
+		List_components; exit 0;;
+	-showlink)
+		showlink=1;;
+	-u | -V | -v | -d | -k)
+		makeflags="${makeflags} ${A}";;
+	-rfile) # simulate the old "make rfile" command
+		nc=`pwd | sed "s#${BUILD_SRC_ROOT}/./##"`
+		for c in ${comp_list}
+		do
+			if [ ${nc} = ${c} ]
+			then
+				c=""
+				break
+			fi
+		done
+		if [ "${c}" ]
+		then
+			echo "Error: No such component: ${nc}"
+			exit 1
+		fi
+		optlist="${optlist} -comp_list ${nc} -lg ${nc}"
+		phase3="";;
+	-O* | -g*)
+		cmd_opt_llist=1
+		optlist="${optlist} ${A}";;
+
+	*)
+		optlist="${optlist} ${A}";;
+	
+	esac
+done
+if [ -f ${llist_config} ]
+then
+	llopt=`cat ${llist_config}`
+fi
+if [ "${llopt}" ]
+then
+	if [ "${cmd_opt_llist}" ]
+	then
+		echo "warning: command line link list will override the file config"
+		# ignore the file llist configuration
+	else
+		# use the file llist configuration
+		optlist="${optlist} ${llopt}"
+	fi
+fi
+if [ "${optlist}" ]
+then
+	set -- ${optlist}
+	while [ $# -gt 0 ]
+	do
+		case $1 in
+
+		-g* | -O* )	# specify component variants
+			opt=$1; override_def=$1
+			shift
+			while [ $# -gt 0 ]
+			do
+				case $1 in
+				-*)
+					break;;
+				*)
+					override_def=""
+					nc=$1
+					for c in ${comp_list}
+					do
+						if [ ${nc} = ${c} ]
+						then
+							c=""
+							break
+						fi
+						if [ ${nc}/src = ${c} ] # try converting xx to xx/src
+						then
+							nc=${nc}/src
+							c=""
+							break
+						fi
+					done
+					if [ "${c}" ]
+					then
+						echo "Error: No such component: ${nc}"
+						exit 1
+					fi
+					case ${opt} in
+						-*g* | -*O*)
+							true;;
+						*)
+							Ill_select ${opt};;
+					esac
+					case ${opt} in
+						-*g*)
+							selected_g="${selected_g} ${nc}";;
+						-*O*)
+							selected_O="${selected_O} ${nc}";;
+						-*l* | -*s*)
+							true;;
+						*)
+							Ill_select ${opt};;
+					esac
+					shift;;
+				esac
+			done
+			if [ ! -z "${override_def}" ]
+			then
+				case ${override_def} in
+					-*g*)
+						def_variant="-g";;
+					-*O*)
+						def_variant="-O";;
+					*)
+						Ill_select ${opt};;
+				esac
+				override_def=""
+			fi;;
+		-comp_list)
+			dyn_comp_list=""
+			shift
+			while [ $# -gt 0 ]
+			do
+				case $1 in
+					-*)
+						break;;
+					*)
+						dyn_comp_list="${dyn_comp_list} $1"
+						shift;;
+				esac
+			done;;
+		-J)
+			makeflags="${makeflags} $1 $2"
+			shift 2;;
+		*)
+			echo "Illegal option: $1"
+			Usage;;
+		esac
+	done
+fi
+
+#########################################################
+# Set up
+#########################################################
+
+if [ "${ARCH}" = unknown ]
+then
+	echo "Error: unknown system"
+	exit 1
+fi
+
+read VERSION <${version_file}
+
+if [ ! "${VERSION}" ]
+then
+	echo Error: "Can't find version"
+	exit 1
+fi
+
+echo Working on version ${VERSION}
+
+if [ "${BUILDMODE}" = system ]
+then
+	if [ "${dyn_comp_list}" -o "${selected_g}" -o "${selected_O}" ]
+	then
+		Usage
+	fi
+	makeflags="${makeflags} -V"
+fi
+
+if [ ! "${dyn_comp_list}" ]
+then
+	dyn_comp_list=${comp_list}
+fi
+
+VARIANT=${def_variant}
+
+LD_LIBRARY_PATH=${OS_ROOTDIR}/lib:/usr/lib:/usr/openwin/lib:${GALAXYHOME}/lib
+export LD_LIBRARY_PATH
+
+winkin_view=winkin.${VERSION}
+
+#########################################################
+# Phase I - Version specific tree management
+#
+# Phase I ensures that an object tree for the specified version exists; the
+# tree is created if necessary.  This phase also affects the content of the
+# tree (mostly object files) as follows:
+# When building with "-clean" option the content of the tree is removed.
+#		
+#########################################################
+if [ "${phase1}" ]
+then
+	for c in ${comp_list}
+	do
+		Set_variant ${c}
+		comp_dir=${OBJ_ROOT}/${ARCH}${VARIANT}/obj/${EXEC_BRANCH}/${c}
+		if [ ! -d ${comp_dir} ]
+		then
+			mkdir -p ${comp_dir} 
+		fi
+		case ${p1_mode} in
+			clean)
+				echo "Cleaning up ${comp_dir}"
+				rm -f ${comp_dir}/*;;
+			cleanlib)
+				echo "Cleaning up ${comp_dir}/lib_${LIB_NAME}.o"
+				rm -f ${comp_dir}/lib_${LIB_NAME}.o;;
+		esac
+	done
+fi
+
+#########################################################
+# Phase II - Component building
+#########################################################
+
+if [ "${phase2}" ]
+then
+	for COMPONENT in ${dyn_comp_list}
+	do
+		Set_variant ${COMPONENT}
+		echo "[${COMPONENT}]: VARIANT=${VARIANT}"
+		libdir=${OBJ_ROOT}/${ARCH}${VARIANT}/obj/${EXEC_BRANCH}/${COMPONENT}
+		cd ${libdir}
+		
+		COMPONENT_PATH=${LOCAL_SRC_ROOT}/${COMPONENT}
+		if [ ! -d ${COMPONENT_PATH} ] ; then
+			COMPONENT_PATH=${BUILD_SRC_ROOT}/${COMPONENT}
+		fi
+		SRC_DIR=${COMPONENT_PATH}/src
+		FLIST=${COMPONENT_PATH}/make/Make.${targ}.flist
+		if [ ! -f "${FLIST}" ] ; then
+			FLIST=${COMPONENT_PATH}/make/Make.flist
+		fi
+
+		export SRC_DIR
+		export FLIST
+
+		Run_make ${COMPONENT_PATH}/${make_component} -k lib_${LIB_NAME}.o
+	done
+	if [ "${failed_list}" ]
+	then
+		echo "Failed components: ${failed_list}"
+		exit 1
+	fi
+fi
+
+
+#########################################################
+# Phase III - Final linking procedures
+#
+# Create a list of directories containing the desired lib_${LIB_NAME}.o 
+# files to be used when linking the executable.  Note that the list 
+# contains a macro (make variable SC) to be expanded by the make, in 
+# order to limit the size of the shell variable.  If any of the 
+# libraries does not exist, try to wink it in from the appropriate build
+# view.  Then call make to do the linking.
+#
+#########################################################
+
+if [ "${phase3}" ] ; then
+	LLIST=""
+
+	for c in ${comp_list} ; do
+		Set_variant ${c}
+		LLIST="${LLIST} ${SYS_TREE}${VARIANT}/obj/${EXEC_BRANCH}/${c}"
+		libdir=${OBJ_ROOT}/${ARCH}${VARIANT}/obj/${EXEC_BRANCH}/${c}
+	done
+	COMPONENT_PATH=${LOCAL_SRC_ROOT}
+	if [ ! -d ${COMPONENT_PATH} ] ; then
+		COMPONENT_PATH=${BUILD_SRC_ROOT}
+	fi
+	cd ${COMPONENT_PATH}
+	if [ "${selected_g}" ] ; then
+		VARIANT="-g"
+	fi
+	BIN_DIR=${OBJ_ROOT}/${ARCH}${VARIANT}/bin/${VERSION}
+	if [ ! -d ${BIN_DIR} ] ; then
+		mkdir -p ${BIN_DIR}
+	fi
+	COMPONENT=${TARGET}
+	Run_make ${COMPONENT_PATH}/${make_link} ${TARGET} || exit 1
+	if [ ! -x ${BIN_DIR}/${TARGET} ] ; then
+		exit 1
+	fi
+fi
+
+echo "Succeeded building ${EXEC} ${ARCH}${VARIANT} ${BUILDMODE} version ${VERSION}"
+exit 0

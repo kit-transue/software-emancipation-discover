@@ -1,0 +1,187 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+    Functional Specification: Merge Project (10/04/93 17:00)
+
+        What it is
+
+            Merge two or three files and keep their pset files in sync.
+
+        Functional description
+
+            ParaSET Merge is similar to UNIX merge utilities, but it must  also handle the added complexity of the .pset files related to the source code files. ParaSET Merge must handle two scenarios:
+
+            o Merging three files (one system copy and two local copies)
+
+            o Merging two files (performing a Put, Get, or Load when a relevant pset file is out-of-sync or non-existent)
+
+            1. Merging three files
+
+                When two people check out the same file, ParaSET Merge allows a user to merge the two files by comparing them with the file in the system area.
+
+                The file in the system area is referred to as the Original File, and the checked out copies are referred to as File Copy 1 and File Copy 2. File Copy 1 is considered the primary file and is the one which will get checked in after the merge. File Copy 2 is considered secondary and is expendable after its changes have been merged with File Copy 1. 
+
+                In particular, ParaSET links such as Hard and Soft Associations and Hyperlinks are generally saved based on the contents of File Copy 1. Links in File Copy 2 are generally lost.
+
+                For example, if both File Copy 1 and File Copy 2 have good pset files associated with them ("good" meaning that they exist and are in sync with their source file), links in File Copy 1 will be maintained. The links in File Copy 2 will be lost,except in newly-inserted text which gets added to File Copy 1 as part of the Merge operation.
+
+                If only one checked out file has a good pset file, it becomes File Copy 1. The user will be notified via a popup message if ParaSET Merge reverses the files designated as File Copy 1 and File Copy 2.
+
+                See User Interface below for more information about how the user will merge three files.
+
+            2. Merging two files
+
+                ParaSET Merge must also handle situations in which the source file is found to be out of sync with its associated pset file. In the past, ParaSET assumed (and tried to enforce) that source files always matched their pset files, and did so through a time stamp mechanism. For this release, we will permit the user to knowledgeably allow these two files to be out of sync, and handle the merge operation to get them back into sync the next time the user invokes ParaSET Get or Put. To support this, the pset file will now include a copy of the source file.
+
+                2.1. Get
+
+                    If in the system area the source file is different from the copy of the source appended to the pset file, a question popup will ask the user whether or not to update the pset file from the source file. If yes, ParaSET does the merge and checks out the updated pset file with the source file. If no, the Get process is terminated.
+
+                2.2. Put
+
+                    If the file to be put does not have a good pset file and there is a pset file in the system area, a question popup will ask the user whether or not to update the system pset. If yes, ParaSET does the merge and checks in a good pset file with its source file. If no, the Put process is terminated.
+
+                2.3. Load
+
+                    If the source file is different from the copy of the source appended to the pset file, a question popup will ask the user whether or not to update the pset file from the source file. If yes, ParaSET does the merge and loads the updated pset file with the source file. If no, the source file is loaded as a raw view.
+
+                2.4. batch
+
+                    The first pass of a paraset -batch operation will do the merge if needed.
+
+        Justification 
+
+            Currently ParaSET supports checking out a file, modifying this file, and checking it back in. In this case, the modified source file and its pset file replace the old ones. No merge is required.
+
+            There are three cases that require merge:
+
+            1. If a file is checked out and modified with a non-ParaSET editor such as EMACS or vi.
+
+            When checked back in, the new source file will replace the old source file. However, the difference between the new source file and the old source file must be merged into the old pset file to create a new pset file.
+
+            2. If a file is checked out by two people at the same time and modified with ParaSET.
+
+            In this case, three files must be merged (the two checked out copies, and the original).
+
+            3. If a file is checked in without an up-to-date pset (for example, like Case 1 above, but the user does not perform the merge.) 
+
+            In this case, the pset file in the system area will be outdated, and a merge should be done when somebody next does a Get or Put on the file.
+
+        Design description
+
+            The project to merge three files has almost been completed.
+
+            The project to merge two files will be described in a separate  design spec. 
+
+        What it does 
+
+        Environmental considerations 
+
+            Performance 
+
+                Memory: 
+
+                Diskspace: The pset file will be enlarged by a factor about 40%. (estimated)
+
+                Time: The time to Get, Put, or Load will be longer by a factor  about 5%. (estimated)
+
+            Scalability
+
+        What does it take 
+
+            Tasks 
+
+            Time 
+
+            Money 
+
+            Resources 
+
+            Ordering 
+
+        User Interface
+
+            1. Merging three files
+
+                There is a special dialogbox for merging three files, which the user accesses by selecting Merge from the Browser Manage pulldown menu.
+
+                This displays a dialogbox consisting of two sections and the standard button bar at the bottom of the dialogbox. The Merge operation also displays a Viewer split into three views (one each for the three files being merged).
+
+                1.1. Upper section
+
+                    The top section of the Merge dialogbox consists of three fields into which the user must enter physical pathnames for Original File, File Copy 1, and File Copy 2.
+
+                    Once the fields are entered, the user clicks on the OK button. The lower section and the Save button then become activated, and the OK button and the upper section become insensitive for the rest of the operation. The three-view Viewer is displayed.
+
+                    Four new error messages (along with active Help buttons) will be added to the system to flag problems with the physical pathname fields entered by the user:
+
+                    o Files are not ASCII files.
+
+                    o Files are not Project files.
+
+                    o Files cannot be identical.
+
+                    o File Copy 1 and 2 have been swapped.
+
+                1.2. Lower section
+
+                    The lower section consists of a toggle button (only traverse conflicts), a column of buttons (prev, curr, and next), and two panes.
+
+                    The prev, curr, and next buttons bring the changed area of each file into the view in the Viewer. prev and next are self-explanatory; curr acts as a "reset", returning the views to the current location after the user has changed the view by navigating around the files.
+
+                    Changed areas are one of five types:
+
+                    inserted: Any new text that is inserted into either File Copy 1 or File Copy 2, or both. Inserts to only File Copy 2 are inserted into File Copy 1 automatically.
+
+                    deleted: Any text that is deleted from either File Copy 1 or File Copy 2, or both. Deletions from only File Copy 2 are also made in File Copy 1 automatically.
+
+                    same change: Any existing text that is modified in the same way in both File Copy 1 and File Copy 2.
+
+                    replacement: Any existing text that is modified in only File Copy 1 or File Copy 2.
+
+                    conflicted: An area that is changed in both File Copy 1 and File Copy 2, but in different ways. The user needs to edit File Copy 1 to obtain the correct change.
+
+                    The only traverse conflicts toggle button allows the user to choose whether to traverse all changed areas or only conflicted areas.
+
+                    The left pane displays the status of the current changed area. If it is a conflicted area, a message of "Requires your editing" is displayed. The data in this window will be changed by the "prev" or "next" button or by the combination of the toggle button and the "curr" button.
+
+                    The right pane displays the status of the changed area. It contains the number of inserted areas, the number of deleted areas, the number of same change areas, the number of replacement areas, the number of conflicted areas, and the total number of changed areas. The data in this window does not change during the merge process.
+
+                1.3. Buttons
+
+                    The dialogbox provides four buttons: Ok, Save, Cancel, and Help. The Save button is dimmed until three file names are correctly entered in top section. The Ok button becomes dimmed when the Save button becomes sensitive. When the Save button is pressed, only File Copy 1 is saved. Both the Save and Cancel buttons remove this dialogbox, remove the Viewer, and terminate the merge process. The Help button displays the help file for Merge.
+
+            2. merge two files
+
+                For Load, Get, and Put, a simple question popup is displayed, asking the user whether or not to perform the merge. If "no", Get and Put are terminated; Load proceeds by loading a raw view of the source file.
+
+        ISSUE
+
+        1. Can we have a new kind of highlighting (see bug #4861)? -- bfrederi
+
+         

@@ -1,0 +1,220 @@
+
+Edit this line to be the title of the document. For example: "STE Functional Specification". Do NOT delete this line...only edit its text. STE formatting requires that this line not be deleted.
+
+    <Use this template to create Functional Specifications for all SET
+product functionality. Delete all instructions and examples (including
+this paragraph) enclosed in angle brackets (<>). Use ParaSET features
+such as notes and hyperlinks where appropriate.>
+
+    What it is
+
+        <Name of function: For example: "Hyperlinks".>
+
+        Functional description
+
+            <This section should be written in simple English and
+should describe what the function does, typically in the context of
+what the user will see. For example: "Hyperlinks allow the user to
+navigate his or her files through the use of Hotlinks and Section
+Links.
+
+            Hotlinks are unidirectional relations between an entity in
+one file and an entity in the same or another file.
+
+            Section Links are bidirectional links between entities
+within the same file or in different files.
+
+            Hotlinks are flagged by highlighting. Users navigate
+hotlinks by clicking on them and selecting a Hotlinks menu item; the
+view is updated with the destination of the link, in a selected state.
+Users navigate Section Links by selecting Next Section or Previous
+Section from a menu. If no Section Links exist, an error dialog pops
+up.">
+
+	Justification
+
+	    <Why this functionality is being added/fixed/enhanced. This 
+should at least address the [assumed] user requirements driving the
+work, plus any other relevant issues. For example,
+"Hyperlinking falls out of ParaSET's already-implemented Associativity 
+mechanism, and provides a powerful navigation and documentation facility
+with relatively little effort.">
+
+
+	Marketing Mandates
+
+            <Critical issues as defined by GP and/or VPG. Not all specs
+will have these.  Some will have several.>
+
+        Design description
+
+            <You can get technical here (but please try to keep it
+comprehensible to your colleagues). Specify what data and code
+elements are involved...>
+
+    What the user can do with it
+
+            <Example: Users can navigate between documents and/or code
+files based on user-defined relations. For example, a program
+specification can include a hyperlink that allows the user to bring up
+and display the program file being described. A series of document
+files can include Section Links that allow the user to easily display
+and read the files in logical order.>
+
+    What it does
+
+            <The following two sections sometimes differ, but not always. For example, a given piece of functionality might have some basic characteristics, but the context in which those charcteristics get used might be critical. The hyperlink example may not be the best illustration of this, but here is one approach:>
+
+        In isolation
+
+            <Example: Provides a method for relating objects within or between files, and navigating between those objects.>
+
+        In the context of the product
+
+            <Example: Hyperlinks are used primarily as a documentation tool: Section Links are used to navigate back and forth between sections in a logical, sequential order. Hotlinks can be used to navigate from one text section to a related section in a unidirectional fashion. The hyperlinked files can be text or program files: a reference in a spec could lead to the related piece of code; a piece of code could be linked to a related piece of documentation.>
+
+    How to use it
+
+        <Example: Creating Section Links:
+
+            1. Click on the title or paragraph you consider the "current section".
+ 
+            2. Select Start Section Links.
+
+            3. Click on the title or paragraph you consider the "next section".
+
+            4. Select Close Link.
+
+        Creating Hotlinks:
+
+            1. Highlight the word or string you wish to designate as a Hotlinks.
+
+            2. Select Start Hotlinks.
+
+            3. Click within the title or paragraph you wish to designate the destination text.
+
+            4. Select Close Link.>
+
+        Navigating Section Links:
+
+            1. Click within a section.
+
+            2. Select Next Section or Previous Section.
+
+        Navigating Hotlinks:
+
+            1. Click on a Hotlinks, as flagged by turquoise highlighting.
+
+            2. Select Hotlinks.
+
+        Removing hyperlinks:
+
+            1. Click within the text where the Section Link or Hotlinks exists.
+
+            2. Select Remove Hyperlinks.
+
+            3. Select one of the link types listed in the resulting dialogbox, and select OK.
+
+                >
+
+    Environmental considerations
+
+        <Note any significant issues below.>
+
+        Performance
+
+            <List any significant figures relating to memory, diskspace, time, etc. For example: 
+
+            Memory: 
+
+                n/a
+
+            Diskspace: 
+
+                n/a
+
+            Time: 
+
+                Performance of following a link may be a problem when jumping to an unloaded file via rmtHeader. If it takes longer than about 3 seconds to update the screen with the new file, we may need to consider a way of decreasing the time.>
+
+         Scalability
+
+             <How will this functionality hold up as the system evolves and grows? For example:
+
+             The proposed implementation may encounter performance problems as user projects exceed 1000 files.>
+
+    What does it take
+
+        Tasks
+
+            <For example:
+
+            1. The following commands need to be implemented and added to the UI:
+
+            Create Section Links
+
+            Create Hotlinks
+
+            Close Link
+
+            Previous Section
+
+            Next Section
+
+            Hotlink
+
+            Remove Links
+
+            2. Assignment of a highlighting category needs to be made automatically to hotlinked text. >
+
+            3. rmtHeader functionality needs to be extended to handle navigation to unloaded files.
+
+            >
+
+        Time
+
+            <For example:
+
+            1. Implementation of 7 commands:
+
+                1 week
+
+            2. Category assignment:
+
+                .5 day
+
+            3. rmtHeader functionality:
+
+                2 days
+
+            >
+
+        Money
+
+            <For example:
+
+            If we assign some of this to a contractor, we will need to
+allocate up to $3,200 (40 hrs @ $80/hr.)
+
+            >
+
+        Resources
+
+            <For example:
+
+            1 fulltime employee or contractor for 1 week
+
+            1 summer student for 1/2 day
+
+            MG's time for 2 days
+
+            >
+
+        Ordering
+
+            <For example:
+
+            We will need to acquire another SPARC IPX ASAP for the
+contractor.  Kim should start the paperwork immediately.
+
+                >

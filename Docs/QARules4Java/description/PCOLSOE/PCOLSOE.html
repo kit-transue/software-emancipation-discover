@@ -1,0 +1,35 @@
+<html>
+<body>
+
+<p><b>PCOLSOE - Place Constants On the Left Side Of Expression.</b></p>
+
+<p>Place constants on the left side of comparisons/expression. By placing constants
+on the left side of comparisons the compiler will catch it if you accidentally
+use assignment instead of comparison. </p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class PCOLSOE {<br>
+&nbsp; public void testOper (int something) {<br>
+&nbsp; &nbsp; <font color='red'> if (something == 5) {}</font> <br> 
+&nbsp; }<br>
+}</code></nobr></p>
+
+<p><b>Tip:</b>
+Place constants on the left side of comparisons.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class PCOLSOE {<br>
+&nbsp; public void testMethod (int something) {<br>
+&nbsp; &nbsp; <font color='blue'> if (5 == something ) {}</font><br>
+&nbsp; }<br>
+}</code></nobr></p>
+
+<p><b>REFERENCE</b></p>
+<p>Section 2.5.2 of http://www.AmbySoft.com/javaCodingStandards.pdf</p>
+
+</body>
+</html>

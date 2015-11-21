@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<p><b>APAPA - Avoid Public And Package Attributes</b></p>
+
+<p>Declare the attributes either private or protected and
+provide operations to access or change them.
+</p>
+
+<p>
+There might be one exception when some class is used just as <code>struct</code>
+in C language: it just holds some values, and thus has no methods.
+Formally option regulates whether to raise violations for such classes.
+When formally option is off, violations are not raised.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class APAPA {<br>
+&nbsp; &nbsp; <font color='red'>int attr1; </font><br>
+&nbsp; &nbsp; <font color='red'>public int attr2; </font><br>
+}
+</code></p></nobr>
+<p><b>Tip:</b>
+Change visibility of attributes to either private or protected.<br>
+Provide access operations for these attributes.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class APAPA {<br>
+&nbsp; &nbsp; <font color='blue'>private</font> int attr1; <br>
+&nbsp; &nbsp; <font color='blue'>protected</font> int attr2; <br>
+<font color='blue'>
+&nbsp; &nbsp; public int getAttr1() { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; return attr1;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; public int getAttr2() { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; return attr2; <br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; public void setAttr2(int newVal) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; attr2 = newVal; <br>
+&nbsp; &nbsp; }<br>
+</font>
+}
+</code></p></nobr>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<html>
+<body>
+
+<p><b>PDOBB - Put Declarations Only at the Beginning of Blocks</b></p>
+
+<p>
+Sun Code Conventions for Java recommends to
+put declarations only at the beginning of blocks.
+(A block is any code surrounded by curly braces "{" and "}".)
+Don't wait to declare variables until their first use;
+it can confuse the unwary programmer and hamper code portability within the scope.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void myMethod() {<br>
+&nbsp; &nbsp; if (condition) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; doSomeWork();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>int int2 = 0;</font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; useInt2(int2);<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; <font color='red'>int int1 = 0;</font><br>
+&nbsp; &nbsp; useInt1(int1);<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Move declarations to the beginning of the block.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void myMethod() {<br>
+&nbsp; &nbsp; <font color='blue'>int int1 = 0;</font> // beginning of method block<br>
+&nbsp; &nbsp; if (condition) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>int int2 = 0;</font>     // beginning of "if" block<br>
+&nbsp; &nbsp; &nbsp; &nbsp; doSomeWork();<br>
+&nbsp; &nbsp; &nbsp; &nbsp; useInt2(int2);<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; useInt1(int1);
+}
+</code></p></nobr>
+
+</body>
+</html>

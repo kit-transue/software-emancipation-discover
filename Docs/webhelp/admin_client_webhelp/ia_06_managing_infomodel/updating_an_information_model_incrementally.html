@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Updating an Information Model Incrementally</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 9.0px 'Times New Roman'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Updating an Information Model Incrementally</b></p>
+<p class="p2">During the development of a software project, many changes can occur that affect an information model: the addition or deletion of source files, modifications to existing files, or changes to the parser flags that may affect the way the source code is viewed. To reflect these changes, you can build a new information model; however, creating a new information model based on a large code base can be a time consuming process. To save time, DIScover now allows you to update an existing information model incrementally, using the most recent version of the model as a <i>baseline</i>. When you perform an incremental model build, DIScover parses and imports only the files that have been changed into the selected version of the information model you want to update.</p>
+<p class="p2">To determine which files are out of date, DIScover uses one of the following two methods: automatic dependency analysis or a user specified list.</p>
+<p class="p2">Automatic dependency analysis determines which files are out of date by comparing file time stamps with the last time the model was built and/or performing a checksum on files. Examining time stamps is the default and recommended method for determining which files are out of date.</p>
+<p class="p3"><b>Note: </b>We recommend specifying checksum and checksum/time stamp if time stamps are not a reliable way of determining if files have been modified on your system.</p>
+<p class="p2">A user specified list is a list of the changed files in the software project. This method is recommended for determining which files are out of date when automatic dependency analysis is expected to take a long time.</p>
+<p class="p3"><b>Note: </b>If you are using Integrity Manager and Source Integrity, you can easily create a file containing a list of files that need to be updated by including members of one or more recently closed change packages.</p>
+<p class="p2">To perform an incremental model build, you need to:</p>
+<p class="p4">•<span class="s1">   </span>Prepare for an incremental model build.</p>
+<p class="p4">•<span class="s1">   </span>Configure incremental model build variables.</p>
+<p class="p4">•<span class="s1">   </span>Start the incremental model build.</p>
+</body>
+</html>

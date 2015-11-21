@@ -1,0 +1,29 @@
+CPROOTS=\
+	main\
+	DIS_cm\
+	DIS_dormant\
+        DIS_gpi\
+	DIS_group\
+	DIS_main\
+	DIS_report\
+        DIS_create\
+        DIS_extract\
+        DIS_rtlFilter\
+	DIS_ui\
+        dis_extApp\
+	genWild\
+	regexp\
+	machdep\
+	cLibraryFunctions\
+	stubs\
+	vpopen\
+	gala_interp\
+	monitorBatch\
+	clipboard\
+	inform\
+	packageObjs\
+	vdasservcmds\
+	to_package\
+	deaddirs\
+	Args
+

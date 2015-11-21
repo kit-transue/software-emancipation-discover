@@ -1,0 +1,7 @@
+<Para <PgfTag `troff2'>
+	<ParaLine # Begin Para's ParaLines.
+	<Font <FFamily `Times'> <FSize 10> <FPlain Yes>>
+	<String `$Q'>
+	<Char HardReturn>><ParaLine
+	> # End Paraline.
+> # End Para.

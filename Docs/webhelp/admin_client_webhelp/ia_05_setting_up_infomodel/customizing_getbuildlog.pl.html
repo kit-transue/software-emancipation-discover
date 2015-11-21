@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Customizing GetBuildLog.pl</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 12.0px Verdana}
+    span.s4 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Customizing GetBuildLog.pl</b></p>
+<p class="p2">Most of the build methods available in the Create Model Wizard generate a build log each time a new model version is built. If you select the <b>Fully Logged Build</b> method, you provide the log that was created when you compiled your software project. Other build methods, such as <b>Files from a Directory Structure</b>, generate a build log; however, it still resembles a list of command lines, the most relevant of which begin with a compiler name and end with the name of a source file.</p>
+<p class="p2">The <b>Customize Perl Subroutine</b> build method essentially works the same as build methods like <b>Files from a Directory Structure</b>, because it provides complete control over what goes into the build log; you provide the Perl code that creates the log file.</p>
+<p class="p2">Before you use the Create Model Wizard and specify the <b>Customize Perl Subroutine</b> build method, do the following:</p>
+<p class="p3"><span class="s1"><b>1</b></span><span class="s2"><b>   </b></span><span class="s3">Copy </span>&lt;CodeIntegrityInstalldir&gt;/mb/GetBuildLog.pl<span class="s3"> to </span>&lt;repository&gt;/template/&lt;informationmodel&gt;Template/config<span class="s3">.</span></p>
+<p class="p4"><span class="s1"><b>2</b></span><span class="s2"><b>   </b></span>Open <span class="s4">GetBuildLog.pl</span> and at the end of the file, append Perl code that creates a build log in the required location (the variable <span class="s4">$GetBuildLog::BuildLogName</span> specifies the file name), for example:</p>
+<p class="p5">open(LOG, "&gt;$GetBuildLog::BuildLogName");</p>
+<p class="p5">foreach my $src (glob("/home/joe/src/*.c")) {</p>
+<p class="p5">print LOG "cc -DLITTLE_ROBOT -I/home/joe/include $src\n";</p>
+<p class="p5">}</p>
+<p class="p5">close(LOG);</p>
+<p class="p4">This example code opens the required log file for writing, then instructs the <span class="s4">glob</span> function to obtain a list of source files. The code then loops, writing a compile line for each source file, for example:</p>
+<p class="p5">cc -I/home/joe/include /home/joe/src/foo.c</p>
+<p class="p4">Note that the log uses absolute path names. If the log used relative names, the log file would require a <span class="s4">cd</span> command. For example, an equivalent sample of customized code would contain the following:</p>
+<p class="p5">print LOG "cd /home/joe/src";</p>
+<p class="p5">foreach my $src (glob("*.c")) {</p>
+<p class="p5">print LOG "cc -DLITTLE_ROBOT -I../include $src\n";</p>
+<p class="p5">}</p>
+<p class="p4">The log also specifies all defined symbols and include directories necessary to compile the source code, similar to the <b>Fully Logged Build</b> and <b>Files from a Directory Structure</b> build methods.</p>
+<p class="p3"><span class="s1"><b>3</b></span><span class="s2"><b>   </b></span><span class="s3">Save </span>GetBuildLog.pl<span class="s3">.</span></p>
+</body>
+</html>

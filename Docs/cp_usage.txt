@@ -1,0 +1,60 @@
+
+    New Change propagation usage:
+
+        Select several items in viewerShell, and choose "Edit->Change Propagation" option. One can also access similarly in call tree, or other places that invoke change propagation. 2 dialogs will be involved.
+
+        The new Change propagation has error recovery feature which is transparent to the users. So, users can restart or suspend a session till later time.
+
+        Dialog box #1
+
+        * Selected Entities list: contains items that were selected by user
+
+        * Suggested Entities list: contains items that are related to the previous list in some sense (either logical like virtual functions, or syntactic like overloaded functions). The idea is: If you are going to change items in Selected Entities list, consider this list also.
+
+        * Final Selection list: Final choices of users to do change propagation
+
+        * ADD/REMOVE button: add/remove to Final Selection list.
+
+        * OK, Apply: activate Dialog box #2, with its usual meaning
+
+        * Operation: has 3 option: Impact Analysis, change Arg, rename.
+
+        * Change Arg: there will be 2 text fields if this option is selected. The From contain the prototype name of the function, and the Changing_to contains the function name in the form foo($1, $2, $3) if function foo has 3 arguments. We can make multiple changes to a function (arguments). For example, changing to foo($3, $2, int) will means remove first argument, flip arg 2 and arg 3 and insert the last argument as an integer!
+
+        Dialog box #2
+
+        It is designed to be similar to the main browser with self-explanatory items in first and third collumn.
+
+        * File->open: open and load selected files in Domain
+
+        * File->unload: unload selected files in Domain
+
+        * File->reparse: reparse selected files in Domain
+
+        * Manage->Fetch: try to get/copy selected files in Domain
+
+        * Manage->Abandon: abandon this change propagation session
+
+        * Manage->report: give a report for this session
+
+        * Manage->undo: if selected are instances, will undo those instances. If selected are files, will undo those files
+
+        * Save all files: same as before
+
+        * OK/Suspend toggle: apply change propagation to each files. Can suspend any time
+
+        * Apply/Suspend toggle:  if selected are instances, will apply to those instances. If selected are files, will apply those files. If apply without any selection, then similar to OK.
+
+        Comments/Bugs/Questions:
+
+        Please try to use the new change propagation whenever possible. It might be a good idea to use the Impact Analysis feature to do your code review before submission! Impact Analysis will also be usefull whenever you want to do some global change.
+
+        Send comments, bugs, questions to trung.
+
+        BTW, if you like it, send a check to trung (no upper limit! fyi) and if you hate it direct them to Pero (send some swearing nasty messages!)
+
+         
+
+         
+
+         

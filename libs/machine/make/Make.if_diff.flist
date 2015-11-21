@@ -1,0 +1,4 @@
+CROOTS = alloca
+
+CXXROOTS = \
+	machdep

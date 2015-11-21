@@ -1,0 +1,4 @@
+#!/bin/sh
+projectRoot=$1
+cd $projectRoot
+find . -type f -print 

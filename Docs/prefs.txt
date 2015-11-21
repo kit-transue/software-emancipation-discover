@@ -1,0 +1,174 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+		DISCOVER Preference Registry
+
+Revised 11.Aug.97 Tom Wight
+Revised 09.Jan.97 Tom Wight
+Revised 12.Jul.96 Kit Transue
+Created 13.Jun.96 Tom Wight
+
+1. Intro
+	Preferences provide a controlled interface between our programs and the
+environment the run in. They are used both as a means of documenting what our
+programs require, e.g., where our programs have been installed; as a way for 
+users to customize our programs to the individual tastes, e.g. edit using emacs
+or vi commands; and as a way for us to get additional information when things
+are not working correctly, e.g. to enable additional debug prints or log files.
+
+	Preferences should work the same way on all of our executables and on
+all of the platforms we operate on. Unfortunately our older programs do not have
+preferences. Environment variables are sometimes used to get information in a
+very similar way that preferences are. Environment variables are also used to
+pass information to executables that are 'forked'. These methods are simple and
+easy to do, but they are hard to maintain because the are not usually
+documented. Preferences are preferred because the same file which stores the
+name and value of the preference can be used to document it.
+
+
+2. Run Time Preference Table.
+	While DISCOVER is running, a table of all preferences is maintained.
+This table is a very simple list of keynames and values. The naming
+convention is "folder.descriptor". The "folder"s have names like "DIS_bp",
+"DIS_cm", and "DIS_model". The descriptors have names like "editorMode",
+"cPlusIncludes", and "GenerateY2KInfo".
+	There are two types of preference values - Integer and String. String
+preferences are stored with shell metacharacters unexpanded and can be
+retrieved either expanded or unexpanded.
+
+3. Getting Preferences.
+	The preference table is always the first place searched. If the
+preference is not found, the follow searches are done in the following order:
+	a. A matching preference in the command line options.
+	b. A matching preference in the user's preference file.
+	c. A matching preference in the system preference file.
+The searching stops as soon as a match is found.
+
+	Each time a preference value is found it is saved in the preference
+table. The table is only filled as values are requested. We have considered
+loading the table with all values during program startup but have not done any
+evaluation of the pros and cons.
+
+
+4. Changing Preferences.
+	When a preference changes, the preference table is always updated. 
+Unless the value came from a command line option, the new value will also be
+written out to the user's preference file. The system preference file is never
+written to.
+
+
+5. Expansion of preferences values.  (reviewed 12.Jul.96, M.G.)
+	Preferences may contain environment variables or "metachars" that
+should be expanded before they are actually used.  The preferences class
+provides for retrieval of these either expanded or unexpanded (the default
+for calls within discover is expanded).  When editing the preference, the user
+should see and edit the unexpanded version.
+	Conventions for special characters differ between Unix and NT.
+DISCOVER provides a convention that attempts to provide familiar or
+natural behavior on both platforms, allowing for compatibility of
+preferences files.  This convention is:
+	$VAR or ${VAR} or %VAR% indicate that 'VAR' is an environment variable.
+The word VAR will be looked up in the environment and substituted back into
+the value.  (Actually %{VAR}% will work too, but it is not recommended.)
+	~ at the start of a value and followed by slash or backslash:
+expands to user's home directory.  On Unix, ~username expands to
+username's home directory (this is one place where the conventions
+between NT and Unix differ).
+	\ is NOT an escape character.  There is little need to escape
+these metachars on Unix or on NT, and on NT the \ is an important
+component of pathnames.
+	$ or % may be escaped by repeating them:  %%foo%% expands to
+"%foo%", not the value of the environment variable foo.
+
+	We do not currently address what happens in paths where : is
+used to separate pathnames.  Under NT, the path delimiter is ;.  Both
+: and ; have no meaning to the preferences, and are unchanged during
+expansion.
+
+
+6. Internal Preferences.
+	When we need to get additional information for problem resolution we
+often add features to the system which should be hidden from our users. A
+preference folder, "DIS_internal", has been created with this in mind. The
+types of preferences used are either debug prints, generally controlled by a
+XXX_DebugLevel preference, or a log file name, generally controlled by a
+XXX_LogFile preference.
+	When one of these preferences is created the following steps need to
+be done:
+	1. Add the getIntPref("name"), or getStrPref("name") calls to the code.
+	2. Add the "*psetPrefs.DIS_internal.name value" line to base.prefs in
+	   our /paraset/AdminDir/prefs/base.prefs file.
+	3. Add a comment describing the preference to the base.prefs file.
+	4. If the preference will be needed during regression testing, you must
+	   also add it to the 4 preference files in /job1/prefs.
+
+
+7. Requirements.
+	1. Better handling of environment variables as values of keys
+
+Discover was not consistent in its handling of environment variables
+as preference values: when set using the GUI, the variables were
+usually expanded during save.  On retrieval, they were not expanded.
+Not all preferences were available from the GUI, and changing
+variables through the GUI destroyed all structure and comments in the
+preferences file.  As a result, many users edited the preferences file
+by hand, and used environment variables without expanding them.  Also,
+attempts to use environment variables to isolate DISCOVER from changes
+in environment failed, since DISCOVER expanded them prior to save.
+
+	2. Replacement of xrdb database on non X systems
+
+The x resources database and its query mechanisms are not available on
+NT machines.
+
+	3. Hierarchical preferences to ease site administration.
+
+Some preferences (configurator system, configurator custom directory,
+default pdf, comments on put, etc.) should be set by policy by the
+site administrator.  Other preferences (color, editor mode) should be
+set by the user.  In the old mechanism, if the user wrote preferences
+to ~/.psetPrefs, all the preferences were set there.  The new,
+hierarchical mechanism allows the administrator to change a site's
+settings without requiring all users who have their own .psetPrefs to
+change to the new values.
+
+	4. Consistent mechanism for controlling DISCOVER behavior
+
+The proliferation of environment variables, commandline arguments, and
+preferences entries was difficult to understand, manage, and document.
+The new preferences mechanism makes treatment of all preferences
+consistent, while still allowing easy override of any preference
+without modifying preferences files.
+
+	5. Easier, safer interface for modifying values
+
+The new user interface eliminates the need for the user to properly
+type in the key string in the preferences file, and adds some type
+checking to the values fields.  In addition, the graphical preferences
+editor adds organization to the preferences.
+

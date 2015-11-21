@@ -1,0 +1,34 @@
+R610B70P01
+
+TIMELINE
+--------
+
+element /nt-bin/InstallShield/client/setup.rul /main/17
+element /paraset/PSETHOME_ADMIN/mb/dismb_lib.pl /main/26
+element /paraset/PSETHOME_ADMIN/mb/dismb_parse.pl /main/32
+element /paraset/src/paraset/api/scripts/els.dis /main/41
+element /paraset/src/paraset/dfa/src/dfa_cli.C /main/103
+element /paraset/src/paraset/api/pset/access_cmds.C /main/37
+element * /main/LATEST -time 22-Dec.22:38
+
+RELEASE DIRECTORY
+----------------
+/net/power/dis_model/Releases/R610B70P01/<platform>/discover
+
+CONTENTS
+--------
+
+regular build (all platforms) + :
+	a) compilation error in access_cmds.C (missing cast to char*)
+	b) dis_sql did not pick cEsqlArgs for embedded SQL processing,
+	   rather the flags for SQL code only; the reason for els.dis
+	c) fixes for the dismb crash on NT, and dismb failure to recognize
+	   PreserveFilenameCase (16455, 16456)
+	d) fix for TPM CP blocking issue 16461; dfa_cli.C
+
+QA Release Notes
+----------------
+
+the configuration specification has been consistently applied across
+all supported platforms; DOCUMENTATION changes include any submissions
+to VOB /DOCUMENTATION prior to 3pm 12/24

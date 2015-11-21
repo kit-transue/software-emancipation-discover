@@ -1,0 +1,2234 @@
+#
+# java.dis
+#
+# Identify potential violations in Java code.
+#
+
+#
+# Classes should implement equals and hashCode together.
+#
+# http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object-2.html
+#
+
+proc java:impl_equals_hash {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set res [nil_set]
+
+	set classes [defines -classes $src]
+
+	foreach class $classes {
+		set methods [get_member_functions $class]
+		set equals_methods [filter {
+			cname == "equals" && arguments == "(Object)" && type == "boolean"} $methods]
+		set hash_methods [filter {
+			cname == "hashCode" && arguments == "()" && type == "int"} $methods]
+		set equals_count [size $equals_methods]
+		set hash_count [size $hash_methods]
+		if {$equals_count > 0 && $hash_count <= 0} {
+			qdiag $class "Class `[name -ignore $class]' defines `equals(Object)' but\
+				not `hashCode()'"
+			sappend $res $class
+		} elseif {$equals_count <= 0 && $hash_count > 0} {
+			qdiag $class "Class `[name -ignore $class]' defines `hashCode()' but\
+				not `equals(Object)'"
+			sappend $res $class
+		}
+	}
+
+  	return $res
+    }
+}
+
+#
+# Call super.finalize in sub-class finalize.
+#
+# This will ignore classes that are immediately
+# descended from java.lang.Object. However,
+# a class further removed, whose parents don't
+# implement finalize, will be flagged.
+#
+# [Should we limit this only to cases where one
+# of the ancestors actually implements finalize,
+# or be more strict? The spec says: 'The finalize
+# method declared in class Object takes no action'.
+# But it also says 'any class can always invoke
+# the finalize method for its superclass, which
+# is usually good practice'.]
+#
+# http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object-2.html
+#
+
+proc java:finalize_super {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set res [nil_set]
+
+	set classes [defines -class $src]
+
+	foreach class $classes {
+		set super [filter {
+			name != "java.lang.Object"} [get_super_extends $class]]
+		if {[size $super] != 1} {continue}
+		set fun [filter {
+			cname == "finalize" && arguments == "()" &&
+			(type == "void" || type == "")
+		} [get_member_functions $class]]
+		if {[size $fun] != 1} {continue}
+		set calls [tree find -ignore {
+			call_expr -> global_id s.cname=="finalize" s.arguments=="()"
+			(s.type=="void" || s.type == "") , super , !.
+		} $fun]
+		if {[size $calls] <= 0} {
+			qdiag $fun "Method `[name -ignore $fun]' does not call\
+				`super.finalize()'"
+			sappend $res $fun
+		}
+	}
+
+	return $res
+    }
+}
+
+#
+# Using equality operator (==) instead of the equals method.
+#
+# For objects, the equality operator tests if two references
+# point to the same object, while the equals() method tests for
+# 'logical' equality. These two operations are sometimes confused.
+# Usually, objects should be compared using the equals() method,
+# but it is valid to use == in some cases.
+#
+# http://www-106.ibm.com/developerworks/library/jw-javatip88.html
+#
+
+proc java:obj_equality {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set res [nil_set]
+
+	global basic_java_types
+	if {[info exists basic_java_types]} {
+		unset basic_java_types
+	}
+
+	foreach type {boolean byte char double float int long null short} {
+		set basic_java_types($type) ""
+	}
+
+	proc is_basic_java_type {typename} {
+		global basic_java_types
+		return [info exists basic_java_types($typename)]
+	}
+
+	set stmts [tree find -ignore {
+		eq_expr || ne_expr
+		-> ![is_basic_java_type type]
+		,  ![is_basic_java_type type]
+	} $src]
+
+	qdiag $stmts "Objects compared using == or !=. If logical equality\
+		is intended, use `equals()'."
+
+	set res [tree navigate -ignore {r(<-) ast_offset != 0} $stmts]
+	return $res
+    }
+}
+
+#
+# Call super.clone when overriding clone.
+#
+# http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html
+#
+# 
+
+proc java:clone_super {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set res [nil_set]
+
+	set classes [defines -class $src]
+
+	foreach class $classes {
+		set fun [filter {
+			cname == "clone" && arguments == "()" &&
+			(type == "java.lang.Object" || type == "")
+		} [get_member_functions $class]]
+		if {[size $fun] != 1} {continue}
+		set calls [tree find -ignore {
+			call_expr -> global_id s.cname=="clone" s.arguments=="()"
+			(s.type=="java.lang.Object" || s.type=="") , super , !.
+		} $fun]
+		if {[size $calls] <= 0} {
+			qdiag $fun "Method `[name -ignore $fun]' does not call\
+				`super.clone()'"
+			sappend $res $fun
+		}
+	}
+
+	return $res
+    }
+}
+
+#
+# Check for null when overriding equals.
+#
+# JLS: For any non-null reference value x, x.equals(null)
+# should return false.
+#
+# Here and in the queries below, we try to determine if the
+# right comparison is made. We do not try to determine if the
+# branch leads to the right return value.
+#
+# http://java.sun.com/docs/books/jls/html/javalang.doc1.html#46442
+#
+
+proc java:equals_null {src} {
+
+	set res [nil_set]
+
+	set methods [set_union [defines -fun $src] [filter function $src]]
+	set methods [filter {
+		cname == "equals" && arguments == "(Object)" && type == "boolean"
+		!abstract
+	} $methods]
+
+	foreach method $methods {
+
+		set arg [ data symbol [tree navigate -ignore {
+			function_def -> r(,) function_decl -> ,
+			parm_decl -> ast_declspec , local_id (, nil)
+		} $method]]
+		if {[size $arg] != 1} {continue}
+
+		set cmps [tree find -ignore "
+			eq_expr || ne_expr ->
+			(
+				(r(->) (!parens !convert_expr)
+					global_id type==\"null\" (-> nil)) ,
+				(r(->) (!parens !convert_expr)
+					local_id $arg (-> nil))
+			) ||
+			(
+				(r(->) (!parens !convert_expr)
+					local_id $arg (-> nil)) ,
+				(r(->) (!parens !convert_expr)
+					global_id type==\"null\" (-> nil))
+			)
+		" $method]
+		if {[size $cmps] <= 0} {
+			qdiag $method "Equals method `[name -ignore $method]' does not\
+				appear to check if the object (`[name -ignore $arg]')\
+				is equal to `null'"
+			sappend $res $method
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Check for 'this' when overriding equals.
+# This is an optional optimization.
+#
+# JLS: It is reflexive: for any reference value
+# x, x.equals(x) should return true. 
+#
+# http://java.sun.com/docs/books/jls/html/javalang.doc1.html#46442
+#
+
+proc java:equals_this {src} {
+
+	set res [nil_set]
+
+	set methods [set_union [defines -fun $src] [filter function $src]]
+	set methods [filter {
+		cname == "equals" && arguments == "(Object)" && type == "boolean"
+		!abstract
+	} $methods]
+
+	foreach method $methods {
+
+		set arg [data symbol [tree navigate -ignore {
+			function_def -> r(,) function_decl -> ,
+			parm_decl -> ast_declspec , local_id (, nil)
+		} $method]]
+		if {[size $arg] != 1} {continue}
+
+		set cmps [tree find -ignore "
+			eq_expr || ne_expr ->
+			(
+				(r(->) (!parens !convert_expr)
+					this (-> nil)) ,
+				(r(->) (!parens !convert_expr)
+					local_id $arg (-> nil))
+			) ||
+			(
+				(r(->) (!parens !convert_expr)
+					local_id $arg (-> nil)) ,
+				(r(->) (!parens !convert_expr)
+					this (-> nil))
+			)
+		" $method]
+		if {[size $cmps] <= 0} {
+			qdiag $method "Equals method `[name -ignore $method]' does not\
+				appear to check if the object (`[name -ignore $arg]')\
+				is equal to `this'"
+			sappend $res $method
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Check for class equality using getClass when overriding equals.
+# This is the best way to ensure that the objects being compared
+# have the same exact internal class type.
+#
+# http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object-2.html
+#
+
+proc java:equals_class {src} {
+
+	set res [nil_set]
+
+	set methods [set_union [defines -fun $src] [filter function $src]]
+	set methods [filter {
+		cname == "equals" && arguments == "(Object)" && type == "boolean"
+		!abstract
+	} $methods]
+
+	foreach method $methods {
+
+		set arg [data symbol [tree navigate -ignore {
+			function_def -> r(,) function_decl -> ,
+			parm_decl -> ast_declspec , local_id (, nil)
+		} $method]]
+		if {[size $arg] != 1} {continue}
+
+		set match 0
+		set calls [tree find -ignore {
+			call_expr name=="java.lang.Object.equals(Object)"} $method]
+
+		foreach call $calls {
+			set lhs [tree navigate -ignore {
+				->, r(->) (!parens !convert_expr) call_expr
+				name=="java.lang.Object.getClass()"} $call]
+			set rhs [tree navigate -ignore {
+				->,, r(->) (!parens !convert_expr) call_expr
+				name=="java.lang.Object.getClass()"} $call]
+			if {[size $lhs] != 1 || [size $rhs] != 1} {continue}
+			set obj_lhs [tree navigate -ignore {
+				-> , r(->) (!parens !convert_expr) (, nil) (-> nil)} $lhs]
+			set obj_rhs [tree navigate -ignore {
+				-> , r(->) (!parens !convert_expr) (, nil) (-> nil)} $rhs]
+			if {[size $obj_lhs] != 1 || [size $obj_rhs] != 1} {continue}
+			if {[local_id $obj_lhs] &&
+				[size [set_intersect [data symbol $obj_lhs] $arg]] == 1 &&
+				[this $obj_rhs]} {
+				set match 1
+				break
+			}
+			if {[this $obj_lhs] &&
+				[local_id $obj_rhs] &&
+				[size [set_intersect [data symbol $obj_rhs] $arg]] == 1} {
+				set match 1
+				break
+			}
+		}
+
+		if {!$match} {
+			qdiag $method "Equals method `[name -ignore $method]'\
+				does not seem to check for class equality\
+				(using `[cname -ignore $arg].getClass().equals(this.getClass())')"
+			sappend $res $method
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Call super.equals if an ancestor (other than Object!)
+# implements equals. This will allow parent classes to
+# compare their fields before the subclass compares
+# whatever additional fields it uses. If super.equals
+# returns false, the method can immediately return
+# false.
+#
+# http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object-2.html
+#
+
+proc java:equals_super {src} {
+
+	set res [nil_set]
+
+	set classes [set_union [defines -class $src] [filter class $src]]
+
+	foreach class $classes {
+
+		set method [filter {
+			cname == "equals" && arguments == "(Object)" && type == "boolean"
+			!abstract
+		} [get_member_functions $class]]
+
+		if {[size $method] != 1} {continue}
+
+		set parent_override [nil_set]
+		set parent [filter {name!="java.lang.Object"} [get_super_extends $class]]
+		while {[size $parent] == 1} {
+			set parent_equals [filter {
+				cname == "equals" && arguments == "(Object)" && type == "boolean"
+				!abstract
+			} [get_member_functions $parent]]
+			if {[size $parent_equals] == 1} {
+				set parent_override $parent
+				break
+			}
+			set parent [filter {name!="java.lang.Object"} [get_super_extends $parent]]
+		}
+
+		if {[size $parent_override] != 1} {continue}
+
+		set arg [data symbol [tree navigate -ignore {
+			function_def -> r(,) function_decl -> ,
+			parm_decl -> ast_declspec , local_id (, nil)
+		} $method]]
+		if {[size $arg] != 1} {continue}
+
+		set call [tree find -ignore "
+			call_expr
+			s.cname == \"equals\" && s.arguments == \"(Object)\" && s.type == \"boolean\"
+			-> ,
+			(r(->) (!parens !convert_expr) super) ,
+			(r(->) (!parens !convert_expr) local_id $arg)
+		" $method]
+
+		if {[size $call] <= 0} {
+			qdiag $method "Equals method `[name -ignore $method]' does not\
+				call `super.equals()', even though superclass\
+				`[name -ignore $parent_override]' provides a definition."
+			sappend $res $method
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Don't call super.equals if it will end up calling
+# Object.equals. This may be a mistake, since if
+# reference equality was intended, there would be
+# no need to override equals. (An exception to this
+# is when equals is made final to ensure that it is
+# not overriden and retains the same semantics as
+# Object.equals.) It is best to only call super.equals
+# if a parent (other than Object) has implemented equals
+# (as with the query above).
+#
+# http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object-2.html
+#
+
+proc java:equals_no_super {src} {
+
+	set res [nil_set]
+
+	set classes [set_union [defines -class $src] [filter class $src]]
+
+	foreach class $classes {
+
+		set method [filter {
+			cname == "equals" && arguments == "(Object)" && type == "boolean"
+			!abstract
+		} [get_member_functions $class]]
+
+		if {[size $method] != 1} {continue}
+		
+		if {[final $method] == "1"} {continue}
+
+		set parent_override [nil_set]
+		set parent [filter {name!="java.lang.Object"} [get_super_extends $class]]
+		while {[size $parent] == 1} {
+			set parent_equals [filter {
+				cname == "equals" && arguments == "(Object)" && type == "boolean"
+				!abstract
+			} [get_member_functions $parent]]
+			if {[size $parent_equals] == 1} {
+				set parent_override $parent
+				break
+			}
+			set parent [filter {name!="java.lang.Object"} [get_super_extends $parent]]
+		}
+
+		if {[size $parent_override] != 0} {continue}
+
+		set arg [data symbol [tree navigate -ignore {
+			function_def -> r(,) function_decl -> ,
+			parm_decl -> ast_declspec , local_id (, nil)
+		} $method]]
+		if {[size $arg] != 1} {continue}
+
+		set call [tree find -ignore "
+			call_expr
+			name==\"java.lang.Object.equals(Object)\"
+			-> ,
+			(r(->) (!parens !convert_expr) super) ,
+			(r(->) (!parens !convert_expr) local_id $arg)
+		" $method]
+
+		if {[size $call] > 0} {
+			qdiag $method "Equals method `[name -ignore $method]'\
+				invokes direct reference comparison using `Object.equals()'\
+				via a call to `super.equals()'"
+				
+			sappend $res $method
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Use System.getProperty("line.separator") for portability
+# instead of hardcoding \n or \r.
+#
+
+proc java:line_separator {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [tree find -ignore {
+		(stringl (match("*\\n*",name) || match("*\\r*",name))) ||
+		(constant type=="char" cname=="'\\n'" || cname=="'\\r'")
+	} $src]
+
+	qdiag $hits "Hardcoded newline character(s) found (\\n or \\r).\
+		Consider using System.getProperty(\"line.separator\") for portability."
+
+	return $hits
+    }
+
+}
+
+#
+# Method hides a super class method.
+#
+# This detects when: A class defines a static, non-private
+# method that has the same signature as another static,
+# non-private method in a class that is an ancestor of the
+# initial class. Interfaces do not affect this query.
+#
+# class C1 {
+#   public static void f() {System.out.println("C1.f");}
+# }
+#
+# class C2 extends C1 {
+#   public static void f() {System.out.println("C2.f");}
+# }
+#
+# C1 x = new C2();
+# C2 y = new C2();
+# x.f(); y.f();
+#
+# Calling the same method name through objects with same internal
+# class produces different output: "C1.f" and "C2.f". This is
+# because the static method is resolved at compile-time.
+# This may be misleading if you expect the call to always invoke
+# the definition in the object's underlying class. To
+# avoid confusion consider making the method names different.
+# 
+
+proc java:method_hides {src} {
+
+	set res [nil_set]
+
+	set classes [defines -class $src]
+
+	foreach class $classes {
+
+		set statics [filter {static (public||protected)} \
+			[get_member_functions $class]]
+		if {[size $statics] <= 0} {continue}
+
+		if {[info exists match_list]} {unset match_list}
+
+		# Loop over each superclass
+
+		set super $class
+
+		while {1} {
+
+			set super [get_super_extends $super]
+			if {[size $super] <= 0} {break}
+
+			set statics_inherited [filter {static (public||protected)} \
+				[get_member_functions $super]]
+			if {[size $statics_inherited] <= 0} {continue}
+
+			foreach method $statics {
+
+				if {[info exists match_list([etag $method])]} {continue}
+
+				set match [filter "
+					cname==\"[cname $method]\"
+					type==\"[type $method]\"
+					args==\"[args $method]\"
+				" $statics_inherited]
+
+				if {[size $match] == 1} {
+					set match_list([etag $method]) 1
+					qdiag $method "Method `[name -ignore $method]' hides\
+						method `[name -ignore $match]'"
+					sappend $res $method
+				}
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Field hides base class field.
+#
+# This detects when a field in a subclass has the same
+# name as a field that would otherwise be inherited
+# from a superclass or superinterface.
+#
+# http://java.sun.com/docs/books/jls/second_edition/html/classes.doc.html#40898 
+#
+
+#
+# get_member_fields
+#
+# This utility function gets the fields a class or
+# interface defines. (This is necessary since
+# get_member_data ignores statics and interface fields).
+#
+
+proc get_member_fields {src} {
+
+	set res [nil_set]
+
+	foreach class [filter {class||interface} $src] {
+		set cname [cname -ignore $class]
+		set fields [filter "regexp(\"^$cname\\.\",name)" [uses -field -var $class]]
+		sappend $res $fields
+	}
+
+	return $res
+
+}
+
+#
+# get_visible_fields
+#
+# This utility function returns the set of fields which
+# a class defines and the fields which it inherits without
+# hiding. (Note, hidden fields may still be accessible via
+# a qualified name (if static) or by using super or casting
+# to a superclass.)
+#
+
+proc get_visible_fields {src} {
+
+	# The counter below will prevent us from hanging if the
+	# class tree has a loop. (Is it possible to create a
+	# 'ClassCircularityError' exception using legal code?)
+
+	global global_call_counter
+	set global_call_counter 0
+
+	return [_get_visible_fields $src]
+
+}
+
+proc _get_visible_fields {src} {
+
+	global global_call_counter
+	if {![info exists global_call_counter]} {set global_call_counter 0}
+	incr global_call_counter
+	if {$global_call_counter > 4096} {
+		error "Exceeded maximum iterations when analyzing java class tree."
+		return [nil_set]
+	}
+
+	set res [nil_set]
+
+	foreach class [filter {class||interface} $src] {
+		set members [get_member_fields $class]
+		set names [apply cname $members]
+		set supers [get_super_classes $class]
+		set inherits [filter {!private} [get_visible_fields $supers]]
+		foreach field $inherits {
+			set cname [cname -ignore $field]
+			if {[lsearch $names $cname] == -1} {
+				sappend $res $field
+			}
+		}
+		sappend $res $members
+	}
+
+	return $res
+
+}
+
+proc java:field_hides {src} {
+
+	set res [nil_set]
+
+	set classes [set_union [defines -class -interface $src] \
+		[filter {class||interface} $src]]
+
+	foreach class $classes {
+		set parent_fields [filter {!private} \
+			[get_visible_fields [get_super_classes $class]]]
+		set fields [get_member_fields $class]
+		foreach field $fields {
+			set cname [cname -ignore $field]
+			set matches [filter "cname==\"$cname\"" $parent_fields]
+			if {[size $matches] > 0} {
+				foreach match $matches {
+					qdiag $field "Field `[name -ignore $field]' hides\
+						`[name -ignore $match]'"
+					sappend $res $field
+				}
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Shift distance is out of range and will be adjusted.
+# If the shift amount is equal to or greater than the
+# precision of the value, the shift distance will be mod'd by
+# the number of bits in the unary-promoted left-hand value
+# (32 for int, 64 for long).
+#
+# Example: 1 << 32 is equal to 1 << 0, or 1.
+#
+# This query only finds cases where the shift distance is
+# specified as a single numeric literal (no chars). Any
+# other kind of constant expression won't be detected.
+#
+# Note: The idea of this query can be applied to C/C++ also.
+#
+# http://mindprod.com/gotchas.html#SHIFT
+# http://java.sun.com/docs/books/jls/second_edition/html/expressions.doc.html#5121
+#
+
+proc java:shift_max {src} {
+
+	set res [nil_set]
+
+	set shifts [tree find -ignore {
+		(arshift_expr||arshift_assign_expr||
+		 alshift_expr||alshift_assign_expr||
+		 lrshift_expr||lrshift_assign_expr)
+		-> , r(->) (!parens !convert_expr)
+		constant global_id
+		(type=="short"||type=="int"||type=="long"||type=="float"||type=="double")
+	} $src]
+
+	foreach shift $shifts {
+
+		# Get the shift amount (right-hand side)
+		set rhs [tree navigate -ignore {
+			->, r(->) (!parens !convert_expr) (constant global_id)
+		} $shift]
+		# The decimal value of the literal should be in the name attribute
+		set amount [name -ignore $rhs]
+		# Strip trailing "L" for long literals
+		if {[string match {*L} $amount]} {
+			set amount [string range $amount 0 [expr [string length $amount] - 2]]
+		}
+		# If we don't have a valid number, stop.
+		# Also make sure to convert the amount into an integer if it
+		# was cast from a float.
+		if {$amount == "" || [catch {set amount [expr int($amount)]}]} {
+			continue
+		}
+		
+		set lhs [tree navigate -ignore {->} $shift]
+		set left_type [type -ignore $lhs]
+
+		if {$left_type == "long"} {
+			if {[expr ($amount > 63) || ($amount < 0)]} {
+				qdiag $rhs "Shift amount is outside the valid range for\
+					long shifts (0 - 63) and will be adjusted\
+					($amount -> [expr $amount % 64])"
+			}
+			sappend $res $rhs
+		} else {
+			if {[expr ($amount > 31) || ($amount < 0)]} {
+				qdiag $rhs "Shift amount is outside the valid range for\
+					integer shifts (0 - 31) and will be adjusted\
+					($amount -> [expr $amount % 32])"
+			}
+			sappend $res $rhs
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Constant expression as conditions.
+# Detects condition that is unconditional (i.e.: derived wholly
+# from constant expressions):
+#
+# Ignores infinite loops (exists more generic version of this query in
+# Java:Possible_Errors and General:Constant_Expression_as_condition.
+#
+#  Created:     3/10/02
+#
+
+proc java:const_cond_except_loops { src args } {
+
+  set conds [ nil_set ]
+
+  set stmts [ tree find -ignore for_stmt "$src" ]
+  sappend $conds [ tree navigate -ignore ->,. $stmts ]
+
+  set stmts [ tree find -ignore if_stmt||cond_expr "$src" ]
+  sappend $conds [ tree navigate -ignore ->. $stmts ]
+
+  set conds [ tree filter -ignore { x: [ expression_is_constant $x ] } $conds ]
+  set assert [ filter {regexp("[aA][sS][sS][eE][rR][tT]",ast_text)} $conds ]
+
+  set res [ set_subtract $conds $assert ]
+
+  set res [ tree navigate -ignore { r(<-) ast_offset != 0 } $res ]
+  return $res
+
+}
+proc java:const_cond { src args } {
+    if { [ string match -nocase "java" [language $src ] ] } {	
+	set hits [ lang:const_cond $src ]
+	return $hits
+    }
+}
+
+
+#
+# Comparison with NaN.
+#
+# The result of == is always false if one of the
+# operands is NaN. It makes sense to write
+# 'if (Double.isNaN(x))', not 'if (x == Double.NaN)'.
+#
+# The JLS states (4.2.3):
+#
+#   The numerical comparison operators <, <=, >, and >= return
+#   false if either or both operands are NaN (§15.19.1). The
+#   equality operator == returns false if either operand is NaN,
+#   and the inequality operator != returns true if either operand
+#   is NaN.
+#
+# Because of these reasons, using the NaN constant directly in
+# comparisons is suspicious.
+#
+# This query only detects direct comparisons with the constant
+# variables Float.NaN and Double.NaN.
+#
+# Note: Using NaN in arithmetic operations is also suspicious.
+#
+# http://mindprod.com/gotchas.html#NAN
+# http://java.sun.com/docs/books/jls/html/4.doc.html#9208
+#
+
+proc java:compare_nan {src} {
+
+	set nans [tree find -ignore {
+		(name=="java.lang.Float.NaN"||name=="java.lang.Double.NaN")
+		<- r(<-) (!parens !convert_expr)
+		(lt_expr||le_expr||gt_expr||ge_expr||eq_expr||ne_expr)
+	} $src]
+
+	qdiag $nans "Use of Float.NaN or Double.NaN in a comparison expression."
+
+	return $nans
+
+}
+
+#
+# Use of octal numeric literal. Since octal tends to be
+# used rarely, this may be be a typo. This source says
+# that the leading 0 (designating octal) may have
+# been inserted by the programmer just to align the text.
+#
+# http://mindprod.com/gotchas.html#OCTAL
+#
+
+proc java:numeric_octal {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set octals [tree find -ignore {
+		constant global_id
+		(type=="int"||type=="long"||type=="float"||type=="double")
+		regexp("^0[0-9]+$",ast_text)
+	} $src]
+
+	qdiag $octals "Use of octal numeric literal"
+
+	return $octals
+    }
+}
+
+#
+# A label has been defined that isn't used.
+#
+# This may be a placeholder, an oversight, or
+# the result of a typo as in:
+#
+# switch (x) {
+#   case 1: System.out.print("one");
+#   case2: System.out.print("too");
+#   case 3: System.out.print("many");
+#   defalt: System.out.print("...");
+# }
+#
+# The labels 'case2' and 'defalt' are obviously
+# typos, but the compiler may not give a warning.
+#
+
+proc java:label_unused {src} {
+
+	set res [nil_set]
+
+	set funs [set_union [defines -fun $src] [filter function $src]]
+
+	foreach fun $funs {
+		set labels [uses -label $fun]
+		set refs [tree find -ignore {
+			global_id s.kind=="label" <- exit_stmt
+		} $fun]
+		set targets [data symbol $refs]
+		set unused [set_subtract $labels $targets]
+		foreach elem $unused {
+			qdiag $elem "Label `[cname -ignore $elem]' is unused in\
+				function `[name -ignore $fun]'"
+		}
+		sappend $res $unused
+	}
+
+	return $res
+
+}
+
+#
+# Labels with identical names in the same function.
+#
+# This is valid code if they are in different scopes,
+# but this style may lead to confusion.
+#
+
+proc java:label_dup {src} {
+
+	set res [nil_set]
+
+	set funs [set_union [defines -fun $src] [filter function $src]]
+
+	foreach fun $funs {
+
+		set labels [uses -label $fun]
+
+		if {[info exists names]} {unset names}
+
+		foreach label $labels {
+			set name [cname $label]
+			lappend names($name) 1
+		}
+
+		foreach name [array names names] {
+			if {[llength $names($name)] <= 1} {continue}
+			set matches [filter "cname==\"$name\"" $labels]
+			foreach match $matches {
+				qdiag $match "Multiple labels use the name\
+					`[cname -ignore $match]' in function\
+					`[name -ignore $fun]'"
+				sappend $res $match
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Unused local variable or parameter.
+#
+
+proc java:unused_local {src} {
+
+	set res [nil_set]
+
+	set funs [set_union [defines -fun $src] [filter function $src]]
+
+	foreach fun $funs {
+		set decls [tree find -ignore {var_decl -> local_id} $fun]
+		set refs [tree find -ignore {local_id !((-- nil) <- var_decl)} $fun]
+		set syms [data symbol $refs]
+		foreach decl $decls {
+			set sym [data symbol $decl]
+			if {[size $sym] == 1 && [size [set_intersect $sym $syms]] <= 0} {
+				sappend $res $decl
+				qdiag $decl "Local variable `[name -ignore $sym]'\
+					is unused in function `[name -ignore $fun]'"
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Unused private method.
+# (Private constructors are ignored since that may be
+# an idiom for preventing instantiation.)
+#
+
+proc java:unused_private_method {src} {
+
+	set res [nil_set]
+
+	set classes [set_union [defines -class $src] [filter class $src]]
+
+	foreach class $classes {
+		set funs [filter private [get_member_functions $class]]
+		foreach fun $funs {
+			if {[size [where used $fun]] <= 1} {
+				qdiag $fun "Private method `[name -ignore $fun]'\
+					is not used anywhere"
+				sappend $res $fun
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Unused private field.
+#
+
+proc java:unused_private_field {src} {
+
+	set res [nil_set]
+
+	set classes [set_union [defines -class $src] [filter class $src]]
+
+	foreach class $classes {
+		set fields [filter private [get_member_fields $class]]
+		foreach field $fields {
+			if {[size [where used $field]] <= 1} {
+				qdiag $field "Private field `[name -ignore $field]'\
+					is not used anywhere"
+				sappend $res $field
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Narrowing primitive conversion.
+#
+# http://java.sun.com/docs/books/jls/html/5.doc.html#175672
+#
+
+proc java:conv_num_narrow {src} {
+
+	set res [nil_set]
+
+	set convs [tree find -ignore convert_expr $src]
+
+	array set types {byte 1 char 2 short 3 int 4 long 5 float 6 double 7}
+
+	foreach conv $convs {
+		set to [type $conv]
+		if {![info exists types($to)]} {continue}
+		set base [tree navigate -ignore -> $conv]
+		if {[size $base] <= 0} {continue}
+		set from [type $base]
+		if {![info exists types($from)]} {continue}
+		if {$types($to) >= $types($from)} {continue}
+		qdiag $conv "Conversion from `$from' to `$to'\
+			may result in a loss of information."
+		sappend $res $conv
+	}
+
+	set res [tree navigate -ignore {r(<-) ast_offset != 0} $res]
+
+	return $res
+
+}
+
+#
+# Method overloaded with arguments that only
+# differ by inheritance.
+#
+# The underlying type of an argument may match
+# one method, but a call may invoke a different
+# one because only static type information is used
+# to resolve the overload.
+#
+# class X1 {}
+# class X2 extends X1 {}
+#
+# class Y1 {
+#   public void f(X1 x) {System.out.println("C2.f(X1 x)");}
+#   public void f(X2 x) {System.out.println("C2.f(X2 x)");}
+# }
+#
+# class S {
+#   public static void main(String[] args) {
+#     X1 a = new X2();
+#     Y1 b = new Y1();
+#     b.f(a);
+# }
+#
+# This ends up caling Y2.f(X1), even though we're passing
+# an object whose underlying class is X2 and matches Y2.f(X2).
+# This is because the signature of the method to be called is fixed
+# at compile-time. Consider renaming one of the overloaded methods.
+#
+
+proc java:overload_similar {src} {
+
+	set res [nil_set]
+
+	# Is the type name a primitive?
+
+	proc is_basic_type {name} {
+		set name [string trim $name]
+		foreach type {void boolean byte char double float int long null short} {
+			if {$name == $type} {
+				return 1
+			}
+		}
+		return 0
+	}
+
+	# Does the given method have at least one arg that
+	# isn't a basic type?
+
+	proc has_obj_arg {method} {
+		set arglist [args $method]
+		regsub -all {[\(\)]} $arglist {} arglist
+		set arglist [split $arglist ","]
+		foreach arg $arglist {
+			regsub -all {\[\]} $arg {} arg 
+			if {![is_basic_type $arg]} {
+				return 1
+				break
+			}
+		}
+		return 0
+	}
+
+	# Get the symbols that correspond to a method's args
+	
+	proc get_arg_syms {method} {
+		set res [nil_set]
+		set decl [tree navigate -ignore {
+			-> ast_declspec , function_decl -> , parm_decl} $method]
+		while {[size $decl] == 1} {
+			set parm [tree navigate -ignore {
+				-> ast_declspec , local_id (, nil)} $decl]
+				sappend $res [data symbol $parm]
+				set decl [tree navigate -ignore {, parm_decl} $decl]
+			}
+		return $res
+	}
+
+	#
+	# Begin - Get all classes/interfaces and loop through them
+	#
+
+	set classes [set_union [defines -class -interface $src] \
+		[filter {class||interface} $src]]
+
+	foreach class $classes {
+		
+		set defines [get_member_functions $class]
+		set methods [set_copy $defines]
+
+		# Get all the methods that are available to this
+		# class (defined + inherited).
+
+		set methods [get_member_functions $class]
+		set super [get_super_classes $class]
+
+		while {[size $super] > 0} {
+			set members [filter {public||protected !constructor} \
+				[get_member_functions $super]]
+			foreach member $members {
+				set subdef [filter "
+					cname==\"[cname $member]\"
+					args==\"[args $member]\"
+				" $methods]
+				if {[size $subdef] <= 0} {
+					# Not hidden or overriden
+					sappend $methods $member
+				}
+			}
+			set super [get_super_classes $super]
+		}
+
+		if {[info exists checkpairs]} {unset checkpairs}
+
+		# Check each method for overloads
+
+		foreach method $defines {
+
+			# Make sure the method has at least one object
+			# type argument
+
+			if {![has_obj_arg $method]} {continue}
+
+			# Make sure this method overloads something
+
+			set overloads [filter "
+				cname==\"[cname $method]\"
+				args!=\"[args $method]\"
+			" $methods]
+			if {[size $overloads] <= 0} {continue}
+
+			# Get the argument objects in order
+
+			set method_args [get_arg_syms $method]
+
+			# Loop over the overloaded methods, comparing each
+			# parameter to see if it is a sub or super class/interface
+
+			foreach overload $overloads {
+
+				lappend checkpairs([etag $method]) [etag $overload]
+				if {[info exists checkpairs([etag $overload])]} {
+					set items $checkpairs([etag $overload])
+					if {[lsearch -exact $items [etag $method]] != -1} {
+						continue;
+					}
+				}
+
+				# Compare each arg in the overloaded method
+
+				set overload_args [get_arg_syms $overload]
+				set max [size $method_args]
+				if {[size $overload_args] < [size $method_args]} {
+					set max [size $overload_args]
+				}
+
+				for {set i 1} {$i <= $max} {incr i} {
+
+					set flag 0
+					set a [set_copy $method_args $i]
+					set b [set_copy $overload_args $i]
+					set a_type [type $a]
+					set b_type [type $b]
+					if {$a_type == $b_type} {continue}
+					if {$a_type == "" || $b_type == ""} {continue}
+					regsub -all {[\[\]]} $a_type {} a_base
+					regsub -all {[\[\]]} $b_type {} b_base
+					if {[is_basic_type $a_base]} {continue}
+					if {[is_basic_type $b_base]} {continue}
+					set a_dim "" ; set b_dim ""
+					regexp {\[.*} $a_type a_dim
+					regexp {\[.*} $b_type b_dim
+					if {$a_dim != $b_dim} {continue}
+
+					# Get a symbol for the type of each arg
+
+					set a_obj [nil_set]
+					set t [get_type $a]
+					while {[size $t] == 1} {set a_obj $t; set t [get_type $a_obj]}
+
+					set b_obj [nil_set]
+					set t [get_type $b]
+					while {[size $t] == 1} {set b_obj $t; set t [get_type $b_obj]}
+
+					if {[size $a_obj] != 1 || [size $b_obj] != 1} {continue}
+
+					set superior ""
+
+					# Is the overloaded arg type a super?
+
+					set t [get_super_classes $a_obj]
+					while {[size $t] > 0} {
+						if {[size [set_intersect $t $b_obj]] > 0} {
+							set flag 1; set superior b; break
+						}
+						set t [get_super_classes $t]
+					}
+
+					# Is the overloaded arg type a sub?
+
+					set t [get_super_classes $b_obj]
+					while {[size $t] > 0} {
+						if {[size [set_intersect $t $a_obj]] > 0} {
+							set flag 1; set superior a; break;
+						}
+						set t [get_super_classes $t]
+					}
+
+					# Regardless of above, if one of the args
+					# is Object at this point, it is superior
+
+					set a_tail [lindex [split $a_type .] end]
+					set b_tail [lindex [split $b_type .] end]
+					if {$a_tail == "Object"} {
+						set superior a
+						set flag 1
+					} elseif {$b_tail == "Object"} {
+						set superior b
+						set flag 1
+					}
+
+					# Flag the overloaded method
+
+					if {$flag} {
+
+						set method_name [name -ignore $method]
+						set overload_name [name -ignore $overload]
+						set rel ""
+						if {$superior == "a"} {
+							set rel "super"
+						} elseif {$superior == "b"} {
+							set rel "sub"
+						}
+						set kind "class"
+						if {[interface $a_obj]} {set kind "interface"}
+
+						qdiag $method "Method `$method_name'\
+							is overloaded in a way that may be confusing.\
+							Parameter $i (`[name -ignore $a]') is a $rel-$kind\
+							of the corresponding parameter (`[name -ignore $b]')\
+							in method `$overload_name'"
+
+						sappend $res $method
+					}
+				}
+			}
+		}
+	}
+
+	return $res
+
+}
+
+#
+# Access static fields through a class name instead of
+# through an object. This can make it clear that the
+# field is static.
+#
+
+proc java:static_field_ref {src} {
+
+	set res [nil_set]
+	set refs [tree find -ignore {
+		static variable global_id <- java_component_ref} $src]
+
+	foreach ref $refs {
+		set component [tree navigate -ignore -- $ref]
+		if { [ catch {
+			qdiag $ref "Static field is referenced through an object.\
+				Consider using the class name instead\
+				(e.g.: `[type -ignore $component].[cname $ref]')"
+			} ] != 0 } {
+			qdiag $ref "Static field is referenced through an object.\
+				Consider using the class name instead."
+		}
+	}
+
+	return $refs
+
+}
+
+#############################################################################
+#  Name:	ATFLV
+#  Descr:	This function will make sure the loop increment/decrement
+#		variables are not re-assigned
+#  Created: 	7/31/01
+#  Updated: 	7/31/01
+#############################################################################
+
+proc java:atflv { src } {
+
+	set hits [ nil_set ]
+
+	set for_stmts [ tree find -ignore for_stmt $src ]
+	if { [ size $for_stmts ] == 0 } {
+		return
+	} else {
+		foreach for_statement $for_stmts {
+			set loop_vars_id [ tree find -ignore local_id [ tree navigate ->,, $for_statement ] ]
+			if { [ size $loop_vars_id ] == 0 } {
+				continue
+			}
+			set body_vars [ tree navigate -> [ tree find -ignore { 	assign_expr || \
+										plus_assign_expr || \
+										minus_assign_expr || \
+										mult_assign_expr || \
+										trunc_div_assign_expr || \
+										trunc_mod_assign_expr || \
+										predecrement_expr || \
+										preincrement_expr || \
+										postdecrement_expr || \
+										postincrement_expr  \
+									} [ tree navigate ->,,, $for_statement ] ] ]
+			foreach loop_index $loop_vars_id {
+				foreach body_var $body_vars {
+					if { [ string match [ ast_text $loop_index ] [ ast_text $body_var ] ] } {
+						sappend $hits $body_var
+					}
+				}
+			}
+		}
+	}
+
+	return [ set_unique $hits ]
+
+}
+
+proc java:CPAMBF {src} {
+}
+
+#############################################################################
+#  Name:        DID
+#  Descr:       This function will catch duplicate import declarations
+#  Created:     8/5/01
+#  Updated:     8/5/01
+#############################################################################
+
+proc java:did { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set imports [ sort ast_text [ tree find -ignore using_decl $src ] ]
+        
+	set index 0
+	set prev_import ""
+	set next_import ""
+	foreach import_stmt $imports {
+		regsub {^.*import[ 	]+(.*)\;$} [ ast_text $import_stmt ] {\1} import_name
+                if { $index == 0 } {
+                        set prev_import $import_name
+                        set next_import $import_name
+                }
+		if { $index > 0 } {
+                        set next_import $import_name
+                        if { [ string compare $prev_import $next_import ] == 0 } {
+                                sappend $hits $import_stmt
+                        }
+                        set prev_import $next_import
+                }
+                incr index
+
+	}
+
+	return $hits
+    }
+}
+
+#############################################################################
+#  Name:        DIPSFBT
+#  Descr:       This function will catch imports for the package, that the 
+#		class belongs to
+#  Created:     8/5/01
+#  Updated:     8/5/01
+#############################################################################
+
+proc java:dipsfbt { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set package_sym [ data symbol [ tree navigate -> $src ] ]
+	set package_name ""
+	if { [ size $package_sym ] > 0 && [ string match package [ kind $package_sym ] ] } {
+		set package_name [ name $package_sym ]
+	} else {
+		return
+	}	
+
+	set imports [ tree find -ignore using_decl $src  ]
+	foreach import_stmt $imports {
+		if { [ string match "* $package_name\.*" [ ast_text $import_stmt ] ] } {
+			sappend $hits $import_stmt
+		}
+	}
+
+	return $hits
+    }
+}
+
+
+proc java:CQS {src} {
+}
+
+#############################################################################
+#  Name:        EIOJLC
+#  Descr:       This function will catch explicit import for java.lang Classes
+#  Created:     8/5/01
+#  Updated:     8/5/01
+#############################################################################
+
+proc java:eiojlc { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set imports [ tree find -ignore using_decl $src ]
+	foreach import_stmt $imports {
+		if { [ string match "* java\.lang\.*" [ ast_text $import_stmt ] ] } {
+			sappend $hits $import_stmt
+		}
+	}
+
+	return $hits
+    }
+}
+
+
+proc java:HON {src} {
+}
+
+proc java:ICOMM {src} {
+}
+
+proc java:MVDWSN {src} {
+}
+
+proc java:ONAMWAM {src} {
+}
+
+proc java:OPM {src} {
+}
+
+proc java:OWS {src} {
+}
+
+proc java:PCOLSOE {src} {
+}
+
+proc java:UC {src} {
+}
+
+proc java:UOUIMM {src} {
+}
+
+proc java:USAFI {src} {
+}
+
+proc java:APAPA {src} {
+}
+
+proc java:ASWEB {src} {
+}
+
+proc java:CA {src} {
+}
+
+proc java:CNMMIFN {src} {
+}
+
+proc java:DCFPT {src} {
+}
+
+proc java:DVIOSE {src} {
+}
+
+proc java:IIMBU {src} {
+}
+
+proc java:LAPAPMF {src} {
+}
+
+proc java:MLOWP {src} {
+}
+
+proc java:NAICE {src} {
+}
+
+proc java:NC {src} {
+}
+
+proc java:OOAOM {src} {
+}
+
+proc java:PIIFS {src} {
+}
+
+proc java:RFDI {src} {
+}
+
+proc java:UAAO {src} {
+}
+
+proc java:UIOE {src} {
+}
+
+proc java:UITI {src} {
+}
+
+##################################################################################
+# Performance related queries.
+#
+##################################################################################
+#
+# CLE - Complex Loop Expressions
+# Avoid using complex expressions as repeat conditions within loops.
+#
+#  Created:     8/3/01
+#  Updated:     9/21/01
+#############################################################################
+
+proc javaperf:cle {src} {
+
+        set hits [ tree find -ignore { . while_stmt || do_while_stmt-> find1(call_expr)} $src ]
+        sappend $hits [ tree find -ignore { . for_stmt->, find1(call_expr)} $src ]
+ 
+        return [ set_unique $hits ]
+
+}
+ 
+#
+# UCIS - Use charAt() instead startsWith()
+# Using startsWith() with a one character argument works fine but from a performance 
+# perspective this method is a misuse of the String API. startsWith() makes quite 
+# a few computations preparing itself to compare its prefix with another string.
+#
+#  Created:     8/5/01
+#  Updated:     9/20/01
+#############################################################################
+
+proc javaperf:ucis {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+
+	set chk_stmts [ tree navigate ->,, [tree find -ignore {.call_expr&&context=="java.lang.String"&&s.funct&&s.cname=="startsWith"->,,global_id&&s.string} $src] ]
+
+ 
+	foreach chk_stmt $chk_stmts {
+		if { [ string length [ ast_text $chk_stmt ] ] == 3 } {
+			if { [ string match [ string range [ ast_text $chk_stmt ] 0 0 ] "\"" ] && \
+			     [ string match [ string range [ ast_text $chk_stmt ] 2 end ] "\""] } {
+				sappend $hits $chk_stmt
+			}
+		}
+	   	if { [ string length [ ast_text $chk_stmt ] ] == 4 } {
+			if { [ string match [ string range [ ast_text $chk_stmt ] 0 0 ] "\"" ] && \
+			     [ string match [ string range [ ast_text $chk_stmt ] 3 end ] "\""] && \
+			     [ string compare [ string range [ ast_text $chk_stmt ] 1 1 ] "\\" ] == 0 } {
+				sappend $hits $chk_stmt
+			}
+		}
+	   	if { [ string length [ ast_text $chk_stmt ] ] == 8 } {
+			if { [ string match [ string range [ ast_text $chk_stmt ] 0 0 ] "\"" ] && \
+			     [ string match [ string range [ ast_text $chk_stmt ] 7 end ] "\""] && \
+			     [ string compare [ string range [ ast_text $chk_stmt ] 1 2 ] "\\u" ] == 0 } {
+				sappend $hits $chk_stmt
+			}
+		}
+	}
+
+	return $hits
+    }
+}
+
+#############################################################################
+#  Name:        UCISFSC
+#  Descr:       This function will make sure that char is used for one
+#		char String concatenation
+#  Created:     8/4/01
+#  Updated:     8/4/01
+#############################################################################
+
+proc javaperf:ucisfsc { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set String_type "java.lang.String"
+	set all_assignments [ tree find -ignore { assign_expr || plus_assign_expr }  $src  ]
+
+	foreach assign $all_assignments {
+		if { [ string match $String_type [ type [ tree navigate -> $assign ] ] ] } { 
+		   set strings [ tree filter type=="$String_type" [ tree find -ignore { local_id || global_id } [ tree navigate ->, $assign ] ] ]
+		   foreach str $strings {
+		   	if { [ string length [ ast_text $str ] ] == 3 } {
+				if { [ string match [ string range [ ast_text $str ] 0 0 ] "\"" ] && \
+				     [ string match [ string range [ ast_text $str ] 2 end ] "\""] } {
+					sappend $hits $str
+				}
+			}
+		   	if { [ string length [ ast_text $str ] ] == 4 } {
+				if { [ string match [ string range [ ast_text $str ] 0 0 ] "\"" ] && \
+				     [ string match [ string range [ ast_text $str ] 3 end ] "\""] && \
+				     [ string compare [ string range [ ast_text $str ] 1 1 ] "\\" ] == 0 } {
+					sappend $hits $str
+				}
+			}
+		   	if { [ string length [ ast_text $str ] ] == 8 } {
+				if { [ string match [ string range [ ast_text $str ] 0 0 ] "\"" ] && \
+				     [ string match [ string range [ ast_text $str ] 7 end ] "\""] && \
+				     [ string compare [ string range [ ast_text $str ] 1 2 ] "\\u" ] == 0 } {
+					sappend $hits $str
+				}
+			}
+		   }
+		}
+	}
+
+	return $hits
+    }
+}
+
+#
+# ADVIL - Avoid Declaring Variables Inside Loops
+# This rule recommends to declare local variables outside the loops. 
+# The reason: as a rule, declaring variables inside the loop is less efficient. 
+#
+#  Created:     8/5/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javaperf:advil {src} {
+
+	set hits [nil_set]
+
+	set loops [tree find -ignore {.while_stmt||do_while_stmt->,} $src]
+        sappend $loops [tree navigate -ignore {->,,,} [tree find -ignore {.for_stmt->,,,} $src]]
+
+	foreach loop $loops {
+		sappend $hits [tree find -ignore {.var_decl} $loop]
+	}
+
+        return [ set_unique $hits ]
+
+}
+
+#
+# PTCOL - Place "Try/Catch" blocks Outside of Loops.
+# Placing try/catch blocks inside loops can slow down the execution of code. 
+# If the JIT compiler is turned off or if you are running a JVM without a JIT, 
+# performance speed may decrease by about 21 percent.
+#
+#  Created:     8/15/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javaperf:ptcol {src} {
+	set hits [nil_set]
+
+	set loops [tree find -ignore {.while_stmt||do_while_stmt||for_stmt} $src]
+
+	foreach loop $loops {
+		sappend $hits [tree find -ignore {.catch} $loop]
+	}
+
+        return [ set_unique $hits ]
+
+}
+
+#
+# DIS - Define Initial capacity for StringBuffer.
+# The 'StringBuffer' constructor will create a character array of a default size, 
+# typically 16. If StringBuffer exceeds it's capacity, StringBuffer has to allocate 
+# a new character array with a larger capacity, copy the old contents into the new 
+# array, and eventually discard the old array. In many situations you can tell in 
+# advance how big your StringBuffer is likely to be. In that case, reserve enough 
+# capacity during construction and prevent the StringBuffer from ever needing expansion.
+#
+#  Created:     8/5/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javaperf:dis {src} {
+	set hits [tree find -ignore {.(field_decl||var_decl)&&s.type=="java.lang.StringBuffer" find1(s.constructor&&s.numargs==0)} $src]
+
+	return $hits
+}
+
+# 
+# DICFVH - Define Initial Capacity for Vector and Hashtable collections.
+# Expansion of Vector capacity involves allocating a larger array and copying 
+# the contents of the old array to the new one. Eventually, the old array 
+# object gets reclaimed by the garbage collector. Vector expansion is an 
+# expensive operation. Same situation with HashTable. It is often the case 
+# that the default 10-element capacity of a collection is not enough. 
+#
+#  Created:     8/15/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javaperf:dicfvh {src} {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [tree find -ignore {.(field_decl||var_decl)&&(s.type=="java.util.Vector"||s.type=="java.util.Hashtable") find1(s.constructor&&s.numargs==0)} $src]
+
+	return $hits
+    }
+}
+
+#############################################################################
+#  Name:        ATSWL
+#  Descr:       This function will make sure Strings are not appended within
+#               a loop with the = operator or += operator
+# 		Performance enhancements can be obtained by replacing String 
+#		operations with StringBuffer operations if a String object is 
+#		appended to within a loop.
+#  Created:     8/2/01
+#  Updated:     8/2/01
+#############################################################################
+
+proc javaperf:atswl { src } {
+
+        set hits [ nil_set ]
+        set String_type "java.lang.String"
+        set loop_stmts [ tree find -ignore { for_stmt || while_stmt || do_while_stmt } $src ]
+ 
+        foreach loop $loop_stmts {
+                set plus_assignment_stmts [ tree find -ignore plus_assign_expr $loop ]
+                set assignment_stmts [ tree find -ignore assign_expr $loop ]
+ 
+                foreach plus_assignment $plus_assignment_stmts {
+                        if { [ string match $String_type [ type [ tree navigate -> $plus_assignment ] ] ] } {
+                                sappend $hits [ tree navigate -> $plus_assignment ]
+                        }
+                }
+ 
+                foreach assignment $assignment_stmts {
+                        if { [ string match $String_type [ type [ tree navigate -> $assignment ] ] ] } {
+                                if { [ size [ tree filter plus_expr [ tree navigate ->, $assignment ] ] ] == 1 } {
+                                        sappend $hits [ tree navigate -> $assignment ]
+                                }
+                        }
+                }
+        }
+ 
+        return [ set_unique $hits ]
+}
+
+#
+# MUI - Minimize Use of instanceof
+# Excessive use of instanceof will slow your programm, as will most reflection operations.
+#
+#  Created:     8/15/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javaperf:mui { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set inst_of_refs [tree find -ignore {.function_def find1(if_stmt->instanceof)} $src ]
+	foreach inst_of_ref $inst_of_refs {
+		set c_refs [ tree find -ignore {.if_stmt->instanceof} $inst_of_ref]
+		if { [ size $c_refs ] > 4 } {
+			sappend $hits $c_refs
+		}
+	}
+	return $hits
+    }
+}
+
+#
+# MUC - Minimize Use of Casting
+# Casting is not a free operation. Minimize using of castiong whenether 
+# it will be possible.
+#
+#  Created:     8/15/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javaperf:muc {src} {
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+    }
+}
+
+#############################################################################
+#  Name:        UARRCPY
+#  Descr:       This function will catch array copy's made inside a loop
+#  Created:     8/5/01
+#  Updated:     8/5/01
+#############################################################################
+
+proc javaperf:uarrcpy { src } {
+	
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set loop_stmts [ tree find -ignore { for_stmt || while_stmt || do_while_stmt }  $src ]
+
+	foreach loop $loop_stmts {
+		set assignments [ tree find -ignore assign_expr $loop ]
+		foreach assign $assignments {
+			if { [ string match [ ast_code [ tree navigate -> $assign ] ] "array_ref" ] && \
+			     [ string match [ ast_code [ tree navigate ->, $assign ] ] "array_ref" ] && \
+			     [ size [ tree navigate ->,, $assign ] ] == 0 } {
+				sappend $hits $assign
+			}
+		}
+	}
+
+	return $hits
+    }
+}
+
+#############################################################################
+#  Name:        DNTEFNP
+#  Descr:       This function will catch exceptions thrown for normal processing,
+#		specifically the ArrayIndexOutOfBoundsException, and the
+#		NullPointerException
+#  Created:     8/6/01
+#  Updated:     8/6/01
+#############################################################################
+
+proc javaperf:dntefnp { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set try_stmts [ tree find -ignore try_block $src ]
+	
+	foreach try_catch $try_stmts {
+		set ArrayException [ nil_set ]
+		set catch_stmts [ tree find -ignore catch $try_catch ]
+		foreach catch $catch_stmts {
+			if { [ string match "ArrayIndexOutOfBoundsException *" [ ast_text [ tree navigate -> $catch ] ] ]  || \
+			     [ string match "NullPointerException *" [ ast_text [ tree navigate -> $catch ] ] ] } {
+				set ArrayException [ tree navigate -> $catch ]
+			}
+		}
+
+		if { [ size $ArrayException ] > 0 } {
+			set loops [ tree find -ignore { for_stmt || while_stmt || do_while_stmt } [ tree navigate -> $try_catch ] ]
+			if { [ size $loops ] == 0 } {
+				continue
+			}
+			foreach loop_stmt $loops {
+				if { [ size [ tree find -ignore array_ref $loop_stmt ] ] > 0 } {
+					sappend $hits $ArrayException
+				}
+			}
+		}	
+	}
+
+	return $hits
+    }
+}
+
+##############################################################################
+# Garbage Collection and Resource handling related queries.
+#
+##############################################################################
+
+#
+# GCASC - GC - Avoid Static Collections, like Vector, Hashtable; 
+#              it can grow without bounds. 
+# Static variables (Vector, Hashtable, etc) are able to hold large number of objects 
+# are therefore candidates for memory leaks.
+#
+#  Created:     9/6/01
+#  Updated:     10/1/01
+#############################################################################
+
+proc javasupp:gcasc { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+
+	set collection_api_classes {}    
+        lappend collection_api_classes "java.util.AbstractCollection"
+        lappend collection_api_classes "java.util.AbstractMap"
+        lappend collection_api_classes "java.util.Dictionary"
+
+	set static_refs [ tree find -ignore {.field_decl&&s.static&&s.var} $src ] 
+
+	foreach static_ref $static_refs {
+		set super_classes [ nil_set ]
+		set super_classes [ get_super_classes [ context $static_ref ] ]
+		set super_classes [ set_unique $super_classes ]
+		foreach super $super_classes {
+			if { [ lsearch -exact $collection_api_classes [ name $super ] ] >= 0 } {
+				sappend $hits $static_ref
+				break
+			}
+		}
+	}
+	return $hits
+    }
+}
+ 
+#
+# GCAUTCPTS - GC Avoid Unnecessary Temporaries when Convert Primitive Types to String.
+# Java provides wrapping classes for primitive types. Those classes provide a static 
+# method toString (...) to convert primitive types into their String equivalent. 
+# Use this method instead of creating an object of the wrapping class and then using 
+# the instance toString () method.
+#
+#  Created:     9/6/01
+#  Updated:     10/1/01
+#############################################################################
+
+proc javasupp:gcautcpts { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ tree find -ignore {.call_expr&&s.cname=="toString"&&( \
+                   s.context=="java.lang.Byte" ||
+                   s.context=="java.lang.Character" ||
+                   s.context=="java.lang.Double" ||
+                   s.context=="java.lang.Float" ||
+                   s.context=="java.lang.Integer" ||
+                   s.context=="java.lang.Long" ||
+                   s.context=="java.lang.Short"
+                   ) find1(call_expr&&s.constructor)} $src]
+	return $hits
+    }
+}
+
+#############################################################################
+#  Name:        GCFMUL
+#  Descr:       This function will catch implementations of finalize methods,
+#		that unregister listeners
+#  Created:     8/6/01
+#  Updated:     8/6/01
+#############################################################################
+
+proc javasupp:gcfmul { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+
+	set API_classes {}    
+        lappend API_classes "java.applet.Applet"
+        lappend API_classes "java.awt.Button"
+        lappend API_classes "java.awt.Canvas"
+        lappend API_classes "java.awt.Checkbox"
+        lappend API_classes "java.awt.CheckboxGroup"
+        lappend API_classes "java.awt.CheckboxMenuItem"
+        lappend API_classes "java.awt.Choice"
+        lappend API_classes "java.awt.Component"
+        lappend API_classes "java.awt.Container"
+        lappend API_classes "java.awt.Dialog"
+        lappend API_classes "java.awt.Frame"
+        lappend API_classes "java.awt.FileDialog"
+        lappend API_classes "java.awt.Panel"
+        lappend API_classes "java.awt.ScrollPane"
+        lappend API_classes "java.awt.Window"
+        lappend API_classes "java.awt.Label"
+        lappend API_classes "java.awt.List"
+        lappend API_classes "java.awt.Scrollbar"
+        lappend API_classes "java.awt.TextComponent"
+        lappend API_classes "java.awt.TextArea"
+        lappend API_classes "java.awt.TextField"
+        lappend API_classes "java.awt.Image"
+        lappend API_classes "java.awt.MenuComponent"
+        lappend API_classes "java.awt.MenuContainer"
+        lappend API_classes "java.awt.Menu"
+        lappend API_classes "java.awt.MenuBar"
+        lappend API_classes "java.awt.MenuItem"
+        lappend API_classes "java.awt.MenuShortcut"
+	lappend API_classes "java.awt.CheckboxMenuItem"
+        lappend API_classes "java.awt.PopupMenu"
+        lappend API_classes "java.awt.Polygon"
+        lappend API_classes "java.awt.Point"
+        lappend API_classes "java.awt.Rectangle"
+        lappend API_classes "javax.swing.AbstractButton"
+        lappend API_classes "javax.swing.Box"
+        lappend API_classes "javax.swing.JComponent"
+        lappend API_classes "javax.swing.JButton"
+        lappend API_classes "javax.swing.JMenuItem"
+        lappend API_classes "javax.swing.JCheckBoxMenuItem"
+        lappend API_classes "javax.swing.JMenu"
+        lappend API_classes "javax.swing.JRadioButtonMenuItem"
+        lappend API_classes "javax.swing.JToggleButton"
+        lappend API_classes "javax.swing.JCheckBox"
+        lappend API_classes "javax.swing.JRadioButton"
+        lappend API_classes "javax.swing.JColorChooser"
+        lappend API_classes "javax.swing.JComboBox"
+        lappend API_classes "javax.swing.JFileChooser"
+        lappend API_classes "javax.swing.JInternalFrame"
+        lappend API_classes "javax.swing.JLabel"
+        lappend API_classes "javax.swing.DefaultListCellRenderer"
+        lappend API_classes "javax.swing.JLayeredPane"
+        lappend API_classes "javax.swing.JDesktopPane"
+        lappend API_classes "javax.swing.JList"
+        lappend API_classes "javax.swing.JMenuBar"
+        lappend API_classes "javax.swing.JOptionPane"
+        lappend API_classes "javax.swing.JPanel"
+        lappend API_classes "javax.swing.JPopupMenu"
+        lappend API_classes "javax.swing.JProgressBar"
+        lappend API_classes "javax.swing.JRootPane"
+        lappend API_classes "javax.swing.JScrollBar"
+        lappend API_classes "javax.swing.JSeparator"
+        lappend API_classes "javax.swing.JSlider"
+        lappend API_classes "javax.swing.JSplitPane"
+        lappend API_classes "javax.swing.JTabbedPane"
+        lappend API_classes "javax.swing.JTable"
+        lappend API_classes "javax.swing.JToolBar"
+        lappend API_classes "javax.swing.JToolTip"
+        lappend API_classes "javax.swing.JTree"
+        lappend API_classes "javax.swing.JViewport"
+        lappend API_classes "javax.swing.JEditorPane"
+        lappend API_classes "javax.swing.JTextPane"
+        lappend API_classes "javax.swing.JTextArea"
+        lappend API_classes "javax.swing.JTextField"
+        lappend API_classes "javax.swing.JPasswordField"
+        lappend API_classes "javax.swing.JApplet"
+        lappend API_classes "javax.swing.JWindow"
+        lappend API_classes "javax.swing.JDialog"
+        lappend API_classes "javax.swing.JFrame"
+
+	set API_remove {}
+	lappend API_remove "remove"
+        lappend API_remove "removeActionListener"
+        lappend API_remove "removeAll"
+        lappend API_remove "removeAncestorListener"
+        lappend API_remove "removeChangeListener"
+        lappend API_remove "removeComponentListener"
+        lappend API_remove "removeContainerListener"
+        lappend API_remove "removeFocusListener"
+        lappend API_remove "removeHierarchyBoundsListener"
+        lappend API_remove "removeHierarchyListener"
+        lappend API_remove "removeInputMethodListener"
+        lappend API_remove "removeItemListener"
+        lappend API_remove "removeKeyListener"
+        lappend API_remove "removeMouseListener"
+        lappend API_remove "removeMouseMotionListener"
+        lappend API_remove "removePropertyChangeListener"
+        lappend API_remove "removeVetoableChangeListener"
+
+
+	set finalize_funcs [ filter cname=="finalize" [ defines -func $src ] ] 
+	set APIfinalize_funcs [ nil_set ]
+
+	foreach func $finalize_funcs {
+		set super_classes [ nil_set ]
+		set super_classes [ query_closure 100 get_super_classes [ context $func ] ]
+		set super_classes [ set_unique $super_classes ]
+		foreach super $super_classes {
+			if { [ lsearch -exact $API_classes [ name $super ] ] >= 0 } {
+				sappend $APIfinalize_funcs $func
+				break
+			}
+		}
+	}
+
+	foreach APIfinalize $APIfinalize_funcs {
+		set remove_calls [ tree find call_expr $APIfinalize  ]
+		foreach remove $remove_calls {
+			if { [ lsearch -exact $API_remove [ cname $remove ] ] >= 0 && \
+			     [ lsearch -exact $API_classes [ context $remove ] ] >=0 } {
+				sappend $hits $remove
+			}
+		}
+	}
+
+	return $hits
+    }
+}	
+
+#############################################################################
+#  Name:        GCGCB
+#  Descr:       This function will catch all calls to the function getClipBounds
+#		from java.awt.Graphics, or java.awt.Graphics2D classes
+#  Created:     8/6/01
+#  Updated:     8/6/01
+#############################################################################
+
+proc javasupp:gcgcb { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [ nil_set ]
+	set ClipBoundsFuncs [ filter cname=="getClipBounds" [ uses -func $src ] ]
+	set GraphicsClipBoundsFuncs [ nil_set ]
+	foreach func $ClipBoundsFuncs {
+		if { [ string match "java.awt.Graphics" [ context $func ] ] || [ string match "java.awt.Graphics2D" [ context $func ] ] } {
+			sappend $GraphicsClipBoundsFuncs $func
+		}
+	}
+
+	set hits [ tree filter call_expr [ tree navigate <- [ instances $GraphicsClipBoundsFuncs ] ] ]
+			
+	return $hits
+    }
+}
+
+#
+# GCNCFE - GC - Never Call finalize() method explicitly.
+# Calling finalize() method explicitly insures that finalize() is called, but the 
+# Garbage Collection during runtime will call the finalize() method again when the 
+# object is collected.
+#
+#  Created:     8/15/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javasupp:gcncfe {src} {
+	
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [tree navigate -ignore { find1(y: call_expr&&s.cname=="finalize"&&s.arguments=="()") \
+            setcur($y)} [tree find -ignore {.function_def&&!(s.cname=="finalize"&&s.arguments=="()")} $src ] ]
+
+	return $hits
+    }
+}
+
+#
+# GCOSKR - GC Object Stream Keep References.
+# Be aware of memory leaks due to 'ObjectStream' usage. ObjectInputStream and 
+# ObjectOutputStream may cause memory leaks. ObjectStreams are designed to handle 
+# the case of sending the same Object multiple times across a connection. For this
+# reason, ObjectStream classes keep a reference to all objects written or read until
+# the 'reset()' method is called. Thoes objects will not be garbage collected until 
+# 'reset()' is called.
+#
+#  Created:     8/15/01
+#  Updated:     9/24/01
+#############################################################################
+
+proc javasupp:gcoskr { src } {
+
+#workaround for now. right fixes will be in sev.dis.
+    if { [ string match -nocase "java" [language $src] ] } {	
+	set hits [tree find -ignore {call_expr->s.funct&&s.cname=="writeObject"&&s.context=="java.io.ObjectOutputStream"<-<- !search1(call_expr&&s.funct&&s.cname=="reset")} $src]
+
+	return $hits
+    }
+}
+ 

@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>The Middleman in Editor Integration Communication: “nameserv”</title>
+  <meta name="Author" content="jnapoli">
+  <meta name="LastAuthor" content="jnapoli">
+  <meta name="Company" content="SET">
+  <meta name="CreationTime" content="2001-11-06T15:05:00Z">
+  <meta name="ModificationTime" content="2001-11-06T17:05:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Times New Roman'}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 36.0px; font: 12.0px 'Times New Roman'}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 36.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 36.0px; text-indent: 36.0px; font: 12.0px 'Times New Roman'}
+    p.p7 {margin: 0.0px 0.0px 0.0px 72.0px; font: 12.0px 'Times New Roman'}
+    p.p8 {margin: 0.0px 0.0px 0.0px 72.0px; font: 10.0px 'Times New Roman'}
+    p.p9 {margin: 0.0px 0.0px 0.0px 72.0px; text-indent: 36.0px; font: 12.0px 'Times New Roman'}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>The Middleman in Editor Integration Communication: “nameserv”</b></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>The method in Source Analysis which enables editor integration to talk with the main Source Analysis application is “nameserv”.<span class="Apple-converted-space">  </span>nameserv is the mechanism for registering (and correspondingly unregistering), listing, and finding a service available in Source Analysis.</p>
+<p class="p2"><br></p>
+<p class="p4">We use nameserv so that the main Source Analysis application (be it the Java, Motif, or MFC application) are able to find an appropriate editor to utilize during a session.<span class="Apple-converted-space">  </span>This document describes this purpose.</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>The way nameserv works is very straightforward: it sits on a port (28948) on your local machine (which is running Source Analysis) and waits for messages from an application, via TCP/IP sockets.<span class="Apple-converted-space">  </span>Once an application connects to nameserv (typically using “connect()”), nameserv is assigned a new socket, and it talks to the connecting application from there.</p>
+<p class="p2"><br></p>
+<p class="p4">nameserv’s structure is very simple: it keeps an internal list of names that have been registered with it.<span class="Apple-converted-space">  </span>When asked by a connected application, nameserv lists the names it has registered.<span class="Apple-converted-space">  </span>A connected application can also unregister a name, removing that name from the internal list.<span class="Apple-converted-space">  </span>Registering a name with nameserv is trivial; a connected application simply has to pass its port number, the length of its name, and then its name.<span class="Apple-converted-space">  </span>The address of the connected application, the port number, and the name are then stored in nameserv.</p>
+<p class="p5"><br></p>
+<p class="p4">More details about what data and the size of that data which nameserv receives and returns are given below, for each set of functionality.<span class="Apple-converted-space">  </span>The “Client:” lines represent what the client is expected to send to the server, and the “Server:” lines represent what the server is expected to send to the client.<span class="Apple-converted-space">  </span>The terminology “x bytes sent as an integer representing …” refers to a 4-byte integer being broken up into 4 bytes and sent.<span class="Apple-converted-space">  </span>The receiving end is expected to reassemble those bytes into a 4-byte int.</p>
+<p class="p5"><br></p>
+<p class="p4">The first presumption made is that each application connects, via the “connect()” function call, and then sends 1 byte to nameserv.<span class="Apple-converted-space">  </span>The value of that 1 byte determines the desired functionality by the connecting application:</p>
+<p class="p2"><br></p>
+<p class="p3">If the value of that byte is:</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>0 – REGISTER_SERVER</p>
+<p class="p4">Registering a name:</p>
+<p class="p4"><span class="Apple-tab-span">	</span>Client: 4 bytes sent as an integer representing the port number</p>
+<p class="p6">Client: 4 bytes sent as an integer representing the name (STRLEN)</p>
+<p class="p6">Client: STRLEN bytes sent as bytes consisting of the name</p>
+<p class="p4"><span class="Apple-tab-span">	</span>Server: Closes socket</p>
+<p class="p5"><br></p>
+<p class="p4">1 – LIST_OF_SERVERS</p>
+<p class="p4">Listing the available names:</p>
+<p class="p7">For as many names are registered in nameserv, the server will do the following:</p>
+<p class="p7">Server: 4 bytes sent as an integer representing the name (STRLEN)</p>
+<p class="p7">Server: STRLEN bytes sent as bytes consisting of the name</p>
+<p class="p8">(i.e. if there are 3 registered names, the server will return 3 pairs of replies)</p>
+<p class="p7">Server: 4 bytes sent as an integer representing a 0, denoting the end of the list</p>
+<p class="p7">Server: Closes socket</p>
+<p class="p5"><br></p>
+<p class="p4">2 – FIND_SERVER</p>
+<p class="p4">Finding a specified name:</p>
+<p class="p7">Client: 4 bytes sent as an integer representing the name length (STRLEN)</p>
+<p class="p7">Client: STRLEN bytes sent as bytes consisting of the name</p>
+<p class="p7">If that name is registered, and the socket is still up</p>
+<p class="p9">Server: 1 bytes sent as with a value of 1</p>
+<p class="p9">Server:<span class="Apple-converted-space">  </span>4 bytes sent as an int representing the port number</p>
+<p class="p9">Server:<span class="Apple-converted-space">  </span>4 bytes sent as an int representing the IP address</p>
+<p class="p7">If that name is not registered (if was registered and the socket wasn’t working, then the name was removed from the internal list):</p>
+<p class="p7"><span class="Apple-tab-span">	</span>Server: 1 bytes sent with a value of 0</p>
+<p class="p7">Server: Closes socket</p>
+<p class="p5"><br></p>
+<p class="p4">3 – UNREGISTER_SERVER</p>
+<p class="p4">Removing a name from nameserv’s internal list:</p>
+<p class="p4"><span class="Apple-tab-span">	</span>Client: 4 bytes sent as an integer representing the name length (STRLEN)</p>
+<p class="p4"><span class="Apple-tab-span">	</span>Client: STRLEN bytes sent as bytes consisting of the name</p>
+<p class="p4"><span class="Apple-tab-span">	</span>Server: Closes socket</p>
+<p class="p5"><br></p>
+<p class="p4">4 – STOP</p>
+<p class="p4">Shutting down nameserv:</p>
+<p class="p4"><span class="Apple-tab-span">	</span>Server: Closes socket, and shuts down nameserv</p>
+</body>
+</html>

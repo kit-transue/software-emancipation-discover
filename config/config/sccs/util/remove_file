@@ -1,0 +1,22 @@
+file=${1:?"filename expected"}
+
+if [ ! -f $file ]; then
+   exit 0;
+fi
+
+if [ -w $file ]; then
+    ft="Writable"
+elif [ -r $file ] ; then
+    ft="Readable"
+elif [ -e $file ] ; then
+    ft="Executable"
+else
+    ft=""
+fi;
+  
+if $PSETCFG/util/y_or_n "$ft $file exists overwrite"; then
+    rm -f $file
+    exit 0
+else
+    exit 1
+fi

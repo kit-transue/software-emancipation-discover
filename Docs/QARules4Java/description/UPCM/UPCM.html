@@ -1,0 +1,34 @@
+<html>
+<body>
+
+<p><b>UPCM - Unused Private Class Member</b></p>
+
+<p>An unused class member might indicate a logical flaw in the program.
+The class declaration has to be reconsidered in order to determine
+the need of the unused member(s).</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class UPCM {<br>
+&nbsp; &nbsp; <font color='red'>private int bad_attr;</font><br>
+&nbsp; &nbsp; private int good_attr;<br>
+&nbsp; &nbsp; <font color='red'>private void bad_oper () {<br>&nbsp; 
+&nbsp; &nbsp; &nbsp; // do something...;<br>
+&nbsp; &nbsp; }</font><br>
+&nbsp; &nbsp; private void good_oper1 () {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; good_attr = 10;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; public void good_oper2() {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; good_oper1();<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+ Examine the programm. If this member is unnecessary, remove it
+(or at least comment it out).
+</p>
+
+</body>
+</html>

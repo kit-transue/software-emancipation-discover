@@ -1,0 +1,162 @@
+<head>
+<title>Plan for Java Support in DISCOVER</title>
+</head>
+<body>
+<table>
+<tr><td align="right">To:<td width="3"><td>Vladimir Geisberg
+<tr><td align="right">Cc:<td><td>Michael Brook, Mikhail Gurevich, W. M. Miller, Alex Harlap, Mark Avenmarg, Peter Goodrich, Pero Smrzlic
+<tr><td align="right">From:<td><td>Scott Turner
+<tr><td align="right">Date:<td><td>98-07-13
+<tr><td align="right">Subject:<td><td>Plan for Java Support in DISCOVER
+</table>
+<hr>
+<h3>Goals and Requirements</h3>
+<p>DISCOVER will support programming in the Java language.
+Most importantly, DISCOVER must accept Java code, parsing it, analyzing it, and 
+incorporating its significant relationships into a model.
+</p>
+<ul>
+<li>speed: The speed of the Java front end must be as good as that of a fast compiler.
+<li>input: It will digest straight Java source, as well as interfaces from .class files.
+<li>user interface: A new category will be introduced in DISCOVER's scan mode, for Java "interface" types. New queries will be provided <em>as appropriate</em>.
+Details of the features supported by this project are described in a separate functional
+specification.
+</ul>
+</p>
+<h3>Implementation</h3>
+<p>
+Implementation of Java support for DISCOVER will be uncomplicated, 
+thanks to the work that has gone before in support for IF,
+particularly for the C++ language which is (syntactically) nearly a superset of Java.
+</p>
+<h4>bulk compilation</h4>
+<p>
+A number of Java parsers, including EDG,
+are capable of parsing a number of compilation units in one go.
+This provides an efficiency analogous to precompiled headers,
+without the risk of complications that occur with C and C++ preprocessing.
+We will take advantage of this, and do not expect it to affect the user
+interface.
+This feature will require substantive effort of a day or two.
+</p>
+<h3>Testing</h3>
+<p>
+There are at present no good ways of verifying that a model built from Java is complete,
+correct, or consistent, apart from manual inspection of the results.
+If a more automatic mechanism were invented, it could affect the duration
+of task 7 in either direction:
+it could reduce the time spent testing, or it could lengthen the time spent fixing
+(a larger number of) bugs and issues.
+The testing plan is that a large quantity of Java code will be run
+through the model build to detect crashes, compilation errors,
+and such,
+and that a large amount of spot inspection will be applied to verify apparently-successful
+results.
+</p>
+<p>
+Existing techniques of building regression tests are sufficient for this project.
+</p>
+<h3>Dependencies</h3>
+<p>
+We depend on EDG Java support of .class and .zip files. This means that the parser can
+read declarations from the bytecode in these files.
+EDG anticipates this feature being available in July.
+Without this feature, DISCOVER's Java support would be generally useless.
+</p>
+<p>Implementation of model build for Java needs to wait until after 
+we have IF generation fully implemented (based on Jfe or another Java parser).
+</p>
+<h3>Risks</h3>
+<p>MG, I believe, is of the opinion that the one week in the schedule above for tasks 2 and 3
+is insufficient, but I do not know how much time he would allow for them. <em>Check with MG.</em>
+</p>
+<p>Unanticipated discoveries in the first three tasks, in particular, could negatively
+impact the schedule;
+a review of the schedule should be planned shortly after the evaluation,
+functional specification, and design tasks are completed.
+</p>
+<p>
+We assume that the EDG front end is selected. 
+If the EDG front end were elminated, the schedule would be delayed
+in order to find a suitable replacement, and implementation effort
+would likely be greater. 
+There are several reasons for this impact. First, EDG have attempted
+to incorporate <em>a priori</em> our needs for source locations and the like
+(having gained insight into these needs through the required enhancements to the C/C++
+parser over the last eight months), 
+while a parser that was designed strictly for compilation will likely require significant modifications to collect and maintain the information we need.
+Second, although the EDG Java intermediate language is different in many ways
+from that of their C/C++ product, a good deal of othe experience we have gained will carry over,
+while working with the other compilers would have a longer learning curve.
+</p>
+<p>
+The EDG Java front end is not yet proven as part of a usable product.
+Though Java is a straightforward language and EDG has done a good deal
+of testing, if we should choose EDG then we can expect a few substantial bugs to show up during the
+development of Java support.
+</p>
+<p>
+Since we are not plugged in to the Java community, it is hard to anticipate
+all of the expectations/requirements of customers.
+</p>
+<h3>Tasks</h3>
+Below are details of the scheduled tasks that need explanation. 
+Numbers refer to the numbering of the schedule below.
+<ol>
+<li value="4"><p><strong>Write and unit test IF generation.</strong>
+<br>To generate IF, a conventional compiler front end is augmented to create sections
+as follows:
+<ol>
+<li>The map is created, consisting of MAP lines and the SYM lines for files.
+<li>The symbols are defined and described, using SYM, REL, and ATR lines.
+<li>SMT and ERR lines are dumped based on information saved during parsing.
+SMT lines will be produced for literals.
+<li>The AST is dumped by traversing the IL. Constant expressions will be
+unfolded.
+</ol>
+<p>
+Attention will be given to performance improvement
+after the implementation is functioning.
+</p>
+</p>
+<li value="5"><p><strong>Implement DISCOVER changes.</strong>
+<br>
+<ul>
+<li>Model build support for Java will deal with AST operators and relations 
+that are new with Java. These will be specified in a separate document.
+In addition, Java usage of operators and relations may vary from their
+usage in C/C++. Usage differences can be dealt with on a case-by-case basis, either by enhancing 
+the model build or by modifying IF generation.
+
+<li>User-visible features (documented more completely in the
+functional specification) will require effort to implement
+<ul>
+<li>a new category
+and additional queries
+<li>new preferences
+<li>make flags extraction for Java
+</ul>
+<li>Support for bulk compilation (described above) will be added.
+</ul>
+</p>
+</ol>
+<h3>Schedule</h3>
+<p>
+<table>
+<tr><td>1.<td>Evaluation of EDG front end<td align="right">1.5 wks
+<tr><td>2.<td>Design of IF support for Java<td align="right">.5 wks
+<tr><td>3.<td>Functional specification of Discover support for Java<td align="right">.5 wks
+<tr><td align="center" colspan="3"><strong>&lt;reevaluate rest of plan at this point&gt;</strong>
+<tr><td>4.<td>Write and unit test IF generation for EDG front end<td align="right">3.0 wks
+<tr><td>5.<td>Implement DISCOVER changes (model, UI)<td align="right">1.5 wks
+<tr><td>6.<td>Documentation<td align="right">1.6 wks
+<tr><td>7.<td>System test and fix issues and bugs<td align="right"><u>6.0 wks</u>
+<tr><td><td align="right"><strong>total:</strong><td align="right">14.0 wks
+</table>
+</p>
+<p>
+Task 1 can be conducted in parallel with tasks 2 and 3. Tasks 4 and 5 can be conducted in paralled,
+as can (and should) tasks 6 and 7.
+The critical path is tasks 1, 4, and 7, for an elapsed time of 10.5 weeks.
+</p>
+</body>

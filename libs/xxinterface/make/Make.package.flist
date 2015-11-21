@@ -1,0 +1,6 @@
+
+CPROOTS=\
+	xxinterface
+
+CPPROOTS=\
+	xxsn

@@ -1,0 +1,230 @@
+#
+# build.prefs
+#
+*psetPrefs.rtlFileStat: 0
+
+*psetPrefs.version:		1
+
+*psetPrefs.defaultPDF:
+
+*psetPrefs.steSuffix:		.txt
+
+*psetPrefs.excludedDirectories:	/usr/include:/usr/local/include:/usr/include/X11:/usr/openwin/include:/usr/openwin/share/include/X11
+
+*psetPrefs.makefileDir:		.
+*psetPrefs.makePath:		make
+*psetPrefs.makefileTargets:     Default:Objects:all:install:libraries:executable:makefile:clean
+
+*psetPrefs.gdbPath:		
+*psetPrefs.cHdrSuffix:		.h
+*psetPrefs.cCompiler:		cc
+*psetPrefs.cSuffix:		.c .h
+*psetPrefs.cDfltSrcSuffix:	.c
+*psetPrefs.cDfltHdrSuffix:	.h
+*psetPrefs.cFlags:		-quiet -w -fsyntax-only
+*psetPrefs.cDefines:		-D__DISCOVER__
+*psetPrefs.cIncludes:		
+*psetPrefs.cStyle:		0
+
+*psetPrefs.cPlusCompiler:	CC
+*psetPrefs.cPlusHdrSuffix:	.H .h .hpp .hxx
+*psetPrefs.cPlusSuffix:		.C .cpp .cxx .H .h .hpp .hxx
+*psetPrefs.cPlusDfltSrcSuffix:	.C
+*psetPrefs.cPlusDfltHdrSuffix:	.H
+*psetPrefs.cPlusFlags:		-quiet -w -fsyntax-only
+*psetPrefs.cPlusDefines:	-D__DISCOVER__ -D__GNUG__
+*psetPrefs.cPlusIncludes:	-I$PSETHOME/include/cp-include
+
+*psetPrefs.configurator:	$PSETHOME/bin/configurator
+*psetPrefs.configuratorLock:	
+*psetPrefs.configuratorUnlock:	
+*psetPrefs.configuratorPut:	
+*psetPrefs.configuratorGet:	
+*psetPrefs.configuratorDiff:	
+
+*psetPrefs.PutTrackBugs:        0
+
+# 
+# Default viewer editor: 0 for Emacs, 1 for vi.
+# 
+*psetPrefs.steEditMode:		0
+
+#
+# The location for custom CM interface
+# should be set to $ADMINDIR/config if required.
+# 
+*psetPrefs.configuratorCustomDirectory:	
+
+*psetPrefs.configuratorSystem:		rcs
+
+#
+# Attempt to proceed in the presence of syntax errors in
+# the code. Try to save all possible information in the
+# model.
+# Equivalent to former '-forgive' options
+#
+*psetPrefs.acceptSyntaxErrors:		yes
+
+#
+# If set to any value then place discover's cpp output
+# in this file prior to parsing. NB this file is subject
+# to continuous change and is USED as input to the parser
+#
+#*psetPrefs.debugCppOutputFile:		$ADMINDIR/tmp/CPPOutputFile
+
+#
+# DISCOVER executable to run for diagnostic purposes.
+# For internal SET use only.
+#
+*psetPrefs.debugDiscoverExecPath:	
+
+#
+# Save the generated environment prior to parsing.
+#
+*psetPrefs.debugEnvSave:		no
+
+#
+# Show the output from '.make' rules as they execute.
+#
+*psetPrefs.debugShowMakeRuleOutput:	no
+
+#
+# Environment initialization, for diagnostic purposes.
+# For internal SET use only.
+#
+*psetPrefs.debugVariablesList:		
+
+*psetPrefs.executableTimer:		/bin/time
+
+#
+# Do you wish to have log files compressed at the
+# end of a run? This would save space for frequent
+# large verbose builds.
+#
+*psetPrefs.logFileBuildCompress:	no
+
+#
+# Do you wish a permanent log file to be created?
+#
+*psetPrefs.logFileCreate:		yes
+
+#
+# Directory in which log files will be created.
+# Should not be changed unless absolutely necessary.
+#
+*psetPrefs.logFileDir:			$ADMINDIR/log
+
+#
+# Do you wish to monitor logging information on
+# your screen?
+#
+*psetPrefs.logFileMonitor:		yes
+
+#
+# Do you wish the log file names to be fixed
+# instead of using a time/date dependent name?
+#
+*psetPrefs.logFileNameFixed:		no
+
+#
+# Do you wish the log files of users to be deleted
+# after they exit discover?
+#
+*psetPrefs.logFileUserDelete:		no
+
+#
+# Do you wish the log file to contain all the
+# selected options from the preference file?
+#
+*psetPrefs.logPrefValues:		no
+
+#
+# Do you wish to use the message logger instead of
+# having multiple error dialogs in case of a problem?
+#
+*psetPrefs.msgLogger:			yes
+
+#
+# Some useful information that gets placed in the logs.
+# Should be customized for your site.
+#
+*psetPrefs.nameCompany:			"Software Emancipation Technology Inc, Lexington MA"
+*psetPrefs.nameDiscoverAdministrator:	"Tech Support, support@setech.com, 617-863-5588"
+
+#
+# This is the PDF to build the Information Model. The
+# shared projects should be writable.
+#
+*psetPrefs.pdfFileBuild:		$ADMINDIR/pdf/build.pdf
+
+#
+# This is the PDF for individual users. The shared projects
+# should be read only.
+#
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/user.pdf
+
+#
+# Check out the Information Model prior to performing
+# build. Only done on those installations where the
+# Information Model is under configuration management.
+#
+*psetPrefs.getModel:			no
+
+#
+# Check in the Information Model prior to performing
+# build. Only done on those installations where the
+# Information Model is under configuration management.
+#
+*psetPrefs.putModel:			no
+
+#
+# Perform dependency analysis on the model. Refer to
+# documentation for more information.
+# Should be set to 'no' until the model had been
+# created.
+#
+*psetPrefs.doPassDependency:		no
+
+#
+# Perform header analysis on the model.
+# Should be set to 'no' if there is only one shared
+# project, otherwise should probably be set to 'yes'.
+# Refer to documentation for more information.
+#
+*psetPrefs.doPassHeaders:		yes
+
+# 
+# Save information about the project structure.
+#
+*psetPrefs.doPassSaveProj:		yes
+*psetPrefs.doPassSaveRoot:		yes
+
+#
+# List of projects to build into the Information Model.
+#
+*psetPrefs.projectList:			shared
+
+#
+# Should a parallel build be attempted? Please refer to
+# documentation for syntax.
+#
+*psetPrefs.projectParallel:		no
+
+#
+# The home project to use when working interactively.
+# If unset the user will be prompted to select a project
+# before they will be able to proceed with interactive
+# usage. NB this is where checked out files will be
+# placed.
+#
+*psetPrefs.projectHome:			Home
+
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src/SHARED
+*psetPrefs.privateModelRoot:		$ADMINDIR/model/$USER
+*psetPrefs.privateSrcRoot:		$ADMINDIR/src/$USER
+
+# 
+# For more examples examine the preference files in 
+# $PSETHOME/lib/Learn/AdminDir/prefs.
+# 

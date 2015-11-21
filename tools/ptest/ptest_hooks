@@ -1,0 +1,268 @@
+#!/bin/sh
+#set -x
+[ -z "$1" ] &&
+{
+	echo "usage: $0"
+	echo " -outdir    directory /* These two args have to precede all others. */"
+	echo " -file       filename for hook files"
+	echo " -ok         directory"
+	echo " +ok         /* remove all successful results. */"
+	echo " -parse      directory"
+	echo " -oldMachine remoteMachineName"
+	echo " -newMachine remoteMachineName"
+	echo " -oldParser  oldparser"
+	echo " -newParser  newparser"
+	echo " -enum  /* don't create .tok file */" 
+	echo " -ifile /* creates .i file */" 
+	echo " -quiet /* turn output off  */" 
+	echo " -clean /* removes .new .old .tok files */" 
+	echo " -dirty /* removes nothing */"
+	echo " -incl  +dir1 /* No hooks for include files except for dir1 ... */"
+	echo "        ~dir2 /* No hooks for include files in dir2 ... */"
+	echo " -cpp   /* use cpp for parsing (default is gcc -E) */"
+	exit 0
+}
+
+oldMachine=""
+newMachine=""
+oldParser="$PSETHOME/bin/cp-parser"
+newParser="$meg/cp-parser"
+outdir="."
+file="hook"
+enum="t" 
+ifil="f" 
+quiet="f" 
+dirty="f" 
+clean="f" 
+okclean="f" 
+incl="f"
+CPP="gcc -E -w" 
+
+
+# Scan for -outdir and -file flags so that -incl flag knows where and what name to
+# give temporary files.
+#
+# Note: This is not a fullproff way to pre-read args.  Quoted string like "hi there"
+#       turn into two args.  But the above purpose it works fine.
+#
+for arg in $*
+do
+  [ -n "$lastarg" ]
+  {
+    if [ "$lastarg" = "-outdir" ] ; then
+	outdir=$arg ;
+    elif [ "$lastarg" = "-file" ] ; then
+	file=$arg ;
+    fi
+  }
+  lastarg=$arg ;
+done
+
+
+# Get the rest of the args.
+while true 
+do
+
+if [ "$1" = "-outdir" ] ; then
+	[ -n "$2" ] && { shift ; }
+	shift ;
+elif [ "$1" = "-ok" ] ; then
+	[ -n "$2" ] && { okdir=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "~ok" ] ; then
+	okclean="t";	
+	shift ;
+elif [ "$1" = "-parse" ] ; then
+	[ -n "$2" ] && { parsedir=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-oldMachine" ] ; then
+	[ -n "$2" ] && { oldMachine="rsh $2" ; shift ; }
+	shift ;
+elif [ "$1" = "-newMachine" ] ; then
+	[ -n "$2" ] && { newMachine="rsh $2" ; shift ; }
+	shift ;
+elif [ "$1" = "-oldParser" ] ; then
+	[ -n "$2" ] && { oldParser=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-newParser" ] ; then
+	[ -n "$2" ] && { newParser=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-file" ] ; then
+	[ -n "$2" ] && { shift ; }
+	shift ;
+elif [ "$1" = "-ifile" ] ; then
+	ifil="t" ;
+	shift ;
+elif [ "$1" = "-enum" ] ; then
+	enum="f" ;
+	shift ;
+elif [ "$1" = "-quiet" ] ; then
+	quiet="t" ;
+	shift ;
+elif [ "$1" = "-clean" ] ; then
+	clean="t" ;
+	shift ;
+elif [ "$1" = "-dirty" ] ; then
+	dirty="t" ;
+	shift ;
+elif [ "$1" = "-incl" ] ; then
+	incl="t"
+	shift ;
+	sedfile2a="$file.sed2a"
+	echo "s/^\(# [0-9]* \"\)++:\(\/.*\.[^cC]\".*\)/\1--:\2/" > $outdir/$sedfile2a
+	while true
+	do	
+	  fc=""
+	  [ -n "$1" ] &&	fc=`expr substr "$1" 1 1` ;
+	  [ "$fc" != "+" -a "$fc" != "~" ] && break ;
+	  dir=`expr "$1" : '.\(.*\)'`
+	  dir=`echo $dir | sed 's/\//\\\\\//g'`
+	  if [ "$fc" = "+" ] ; then
+	    echo "s/^\(# [0-9]* \"\)--:\($dir.*[^cC]\".*\)/\1++:\2/" >> $outdir/$sedfile2a ;
+	  else
+	    echo "s/^\(# [0-9]* \"\)++:\($dir.*[^cC]\".*\)/\1--:\2/" >> $outdir/$sedfile2a ;
+	  fi
+	  shift
+	done
+elif [ "$1" = "-cpp" ] ; then
+	CPP="$PSETHOME/bin/aset_cpp";
+	shift ;
+else
+	break;
+fi
+
+done
+
+
+newfile="$file.new"
+oldfile="$file.old"
+difffile="$file.diff"
+tokfile="$file.tok"
+ioldfile="$file.o.i"
+inewfile="$file.n.i"
+errfile="$file.err"
+sedfile1="$file.sed1"
+sedfile2="$file.sed2"
+echo "s/^\(# [0-9]* \"\)\(.*\".*\)/\1++:\2/" > $outdir/$sedfile2
+[ "$incl" = "t" ] &&
+{
+	cat $outdir/$sedfile2a >> $outdir/$sedfile2
+	rm $outdir/$sedfile2a 
+}
+
+[ $quiet = "f" -a -n "$oldMachine" ] && echo "oldMachine = $oldMachine"
+[ $quiet = "f" -a -n "$newMachine" ] && echo "newMachine = $newMachine"
+[ $quiet = "f" ] && echo "oldParser = $oldParser"
+[ $quiet = "f" ] && echo "newParser = $newParser"
+[ $quiet = "f" ] && echo "outdir    = $outdir"
+[ $quiet = "f" ] && echo "oldfile   = $oldfile"
+[ $quiet = "f" ] && echo "newfile   = $newfile"
+[ $quiet = "f" ] && echo "difffile  = $difffile"
+[ $quiet = "f" ] && echo "tokfile   = $tokfile"
+[ $quiet = "f" ] && echo "ifile     = $inewfile"
+[ $quiet = "f" ] && echo "enum      = $enum"
+[ $quiet = "f" ] && echo "incl      = $incl"
+[ $quiet = "f" ] && echo "cpp args  = [$*]"
+
+
+#
+# If running in "standard" mode leave the header file names in various hooks.  This is neccessary
+# in order to identify the tokens.
+#
+
+echo 's/0x[0-9a-f]*//g
+s/^\[[0-9]*\]//' > $outdir/$sedfile1
+# 
+split_sections ()
+{
+	fileName="$1"
+#
+# Before spliting the file remove all temp vars, and entries containg _ctor_arg
+#
+	cat $fileName | grep -v "_ctor_arg" | sed -f $outdir/$sedfile1 | nawk ' 
+	{
+		if ( $1 == "------" ) 
+			currFile = sprintf("%s.%s",file,$2) ;
+		else if ( currFile != "" ) print >currFile ;
+	}' currFile="" file=$fileName
+}
+
+$CPP $*                    | tokenizer | sed -f $outdir/$sedfile2 > $outdir/$inewfile ;
+$CPP -D__GNUC_MINOR__=5 $* | tokenizer | sed -f $outdir/$sedfile2 > $outdir/$ioldfile ;
+
+
+
+[ "$enum" = "t" ] && enumerate_tokens  $outdir/$inewfile > $outdir/$tokfile ;
+
+
+#
+#  Parse both file and create hook info.  The $oldMachine allows ptest hooks 
+#  to run remotely.  The `which ptest_exec_parser` insures that the full
+#  path name of that script will be used if "rsh" is used.
+#
+parseerr=0
+[ $quiet = "f" ] && echo "$oldMachine /ParaSET/tools/ptest_exec_parser $oldParser -w -quiet -fsyntax-only $outdir/$ioldfile > $outdir/$oldfile"
+$oldMachine /ParaSET/tools/ptest_exec_parser $oldParser -w -quiet -fsyntax-only $outdir/$ioldfile > $outdir/$oldfile 2> $outdir/$errfile
+parseerr1=$? 
+[ $quiet = "f" ] && echo "$newMachine /ParaSET/tools/ptest_exec_parser $newParser -w -quiet -fsyntax-only $outdir/$inewfile > $outdir/$newfile 2>> $outdir/$errfile "
+$newMachine /ParaSET/tools/ptest_exec_parser $newParser -w -quiet -fsyntax-only $outdir/$inewfile > $outdir/$newfile 2>> $outdir/$errfile 
+parseerr2=$? 
+[ $parseerr1 -ne 0 -o $parseerr2 -ne 0 ] && parseerr=1 ;
+
+differr=1
+if [ $parseerr -ne 0 ] ; then
+	echo "Parse error!" ;
+else
+	egrep -v '(^time in parse|^$)' $outdir/$errfile 
+	if [ $? -eq 0 ] ; then
+		echo "Parse warnings!" ;
+		differr=0;  
+	else
+		[ $dirty = "f" ] && rm $outdir/$errfile ;
+	fi
+fi	
+
+# Set differr to no errors found.
+# Skip splitting and parsing if parse errors found.
+[ $parseerr -eq 0 ] && 
+{
+	[ $quiet = "f" ] && echo "Splitting files..."
+	split_sections $outdir/$oldfile
+	split_sections $outdir/$newfile
+
+	[ $quiet = "f" ] && echo "Diffing files..."
+	ptest_diff $outdir/$oldfile.file_globals $outdir/$newfile.file_globals file_globals   > $outdir/$difffile
+	ptest_diff_decl_specs  $outdir/$oldfile.declspecs $outdir/$newfile.declspecs declspecs >> $outdir/$difffile
+	ptest_diff_call_globals $outdir/$oldfile.call_globals $outdir/$newfile.call_globals call_globals >> $outdir/$difffile
+	ptest_diff $outdir/$oldfile.ref_ids      $outdir/$newfile.ref_ids      ref_ids        >> $outdir/$difffile
+
+	grep -s "^\*\*\*" $outdir/$difffile
+	differr=$?
+}
+
+if [ $differr -eq 0 -o $parseerr -ne 0  ] ; then 
+	echo "Failed!" ; 
+	ex=1 ; 
+else
+	echo "Success!" ; 
+	ex=0 ;
+fi
+
+[ $dirty = "f" ] && rm -f $outdir/$oldfile.* $outdir/$newfile.* $outdir/$oldfile $outdir/$sedfile1 $outdir/$sedfile2 $outdir/$file*.s
+
+[ "$ifil" = "f" -a  $dirty = "f" ] && rm -f $outdir/$file*.i
+
+[ $clean = "t" ] && rm -f $outdir/$newfile $outdir/$tokfile
+
+# If test succeded and "~ok" flag is present, remove all related files.
+# else move files to "$okdir".
+if [ "$ex" -eq 0 -a "$okclean" = "t" ] ; then
+	rm -f $outdir/$file.* ;
+else
+	[ "$ex" -eq 0 -a -n "$okdir" -a "$okdir" != "$outdir" ] && 
+		mv -f $outdir/$file.* $okdir ;
+fi
+
+[ "$parseerr" -ne 0 -a -n "$parsedir" -a "$parsedir" != "$outdir" ] && mv -f $outdir/$file.* $parsedir ;
+exit $ex
+

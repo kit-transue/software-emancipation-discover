@@ -1,0 +1,7 @@
+CXXROOTS = disperl
+
+CPP_INCLUDES=\
+-I$(LOCAL_SRC_ROOT)/gala/extern/osport/include \
+-I$(BUILD_SRC_ROOT)/gala/extern/osport/include \
+-I$(LOCAL_SRC_ROOT)/gala/extern/ads/include \
+-I$(BUILD_SRC_ROOT)/gala/extern/ads/include \

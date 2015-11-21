@@ -1,0 +1,60 @@
+<html>
+<body>
+
+<p><b>UCVN - Use Conventional Variable Names</b></p>
+
+<p>One-character local variable or parameter names should be avoided,
+except for temporary and looping variables, or where a variable holds
+an undistinguished value of a type. Conventional one-character names are:
+
+<p><code>
+b for a byte<br>
+c for a char<br>
+d for a double<br>
+e for an Exception<br>
+f for a float<br>
+i, j, k for integers<br>
+l for a long<br>
+o for an Object<br>
+s for a String
+</code></p>Local variable or parameter names that consist of only two or three 
+uppercase letters should be avoided to avoid potential conflicts with the 
+initial country codes and domain names that are the first component of unique 
+package names.
+<P></P>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void func (double d) {<br>
+&nbsp; &nbsp; int i;<br>
+&nbsp; &nbsp; Object o;<br>
+&nbsp; &nbsp; Exception e;<br>
+&nbsp; &nbsp; <font color='red'>char s; </font><br>
+&nbsp; &nbsp; <font color='red'>Object f; </font><br>
+&nbsp; &nbsp; <font color='red'>String k; </font><br>
+&nbsp; &nbsp; <font color='red'>Object UK; </font><br>
+}
+</code></p></NOBR>
+
+<p><b>Tip:</b> Give 
+conventional names to all local variables.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void func (double d) {<br>
+&nbsp; &nbsp; int i;<br>
+&nbsp; &nbsp; Object o;<br>
+&nbsp; &nbsp; Exception e;<br>
+&nbsp; &nbsp; <font color='blue'>char c; </font><br>
+&nbsp; &nbsp; <font color='blue'>Object o; </font><br>
+&nbsp; &nbsp; <font color='blue'>String s; </font><br>
+&nbsp; &nbsp; <font color='blue'>Object o1; </font><br>
+}
+</code></p></NOBR>
+<P></P>
+
+</body>
+</html>

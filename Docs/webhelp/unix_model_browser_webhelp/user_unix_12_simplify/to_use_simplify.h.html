@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>To use Simplify.h</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 1.3px 24.0px; font: 9.0px 'Times New Roman'}
+    p.p3 {margin: 0.0px 1.0px 1.3px 24.0px; font: 12.0px 'Courier New'}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p8 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p9 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p10 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 11.0px Verdana}
+    span.s2 {font: 12.0px 'Courier New'}
+    span.s3 {font: 9.0px 'Times New Roman'}
+    span.s4 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>To use Simplify.h</b></p>
+<p class="p2"><span class="s1"><b>1</b></span><b>   </b><span class="s2">cd</span></p>
+<p class="p3"><span class="s1"><b>2</b></span><span class="s3"><b>   </b></span>discover -learn</p>
+<p class="p4"><span class="s1"><b>3</b></span><span class="s3"><b>   </b></span>Set <span class="s4">/xip_private</span> as your home project by clicking it, and then clicking <b>OK</b>.</p>
+<p class="p4"><span class="s1"><b>4</b></span><span class="s3"><b>   </b></span>Double-click <span class="s4">/xip_shared</span> to open the system project in the Browser.</p>
+<p class="p4"><span class="s1"><b>5</b></span><span class="s3"><b>   </b></span>Double-click <span class="s4">/xip_shared/src</span> <span class="s4">t</span>o view the source files.</p>
+<p class="p4"><span class="s1"><b>6</b></span><span class="s3"><b>   </b></span>Click <span class="s4">/xip/src/pipeline.c</span> to select it. Make sure that it is highlighted.</p>
+<p class="p4"><span class="s1"><b>7</b></span><span class="s3"><b>   </b></span>From the Browser menu bar, click <b>CM &gt; Check Out</b> (or similar command, depending on your integrated CM system) to check out a copy of this source file to your local project.</p>
+<p class="p4"><span class="s1"><b>8</b></span><span class="s3"><b>   </b></span>In the Browser, click the <b>Up</b> button twice to return to the top level.</p>
+<p class="p4"><span class="s1"><b>9</b></span><span class="s3"><b>   </b></span>Double-click <span class="s4">/xip_private</span> to open your local project and display the local project source files. This should display <span class="s2">pipeline.c</span>, the only file you have checked out to your local project.</p>
+<p class="p4"><span class="s1"><b>10</b></span><span class="s3"><b>   </b></span>Double-click <span class="s4">/xip/src/pipeline.c</span> to display it in the Viewer.</p>
+<p class="p4"><span class="s1"><b>11</b></span><span class="s3"><b>   </b></span>Go to the Viewer and add include file <span class="s4">extra.h</span> to the end of the header section of <span class="s4">pipeline.c</span>:</p>
+<p class="p5">#define _NO_PROTO<br>
+<br>
+#include &lt;xip.h&gt;<br>
+#include &lt;externals.h&gt;<br>
+#include &lt;stage.h&gt;<br>
+#include &lt;image_win.h&gt;<br>
+#include &lt;extra.h&gt;</p>
+<p class="p4"><span class="s1"><b>12</b></span><span class="s3"><b>   </b></span>Scroll to the bottom of the file and add a reference to a structure called <span class="s2">Used</span> as the last line of the file.</p>
+<p class="p5">DBG_OUT("UiwoCBMenu");<br>
+}</p>
+<p class="p5">struct Used test;</p>
+<p class="p4"><span class="s1"><b>13</b></span><span class="s3"><b>   </b></span>Click <b>Update</b>.</p>
+<p class="p4">Structure <span class="s2">Used</span> does nothing; it merely consists of three <span class="s2">int</span> data members.</p>
+<p class="p4"><span class="s2">Used</span> is defined in header file <span class="s4">extra2.h</span>. Source file <span class="s4">pipeline.c</span> does not include <span class="s4">extra2.h</span> directly. The file <span class="s4">pipeline.c</span> includes <span class="s4">extra.h</span>, which includes <span class="s4">extra2.h</span>. The file <span class="s4">pipeline.c</span> does not use anything from <span class="s4">extra.h</span> other than <span class="s4">extra2.h</span>.</p>
+<p class="p6"><br></p>
+<p class="p7"><img src="./tmp090401.jpg" alt="tmp090401.jpg"></p>
+<p class="p8"> </p>
+<p class="p4"><span class="s1"><b>14</b></span><span class="s3"><b>   </b></span>Click <b>Tools &gt; Simplify</b> from the model browser menu bar.</p>
+<p class="p4">DIScover examines the header files included by <span class="s4">pipeline.c</span> and finds that <span class="s4">extra.h</span> defines nothing for <span class="s4">pipeline.c</span>. However, <span class="s4">extra2.h</span>, which is included by <span class="s4">extra.h</span>, defines struct <span class="s2">Used</span>, which is now referenced by <span class="s4">pipeline.c</span>.</p>
+<p class="p4">When <b>Simplify Includes</b> finishes, DIScover comments out the necessary include file and adds the include file(s) that <span class="s4">pipeline.c</span> actually uses:</p>
+<p class="p5">#include &lt;xip.h&gt;<br>
+#include &lt;externals.h&gt;<br>
+/* #include &lt;stage.h&gt; */ /* Automatically commented out *<br>
+/* #include &lt;image_win.h&gt; */ /* Automatically commented out */<br>
+/* #include &lt;extra.h&gt; */ /* Automatically commented out */<br>
+#include &lt;extra2.h&gt; /* Automatically substituted *</p>
+<p class="p4"><span class="s1"><b>15</b></span><span class="s3"><b>   </b></span>Quit DIScover.</p>
+<p class="p4">If prompted whether or not to save any files, click <b>Quit Without Saving</b>.</p>
+<p class="p9"> </p>
+<p class="p10"> </p>
+</body>
+</html>

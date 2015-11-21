@@ -1,0 +1,64 @@
+// Logger.idl : IDL source for Logger.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (Logger.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+	[
+		object,
+		uuid(74A56660-1A59-11D1-96A6-00A0245836D0),
+		dual,
+		helpstring("ILoggerTrace Interface"),
+		pointer_default(unique)
+	]
+	interface ILoggerTrace : IDispatch
+	{
+		[propget, id(1), helpstring("property CommandLine")] HRESULT CommandLine([out, retval] BSTR *pVal);
+		[propput, id(1), helpstring("property CommandLine")] HRESULT CommandLine([in] BSTR newVal);
+		[propget, id(2), helpstring("property PID")] HRESULT PID([out, retval] long *pVal);
+		[propput, id(2), helpstring("property PID")] HRESULT PID([in] long newVal);
+		[id(3), helpstring("method LogInstance")] HRESULT LogInstance([in] long PID, [in,string] BSTR strCommandLine);
+		[id(4), helpstring("method LogEntry")] HRESULT LogEntry([in] long objEntry, [in,string] BSTR strEntryName);
+		[id(5), helpstring("method LogExit")] HRESULT LogExit([in] long objEntry);
+		[id(6), helpstring("method LogVal")] HRESULT LogVal([in] long objEntry, [in,string] BSTR strName, [in] VARIANT varVal);
+	};
+	[
+		object,
+		uuid(74A56662-1A59-11D1-96A6-00A0245836D0),
+		dual,
+		helpstring("ILoggerDebug Interface"),
+		pointer_default(unique)
+	]
+	interface ILoggerDebug : IDispatch
+	{
+	};
+[
+	uuid(62432510-1A4F-11D1-96A6-00A0245836D0),
+	version(1.0),
+	helpstring("Logger 1.0 Type Library")
+]
+library LOGGERLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(74A56661-1A59-11D1-96A6-00A0245836D0),
+		helpstring("LoggerTrace Class")
+	]
+	coclass LoggerTrace
+	{
+		[default] interface ILoggerTrace;
+	};
+	[
+		uuid(74A56663-1A59-11D1-96A6-00A0245836D0),
+		helpstring("LoggerDebug Class")
+	]
+	coclass LoggerDebug
+	{
+		[default] interface ILoggerDebug;
+	};
+};

@@ -1,0 +1,67 @@
+#
+# This only serves as a template. A
+# true license file wil be generated
+# by SET for your site.
+#
+
+SERVER {server-name} {host-id} {port}
+VENDOR setechd
+
+#
+# Package definitions
+#
+ 
+PACKAGE Base setechd 7.000 42F612E8FA07 COMPONENTS="DISCOVER Access \
+	TestLinkRO DefectLinkRO Metrics" OPTIONS=SUITE
+
+PACKAGE QualityBase setechd 7.000 ADB0477BF384 COMPONENTS="QFS_Master \
+	QA_Cockpit QAC" OPTIONS=SUITE
+
+PACKAGE QualityPlus setechd 7.000 FB42A87FFB5A COMPONENTS="QA_Report \
+	QA_Browse" OPTIONS=SUITE
+
+PACKAGE Structural setechd 7.000 D073FBB5CFFB COMPONENTS="Delta \
+	Modularity" OPTIONS=SUITE
+
+PACKAGE AdminExtras setechd 7.000 81AA8EC6A172 \
+	COMPONENTS="DefectLinkRW TestLinkRW" OPTIONS=SUITE
+
+PACKAGE Developer setechd 7.000 FEA0B1D4A84E COMPONENTS="ModelClient \
+	DocLinkRO SubCheck Admin C_CPP" OPTIONS=SUITE
+
+PACKAGE Engineer setechd 7.000 917B0550AECF COMPONENTS="TPM DFA \
+	Remediation TaskFlow DocLinkRW" OPTIONS=SUITE
+
+PACKAGE ProjectLeader setechd 7.000 2D710916A29B COMPONENTS=QFSMaster \
+	OPTIONS=SUITE
+
+PACKAGE Architect setechd 7.000 D77862E22817 COMPONENTS="Extract \
+	Package Partition Dormant Simplify" OPTIONS=SUITE
+
+INCREMENT Developer       setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Engineer        setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT ProjectLeader   setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Architect       setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Base            setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QualityBase     setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QualityPlus     setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Structural      setechd 7.000 permanent [num-of-licenses] [license-code]
+
+#
+# Add ons
+# 
+
+INCREMENT AutoDoc         setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Debug           setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Java            setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_Complex      setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_Global       setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_Port         setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_Stand        setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_Stats        setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_Struct       setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT QA_TestCov      setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT SQL             setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Statistics      setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT WebView         setechd 7.000 permanent [num-of-licenses] [license-code]
+INCREMENT Y2K             setechd 7.000 permanent [num-of-licenses] [license-code]

@@ -1,0 +1,237 @@
+# java.ui
+
+# format "Query Name"<ws>"Pref Name"
+# Pref Name is a name of preference. If specified and boolean value of this preference is true,
+# this query will be skipped 
+
+"Files" [SHOW] ["%s%s ==> %s" kind name fname]
+	"Where Referenced"
+	"Files Where Included"
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+	"Defines"
+	"Defines Packages"
+	"Defines Methods"
+	"Defines Class Variables"
+	"Defines Classes"
+	"Defines Interfaces"
+	"Defines Fields"
+	"Show Instances"
+	"Show Modified Entities"
+	"Declares"
+[END]
+
+"Packages" [SHOW]
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Packages"	
+	"Uses Classes"
+	"Uses Interfaces"
+	"Show Nested"
+	"Show Nested Classes"
+	"Show Nested Interfaces"
+	"Show Nested Packages"
+	"Show Containing"
+	"Show Instances"
+	"Show Modified Entities"
+	"Declared In"
+	"Declares"
+[END]
+
+"Methods" [SHOW] ["%s %s %s%s %s ==> %s" java_kind type name c_proto java_attributes lname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Defined As"
+	"Show Decl Usage"
+	"Show Instances"
+	"Show Overrides"
+	"Declared In"
+[END]
+
+"Class Variables" [SHOW] ["%s %s %s %s ==> %s" java_kind type name java_attributes lname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Defined As"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+[END]
+
+"Classes" [SHOW] ["%s %s %s ==> %s" java_kind type name fname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Nested"
+	"Show Nested Classes"
+	"Show Nested Interfaces"
+	"Show Containing"
+	"Show Methods"
+	"Show Fields"
+	"Extends"
+	"Implements"
+	"Extends/Implements"
+	"Where Extended"
+	"Show Related Classes"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+	"Declares"
+[END]
+
+"Interfaces" [SHOW] ["%s %s %s ==> %s" java_kind type name fname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Show Nested"
+	"Show Nested Classes"
+	"Show Nested Interfaces"
+	"Show Containing"
+	"Show Methods"
+	"Show Fields"
+	"Extends Interfaces"
+	"Where Implemented"
+	"Where Interface Extended"
+	"Where Extended/Implemented"
+	"Show Related Classes"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+	"Declares"
+[END]
+
+"String Literals" [SHOW] ["%s %s" java_kind name]
+	"Where Referenced"
+	"Where Used"
+	"Show Instances"
+[END]
+
+"Numeric Literals" [SHOW] ["%s %s" kind name]
+	"Where Referenced"
+	"Where Used"
+	"Show Instances"
+[END]
+
+"Local Variables" [SHOW] ["%s %s" java_kind name]
+	"Where Referenced"
+	"Show Instances"
+	"Show Declarations"
+[END]
+
+"Projects" [HIDE] ["%s %s ==> %s" java_kind name fname]
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+	"Defines"
+	"Defines Packages"
+	"Defines Files"
+	"Defines Methods"
+	"Defines Class Variables"
+	"Defines Classes"
+	"Defines Interfaces"
+	"Defines Fields"
+	"Show Instances"
+	"Declares"
+[END]
+
+"Fields" [HIDE] ["%s %s %s %s ==> %s" java_kind type name java_attributes lname]
+	"Where Defined"
+	"Where Referenced"
+	"Where Used"
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Show Defined As"
+	"Show Decl Usage"
+	"Show Instances"
+	"Declared In"
+[END]
+
+"Instances" [HIDE]
+	"Where Defined"
+[END]
+
+"Scopes" [HIDE] ["%s %s" java_kind name]
+	"Uses"
+	"Uses Packages"
+	"Uses Methods"
+	"Uses Class Variables"
+	"Uses Classes"
+	"Uses Interfaces"
+	"Uses Fields"
+	"Uses String Literals"
+	"Uses Numeric Literals"
+	"Uses Local Variables"
+	"Defines"
+	"Defines Packages"
+	"Defines Methods"
+	"Defines Class Variables"
+	"Defines Classes"
+	"Defines Interfaces"
+	"Defines Fields"
+	"Show Instances"
+	"Declares"
+[END]
+
+"Semtype" [HIDE] ["%s %s" java_kind name]
+	"Where Referenced"
+	"Where Used"
+[END]
+

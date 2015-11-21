@@ -1,0 +1,37 @@
+
+/*------------------------------------------------------------------------------------------
+
+    ADTTREE.STC
+
+    Autor      : Bernd Rumscheid
+    Date       : 18.01.89
+    nderungen :
+
+ ------------------------------------------------------------------------------------------*/
+
+#include "stnum.stc"
+
+
+typedef
+    struct TREE
+    {
+      int                   name;
+      int                   x, y;
+      struct TREE           *succ;                                                /* Shne */
+      struct TREE           *next;                       /* nchster Sohn desselben Vaters */
+    } TREE;
+
+
+
+typedef
+    struct TREE_LIST
+    {
+      TREE                  *t;
+      ST_GRAPH              *SG;
+      int                   leftX, rightX, height;
+      struct TREE_LIST      *next;
+    } TREE_LIST;
+
+
+/* END ADTTREE.STC */
+

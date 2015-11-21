@@ -1,0 +1,19 @@
+#!/bin/csh -f
+#
+echo ""
+echo "Installing the Learn directory in $DISLearnHome..."
+echo ""
+
+cd $PSETHOME/lib
+mkdir -p $DISLearnHome/Learn
+if ( "`DISarch`" == hp700 ) then
+cd $PSETHOME/lib/Learn ; tar -cf - AdminDir private src/extract src/xip src/ttt src/xcalentool src/package | ( cd $DISLearnHome/Learn; tar -xovf -)
+else
+cd $PSETHOME/lib/Learn ; tar -cf - AdminDir private src/extract src/xip src/ttt src/xcalentool src/package | ( cd $DISLearnHome/Learn; tar -xvf -)
+endif
+chmod -R u $DISLearnHome/Learn
+
+echo ""
+echo "Finished installing Learn."
+echo ""
+

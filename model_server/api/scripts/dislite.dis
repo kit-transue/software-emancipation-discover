@@ -1,0 +1,433 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+change_prompt {}
+
+source_dis list_ent.dis
+
+proc languages {} {
+    if { [getvar dis_languages] == "" } {
+	set ll {}
+	set mods [modules /]
+	set lan [apply language $mods]
+	foreach l $lan {
+	    switch $l {
+		UNKNOWN {}
+		ELS {
+		    set els_mods [filter {language=="ELS"} $mods]
+		    foreach {cname["*(.*)", "(1)"]} suff ii $els_mods {
+			lappend ll [els language $suff]
+		    }
+		}
+		default {lappend ll $l}
+	    }
+	}
+	setvar dis_languages $ll
+    }
+    getvar dis_languages
+}
+
+set langs [languages]
+
+if { [lsearch $langs CPP] >= 0 || [lsearch $langs java] >= 0} {
+    source_dis inheritance.dis
+}
+
+proc set_printformat { icon } {
+    if {$icon == 1} {
+	    printformat "%s %s\t%s" kind_icon dis_play etag
+    } else {
+	    printformat "%s\t%s" dis_play etag
+    }
+    return 0
+}
+
+# open definition in browser
+proc dis_before_open_def { args } {
+    set obj [eval set_copy $args]
+    if [size $obj] {
+	switch [dis_check_defs $obj [kind $obj]] {
+	    -1 { return "prj_or_scope" }
+	    0 { return "dislite_error" }
+	    1 { return "single_def" }
+	    default { return "multi_def" }
+	}
+    } else {
+	return "dislite_error"
+    }
+}
+
+proc open_single_def { args } {
+    set obj [eval set_copy $args]
+    set def [dis_get_defs $obj [kind $obj]]
+    set ln [lname $def]
+    if {$ln != ""} {
+	if [viewable $ln] {
+	    set res [fname $def]
+	    if {$res!=""} {
+		return [concat \"$res\" [line $def]]
+	    }
+        }
+    }
+    return ""
+}
+
+proc open_default { args } {
+    set obj [ eval set_copy $args ]
+    return [ dis_get_defs $obj [kind $obj] ]
+}
+
+# describe
+proc dis_describe { args } {
+    set obj [eval set_copy $args]
+    if [size $obj] {
+	return [describe_symbol $obj]
+    } else {
+	return "dislite_error"
+    }
+}
+
+proc describe_symbol { sym } {
+    set kind [kind $sym]
+    set name [name $sym]
+
+    switch $kind {
+	proj    {return [list $kind $name]}
+	scope   {return [list $kind $name]}
+	module  {return [list $kind $name $name]}
+    }
+    set no_defs [dis_check_defs $sym $kind]
+    if {$no_defs == 1} {
+	set single_def [dis_get_defs $sym $kind]
+	set file [lname $single_def]
+    } elseif {$no_defs > 1} {
+	set file [list {} $no_defs]
+    } elseif [generated $sym] {
+	set file generated
+    } else {
+	set file [rscope $sym]
+    }    
+
+    switch $kind {
+	funct {
+	    if [cfunction $sym] {
+		append name [args $sym]
+		set kind cfun
+	    } 
+	    if [member $sym] {
+		set kind method
+		lappend kind [ppp $sym]
+
+		if [abstract $sym] {
+		    lappend kind abstract
+		} elseif [virtual $sym] {
+		    lappend kind virtual
+		}
+	    }
+	    if [inline $sym] {
+		lappend kind inline
+	    }
+	}
+
+	var { 
+	    if [member $sym] {
+		set kind field
+		lappend kind [ppp $sym]
+	    }
+	}
+	field {
+	    lappend kind [ppp $sym]
+	}
+	macro {
+	    if {$no_defs == 1} {
+		set def [uses -version $single_def]
+		if {[size $def]==1} {
+		    if [const $single_def] {
+			lappend name [name $def]
+		    } else {
+			append name [name $def]
+		    }
+		}
+	    }
+	    return [list $kind $name $file]
+	}
+	default {return [list $kind $name $file]}
+    }
+    if [static $sym] {lappend kind static}
+    lappend kind [type $sym]
+    return [list $kind $name $file]
+}
+
+# editor describe/query/open_def/instance 
+proc ed_inst_def {fn pos} {
+    set inst [get_current_inst $fn $pos]
+    if { $inst == "" } {
+	return "dislite_error"
+    }
+    set sym [get_instance_symbol $inst]
+    if [local $sym] {
+	set res [list local [name $sym] [inst_scope $inst]]
+    } else {
+	set res [describe_symbol $sym]
+    }
+    return $res
+}
+
+proc check_inst_sym { fn pos } {
+    set inst [get_current_inst $fn $pos]
+    if {$inst==""} {
+	return "dislite_error"
+    } else {
+	return "dislite_ok"
+    }
+}
+ 
+proc get_inst_sym { fn pos } {
+    set inst [get_current_inst $fn $pos]
+    set symbol [get_instance_symbol $inst]
+    if [local $symbol] {
+	set symbol [get_declarations $inst]
+    }
+    return $symbol
+}
+
+# extension of access commands
+proc print_file_from_pset {fn} {
+    if [catch {print_pset $fn}] {
+	print_file $fn
+    }
+}
+
+proc get_all_symbols {} {
+    set fn [getvar symCacheFile]
+    set scope [string range [client_scope] 1 end]
+    if { $scope != "" } {
+	set fn "$fn.$scope"
+    }
+    print_file $fn 
+}
+
+proc dis_get_subs { arg } {
+    set res [contents $arg]
+    if [scope $arg] {
+	if {[size $res]==1 && ![string compare $arg [name $res]]} {
+	    set res [contents $res]
+	}
+    }
+    return $res
+}
+
+proc dis_roots {} {
+    if {[set_mode] == "off"} {
+	roots
+    } else {
+	root_scopes
+    }
+}
+
+proc where_defined_local { local_sym } {
+    set local_instances [ instances $local_sym ]
+    get_instance_scope $local_instances
+}
+
+proc defines_locals { args } {
+    set res [new_set]
+    set f [filter funct $args]
+    set rest [filter !funct $args]
+    foreach n [apply name $f] { set cache($n) 1}
+    set def_file [ where defined $f ]
+    set decls [filter local [get_declarations $def_file]]
+    foreach d $decls {	
+	if [info exists cache([inst_scope $d])] {
+	    sappend $res $d 
+	}
+    }
+    set rest_res [uses -local $rest]
+    if [size $rest_res] {
+	set res [set_unique $res $rest_res]
+    }
+    return $res
+}
+
+proc where_defined { args } {
+	set local [filter local $args]
+	set nlocal [filter !local $args]
+	set res [where_defined_local $local]
+	set res [set_union $res [where defined $nlocal]]
+	return [set_unique $res]
+}
+
+proc where_called { args } {
+    filter function [where used $args]
+}    
+
+# cache management
+set cur_inst {}
+
+proc get_current_inst { file pos } {
+    global cur_inst
+    if { [lindex $cur_inst 0]==$file && [lindex $cur_inst 1]==$pos } {
+	return [lindex $cur_inst 2]
+    } else {
+	if [catch {set inst [set_copy -e $pos:[lname $file]]}] {
+	    set cur_inst {}
+	    return ""
+	} else {
+	    set cur_inst [list $file $pos $inst]
+	    return $inst
+	}
+    }
+}
+
+# proj/scope return -1, otherwise return number of definitions 
+proc dis_check_defs { obj kind } {
+    switch $kind {
+	scope -
+	proj   {
+	    return -1
+	}
+	module -
+	instance  {
+	    return 1 
+	}
+	string { 
+	    set def [instances $obj]
+	    return [size $def]
+	}
+	local { 
+	    set def [get_declarations $obj]
+	    return [size $def]
+	}
+	macro -
+	typedef -
+	struct {
+	    set def [def_symbols $obj]
+	    set no_defs [size $def]
+	    if {$no_defs > 1} {
+		set def [filter included $def]
+		set no_defs [size $def]
+	    }
+	    return $no_defs
+	}
+	default { 
+	    set def [def_symbols $obj]
+	    return [size $def]
+	}
+    }
+}
+
+proc dis_get_defs { obj kind } {
+    switch $kind {
+	scope -
+	proj   {
+	    return [contents $obj]
+	}
+	module -
+	instance  {
+	    return $obj
+	}
+	string {
+	    return [instances $obj]
+	}
+	local {
+	    return [get_declarations $obj]
+	}
+	macro -
+	typedef -
+	struct {
+	    set def [def_symbols $obj]
+	    set no_defs [size $def]
+	    if {$no_defs > 1} {
+		set def [filter included $def]
+	    }
+	    return $def
+	}
+	default {
+	    return [def_symbols $obj]
+	}
+    }
+}
+
+proc unsafe_query { args } {
+    if [catch { set result [eval $args] } msg] {
+	puts "dislite_error"
+	puts $msg
+    } else {
+	puts "dislite_ok"
+	print $result
+    }
+    return ""
+}
+
+proc dis_instances { args } {
+    set inst [instances $args]
+    puts "[name $inst]"
+    foreach lname line $inst {
+	puts "$lname: [apply line $inst $line]"
+    }
+}
+
+proc prepare_names {args} {
+    set obj [set_copy $args]
+    foreach el $obj {
+	puts [list [pname $el] [fname $el] [lname $el]]
+    }
+}
+
+proc browser_query { cmd } {
+    if [catch {uplevel #0 $cmd} result] {
+	set result
+    }
+    print $result
+}
+
+proc dis_query { cmd {attr {}} } {
+    if [catch {uplevel #0 $cmd} result] {
+	return $result
+    }
+    if [llength $attr] {
+	print_attribute $attr $result
+    } else {
+	print $result
+    }
+}
+
+proc dis_print { set {attr {}} } {
+    set result [uplevel #0 "set_copy -i $set"]
+
+    if [llength $attr] {
+	print_attribute $attr $result
+    } else {
+	print $result
+    }
+}
+
+proc dis_modules {} {
+    set all_modules [modules /]
+    print_attribute fname $all_modules
+}
+

@@ -1,0 +1,174 @@
+#!/bin/sh
+#
+# Almost identical to ptest_create_all_hooks except that this processes one file instead
+# of all files from a project, and requires specification of output directory. Also, it 
+# creates .tok file in output directory, to facilitate analysis of .hook and .diff files.
+#
+# Example invocation:
+#
+# ptest_create_one_hook -test /net/homer/home/local/pmod_test/sun4/CVSCC.sun4
+# -file /net/homer/home/local/pmod_test/sun4/CVSCC.sun4/CVSCC/Sec13/ovrld1S.C
+# -outdir /net/homer/home/local/pmod_test/sun4/CVSCC.sun4 -pd $PSETHOME/bin 
+# -version gcc-2.6.0
+#
+# File name and output directory name can also be relative with respect to current directory.
+# Version name, if given, is attached to the constructed output file name. So, unlike 
+# ptest_create_all_hooks_from_list which uses -version to construct output directory
+# name, this script uses -outdir for output directory, and attaches -version to output
+# files to distinguish parsers.
+#
+# Only -file and -pd are required; defaults for -test and -outdir are current directory,
+# default for -version is empty string.
+#
+cOrC="f"
+test=""
+outdir=""
+version=""
+
+while true 
+do
+
+if [ "$1" = "-cOrC" ] ; then
+	cOrC="t"
+	shift ;
+elif [ "$1" = "-pd" ] ; then
+        [ -n "$2" ] && { pd=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-outdir" ] ; then
+        [ -n "$2" ] && { outdir=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-file" ] ; then
+        [ -n "$2" ] && { infile=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-test" ] ; then
+        [ -n "$2" ] && { test=$2 ; shift ; }
+        shift ;
+elif [ "$1" = "-version" ] ; then
+        [ -n "$2" ] && { version=$2 ; shift ; }
+        shift ;
+else
+	break;
+fi
+
+done
+
+if [ -z "$pd" -o -z "$infile" -o -z "$pd" ]
+then
+	echo "usage: $0"
+	echo " -cOrC  /* if .c use c-parser.  if .C use cp-parser */"
+	echo " -file test_file"
+        echo " -pd parser_directory"
+	echo " -test test_directory"
+	echo " -outdir output_directory"
+	echo " -version parser_name"
+	echo " [other flags passed to ptest_create_hooks]"
+	exit 0;
+fi
+#
+# Create absolute paths and workspace.
+# Absolute path for input file name:
+#
+if [ -z "$outdir" ] 
+then
+	outdir=`pwd`
+fi
+if [ -z "$test" ] 
+then
+	test=`pwd`
+fi
+abs_path=`echo $infile | grep "^/"`
+if [ "`echo $abs_path`" != "`echo $infile`" ]
+then
+	infile=`pwd`/$infile
+fi
+#
+# Absolute path for test directory:
+#
+abs_path=`echo $test | grep "^/"`
+if [ "`echo $abs_path`" != "`echo $test`" ]
+then
+	test=`pwd`/$test 
+	test=`echo $test | sed 's|\.$||'`
+fi
+logname=`basename $infile ".[Cc]"`
+#
+# Absolute path for output directory:
+#
+abs_path=`echo $outdir | grep "^/"`
+if [ "`echo $abs_path`" != "`echo $outdir`" ]
+then
+	outdir=`pwd`/$outdir
+fi
+aux=$outdir
+
+if [ ! -d $aux ] ; then 
+	echo "Making output directory $aux"
+	mkdir $aux || exit 1;
+elif [ ! -d $aux/parse ] ; then
+	echo "Making output directory ${aux}/parse"
+	mkdir $aux/parse || exit 1;
+else
+	rm -f $aux/$logname.log
+fi
+#
+# Get path for source files from source_and_include_paths file in $test
+# directory.
+#
+include_path=""
+source_path=""
+[ -n "$test" -a -f $test/source_and_include_paths ] &&
+{
+include_path=`
+(
+include_path=""
+read source_path
+while read line
+do
+	include_path="${include_path} -I $test/${line}"
+done
+echo ${include_path}
+) < $test/source_and_include_paths ` || exit 1
+}
+#
+# Specify full parser name to be passed to ptest_create_hooks. Option "-oldParser"
+# is used for historical reasons, however just one parser is used in this code.
+#
+oldParser="-oldParser $pd/cp-parser"
+startdate=`date`
+
+file=$infile
+if [ -n "$test" ] 
+then
+	var=`echo $file | sed "s!$test!!"`
+else
+	var=`echo $file`
+fi
+cmprfilename=`echo $var | sed -e 's/\.\///g' -e 's/^\///' -e 's/\//-/g'`
+if [ -n "$version" ] 
+then
+	cmprfilename=`echo $cmprfilename`"-$version"
+fi
+echo "Testing file [$file] compressed name [$cmprfilename]..."
+
+if [ "$cOrC" = "t" -a "`basename $file`" = "`basename $file .c`.c" ]
+then
+#
+# Use c-parser and default include path for .c files if command line option -cOrC is given.
+#
+	oldParser="-oldParser $pd/c-parser"
+#
+# Call ptest_create_hooks to create hooks for $file. Put the result in file $cmprfilename.
+#
+	ptest_create_hooks -outdir $aux -file $cmprfilename -parse $aux/parse $oldParser -incl +$test/$source_path $include_path $* $file >> $aux/$logname.log 2>&1
+#
+# For other files use the default, cp-parser (already specified above), and C++ include path.
+#
+# Note that for Interviews test suite CP_LANG_INCL must be removed.
+#
+else
+	ptest_create_hooks -outdir $aux -file $cmprfilename -parse $aux/parse $oldParser -incl +$test/$source_path $include_path -I $CP_LANG_INCL $* $file >> $aux/$logname.log 2>&1
+fi
+
+echo "Tested 1 file."
+echo "Started  test on: $startdate"
+echo "Finished test on: `date`"

@@ -1,0 +1,1499 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+#
+Command
+Description
+Syntax
+	1
+>
+Direct command output to a file.
+command > filename
+	2
+>>
+Append command output to a file.
+command >> filename
+	3
+add_action
+Adds an item to the action menu in the Browser (same as add_item Action command).
+add_action action_name command_string
+	4
+add_attribute
+Create a new attribute using the specified attribute expression.
+add_attribute attribute_name attribute_expression
+	5
+add_category
+Adds an item to the category menu in the Browser (same as add_item Category).
+add_category category_name command_string
+	6
+add_component
+Define the specified set of entities or instances as a component in the specified set of scopes.
+add_component set_of_entities set_of scopes
+	7
+add_export
+Define the specified set of dynamically-linked library as exporting the specified set of functions and/or variables.
+add_export set_of_dlls set_of_functions/variables
+	8
+add_filter
+Add an item to the filter menu in the Browser (same as add_item Filter command).
+add_filter filter_name command_string
+	9
+add_impact_query
+Add a query rule to the list of query rules for impact analysis.
+add_impact_query query_name
+	10
+add_import
+Define the specified set of scopes (this scope must be an executable or dynamically-linked library) as importing the specified dynamically-linked set of libraries.
+add_import set_ofimporting_scopes set_of_imported_dlls
+	11
+add_item
+Adds an item to one of the browser menus where command_string is the action initiated by the item.
+add_item [Query | Category | Filter | Action | Project | user_def_menu ] item_name command_string
+	12
+add_item Action
+Adds a new item to the action menu in the Browser.
+add_item Action item_name command_string
+	13
+add_item Category
+Adds a new item to the category menu in the Browser.
+add_item Category item_name command_string
+	14
+add_item Filter
+Adds a new item to the filter menu in the Browser.
+add_item Filter item_name command_string
+	15
+add_item Project
+Adds a new item to the project menu in the Browser.
+add_item Project item_name command_string
+	16
+add_item Query
+Adds a new item to the query menu in the Browser.
+add_item Query item_name command_string
+	17
+add_menu
+Add a menu to the Browser's menu bar; allows cascading menus (eg add_menu Y2K.Report.Summary.ASCII).
+add_menu menu_name.submenu_1_name.submenu_2_name 
+	18
+add_query
+Adds a query to the query menu in the Browser (Same as add_item Query).
+add_query query_name command_string
+	19
+add_separator
+Add a graphical separator at the bottom of a menu; all subsequently added items appear below the separator.
+add_separator menu_name
+	20
+add_sll
+Define the specified set of entities or instances as a component in the specified set of scope (same as add_component).
+add_sll set_of_entities set_of_scopes
+	21
+apply
+Apply the specified attribute to each entity or instance in the specified set, removing duplicate entities or instances.
+apply attribute_name set_name
+	22
+argument_of
+Returns all functions that take the specified argument.
+argument_of argument
+	23
+attribute
+Define an attribute.
+attribute [enum attribute_name "value ..."[enum info int print set string]
+	24
+browser
+Command for manipulating the browser gui.  For more information look at browser subcommand.
+browser [ add | remove | set ]
+	25
+browser add
+Adds an item to the browser column specified.
+browser add [ category | query ] name command 
+	26
+browser remove
+Removes a user-inserted item from the specified browser column.
+browser remove [ category | query ] name 
+	27
+browser set
+Sets the appropriate column in the browser (set elements or set results) or the mini-browser (set next) to contain the set specified by set_name.
+browser set [ elements | results | next ] set_name
+	28
+call_put_start_script
+Check in the specified file.
+call_put_start_script filename bugno comment
+	29
+change_prompt
+Change the prompt that appears in the Access Emacs buffer
+Use "\" to precede special characters like spaces.
+change_prompt new_prompt
+	30
+contents
+Returns the logically defined projects and files one level below the specified project.
+contents project_name
+	31
+create_dll
+Create a new scope of the type "dynamically-linked library" and add it to the Information Model.
+create_dll dll_name
+	32
+create_exe
+Create a new scope of the type "executable" and add it to the Information Model.
+create_exe exe_name
+	33
+create_sll
+Create a new scope of the type "statically-linked library" and add it to the Information Model.
+create_sll sll_name
+	34
+data
+Dfa command.  Look at data <subcommand> for more 
+information.
+data [ cells | inflow | outflow | decl | node | instance | symbol ] 
+	35
+data cells
+Returns the data cells which are affected in the flow of the specified entity through the given set of functions.
+data cells entity function_set
+	36
+data decl
+Returns the symbols of the given entities.  If the given entity is a local variable, the ast node is returned. 
+data decl entities
+	37
+data inflow
+Returns the set of cells which can give the entity value through the specified functions. 
+data inflow entity function_set
+	38
+data instance
+Returns the instance(s) corresponding to the specified argument (an entity, ast node or data cell).
+data instance arg
+	39
+data node
+Returns the ast node of the given instance or entity.
+data node instance/entity
+	40
+data outflow
+Returns the set of cells that the entity can give value through the specified functions.
+data outflow entity function_set
+	41
+data symbol
+Returns the symbol corresponding to the specified argument (instance, ast node or data cell).
+data symbol arg
+	42
+declarations
+Returns all of the specified instances that are declarations.
+declarations instance_name ... 
+	43
+def_symbols
+Returns the definition of the specified symbol.
+def_symbols symbol_name
+	44
+defines
+Returns all entities that the specified entity defines.
+defines entity_name
+	45
+dfa_cells
+Returns the data cells which are affected in the flow of the specified entities through the given set of functions.
+dfa_cells entity_set function_set
+	46
+dfa_inflow
+Returns the set of cells which can give the given entities value through the specified functions. 
+dfa_inflow entity_set function_set
+	47
+dfa_outflow
+Returns the set of cells that the specified entities can give value through the given functions.
+dfa_outflow entity_set function_set
+	48
+diff_delete
+Deletes node and replaces it with an empty string.
+diff_delete node
+	49
+diff_delete
+Deletes region from the start of node1 to the end of node2.
+diff_delete node1 node2
+	50
+diff_insert_after
+Inserts string after node.
+diff_insert_after string node
+	51
+diff_insert_before
+Inserts string before node.
+diff_insert_before string node
+	52
+diff_replace
+Replaces the text of node with the string string.
+diff_replace string node
+	53
+diff_replace
+Replaces the text of the region from the start of node1 to the end of node2 with string.
+diff_replace string node1 node2
+	54
+diff_tpm_all
+Applies pattern to each file in scope, as a side effect  a `diff-file' is generated for each file with a non-zero number of matches.
+diff_tpm_all pattern scope
+	55
+diff_tpm_file
+Applies pattern to file.  Generates a `diff-file' if file has a non-zero number of matches.
+diff_tpm_file pattern file
+	57
+do_dormant
+Execute a dormant code analysis on the specified entity.
+do_dormant entity_name
+	58
+emacs_command
+Executes an Emacs command.
+emacs_command command args
+	59
+exports
+Returns all functions and variables exported by the specified DLL.
+exports dll_name
+	60
+extfile
+Defines a file as belonging to an application outside the Information Model.
+extfile physical_pathname
+	61
+fetch
+Equivalent to Manage=>Get or Manage=>Fetch in the Browser.  Fetches a file from the configuration management system.
+fetch module1 [ module2 module3 ... ] [ -opt optstr ]
+	62
+filesb
+Invokes a graphical file selection browser.
+filesb
+	63
+filter
+For the specified set, returns the members for which the the specified attribute-expression returns true (non-zero and non-empty).
+filter attribute_expression set
+	64
+foreach
+For every element in set, set var to the element and perform action.
+foreach var set { action }
+	65
+fork
+Fork the process controlling Access
+
+	66
+friend_of
+Outputs the classes of whom the specified class is a friend.
+friend_of class
+	67
+get_bool_pref
+Returns the boolean value of a preference (0 or 1).  If the preference is not a boolean (i.e. it is a string preference), get_bool_pref returns 1 if the preference is set, 0 otherwise.
+get_bool_pref pref_name
+	68
+get_closure
+Returns 1 if closure is turned on, 0 otherwise.
+get_closure
+	69
+get_containing
+Returns the entities which contain the entity given by entity_name.
+get_containing entity_name
+	70
+get_decl_usage
+Returns a list of structures used in the declaration of the given entity.  (Same as Show Decl Usage in the Browser).
+get_decl_usage entity_name
+	71
+get_declares
+Returns all entities declared but not defined in the specified file
+get_declares logical_pathname
+	72
+get_documents
+Prints a list of documents contained within the specified project.
+get_documents project_name
+	73
+get_friends
+Returns the classes and functions that have access to the private and protected members of the specified class.
+get_friends class_name
+	74
+get_include_files
+Returns the files that the specified source file or header file includes.
+get_include_files logical_pathname
+	75
+get_instance_scope
+Returns the project level of the specified instance.
+get_instance_scope instance_name
+	76
+get_instance_statement
+Returns the statement containing the specified instance.
+get_instance_statement instance_name
+	77
+get_instance_symbol
+Returns the symbol associated with the specified instance.
+get_instance_symbol instance_name
+	78
+get_linked_entities
+Returns a list of entites to which the specified entity has links.
+get_linked_entities entity_name
+	79
+get_links
+Returns a list of links which the specified entitiy has to other entities.
+get_links entity_name
+	80
+get_member_data
+Returns the member data (or fields) of the specified class or structure 
+get_member_data class_name | structure_name]
+	81
+get_member_functions
+Returns the member functions of the specified class.
+get_member_functions class_name
+	82
+get_nested
+Returns a list of the nested entities in the specified project(s).
+get_nested project_name
+	83
+get_nested_classes
+Returns a list of the nested classes within the specified project(s).
+get_nested_classes project_name
+	84
+get_nested_enums
+Returns a list of the nested enums within the specified project(s).
+get_nested_enums project_name
+	85
+get_nested_typedefs
+Returns a list of the nested typedefs within the specified project(s).
+get_nested_typedefs project_name
+	86
+get_nested_unions
+Returns a list of the nested unions within the specified project(s).
+get_nested_unions project_name
+	87
+get_overrides
+Shows the functions which override the specified function.
+get_overrides function_name
+	88
+get_pref_value
+Returns the value of the specified preference
+get_pref_value preference_name
+	89
+get_put_start_script
+Returns the script that initiates checkin under the current configuration management system.
+get_put_start_script
+	90
+get_reference_files
+Returns the files in which the specified entities are referenced (same as where referenced).
+get_reference_files entity_name
+	91
+get_relations
+Returns a list of the relations defined in the specified project.
+get_relations project_name
+	92
+get_scope
+Returns a list of projects in the current scope.
+get_scope
+	93
+get_selection
+Retrieve the entity currently selected in the Browser or mini-browser..
+get_selection
+	94
+get_smt
+Loads a source mode tree into memory.
+get_smt smt_name
+	95
+get_sub_classes
+Returns the classes that inherit from the specified class. 
+get_subclasses class_name
+	96
+get_subsystem_clients
+Returns the clients of the specified subsystem.
+get_subsystem_clients subsystem_name
+	97
+get_subsystem_members
+Returns the members of the specified subsystem.
+get_subsystem_members subsystem_name
+	98
+get_subsystem_of_member
+Returns the subsystem to which the specified member belongs.
+get_subsystem_of_member entity_name
+	99
+get_subsystem_peers
+Returns the peers of the specified subsystem.
+get_subsystem_peers subsystem_name
+	100
+get_super_classes
+Returns the classes from which the specified class inherits.
+get_superclasses class_name
+	101
+get_tmp_group_name
+Returns the name that the next temporary group will be given (i.e. RESULT_1, RESULT_2 ...).
+get_tmp_group_name
+	102
+getvar
+Returns the value of a variable that was set using setvar.
+getvar variable_name
+	103
+graph
+Creates or performs operations on a graph based on the specified set.
+graph [ add | create | compute | local | global ] set_name
+	104
+group
+Collective command for group functions; supersedes next.
+group [ info | new | tmp | save | saveas | rename | set |  get | size | exists ] group_name
+	105
+group exists
+Returns 1 if the specified group exists, 0 otherwise.
+group exists group_name
+	106
+group get
+Retrieves the elements of the specified group.
+group get group_name
+	107
+group info
+Returns a list of all the existing groups.
+group info
+	108
+group new
+Creates a new group with the given name containing the specified elements.
+group new group_name elements
+	109
+group save
+Saves the group group_name to disk.
+group save group_name
+	110
+group saveas
+Save the specified group under a new name.
+group saveas old_name new_name
+	111
+group size
+Returns the number of elements in the specified group.
+group size group_name
+	112
+group tmp
+Creates a temporary group containing the specified elements.
+group tmp group_name elements
+	113
+hide_scopes
+Prevents the return of entities or instances contained within the specified scope.
+hide_scopes scope_name ...
+	114
+home_proj
+Returns the home project for the current session.
+home_proj
+	115
+ifd_dump
+Outputs smt information from a file.
+ifd_dump filename
+	116
+imports
+Lists the dlls that the specified dll or exe imports.
+imports scope_name
+	117
+info
+Returns information about Access commands, options etc.
+info [ attributes | codes | commands | discover | kinds ] arg1 arg2 ...
+	118
+instance_from_offset
+Returns the instance corresponding to the given filename and offset value.
+instance_from_offset filename offset
+	119
+instances
+Returns the instances of the specified entity(s).
+instances entity_name
+	120
+instances_in_region
+Returns all the instances occurring in the specified region.
+instances_in_region filename start_offset end_offset
+	121
+lambda
+Used to chain commands together in creating new queries as in :
+     lambda x {filter fun [where used $x]}
+lambda variable body
+	122
+lindex
+Standard Tcl command.
+	123
+list
+Standard Tcl command.
+	124
+message
+Returns a message relevant to the  current operation in the Browser's status bar.
+message path options
+	125
+mini_create
+Starts the Minibrowser (UNIX only).
+mini_create layout ok_callback ok_data -option ...
+	126
+mini_fill
+Initializes the Minibrowser (UNIX only).
+mini_fill window values
+	127
+mini_refresh
+Refreshes the information returned in the minibrowser.
+mini_refresh
+	129
+modified_entities
+For the specified file, returns all the entities that have been modified since the last modelbuild.
+modified_entities logical_pathname
+	130
+modified_objects
+For the specified file, returns all objects that have been modified since the last modelbuild.
+modified_objects logical_pathname
+	131
+modules
+Returns all files contained in the specified project and in all of the specified project's subprojects.
+modules project_name
+	132
+mrg_module_checkout
+Performs a merge and a checkout on the specified file.
+mrg_module_checkout module
+	133
+msg
+Inserts a message into the message system with the specified severity and arguments.
+msg [ normal_sev | warning_sev | error_sev | catastrophe_sev ]  "format string (i.e. \$1 \$2)" argument1 argument2
+	134
+name
+Returns the full name of the specified entity.
+name entity_name
+	135
+names
+Returns the full names of all the entities in the current or specified set.
+names [ set_name ]
+	136
+new_dll
+Adds an existing dynamically-linked library to the Information Model.
+new_dll dll_name
+	137
+new_exe
+Adds an existing executable file to the Information Model.
+new_exe exe_name
+	138
+new_set
+Makes the specified set the current set.
+new_set set_name
+	139
+new_sll
+Adds an existing statically-linked library to the Information Model.
+new_sll sll_name
+	140
+nil_set
+Makes a null (empty) set the current set.
+nil_set
+	141
+open_view
+Opens the source of the specified entity.
+open_view entity_name
+	142
+parent
+Returns the parent project of the specified project
+parent project_pathname
+	143
+parms_comp
+Returns the parameters that are passed to the parser when the specified file is parsed.
+parms_comp filename
+	144
+parms_cpp
+Returns the parameters that are passed to the preprocessor for the specified file.
+parms_cpp filename
+	145
+pdf_rule
+Returns the specified rule (i.e. pdf_rule pset returns the pset rule) for the given file.
+pdf_rule [ directory | o_file | pset | make ] filename
+	146
+print
+Prints the entities contained in the specified set.
+print set_name
+	147
+printformat
+Determines the format of printed output.
+	148
+prompt
+Brings up a prompt dialog box (with the information text contained in text_string) that accepts text input.
+prompt <text_string>
+	149
+puts
+Standard Tcl command.
+puts text_string
+	150
+query_closure
+Performs a query with closure.  The maximum depth is specified by max, the query is specified by query and the scope by scope.
+query_closure max query scope
+	151
+question
+
+Brings up a question dialog box with OK, Cancel and Help buttons and the informational text contained in text_string (i.e. question "Quit?).
+question text_string
+	152
+read_def_file
+Returns the file that defines the specified dynamically-linked library
+read_def_file dll_name defining_filename.def
+	153
+region_copy
+Copies the currently specified region to a buffer.
+region_copy region_name
+	154
+region_create
+Creates a region with bounds set by input-defined arrays.
+
+	155
+region_cut
+Cuts  the currently specified region from the source mode tree, and places it in a clipboard buffer
+region_cut region_name
+	156
+region_native_text
+Identifies native text within the currently specified region.
+region_native_text region_name
+	157
+region_of_statement
+Returns the region containing the specified statement.
+region_of_statement statement
+	158
+region_paste_after
+Pastes the region from the clipboard buffer after the specified starting object.
+region_paste_after starting_object
+	159
+region_paste_before
+Pastes the region from the clipboard buffer before  the specified starting object.
+region_paste_before starting_object
+	160
+region_restore
+Restores a region that has been cut to its original position.
+region_restore region_name
+	161
+region_text
+Identifies text within the currently specified region.
+region_text region_name
+	162
+return
+Standard Tcl command.
+	163
+root_scopes
+Returns the root-level EXEs and/or DLLs of the specified scope
+root_scopes scope_name
+	164
+roots
+Identifies the root project of the current Information Model.
+roots
+	165
+sappend
+Appends the specified entities or instances to the current set.
+sappend entity_name
+	166
+save
+Saves the specified file.
+save module1 <module2 module3 ... >
+	167
+save_as
+Saves a file under the specified path/name.
+save_as module path
+	168
+scopes
+Returns a list of the currently defined scopes.
+scopes
+	169
+scopes_in
+Returns the projects within the specified scope.
+scopes_in scope_name
+	170
+scopes_of
+Returns scope(s) containing the specified project.
+scopes_of project_name
+	171
+selection
+Places the entities selected in the Browser Elements or Results columns into the current set.
+selection
+	172
+set
+Creates a new set containing the entities selected in the Browser; standard Tcl command, overloaded for internal operations that are invisible to the user.
+	173
+set_add
+Adds the contents of two sets without removing duplicates; the result becomes the current set.
+set_add set_name_1 set_name_2
+	174
+set_copy
+Copies some or all of the contents of the specified set to the current set.
+set_copy set_name
+	175
+set_elements
+
+Returns the contents of the specified set in the Browser's elements column.
+set_elements set_name
+	176
+set_instance_click
+Executes the specified (user-defined) script to determine the response to mouse clicks in the Instance Browser.
+set_instance_click script_name
+	177
+set_instance_title
+Executes the specified (user-defined) script to change the title of the Instance Browser..
+set_instance_title script_name
+	178
+set_intersect
+Finds the elements common to two sets; the result becomes the current set.
+set_intersect set_name_1 set_name_2
+	179
+set_mini
+Defines the button characteristics of the Minibrowser.
+
+	180
+set_mode
+Sets or changes the mode of the scopes feature: Off, Wide, or Deep
+set_mode [off | wide | deep]
+	181
+set_result
+Copies the contents of the specified set into the Browser's Results column.
+
+set_result set_name
+	182
+set_scope
+Defines the current scope to include the specified scope.
+set_scope scope_name
+	183
+set_subtract
+For two sets, A and B, removes the elements of A that are also in B; the remaining elements of A become the current set.
+set_subtract set_name_A set_name_B
+	184
+set_union
+Combines the contents of two sets, removing all duplicates; the result becomes the current set.
+set_union set_name_1 set_name_2
+	185
+set_unique
+For two sets, A and B, returns the elements of each set that are not in the other set.
+set_unique set_name_1 set_name_2
+	186
+setget
+Returns the contents of the specified set.
+setget set_name
+	187
+setinit
+Initializes a new empty set.
+setinit set_name
+	188
+setinsert
+Inserts elements into a set.
+setinsert set_name elements
+	189
+setvar
+Sets a variable equal to a value.  The value can then be retrieved using getvar.
+setvar variable_name value
+	190
+size
+Determines the size of the specified set.
+size set
+	191
+smgr
+Invokes the group manager.
+smgr
+	192
+smt_first
+Loads into memory the first object in the current source mode tree.
+smt_first
+	193
+smt_insert_text_after
+Inserts the specified text string after the specified marker.
+smt_insert_text_after "text_string" marker
+	194
+smt_insert_text_before
+Inserts the specified text string before the specied marker.
+smt_insert_text_before "text_string" marker
+	195
+smt_last
+Loads into memory the last object in the current source mode tree.
+smt_last
+	196
+smt_native_text
+Identify native text within the current source mode tree.
+smt_native_text
+	197
+smt_next
+Loads into memory the next object (the object after the currently specified object) in the current source mode tree.
+smt_next
+	198
+smt_parent
+Loads into memory the parent object of the currently specified object.
+smt_parent
+	199
+smt_prev
+Loads into memory the previous object (the object before the currently specified object) in the current source mode tree.
+smt_prev
+	200
+smt_replace_text
+Inserts the specified text string, overwriting the original text string.
+smt_replace_text "replacement_text_string" "overwritten text_string"
+	201
+smt_root
+Loads into memory the root object of the current source mode tree.
+smt_root
+	202
+smt_text
+Identifies text within the current source mode tree.
+smt_text
+	203
+smt_type
+Identifies the type of the specified object.
+smt_type object_name
+	204
+sort
+Prints the specified set according to a specified sort attribute (default is alphabetical)
+sort sort_attribute
+	205
+source_dis
+Sources a .dis file adding a leading slash onto filename.
+source_dis filename
+	206
+source_find
+Adds a leading slash onto the path of filename and returns the full path and filename (with the slash) if the file exists.  Returns nothing if the file is not found.
+source_find filename
+	207
+src_get_parsable_file
+Returns the file in which the specified entity is defined.
+src_get_parsable_file entity_name
+	208
+src_lines
+Returns the number of lines contained in the specified entity.
+src_lines entity_name
+	209
+src_load
+Loads the file or the file which contains the specified entity.
+src_load entity_name/file_name
+	210
+src_unload
+Unloads the specified file.
+src_unload entity_name/file_name
+	211
+src_update
+Parses the specified modules, updating the Information Model.
+src_update set
+	212
+src_version
+Returns the configuration management version number of the specified entity.
+src_version entity_name
+	213
+start_client
+Starts a client process to enable sending output to stdout.
+start_client executable read_file write_file <-source filename>
+	214
+status end
+Closes the status dialog box brought up using status start.
+status end
+	215
+status query
+Updates the status dialog box according to how much is completed (count).
+status query message count
+	216
+status start
+Opens a new status dialog box which shows how much of a task has currently been completed.
+status start [-ok] [ -title title ] message no_items
+	217
+status_bar_msg
+
+Returns a message relevant to the current operation in the Browser's status bar. UNIX only.
+status_bar_msg message
+	218
+subprojects
+Returns all subprojects of the specified project.
+subprojects project_name
+	219
+system
+Issues a shell command as in the unix system command.  Returns the exit code of the command.  This is like exec except what is returned is the exit code, not the results that are sent to stdout.
+system shell_command
+	220
+tempnam
+Returns the path and name of the currently active temp directory.
+tempnam
+	221
+test_eval
+Tests the evaluation of an attribute enumeration.  Returns the value of index 1 into the enum.
+test_eval attribute_name
+	222
+tree
+TPM commands.
+tree [find | filter | navigate] pattern $set
+tree print <filename>
+	223
+unhide_scopes
+Enables the return of entities in the specified scopes (if previously hidden for example using hide_scopes).
+unhide_scopes scope_name
+	224
+units
+Returns the units contained in the specified scope 
+units scope_name ...
+	225
+unmod
+Reverts a modified file back to its unmodified form.
+unmod module1 [ module2 module3 ... ]
+	226
+update_tmp_group_name
+Updates the current temporary group name.
+update_tmp_group_name
+	227
+uses
+Returns all entities that the specified entity uses.  If a type of entity is specified (i.e. uses -classes) then only entities of that type are returned.
+uses <-file,-classes,-enums...> entity_name
+	228
+validate
+Validates membership and hierarchy compliance of group/subsystem members.
+validate group_name
+	229
+view_file
+Opens the specified file(s) in the viewer.
+view_file file1 [ file2 file3 ... ]
+	230
+wfnode
+Creates/modifies/deletes TaskFlow nodes.  (For more information see wfnode <subcommand>).
+wfnode [ describe | delete | exists | info | new ] tag
+	231
+wfnode delete
+Deletes an existing node. 
+wfnode delete tag
+	232
+wfnode describe
+Describes a node by printing out the information flag it was given during creation.
+wfnode describe tag
+	233
+wfnode exists
+Determines whether a node exists with a given tag.  Result will be 1 if the node exists, 0 otherwise.
+wfnode exists tag
+	234
+wfnode info
+Lists the available node types.
+wfnode info
+	235
+wfnode new
+Creates a new node.
+wfnode new tag -eval command [ [ -in | -out | -opt ] <p1> ... ] [ -i info ]
+	236
+wfparam 
+Creates/modifies/deletes the parameter that can be passed to TaskFlow nodes.  (For more information see wfparam <subcommand>).
+wfparam [ describe | delete | exists | new ] tag
+	237
+wfparam info
+Lists all the existing parameters..
+wfparam info
+	238
+wfparam new
+Create a new parameter type.
+wfparam new tag -v var -t type [ -d default ] [ -i info ]
+	239
+wftask
+Creates/modifies/deletes tasks.  (For more information see wftask <subcommand>).
+wftask [ exists | delete | where | save | validate | revive | error_status ] tag
+	240
+wftask addnode
+Adds a node to an existing task.
+wftask addnode tag pos node1 [ node2 node3 ... ]
+	241
+wftask delnode
+Deletes a node from a task.
+wftask delnode tag pos
+	242
+wftask delete
+Deletes an existing task.
+wftask delete tag
+	243
+wftask dump
+Prints out the nodes in a given task including parameters.
+wftask dump tag [ node1 node2 ... ]
+	244
+wftask error_status
+Retruns the error status for a particular task.
+wftask error_status tag
+	245
+wftask exists
+Determines whether a task with a given tag exists.
+wftask exists tag
+	246
+wftask getparam 
+Gets the parameters of a task.
+wftask getparam tag -n nindex -p pname
+	247
+wftask info
+Prints a list of the existing tasks.
+wftask info
+	248
+wftask move
+Moves a node from one location to another in a task.
+wftask move tag from to
+	249
+wftask new
+Creates a new task with the given nodes.
+wftask new tag [ node1 node2 ... ]
+	250
+wftask print 
+Prints out the nodes in a given task.
+wftask print tag [ -r ] [ -n node1 -n node2 ... ]
+	251
+wftask revive
+Revives the task.
+wftask revive tag
+	252
+wftask run
+Runs the task.
+wftask run tag [ -from pos ] [ -n steps ]
+	253
+wftask save
+Saves the task.
+wftask save tag
+	254
+wftask setparam
+Sets the parameters of a task.
+wftask setparam tag -n nindex -p pname -v value
+	255
+wftask where
+Determines the location in the specified task.
+wftask where tag
+	256
+wftype
+Without arguments : outputs a list of valid types for parameters to wfnodes.
+With a type passed in as an argument : returns a list of subtypes to that type.
+wftype <type>
+	257
+where
+Collective command for "where" queries
+where [ declared | defined | included | referenced | used ] entity_name ...
+	258
+where_declared
+Returns the file in which the specified entity is declared (same as where declared).
+where_declared entity_name
+	259
+wimp
+Returns the DLLs and/or EXEs into which the specified DLL is imported (where imported).
+wimp [dll_name | exe_name] ...
+End of comprehensive, sorted list of known commands. The following section contains a comprehensive sorted list of Access attributes known to date.
+	260
+Section 2:	Access attributes, comprehensive, sorted
+
+Table 2: Alphabetical list of all known Access attributes
+#
+Attribute
+Description
+Syntax
+	1
+addr
+Returns 1 if the specified entity or instance is of the AST category address; returns 0 if not
+addr entity_name
+	2
+alevel
+Returns the assignment reference level of the specified assignment. For example, in the assignment x = *p, the alevel is 0 (no reference); in *x = p, alevel = 1; in char** = p, alevel = 2
+alevel assignment_name
+	3
+argof
+Returns the function of which the specified entity or instance is an argument
+argof entity_name
+	4
+args
+Returns the argument string of the specified function; synonym of arguments
+args function_name
+	5
+argument
+Returns 1 if the specified entity is an argument used within the Information Model; returns 0 if not
+argument entity_name
+	6
+arguments
+Returns the argument string of the specified function; synonym of args
+arguments function_name
+	7
+assignment
+Returns 1 if the specified entity or instance is an assignment; returns 0 if not
+assignment entity_name
+	8
+astcategory
+Returns the AST category of the specified entity (address, argument, assignment, declaration, or value)
+astcategory entity_name
+	9
+attributes
+Returns the attributes associated with the specified entity
+attributes entity_name
+	10
+call
+Returns 1 if the specified entity or instance is called in the execution of a function; returns 0 if not
+call entity_name
+	11
+cfunction
+Returns 1 if the specified entity or instance is a C function; returns 0 if not
+cfunction entity_name
+	12
+class
+Returns 1 if the specified entity or instance is a class; returns 0 if not
+class entity_name
+	13
+cname
+Returns the name of the specified entity or instance as it appears in the source code (without arguments and scope)
+cname entity_name
+	14
+condition
+	15
+constant
+Returns 1 if the specified entity or instance is a constant; returns 0 if not
+constant entity_name
+	16
+constructor
+Returns 1 if the specified entity is a constructor "0" if not.
+constructor entity_name
+	17
+c_proto
+Returns the prototype of the specified function.
+c_proto function_name
+	18
+declaration
+Returns 1 if the specified entity or instance is a declaration; returns 0 if not
+declaration entity_name
+	19
+destructor
+Returns 1 if the specified entity is a destructor, "0" if not.
+destructor entity_name
+	20
+dll
+Returns 1 if the specified scope is a dynamically-linked library (is of the type DLL); returns 0 if not
+dll scope_name
+	21
+enum
+Returns 1 if the specified entity or instance is an enumerated list; returns 0 if not
+enum entity_name
+	22
+error
+Returns 1 if the specified entity or instance is an error message; returns 0 if not
+error entity_name
+	23
+etag
+Returns a string uniquely identifying the specified entity or instance
+etag entity_name
+	24
+evalue
+Returns 1 if the specified entity or instance is an enumerated value; returns 0 if not
+evalue entity_name
+	25
+exe
+Returns 1 if the specified scope is an executable (is of the type EXE); returns 0 if not
+exe entity_name
+	26
+field
+Returns 1 if the specified entity or instance is a field; returns 0 if not
+field entity_name
+	27
+fname
+Returns the physical filename of the specified entity's or instance's defining file
+fname entity_name
+	28
+funct
+synonym of function
+funct entity_name
+	29
+function
+Returns 1 if the specified entity or instance is a function; returns 0 if not
+function entity_name
+	30
+generated
+Returns 1 if the specified function is compiler-generated; returns 0 if not
+generated function_name
+	31
+group
+Returns 1 if the specified entity or instance is a group; returns 0 if not
+group entity_name
+	32
+hard
+Returns 1 if the specified association is a hard association; returns 0 if not
+hard association_name
+	33
+haspmod           
+Returns 1 if the specified entity or instance has a global Information Model file (pmod file); returns 0 if not
+haspmod entity_name
+	34
+header      
+Returns 1 if the specified entity or instance is a header file; returns 0 if not
+header logical_pathname
+	35
+hidden
+Returns 1 if the specified entity or instance is hidden; returns 0 if not
+hidden entity_name
+	36
+included 
+Returns 1 if the specified file is included in another file; returns 0 if not
+included logical_pathname
+	37
+inline
+Returns 1 if the specified function is an inline function; returns 0 if not
+inline function_name
+	38
+inst_info
+Returns information about the specified instance
+inst_info instance_name
+	39
+inst_line
+Returns the line number of the specified instance
+inst_line instance_name
+	40
+inst_offset
+Returns the offset (from the beginning of the containing file) of the specified instance
+inst_offset instance_name
+	41
+inst_scope
+Returns the scope containing the specified instance
+inst_scope instance_name
+	42
+instance
+Returns 1 if the specified entity is an instance; returns 0 if not
+instance entity_name
+	43
+itag
+Returns a string that uniquely identifies the specified entity or instance
+itag entity_name
+	44
+kind
+Returns the kind (category type, e.g. project or module) of the specified entity or instance
+kind entity_name
+	45
+language     
+Returns the language used to write the specified file
+language logical_pathname
+	46
+line
+Returns the offset (from the beginning of the containing file) of the specified entity or instance
+line entity_name
+	47
+lname
+Returns the logical filename of the specified entity's or instance's defining file
+lname entity_name
+	48
+local
+Returns 1 if the specified entity or instance is a local variable; returns 0 if not
+local entity_name
+	49
+macro
+Returns 1 if the specified entity or instance is a macro; returns 0 if not
+macro entity_name
+	50
+member
+Returns 1 if the specified entity or instance is a member function (method) or a data member; returns 0 if not
+member entity_name
+	51
+met_BYTES
+Returns an integer representing the size in bytes of the selected file or function
+met_BYTES [logical_pathname | function_name]
+	52
+met_CC
+Returns an integer representing the cyclomatic complexity of the specified file or function
+met_CC [logical_pathname | function_name]
+	53
+met_DANG_EI
+Returns the number of dangling ELSE-IFs in the specified file or function
+met_DANG_EI [logical_pathname | function_name]
+	54
+met_DANG_SW
+Returns the number of defaultless switch statements in the specified file or function
+met_DANG_SW [logical_pathname | function_name]
+	55
+met_DEFAULTS
+Returns the number of default statements in the specified file or function
+met_DEFAULTS [logical_pathname | function_name]
+	56
+met_DEPTH
+Returns an integer representing the depth of nested control structures in the specified file or function
+met_DEPTH [logical_pathname | function_name]
+	57
+met_FANIN
+Returns the number of superclasses (base classes) in the specified class
+met_FAN_IN [logical_pathname | function_name]
+	58
+met_FANOUT
+Returns the number of subclasses (derived classes) in the specified class
+met_FAN_OUT [logical_pathname | function_name]
+	59
+met_IFS
+Returns the number of IF statements in the specified file or function
+met_IFS [logical_pathname | function_name]
+	60
+met_LOC
+Returns the number of lines of code in the specified file or function
+met_LOC [logical_pathname | function_name]
+	61
+met_LOOPS
+Returns the number of loops in the specified file or function
+met_LOOPS [logical_pathname | function_name]
+	62
+met_MYERS
+Returns an integer representing the Myers complexity of the specified file or function
+met_MYERS [logical_pathname | function_name]
+	63
+met_RETURNS
+Returns the number of return statements in the specified file or function
+met_RETURNS [logical_pathname | function_name]
+	64
+met_START_LN
+Returns the starting line number of the specified file or function
+met_START_LN [logical_pathname | function_name]
+	65
+met_SWITCHES
+Returns the number of switch statements in the specified file or function
+met_SWITCHES [logical_pathname | function_name]
+	66
+met_ULOC
+Returns the number of uncommented lines of code in the specified file or function
+met_ULOC [logical_pathname | function_name]
+	67
+met_XLOC
+Returns the number of executable lines of code in the specified file or function
+met_XLOC [logical_pathname | function_name]
+	68
+method
+Returns 1 if the specified function is a method (member function); returns 0 if not
+method function_name
+	69
+module
+Returns 1 if the specified entity or instance is a module; returns 0 if not
+module entity_name
+	70
+name
+Returns the name of the specified entity or instance
+name entity_name
+	71
+numargs
+Returns the number of arguments taken by the specified function
+numargs function_name
+	72
+offset
+Returns the offset (from the beginning of the containing file) of the specified entity or instance
+offset entity_name
+	73
+outdated 
+Returns 1 if the specified entity's or instance's local Information Model file (pset file) is outdated; returns 0 if not
+outdated entity_name
+	74
+pname
+Returns the project filename of the specified file
+pname logical_pathname
+	75
+pointer
+Returns 1 if the specified entity or instance is a pointer; returns 0 if not
+pointer entity_name
+	76
+private
+Returns 1 if the specified method (member function) has private access status; returns 0 if not
+private function_name
+	77
+proj
+Synonym of project
+proj entity_name
+	78
+project
+Returns 1 if the specified entity or instance is a project; returns 0 if not
+project entity_name
+	79
+protected
+Returns 1 if the specified method (member function) has protected access status; returns 0 if not
+protected function_name
+	80
+psetfile
+Returns the pset filename of the specified file
+psetfile logical_pathname
+	81
+public
+Returns 1 if the specified method (member function) has public access status; returns 0 if not
+public function_name
+	82
+purevirt
+Returns 1 if the specified entity or instance is a pure virtual function; returns 0 if not
+purevirt function_name
+	83
+reference
+Returns 1 if the specified entity or instance is a reference; returns 0 if not
+reference entity_name
+	84
+region
+Returns 1 if the specified entity or instance is a region; returns 0 if not
+region entity_name
+	85
+region_length
+Returns the length (in bytes?) of the specified region
+region_length region_name
+	86
+rscope
+Returns the root-level scope of the specified entity or instance
+rscope entity_name
+	87
+scope
+Returns 1 if the specified entity or instance is a scope; returns 0 if not
+scope entity_name
+	88
+soft
+Returns 1 if the specified association is a soft association; returns 0 if not
+soft association_name
+	89
+static
+Returns 1 if the specified entity or instance is static; returns 0 if not
+static entity_name
+	90
+stringl
+Returns 1 if the specified entity or instance is a string literal; returns 0 if not
+stringl entity_name
+	91
+struct
+Synonym of structure
+struct entity_name
+	92
+structure
+Returns 1 if the specified entity or instance is a structure; returns 0 if not
+structure entity_name
+	93
+subsystem
+Returns 1 if the specified entity or instance is a subsystem; returns 0 if not (no definition found)
+subsystem entity_name
+	94
+templ
+synonym of template
+templ entity_name
+	95
+template
+Returns 1 if the specified entity or instance is a template; returns 0 if not
+template entity_name
+	96
+type
+Returns the return type of the specified function or variable
+type function_name
+	97
+typedef
+Returns 1 if the specified entity or instance is a type definition; returns 0 if not
+typedef entity_name
+	98
+union
+Returns 1 if the specified entity or instance is a union; returns 0 if not
+union entity_name
+	99
+value
+Returns the value of the specified attribute
+value attribute_name
+	100
+var
+Synonym of variable
+var entity_name
+	101
+variable
+Returns 1 if the specified entity or instance is a variable; returns 0 if not
+variable entity_name
+	102
+virtual
+Returns 1 if the specified method (member function) is a virtual function or a class; returns 0 if not
+virtual function_name
+	103
+vlevel
+Returns the value reference level of the specified assignment's value. For example, in the assignment x =p, the vlevel is 0 (no reference); in x = *p, vlevel = 1; in x = **p, vlevel = 2
+vlevel value_name
+	104
+vname
+Returns the name of the specified entity or instance, with arguments; returns the name of the specified C++ member function (method) without its class name
+vname entity_name
+vname function_name
+	105
+volatile
+Returns 1 if the specified entity or instance is volatile; returns 0 if not
+volatile entity_name
+	106
+writable
+Returns 1 if the specified entity or instance has write access; returns 0 if not
+writable entity_name
+	107
+xscope
+Returns the full scope path of the specified entity or instance
+xscope entity_name

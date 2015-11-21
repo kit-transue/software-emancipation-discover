@@ -1,0 +1,2 @@
+#!/bin/sh
+prs -e -d":I:" $cm_revision_file

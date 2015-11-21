@@ -1,0 +1,71 @@
+#
+# this PDF is meant to supplement the examples in $PSETHOME/lib/build.pdf
+#
+# note: DISCOVER will complain and exit if you load a pdf that
+#	refers to unset environment variables, or refers to a project
+#	with an absolute path pointing to a directory
+#	that does not exist (generally indicates an installation
+#	problem).
+#
+
+# Example of a project that has an executable associated with it.
+# It also mixes absolute and relative paths, and uses a lot of
+# different extensions on its C++ files. 
+#
+# This project definition is commented out because DISCOVER will not
+# load a PDF that contains a top-level absolute path unless that path
+# exists. 
+#
+#foo : /net/earth/vob/ducks/foo [[ W ]] <-> /foo
+#{
+#    .exec : bin <-> /.exec { (*) }
+#    source : src <-> source
+#    {
+#	(*.[cC])
+#	(*.cc)
+#	(*.cpp)
+#    }
+#    include : incl <-> include
+#    {
+#	(*.[hH])
+#    }
+#    sysinclude : /net/earth/vob/includes <-> sysinclude
+#    {
+#	(*.[hH])
+#    }
+#}
+
+#
+# Sample definition of a project that has a flat source hierarchy, 
+# uses boilerplates, relations, and subsystems, and has its own make
+# rules. It also excludes the files scraps.C and oldmain.C.
+#
+proj : $PROJ_SRC_DIR <-> /proj {
+   ^scraps.C
+   ^oldmain.C
+   *.[cChH]
+   *.txt
+   rel : rel <-> /DISCOVER-Relations { 
+	*.rels 
+   }
+   subsys : subs <-> /DISCOVER-Subsystems { 
+	*.subs 
+   }
+   .boilerplate : boil <-> /boil { * }
+   . : (*).c/%/.make => "echo cc -I. (1).c"
+   . : (*).C/%/.make => "echo CC -I. (1).C"
+}
+
+#
+# proj2 creates a subproject for each directory below 
+# $LOCAL_ROOT/src. Each of these contains a subproject for
+# each directory that occurs beneath them. Directories
+# named X-interface are excluded.
+#
+proj2 : $LOCAL_ROOT [[ W ]] <-> /proj2
+{
+    src/(*) {
+	^X-interface
+	*  { *.[cChly] *.if psetPrefs.default *.lt }
+    }
+}

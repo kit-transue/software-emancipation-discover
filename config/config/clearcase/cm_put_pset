@@ -1,0 +1,104 @@
+#!/bin/sh
+# cm_put_pset (ClearCase) - Check in the .pset file
+
+# exit script if we get any errors
+set -e
+
+if [ "$cm_workfile" = "" ] ; then
+  echo "The variable cm_workfile is not set"
+  exit 1
+fi
+ 
+if [ "$cm_sysfile" != "" ] ; then
+  if [ $cm_sysfile != $cm_workfile ] ; then
+    if [ -f $cm_workfile ] ; then
+      set +e
+      history=`cleartool lshist $cm_workfile | head -1`
+      set -e
+      if [ "$history" != "" ] ; then
+        echo "The private .pset file $cm_workfile should not be a clearcase element"
+        exit 0
+      fi
+
+      echo "rm -f $cm_workfile 2> /dev/null" 1>&2
+      rm -f $cm_workfile 2> /dev/null
+      exit 0
+    fi
+  fi
+fi
+
+# Try to check is work file directory clearcase element
+set +e
+directory=`dirname $cm_workfile`
+dir_info=`cleartool describe -fmt "%m" $directory | grep 'private'`
+if [ "$dir_info" != "" ] ; then
+  echo "Directory is not an element of the revision control system" >&2
+  echo "Unable to check-in $cm_workfile" >&2
+  exit 1
+fi
+set -e
+
+# Try to get the current version for this file.  We use this to
+# decide if we need to create a new element or not.
+# Find the version of the file selected by the view
+set +e
+viewversion=`cleartool describe $cm_workfile | head -1 | \
+	$PSETCFG/util/atria_revisions`
+set -e
+
+# Create new element if we could not get the version string
+if [ "$viewversion" = "" ]; then
+  cm_elementtype_option="-eltype compressed_file"
+  export cm_elementtype_option
+  $PSETCFG/cm_create_internal
+  exit 0
+else
+  # Exit if .pset is not checkedout
+  checkedout=`cleartool describe -short $cm_workfile | grep CHECKEDOUT`
+  if [ "$checkedout" = "" ] ; then
+    exit 0
+  fi
+fi
+
+#if [ "$cm_c_file" != "" ] ; then
+#  # Create a hyperlinks between .pset and source
+#  source=$cm_c_file
+#  pset=$cm_workfile
+#  export source
+#  export pset
+#  $PSETCFG/cm_makehlink
+#fi
+
+
+# Now we check it in
+echo "cleartool checkin -identical -nc $cm_workfile"
+      cleartool checkin -identical -nc $cm_workfile
+
+set +e
+# Remove older version(s) of this pset file to save space
+if [ "$cm_rmpset" != "" ] ; then
+  previous_ver=`cleartool describe -short -pred $cm_workfile`
+  if [ "$previous_ver" != "" ] ; then
+    prev="$cm_workfile@@$previous_ver"
+    label=`cleartool describe -short -alabel -all $prev`
+    if [ "$label" = "" ] ; then
+      cleartool rmver -force -xhlink $prev 2> /dev/null
+    fi
+  fi
+fi
+
+exit 0
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = informational (displayed in configshell)
+		   : stderr = error messages (displayed in config status dialog box)
+
+#### Environment Variables
+#	$PSETCFG	  - path to directory containing the config scripts
+#	$cm_sysfile	  - path to system (public) copy of file to be checked in
+#			    (already transformed by the pending filter at this point)
+#	$cm_workfile	  - path to local (private) copy of file to be processed
+# This script also defines:
+#	$cm_elementtype_option - used to specify element type for cm_create
+

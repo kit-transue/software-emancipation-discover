@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Author" content="Earl Power">
+  <meta name="LastAuthor" content="Earl Power">
+  <meta name="Company" content="Software Emancipation Technologies, Inc">
+  <meta name="CreationTime" content="1999-12-03T19:53:00Z">
+  <meta name="ModificationTime" content="2000-03-02T18:31:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p2 {margin: 12.0px 0.0px 3.0px 0.0px; text-align: center; font: 16.0px Arial}
+    p.p3 {margin: 12.0px 0.0px 3.0px 0.0px; font: 14.0px Arial}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Courier}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 36.0px; font: 12.0px Courier}
+    span.s1 {font: 12.0px 'Times New Roman'}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><br></p>
+<p class="p2"><b>Starting DISCOVER</b></p>
+<p class="p3"><b>Setting up your environment</b></p>
+<p class="p4">Each client is dependent upon a valid DISPLAY.<span class="Apple-converted-space">  </span>Be sure to set the display to a valid X server before attempting to invoke them.</p>
+<p class="p1"><br></p>
+<p class="p4">Users have a choice of three methods to invoke DISCOVER model clients:</p>
+<p class="p5"><span class="s1">Put the path to the DISCOVER launch scripts in the shell’s PATH environment variable.<br>
+</span>csh:<span class="Apple-tab-span">	</span>setenv<span class="Apple-converted-space">  </span>PATH<span class="Apple-converted-space">  </span>${PATH}:/net/psales/opt/DISCOVER/DISIM/bin<br>
+sh/ksh:<span class="Apple-tab-span">	</span>set PATH=${PATH}:/net/psales/opt/DISCOVER/DISIM/bin; export PATH</p>
+<p class="p4">Create unique aliases for each of the clients (described below)</p>
+<p class="p4">Type full path names as shown in next sections.</p>
+<p class="p3"><b>Starting DeveloperXpress</b></p>
+<p class="p4">Set the ClearCase view to the private work view</p>
+<p class="p4">Start the DeveloperXpress client by typing:</p>
+<p class="p6">/net/psales/opt/DISCOVER/DISIM/bin/StartDevx.sh</p>
+<p class="p1"><br></p>
+<p class="p4">If a user wishes to use DeveloperXpress to check-in and check-out sources, there is only one step in the <b><i>Service Chooser</i></b> that need to be taken. <span class="Apple-converted-space">  </span>The Service Chooser may come up automatically or it can be brought up by selecting “File”-&gt;”Service” from DeveloperXpress.<span class="Apple-converted-space">  </span>Once in the Service Chooser window, the user must select “clearcase” in the drop down list labeled “CM”.</p>
+<p class="p1"><br></p>
+<p class="p4">Always hold down <b><i>shift</i></b> and <b><i>left-click</i></b> the mouse in e<b><i>macs</i></b> to start the DeveloperXpress window after using the service chooser (even when it says “Launching Developer Xpress … “).</p>
+<p class="p1"><br></p>
+<p class="p4">By default, DeveloperXpress uses the first occurrence of <b><i>emacs</i></b> in the user’s path.<span class="Apple-converted-space">  </span>This can be overridden by specifying the full path to <b><i>emacs</i></b> in the environment variable DIS_EMACS.<span class="Apple-converted-space">  </span>This variable also allows the user to specify any command line options to emacs.</p>
+<p class="p1"><br></p>
+<p class="p4">Developers that wish to use <b><i>vi</i></b> as opposed to <b><i>emacs</i></b>, should set the environment variable DIS_VIM to “1”.<span class="Apple-converted-space">  </span>The keywords in <b><i>vi</i></b> that the user types after a colon, “:”, are as follows:</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b><i>desc</i></b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>display the description of the entity at the bottom of the window.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b><i>opendef</i></b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>jump to the definition of the entity.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b><i>query</i></b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>put the entity into the DeveloperXpress window.</p>
+<p class="p4"><span class="Apple-tab-span">	</span><b><i>inst</i></b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>bring up instances window displaying all occurences of the entity.</p>
+<p class="p4">When an entity is highlighted, it is best to hit the Escape key before typing any <b><i>vi</i></b> commands.</p>
+<p class="p1"><br></p>
+<p class="p4">The client is written in TCL/TK and usually takes up less than 10Mbytes on the client machine.</p>
+<p class="p3"><b>Starting the DISCOVER Browser</b></p>
+<p class="p4">Set the ClearCase view to the private work view</p>
+<p class="p4">Start the DISCOVER Browser by typing:</p>
+<p class="p6">/net/psales/opt/DISCOVER/DISIM/bin/StartBrowser.sh &lt;VERSION&gt;</p>
+<p class="p1"><br></p>
+<p class="p4">The &lt;VERSION&gt; argument specifies which version of the DISCOVER model to look at.<span class="Apple-converted-space">  </span>Versions are named after the application with a date stamp telling when the model build was performed.<span class="Apple-converted-space">  </span>A list of all versions will be displayed if the argument is omitted.</p>
+<p class="p1"><br></p>
+<p class="p4">The Browser takes 50Mbytes and more depending on what the Engineer is using.</p>
+<p class="p1"><br></p>
+<p class="p3"><b>Adding DISCOVER Fonts to the X-Server</b></p>
+<p class="p4">This is NOT a necessary step to run either version of DISCOVER but it does prove to be handy and sometimes a time saver to be able to, at a glance, see what type an entity is.</p>
+<p class="p1"><br></p>
+<p class="p4">On the local machine that will be displaying the window (not necessarily the machine that runs discover) type the following command:</p>
+<p class="p5"><span class="Apple-tab-span">	</span>xset fp+ /net/psales/opt/DISCOVER/discover/lib/fonts/sun5</p>
+<p class="p1"><br></p>
+<p class="p4">The next time DISCOVER is invoked, additional icons should show up in the entity lists.</p>
+<p class="p1"><br></p>
+<p class="p1"><br></p>
+</body>
+</html>

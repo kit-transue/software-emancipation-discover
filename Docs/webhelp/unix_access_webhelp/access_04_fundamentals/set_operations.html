@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Set Operations</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 4.0px 24.0px; font: 12.0px 'Courier New'}
+    p.p7 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Set Operations</b></p>
+<p class="p2">The following set operations take sets as arguments and return new sets. The original sets (the arguments) are unchanged.</p>
+<p class="p3"><b>set_intersect</b></p>
+<p class="p4">set_intersect A B</p>
+<p class="p2">This command returns the intersection of sets <span class="s1">A</span> and <span class="s1">B</span>. Duplicates are removed.</p>
+<p class="p3"><b>set_subtract</b></p>
+<p class="p4">set_subtract A B</p>
+<p class="p2">This command returns the members of set A that are not in set B. Duplicates in either set <span class="s1">A</span> or set <span class="s1">B</span> are removed prior to the subtraction: if <span class="s1">A</span> contains two copies of one entity and set <span class="s1">B</span> contains one copy of the same entity, the result is empty, not one copy of the entity.</p>
+<p class="p3"><b>set_union</b></p>
+<p class="p4">set_union A B</p>
+<p class="p2">This command returns the union of sets <span class="s1">A</span> and <span class="s1">B</span>. The result set contains unique elements, even if <span class="s1">A</span> or <span class="s1">B</span> contain multiple instances of an element.</p>
+<p class="p3"><b>set_unique</b></p>
+<p class="p4">set_unique set</p>
+<p class="p2">This command returns a set that contains only one instance of the entities contained in the set.</p>
+<p class="p3"><b>size</b></p>
+<p class="p4">size set</p>
+<p class="p2">This command returns the number of elements in the set. Applied to an element, <span class="s1"><b>size</b></span> returns one: the element is converted into a set with one element.</p>
+<p class="p3"><b>print</b></p>
+<p class="p4">print set</p>
+<p class="p2"><span class="s1"><b>print</b></span> expects as an argument a set of elements. For each element, it prints an index number and the element using the state set by the <span class="s1"><b>printformat</b></span> command. It returns nothing.</p>
+<p class="p3"><b>Printformat</b></p>
+<p class="p4">printformat [-s [-a|-d]] format_string attribute-list</p>
+<p class="p2">Like <span class="s1"><b>sort</b></span>, the <span class="s1"><b>printformat</b></span> command does not take attribute expressions. The format string can contain the following placeholders that are substituted for the corresponding attribute:</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">%s</span>, replace <span class="s1">/string</span> with value</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">%S</span>, (same as <span class="s1">%s</span>), capitalize the first character</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">%b</span>, if attribute is true, print name of attribute; otherwise, print nothing.</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">%B,</span> (same as <span class="s1">%b</span>), capitalize the first character in the attribute</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">-s</span>, sort</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">-a</span>, sort ascending</p>
+<p class="p5">•<span class="s2">   </span><span class="s1">-d</span>, sort descending</p>
+<p class="p2">The <span class="s1">%b</span> attribute may be used to generate more meaningful output for boolean attributes like “virtual” or “static”, for example:</p>
+<p class="p4">printformat %b%s constant name<br>
+uses main</p>
+<p class="p5">returns</p>
+<p class="p6">1 _IO_stderr_<br>
+2 fprintf</p>
+<p class="p6">...<br>
+18 fclose<br>
+19 w<br>
+20 r<br>
+21 constant 1<br>
+22 constant 0</p>
+<p class="p2">Note that <span class="s1"><b>print</b></span> inserts a space after attributes it prints to prevent them from running together. This also allows you to combine multiple attributes easily without having extra spaces appear if the booleans do not match:</p>
+<p class="p4">printformat %b%b%b%s macro constant funct name</p>
+<p class="p7"><b>Note: </b>The format expression <span class="s3">%s%s kind name</span> is probably easier if you are just trying to identify the element’s type.</p>
+<p class="p2">The <span class="s1">-s</span> modifier causes print to sort its results in either ascending (<span class="s1">-a</span>) or descending (<span class="s1">-d</span>) order. This also reorders the result set.</p>
+<p class="p2">You may use string literals in the format string to decorate the output.</p>
+</body>
+</html>

@@ -1,0 +1,84 @@
+
+    Asynchronous Parsing. A. Harlap 
+
+        What it is 
+
+            Asynchronous Parsing.
+
+        Functional description 
+
+            Currently ParaSET frozes after user presses button "REPARSE" until completion of this operation. This project will allow user to continue to work inside ParaSET while "REPARSE" operation is being completed.
+
+        Justification 
+
+            When the user applies "REPARSE" operation for the entire file, it takes a couple minutes. This is not user friendly and is annoying.
+
+        Design description 
+
+        1. The following are the steps of the "REPARSE" operation:
+
+        -- a. SMT tokenizing.
+
+        -- b. CPP preprocessing -- this step invokes ASET_CPP executable.
+
+        -- c. AST building -- this step invokes PARSER executable.
+
+        -- d. Building DD.
+
+        -- e. Updating affected views.
+
+        2. Currently, both calls to ASET_CPP and PARSER are working synchronously. During a call to ASET_CPP, ParaSET is executing callbacks for almost every include file (since ASET_CPP does not know about project structure and some sources are loaded in ParaSET memory). It means that we cannot execute call to ASET_CPP asynchronously.
+
+        3. But what we can do, is to make asynchronous invocation of the PARSER.
+
+        It will reduce ParaSET freezing twice during the "REPARSE" operation.
+
+        4. There are number of situations where parsing process is invoked:
+
+        -- a. Explicit invocation by pressing button "REPARSE".
+
+        -- b. Implicit invocation by converting of some symbolPtr to RelationalPtr.
+
+        Currently we will implement asynchronous parsing only for explicit parser invocation (it covers practically most of cases when user should wait for parsing completion).
+
+        From other side, it seems to me that eventually we should reduce number of cases of implicit invocations of parser, because such heavy operations should not be called without user's confirmation.
+
+        5. The way how the asynchronous parsing will be implemented:
+
+        -- We will split all involving to "REPARSE" operations to three parts:
+
+        ---- a. Before call to parser
+
+        ---- b. Call to parser
+
+        ---- c. After call to parser (include SMT mapping).
+
+        After pressing button "REPARSE" we will immediately execute all operations "before call to parser", call parser and return to ParaSET top level loop without waiting of parsing completion, to allow user to continue all ParaSET operations. When parser process will be completed, we will call from ParaSET top level loop hook for completion "after call to parser" operations.
+
+        6. The following is the list of tasks to provide the perception of the performance improvements:
+
+        -- a. collect list of all objects involved in "REPARSE" operation.
+
+        -- b. update all views before calling parser
+
+        -- c. provide consistent handling of the cases where the user may need to discard the results of parsing.
+
+        Environmental considerations 
+
+            Performance 
+
+                2 times perception improvement over the current performance during "REPARSE" operation.
+
+            Scalability N/A
+
+        What does it take 
+
+            Tasks
+
+            Time = 8 days
+
+            Money = 
+
+            Resources = 1 person
+
+            Ordering

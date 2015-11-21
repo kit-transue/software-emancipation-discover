@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<p><b>Securty - Do not use inner classes with default attribute</b></p>
+
+<p>In Java, it is possible to define inner classes, which are classes nested
+inside other classes.  Some Java language books say that inner classes can only
+be accessed by the outer classes that enclose them, but this is false.
+Java byte code has no concept of inner classes, only regular classes.
+Consequently, the compiler translates inner classes into ordinary classes that
+happen to be accessible to any code in the same package.
+</p><p>
+An inner class can access private variables of the containing class.  Because
+the Java protection mechanism does not let the programmer restrict access to
+single class, it must grant access to the entire package.  Fortunately, the
+only variables that are exposed in such a way are those actually used by an
+inner class.
+</p><p>
+In addition, a distinction is made between variables that are read by an inner
+class and those that are written.  If an inner class reads a variable, any
+class in the package can then read that variable.  If an inner class writes to
+a variable, so can any other class in the package.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class INNER {<br>
+&nbsp; <font color='red'>class INNER_Class {  // violation</font><br>
+&nbsp; &nbsp; // ....
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+ Do not use inner classes with default attribute, always declare it <b>private</b>.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class INNER {<br>
+&nbsp; <font color='blue'>private class INNER_Class {</font><br>
+&nbsp; &nbsp; // ....
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>Statically Scanning Java Code: Finding Security Vulnerabilities.<br>
+John Viega, Gary McGraw, Tom Mutdosch, and Edward W. Felten<br>
+IEEE SOFTWARE September/October 2000</p>
+
+</body>
+</html>

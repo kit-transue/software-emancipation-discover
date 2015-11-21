@@ -1,0 +1,22 @@
+#!/bin/csh -f
+
+if (! $?PTEST_TMPDIR) then
+   if (! $?TMPDIR) then
+      setenv PTEST_TMPDIR "/usr/tmp"
+   else
+      setenv PTEST_TMPDIR $TMPDIR
+   endif
+endif
+
+
+
+if (! -w $PTEST_TMPDIR) then
+  mkdir -p $PTEST_TMPDIR
+  if ($status != 0 || ! -w $PTEST_TMPDIR) then
+    echo "Temporary directory $PTEST_TMPDIR is not writable."
+    exit 1
+  endif
+endif
+
+source ${PROJ_ROOT}/tools/ptest/ptest_set_env.csh
+

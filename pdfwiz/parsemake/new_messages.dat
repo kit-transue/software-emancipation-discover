@@ -1,0 +1,18 @@
+Unmatched brace parsing path|Unmatched brace parsing path|1|1
+Error opening file|Error opening file "$"|1|1
+Too many levels in macro expansion|Too many levels in macro expansion|1|1
+Error opening PDF for writing|Error opening PDF "$" for writing|1|1
+Error while writing PDF|Error while writing PDF "$"|1|1
+Error opening flags database for writing|Error opening flags database "$" for writing|1|1
+Error while writing flags database|Error while writing flags database "$"|1|1
+Error creating directory for admindir|Error creating admindir directory "$"|1|1
+Error creating admindir subdirectory|Error creating admindir subdirectory "$"|1|1
+Error opening makefile|Error opening makefile "$".  Make sure the project's makefile is exported.|1|1
+couldn't open include file: |Couldn't open included file "$"|1|1
+Couldn't find include file|Couldn't find included file "$" using include path "$"|1|1
+Error opening preferences file|Error opening preferences file "$"|1|1
+Error opening prefsfile for write|Error opening prefsfile "$" for write|1|1
+Error writing prefsfile|Error writing prefsfile "$"|1|1
+PSETHOME not found!|PSETHOME environment variable not found|1|1
+Unable to read options description file|Unable to read options description file "$"|1|1
+No executable defined in options file|No executable defined in options file|1|1

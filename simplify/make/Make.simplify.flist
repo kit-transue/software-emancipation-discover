@@ -1,0 +1,10 @@
+CXXROOTS = \
+        simplify \
+	ParserCallBacks \
+	ModifySrc \
+	cleanup \
+        InclusionNode \
+	InclusionTree \
+	main \
+	simplify_globals \
+	simplify_CBS

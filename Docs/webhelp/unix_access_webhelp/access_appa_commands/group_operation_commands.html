@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Group Operation Commands</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p5 {margin: 0.0px 1.0px 1.0px 12.0px; font: 11.0px 'Courier New'}
+    p.p6 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    p.p8 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 11.0px 'Courier New'}
+    span.s2 {font: 12.0px 'Courier New'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 115.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 261.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 0.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 115.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 261.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Group Operation Commands</b></p>
+<p class="p2">While a set in Access offers much of the functionality of a group, it is only a temporary object and is not part of the Information Model. Group operation commands provide a subset of the Group Manager’s functionality. You can use these commands to group entities or use grouped entities. Remember that DIScover does not allow projects as group members.</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td1">
+        <p class="p3"><b>Group Operation Command</b></p>
+      </td>
+      <td rowspan="2" valign="middle" class="td2">
+        <p class="p3"><b>Description and Syntax</b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Collective command for group functions; supersedes next.</p>
+        <p class="p5">group [info | new | tmp | save | saveas | rename | set | get | size | exists | add | remove | delete] <i>group_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group info</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Lists names of existing groups; command takes no arguments.</p>
+        <p class="p5">group info</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group new</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Creates a new group with the given name containing the specified elements.</p>
+        <p class="p5">group new group_name elements</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group get</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Returns the elements of the specified group</p>
+        <p class="p5">group get <i>group_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group save</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Saves the group <span class="s1"><i>group_name</i></span> to disk</p>
+        <p class="p5">group save <i>group_name</i></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group add</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Adds elements to the specified group.</p>
+        <p class="p5">group add group_name elements</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group remove</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Removes elements from the specified group.</p>
+        <p class="p5">group remove group_name elements</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td rowspan="2" valign="middle" class="td3">
+        <p class="p5">group delete</p>
+      </td>
+      <td rowspan="2" valign="middle" class="td4">
+        <p class="p6">Permanently removes the stored group from memory.</p>
+        <p class="p5">group delete group_name</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p4"><br></p>
+<p class="p7"><br></p>
+<p class="p2">Once created, you can reference groups like any entity; they act as sets but do not take a <span class="s2">$</span> prior to their name, for example:</p>
+<p class="p8">% group create var [defines -variables /xip_shared]</p>
+<p class="p8">% print var<br>
+(var) reglist<br>
+(var) reglist_num<br>
+(var) CommandLineOptions<br>
+(var) GPL<br>
+(var) G_dbFileList<br>
+[...]</p>
+</body>
+</html>

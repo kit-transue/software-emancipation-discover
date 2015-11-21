@@ -1,0 +1,69 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "Vim Client"=.\vimclient\vimclient.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    Vim Client
+    .\vimclient
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "client"=.\client\client.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    client
+    ..\..\..
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "server"=.\server\server.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    server
+    ..\..\..
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+    begin source code control
+    emacsserver
+    .
+    end source code control
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

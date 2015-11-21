@@ -1,0 +1,24 @@
+<html>
+<body>
+
+<p><b>AECB - Avoid Empty Catch Blocks</b></p>
+
+<p>
+Catch blocks should not be empty.
+Programmers frequently forget to process negative outcomes of a program
+and tend to focus more on the positive outcomes.
+</p>
+
+<p>
+When 'Check parameter usage' option is on, this rule also checks, whether
+code does something with the exception parameter or not. If not, violation is raised.
+</p>
+
+<p>
+You can also specify the list of exceptions, which should be ignored.
+For example, for <code>PropertyVetoException</code> catch block
+usually is empty - as a rule, the program just does nothing if this exception occurs.
+</p>
+
+</body>
+</html>

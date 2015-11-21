@@ -1,0 +1,49 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+
+    Processing not tokenized input by parser.
+
+    A. Harlap
+
+    1. Purpose of project. To have same input as gcc has.
+
+    2. Current implementation based on inserting into astTree structure fields tree_filen, start_line, end_line which are equal to numbers of tokens in tokenized source of file filen.
+
+    3. We will inside yylex() create array of tokens. We will insert into astTree structure instead of value start_line, end_line indexes in this array.
+
+        Each token may be described as structure { int timestamp; /* index */ int first_line; /* line in source file */ int first_column; /* offset from the beginning of the line */ int last_line; int last_column; int value; /* value of token */ char * text; /* file name */
+
+        }
+
+    4. We will not include to this array tokens from # marked lines.
+
+    5. We will not include to this array tokens during some second pass through source code (like during doing pended inlines).
+
+    6. Files we are intested in :
+
+        /paraset/src/gcc/src/c-lex.c /paraset/src/gcc/src/cp/lex.c /paraset/src/gcc/src/cp/spew.c /paraset/src/ast/parser/ast_hook.C

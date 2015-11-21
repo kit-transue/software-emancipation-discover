@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ "$cm_date" = "" ]; then
+  cm_date="70"
+fi
+sccs prs -c$cm_date -l -d":I: :D: :T:" $cm_revision_file

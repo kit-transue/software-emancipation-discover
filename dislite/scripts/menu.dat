@@ -1,0 +1,43 @@
+# This is predefined menu
+
+MENU	Defines 0
++	All 0 defines
++	Files 0 "defines -module"
++	Functions 2  "defines -function"
++	Classes 0 "defines -class"
++	Variables 0 "defines -var"
++	"Local Var." 0 defines_locals
++	Macros  0 "defines -macro"
++	Typedefs 0 "defines -typedef"
+    
+MENU Function 2
++       "Where Called" 0 where_called
++       Calls 0 "uses -function"
+
+MENU    Class 0
++	"Fields"  0 get_member_data
+
+MENU	Uses	0
++	All 0 uses
++	Functions 2  "uses -function"
++	Classes 0 "uses -class"
++	Variables 0 "uses -var"
++	"Local Var." 0 defines_locals
++	Strings 0 "uses -string"
++	Macros  0 "uses -macro"
++	Typedefs 0 "uses -typedef"
++	"Include Files" 8 get_include_files
+
+MENU	Where	0
++	Defined 0 "where_defined"
++	Referenced 0  "where referenced"
++	Used 0 "where used"
++	Called 0 "where_called"
++	Included 0  "where included"
++	Declared 4  "where declared"
+ 
+MENU    Show 0
++	Instances 0 instances
++	Declarations 0  get_declarations
++       Type    0   get_type
++	Fields 0 get_member_data

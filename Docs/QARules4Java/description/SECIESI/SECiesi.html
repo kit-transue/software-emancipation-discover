@@ -1,0 +1,28 @@
+<html>
+<body>
+
+<p><b>Securty - An interface extends the Serializable interface</b></p>
+
+<p>Java's serialization mechanism lets the programmer save entire objects to a
+storage mechanism such as a disc, database, or string. The mechanism also
+lets classes be restored from saved information later, perhaps from the same
+application after it has stopped and restarted or from another application.
+Saving an object's state in Java is serialization; restoring its state is
+deserialization.  Serialization is dangerous because it lets adversaries
+access your objects' internal state. Adversaries can serialize one of your
+objects into a byte array that can be read, which lets them inspect your
+object's full internal state, including any fields you marked private and
+the internal state of any objects your reference.</p>
+
+<p><b>Tip:</b>
+Do not make your interfaces Serializable if possible.
+If you make your interfaces Serializable, make sure that any sensitive data
+members are <i>transient</i>.</p>
+
+<p><b>REFERENCE</b></p>
+<p>Statically Scanning Java Code: Finding Security Vulnerabilities.<br>
+John Viega, Gary McGraw, Tom Mutdosch, and Edward W. Felten<br>
+IEEE SOFTWARE September/October 2000</p>
+
+</body>
+</html>

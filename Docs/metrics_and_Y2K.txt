@@ -1,0 +1,386 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Ofer Mazor
+
+              More information about metrics and instances (y2k)
+
+The metrics project was developed by Sergey Ioffe, and his document
+describing how they work is in /paraset/src/Docs/metrics.txt.  This
+document will summarize the way metrics work and than explain the
+changes and additions I have made to metrics especially those that
+relate to Y2K and instance browsing.
+
+The fist section of this document will explain the usage of metrics
+and instance browsing from a user's point of view. The second part
+will describe their implementation.
+
+There is a final paragraph about possible addition to the Y2K
+functions. and how they might be accomplished.
+
+METRICS USER'S GUIDE --------------------
+ 
+Metrics are numerical information that can be extracted from code.  In
+DISCOVER, the following metrics are currently available:
+
+ Cyclomatic Complexity: Also known as McCabe's complexity. The number
+ of paths through a given function. Calculated as the number of 'if'
+ and 'case' statements plus one.
+
+ Myers Complexity: Calculated by adding the number of logical
+ operators (||, &&, ?:) to the cyclomatic complexity.
+
+ Lines Of Code: The actual numer of carriage returns in a funtion or
+ file.
+
+ Uncommented Lines Of Code: This does not count any lines that are
+ blank or are commented out. (If a line has both source code and a
+ comment on it, it will be counted)
+
+ Executable Lines Of Code: This is the same as Uncommented Lines Of
+ Code, but it also does not count any code contained in any '#if' or
+ '#ifdef' blocks.
+
+ Number Of Ifs: The number of 'if' statements in the code.
+
+ Number Of Switches: The number of 'switch' statements in the code.
+
+ Number Of Defaults: The number of 'default' clauses in the
+ code. (This one only makes sence in relation to the number of
+ switches.)
+
+ Number of Returns: The number of explicit return statements in the
+ code.
+
+ Number of Loops:
+ The total number of loops in the code.
+
+ Depth of Nested Control Structures:
+ Calculates the deepest nesting of loops, ifs, and other control structures
+ in the code.
+
+ Dangling Else-ifs:
+ The number of else-if blocks that do not end with a final 'else'.
+
+ Dangling Switches:
+ The number of 'switch' statements that do not end with a 'default' block.
+
+ Fan-in (Base classes):
+ The number of base classes (super classes) for a given class.
+
+ Fan-out (Derived classes):
+ The number of derived classes (sub classes) of a given class.  
+
+ Bytelength:
+ The length of a file or function definition in bytes.
+ 
+ Starting line number:
+ The starting line number of a class or function definition.
+
+
+Each metric can be calculated on a function, file, and/or a
+class. Currently, I believe, all the metrics but fan-in and fan-out
+can be calculated on both functions and files. The metrics that work
+for classes are fan-in, fan-out and starting-line-number.
+
+When a metric cannot be calculated it will return a value of -1. There
+are several reasons why this might occur.  First of all, a metric must
+be calculated on the correct type of symbol (e.g. asking for the
+cyclomatic complexity of a class will return -1). In addition, most
+metrics will not work for functions and classes that are defined in
+macros. And finally, metrics queries performed through the CLI or the
+Software Inventory Report can only get metrics values already stored
+in the metrics pmod.  Therefore you must be sure the metrics model has
+been generated for a given project before performing metrics queries
+on it through the CLI.
+
+Metrics queries performed throught the Metrics Analysis dialog box
+will go and calculate any metrics not yet stored in the pmod, possibly
+requiring pset files to be loaded.  Querying metrics through the CLI
+will not load pset files, and will not calculate any metrics not
+stored in the pmod.
+
+
+
+GENERATING METRICS PMODs:
+
+After metrics are calculated they can be stored in a pmod file to
+prevent them from being recalculated unnecessarily. The preference
+that regulated this process is 'DIS_model.SaveMetrics' (before version
+5.0.0.13x, there were 2 prefs called DIS_misc:BuildMetrics and
+DIS_misc:StoreMetrics). This preference's default value is 0.  When it
+is set to 1, metrics will be stored in their pmod files. This means
+that metrics will be automatically calculted and stored for any files
+parsed during a model build, or an interactive update of a file.
+
+If you have an information model already built without metrics, and
+you wish to add metrics information to the model, you can run
+"discover -batch -metric <project_name>" just like you would run a
+-proj pass.  This will build metrics for all files that have been
+parsed already and have .pset files.
+
+If you built your metrics model using a 5.0 Beta-1 executable, and you
+encounter the error message:
+    "Inserting into existing MetricHash!!!!"
+or
+    "*** DISCOVER internal: attempt to reinsert a metric that already
+    exists for this model. "
+please rebuild your metrics model using a newer version of the
+executable.
+
+
+
+USING Y2K AND INSTANCES
+
+There are several additions to the information model that are being
+grouped under the category of Y2K. To have this information added to
+your model, the following two preferences must be set to 1:
+DIS_model.GenerateY2KInfo, and DIS_model.SaveMetrics .
+
+If these preferences are set, the following additional information will 
+be added:
+
+Array Sizes:
+ If an array is declared as "char myString[1024]", the model will
+ contain the variable "myString" with a type of "char[1024]", instead
+ of "char[]".  If a constant is used to specify the size, than that
+ constant will be used in the model (e.g. a type of
+ char[MAX_STRING_SIZE] could be expected). This information is stored
+ in the normal pset and pmod files.
+
+Strings:
+ If a string literal is used in a source file, it will be added to the
+ model. To minimize the increase in model size, string are considered
+ to be used by files (not functions), so to deteremine where and how
+ many times a string is used in a file, you need to use the instance
+ browsing capabilities (explained below).
+
+Local Variables:
+ When a block of code declares local variables, they will be included
+ in the information model. The name of a local variable will consist
+ of its type and identifier (e.g. "int i" is a typical name).  To
+ minimize the increase in model size, a local variable will only be
+ added once to a file, no matter how many times it is used. This means
+ that if file "a.C" uses the local variable "int i", you can not know
+ initially whether it is referenced once, or if it is declared
+ multiple times in many blocks of many functions. This information is
+ stored in the normal pset and pmod files.
+
+Pset-less Instance Browsing:
+ This feature allows the user to determine every location a given
+ symbol is referenced without even loading pset files. Currently it is
+ accessible only through the CLI.  The "instances" command takes a set
+ of symbols and returns a carresponding set of instance-symbols, one
+ for each location in the model where one of the symbols was
+ referenced.  The instnaces-symbols have attributes that allow you to
+ determine the file and line number of the particular instance, as
+ well as the symbol of which it is an instance.  In addition, when
+ looking at the instances of local variables, a distiction is made
+ between normal instances, and those instances where the local
+ variable is declared. Calling the "instances" command on a local
+ variable declaration returns only the instances for that particular
+ declaration.  The instances-related information is stored in the
+ *.pmod.met files.
+
+ In the CLI, all the normal attributes (except 'kind') will work for
+ instances and will return the value of that attribute applied to the
+ symbol that it is an instance of. The kind attribute will return
+ 'instance'. The following additional attributes have been added to
+ work on instances:
+
+* inst_scope: returns the symbol in who's definition contains the
+instance. If the instnace did not occur in a definition, the file
+where it is used is returned.
+
+* inst_scopefile: returns the file where the instance is used
+
+* inst_line: returns the line number in that file where it is used
+
+* inst_info: returns the string "<inst_scopefile> : <inst_line>"
+
+* declaration: boolean value to tell if the instance is a local
+variable declaration.
+
+'instance' is now valid kind, so it can also be used as an attribute
+to test if a symbol is an instnace.
+
+
+
+The following commands have been added to the CLI as well:
+
+* instances: given a set of symbols returns the set of all instances
+of those symbols.  If it is given a local variable declaration as
+input, it returns the instances for that particular declaration.
+
+* declarations: returns all the instances of local variables that are
+declarations
+
+* where_declared: given an instance of a local variable, this returns
+the instances where the var is declared. (NOTE this command might be
+joined with the regular 'where declared' command, or else it should
+have its name changed, i'm not sure what will happen).
+
+* instance_get_symbol: returns the symbol of the given instance(s)
+
+* instance_get_scope: returns the symbol of the scope for the given
+instance(s).  (The scope is the function definition or file where the
+instance is being used.)
+
+* instance_get_statement: returns a string with the particular
+statement in code containing that instnace.
+
+* instance_from_offset: takes as arguments a logical filename and a
+character offset into that file. Returns the particular instance in
+that file.
+
+Because instnaces cannot be saved as groups, the
+"instance_from_offset" command is essential for the storage of
+instances between sessions. You can save instances by stroing a list
+of their filenames and offsets,a nd then restore them in a different
+discover session by using this command.
+
+Once you have extracted instances through the CLI, you can bring them
+into the normal browser by using the 'set_result' command. Once they
+are listed there, double clicking on an instance will open up the
+correct file and position the cursor at that particular instance. This
+action works quickly because it will not load the pset file.
+
+
+
+
+
+METRICS/Y2K IMPLEMENTATION DETAILS ----------------------------------
+
+Source Files with most of the metrics/y2k code:
+ /paraset/src/paraset/smt/src/metricSMT.C
+ /paraset/src/paraset/smt/metric/MetricElement.C
+ /paraset/src/paraset/smt/metric/MetricSet.h.C
+ /paraset/src/paraset/smt/metric/metric.C
+ /paraset/src/paraset/smt/include/metric.h
+
+ /paraset/src/paraset/api/include/Interpreter.h
+ /paraset/src/paraset/api/include/attribute.h
+ /paraset/src/paraset/api/src/Interpreter.C
+ /paraset/src/paraset/api/src/attribute.C
+ /paraset/src/paraset/api/src/cliCommands.C
+
+
+
+The file metrics.txt explains many of the internals of metrics and
+expains the three main classes (Metric, MetricSet and
+MetricElement). To summarize, Metric is the class that acts as an
+interface to metrics from the outside. A MetricSet has a pointer to a
+table of metrics (a pmod.met file). There is one MetricSet for every
+project. MetricElements are how the contents of the metrics tables
+(.pmod.met files) are accessed.  Each MetricElement has a pointer to a
+MetricTable and an offset into that table.
+
+MetricElements can contain other MetricElements, and the .pmod.met
+files consist of trees of MetricElements. MetricElements can store
+values, so the simplest MetricElements will store the value of a
+particular metric for a particular symbol.
+
+I have created a simple program that will print out a visual
+representation of what a particular .pmod.met file looks like in text
+format. (The source code is stored in /paraset/tools/met_reader.C, it
+compiles and works on sun5, (I'm not sure about other platforms).
+
+In brief, a *.pmod.met file is an array of MLinks. An MLink is
+structured like a normal link, consisting of four bytes. The first
+byte contains the type of MLink (using the enumerated type
+MetricType). It also has one bit to specify if it is a "container"
+MLink or not. The next three bytes will store the value of the MLink.
+For a container link, the value is the size of the container.
+
+The most basic MetricElement types in the *.pmod.met files are
+MET_ELEMENT and MET_UNDEFINED_ELEMENT. These are containers that
+represent one particular symbol in the current project.  MET_ELEMENTs
+are defined in the current file, and MET_UNDEFINED_ELEMENTs are
+not. Either of these MetricElements will contain a MET_OBJECT that
+stores the offset of the xrefSymbol represented by this element.
+
+The top layer of very *.pmod.met file will contain the MET_ELEMENTS
+representing every file in the project.  Within each of these there
+will be a MET_CHILDREN container that will store all the MET_ELEMENTs
+and MET_UNDEFINED_ELEMENTs for the different files.
+
+In addition, each MET_ELEMENT contains the values of all metrics that
+have been computed for it.b
+
+
+When a *.pmod.met file is loaded, a hash table is generated for it,
+linking xrefSymbols (indicated by their offset) to their corresponding
+MetricElements in the file.
+
+Now when the user wants a metric to be calculated on a particular
+symbol, the hash table is used to find that symbol's MET_ELMENT which
+can be checked to see if that particular metric has been stored in it.
+
+The way that instnaces are added to this structure is that each
+MET_ELEMENT or MET_UNDEFINED_ELEMENT can also have a
+MET_INSTNACE_BLOCK container which can contain multiple MET_INSTANCEs.
+Each MET_INSTANCE represents one instance of the particular symbol in
+that particular file. The MET_INSTANCE contains information about its
+scope (the file/function definition it is referenced in) and the line
+number and character offset in that file).
+
+Given a symbolPtr, the algorithm used to find all its instances is
+first to use the normal information model to find out every file where
+the symbol is referenced. Then traverse the MetricElement trees for
+those files to find the instances of that symbol.
+
+
+Finally, the instances of local variables are stored slightly
+differently. For every MET_UNDEFINED_ELEMENT representing a local
+variable, there is a MET_DECLARATION_INSTANCE_BLOCK which contains all
+the instnaces which are also declarations. Then within each of those
+block are MET_INSTNCE_BLOCKs that have any other instances for that
+particular declaration.
+
+
+To facilitate the use of instnaces, the symbolPtr class has been
+modified to allow symbolPtrs to point to metricElements. The symbolPtr
+will consist of a MetricSet ptr and an offset. To deferintiate between
+MetricElement pointers and xrefSymbol ptrs, a flag bit is set in the
+unused byte of the offset.
+
+
+
+
+WHERE TO GO FROM HERE:
+
+The next set of changes to the Y2K project will probably require more
+traversals of the smtTrees. The traversing of the trees should be easy
+using the normal smt functioanlty. To convert from an instance to an
+smtTree, see how I did it in the get_instance_statement command.  To
+get from an smtTree back to an instance get the filename and offset
+and then see how I implemented the instance_from_offset command.
+
+Also, to get set operations to work for instances, I am very sure all
+you need to do is modify the symbolPtr::operator== and
+symbplPtr::sym_compare functions to check if either element is an
+instance and if so, just compare the un.mp pointer and the offsets.

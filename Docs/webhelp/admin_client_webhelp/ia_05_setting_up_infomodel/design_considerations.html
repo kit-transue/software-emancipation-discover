@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Design Considerations</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 8.0px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 9.0px 'Times New Roman'}
+    span.s2 {font: 11.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Design Considerations</b></p>
+<p class="p2">Before you begin working with DIScover, consider the following questions that will help you to determine how you create your model:</p>
+<p class="p3"><b>Which software engineering projects do you want to be used during the build?</b></p>
+<p class="p2">To answer this question, consider the following: Where is your code base, and how is it arranged? Do you have separate projects that you want to exist in individual models? Or do you want an information model to represent your entire code base? Which would work best for your engineering purposes and developer audience?</p>
+<p class="p3"><b>Optional Arrangements of Model Structure</b></p>
+<p class="p2">A singular model, representing your entire code base:</p>
+<p class="p4">•<span class="s1">   </span>Project 1</p>
+<p class="p2">Multiple models, representing separate software engineering projects:</p>
+<p class="p4">•<span class="s1">   </span>Project 1</p>
+<p class="p4">•<span class="s1">   </span>Project 2</p>
+<p class="p3"><b>Do you want a distributed build?</b></p>
+<p class="p2">DIScover accommodates model distribution. To maximize efficiency, default DIScover behavior distributes the model build over multiple processes. The default processor setting is four, but you can change this specification by modifying the information model’s <span class="s2">Setup.txt</span> file.</p>
+<p class="p2">To understand these questions, you need to know how DIScover processes a model build. There are three main phases to this process:</p>
+<p class="p5"><b>•</b><span class="s1"><b>   </b></span><b>Analysis phase</b></p>
+<p class="p4">DIScover determines which files need to be reparsed.</p>
+<p class="p5"><b>•</b><span class="s1"><b>   </b></span><b>Parse phase</b></p>
+<p class="p4">DIScover parses all the outdated files and stores data in <i>intermediate file</i> format, or IF files.</p>
+<p class="p5"><b>•</b><span class="s1"><b>   </b></span><b>Update phase</b></p>
+<p class="p4">DIScover imports the intermediary files into the model.</p>
+<p class="p5"><b>•</b><span class="s1"><b>   </b></span><b>Finalize phase</b></p>
+<p class="p4">DIScover completes building the model.</p>
+<p class="p2">Once you have answered the previous questions, you have a better idea of how you want DIScover to build your model—which software projects the model encompasses and how many processors are used to build your model.</p>
+</body>
+</html>

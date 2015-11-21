@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>GCOSKR - GC Object Stream Keep References</b></p>
+
+<p>Be aware of memory leaks due to 'ObjectStream' usage. 
+ObjectInputStream and ObjectOutputStream may cause memory leaks.
+ObjectStreams are designed to handle the case of sending the same Object multiple times across a connection.
+For this reason, ObjectStream classes keep a reference to all objects written
+or read until the 'reset()' method is called.  Thoes objects will not be garbage
+collected until 'reset()' is called.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+public class OSKR {<br>
+&nbsp; public void writeStringToStream(ObjectOutputStream os, String s)<br>
+&nbsp; &nbsp; throws IOException {<br>
+&nbsp; &nbsp; <font color='red'> os.writeObject (s);</font> &nbsp; &nbsp; // possibly cause memory leaks here.<br>
+&nbsp; }<br>
+}</code></p></nobr>
+
+<p><b>Tip:</b>
+Use 'reset()' of ObjectOutputStream or Object InputStream class's method to
+clear the list of Objects written to the Stream.  Or, use DataStreams instead of
+ObjectStreams in terms of Strings or byte arrays for optimal performance.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class OSKR {<br>
+&nbsp; public void writeStringToStream(ObjectOutputStream os, String s)<br>
+&nbsp; &nbsp; throws IOException {<br>
+&nbsp; &nbsp; os.writeObject (s);<br>
+&nbsp; &nbsp;  <font color='blue'> os.reset(); </font> &nbsp; &nbsp; // prevents memory leaks.<br>
+&nbsp; &nbsp; }<br>
+}</code></p></nobr>
+</body>
+</html>

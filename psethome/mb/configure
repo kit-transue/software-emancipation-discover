@@ -1,0 +1,10 @@
+CM   		=    clearcase
+MODEL_SUBDIR    =    model
+ARCHITECHTURE   =    $Arch
+ADMINDIR_PREFIX =    
+VIEWNAME_BUILD	=    uxmodel
+ROOTDIR_BUILD   =    /export1/model/build
+ROOTDIR_INSTALL =    /net/oxen/vol04/share/sun5/model
+VIEWNAME_PREFIX =    uxmodel_
+VIEW_VWS_DIR    =    /net/labyrinth/export1/model/views
+SERVICE_PREFIX  =    UNIX.

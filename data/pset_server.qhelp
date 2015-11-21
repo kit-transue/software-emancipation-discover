@@ -1,0 +1,138 @@
+#
+# File
+# ----
+#
+  dis_MenuAddMenuArgument AppFileMenu 			"qhelp="
+
+    dis_MenuAddItemArgument FileOpenDefinition   	"qhelp=Open a file or entity's definition"
+
+    dis_MenuAddItemArgument BRViewCloseView		"qhelp=Close the current application"
+
+    dis_MenuAddItemArgument FileCloseWindow		"qhelp=Close the Viewer"
+
+#
+# Edit
+# ----
+# 
+  dis_MenuAddMenuArgument EditMenu   			"qhelp="
+
+    dis_MenuAddItemArgument EditImpactProp  		"qhelp=Start Impact Analysis or switch to an existing Impact Analysis session"
+    dis_MenuAddItemArgument EditClearSelection  	"qhelp=Remove highlighting from any entities"
+
+#
+# Views
+# -----
+
+  dis_MenuAddMenuArgument ViewMenu			"qhelp="
+
+    dis_MenuAddItemArgument FileOpenCalltree		"qhelp=Create a Tree Diagram for the selected entity"
+    dis_MenuAddItemArgument FileOpenInheritance		"qhelp=Create an Inheritance Diagram for a selected class or structure"
+    dis_MenuAddItemArgument FileOpenERD			"qhelp=Create an Entity Relation Diagram for the selected C++ class"
+    dis_MenuAddItemArgument FileOpenDatachart		"qhelp=Create a Data Chart for the selected C structure"
+    dis_MenuAddItemArgument FileOpenOutline		"qhelp=Show the current entity and its dependencies in an outline"
+    dis_MenuAddItemArgument FileOpenFlowchart		"qhelp=Show the current entity as a logical flow chart"
+
+    dis_MenuAddItemArgument ViewCollapse		"qhelp=Remove any child nodes below the selected point"
+
+# Expand
+    dis_MenuAddItemArgument Expand1Level		"qhelp=Show any nodes one level down from the selected parent node"
+    dis_MenuAddItemArgument Expand2Level		"qhelp=Show any nodes two levels down from the selected parent node"
+    dis_MenuAddItemArgument Expand3Level		"qhelp=Show any nodes three levels down from the selected parent node"
+    dis_MenuAddItemArgument Expand4Level		"qhelp=Show any nodes four levels down from the selected parent node"
+    dis_MenuAddItemArgument Expand5Level		"qhelp=Show any nodes five levels down from the selected parent node"
+    dis_MenuAddItemArgument ExpandAll			"qhelp=Show all nodes, up to five levels, from the selected parent node"
+
+#
+# Inheritance
+# -----------
+
+  dis_MenuAddMenuArgument InheritanceMenu		"qhelp="
+
+    dis_MenuAddItemArgument InheritanceShowRel		"qhelp=Calls the Display Related Entities dialog box"
+    dis_MenuAddItemArgument InherShowMem		"qhelp=Calls the Show Members dialog box."
+    dis_MenuAddItemArgument InherSortMem		"qhelp=Control the order of entities that appear in an Inheritance Diagram"
+    dis_MenuAddItemArgument InherExpertMode	  	"qhelp=Toggle Expert Mode, showing greater information about a classes' members"
+
+#
+# Tree Diagram
+# ------------
+
+  dis_MenuAddMenuArgument CallTreeMenu			"qhelp="
+
+    dis_MenuAddItemArgument CTDisplayArgs		"qhelp=Display a tree's arguments"
+    dis_MenuAddItemArgument CTHideArguments 		"qhelp=Hide a tree's arguments"
+    dis_MenuAddItemArgument CTPrune			"qhelp=Filter which types of nodes appear in a Tree Diagram"
+    dis_MenuAddItemArgument CTShowPaths			"qhelp=Show only the path between two nodes and turn off the display of anything else"
+
+#
+# ERD
+# ---
+
+  dis_MenuAddMenuArgument RelationsMenu			"qhelp="
+
+# Show All
+      dis_MenuAddItemArgument ShowAllAttributes 	"qhelp=Show all data members"
+      dis_MenuAddItemArgument ShowAllOperations 	"qhelp=Show all member functions"
+
+# Hide All
+      dis_MenuAddItemArgument HideAllAttributes		"qhelp=Hide all data members"
+      dis_MenuAddItemArgument HideAllOperations		"qhelp=Hide all member functions"
+
+    dis_MenuAddItemArgument RelShowBuiltin		"qhelp=Control which colored lines (for user-defined relations) appear"
+    dis_MenuAddItemArgument RelShowOtherRel		"qhelp=Control inheritance relation lines and filter which relations appear using regular expressions"
+    dis_MenuAddItemArgument RelShowMember		"qhelp=Control which types of members appear in the ERD"
+    dis_MenuAddItemArgument RelInsertClass		"qhelp=Add a class to the ERD using a selection browser"
+    dis_MenuAddItemArgument RelRemoveClass		"qhelp=Remove a selected class from the current ERD"
+
+#
+# Subsystems
+# ----------
+
+  dis_MenuAddMenuArgument SubsystemMapMenu		"qhelp="
+
+    dis_MenuAddItemArgument SubShowMembers		"qhelp=Control which types of entities appear"
+    dis_MenuAddItemArgument SubSortMembers		"qhelp=Set the entity sort order"
+    dis_MenuAddItemArgument SubInsertMember		"qhelp=Add a member to a group/subsystem using a selection browser"
+    dis_MenuAddItemArgument SubRemoveMember		"qhelp=Remove a member from a group/subsystem"
+    dis_MenuAddItemArgument SubRemoveGroup		"qhelp=Remove a group/subsystem from the view"
+
+#
+# Data Chart
+# ----------
+
+  dis_MenuAddMenuArgument DatachartMenu			"qhelp="
+
+# Show All
+      dis_MenuAddItemArgument DCShowAllAttributes	"qhelp=Show all data members"
+      dis_MenuAddItemArgument DCShowAllOperations 	"qhelp=Show all method functions"
+
+# Hide All
+      dis_MenuAddItemArgument DCHideAllAttributes	"qhelp=Hide all data members"
+      dis_MenuAddItemArgument DCHideAllOperations 	"qhelp=Hide all member functions"
+
+    dis_MenuAddItemArgument DCShowBuiltin		"qhelp=Control which colored lines (for user-defined relations) appear"
+    dis_MenuAddItemArgument DCShowOther			"qhelp=Control inheritance relation lines and filter which relations appear using regular expressions"
+    dis_MenuAddItemArgument DCShowMembers		"qhelp=Control which types of members appear in the Data Chart"
+
+#
+# Window
+# ------
+
+  dis_MenuAddMenuArgument HistoryMenu			"qhelp="
+
+    dis_MenuAddItemArgument ViewRefresh			"qhelp=Refresh the current view"
+
+# Zoom
+      dis_MenuAddItemArgument ViewZoomIn		"qhelp=Increase the magnification on the current view"
+      dis_MenuAddItemArgument ViewZoomOut		"qhelp=Decrease the magnification on the current view"
+      dis_MenuAddItemArgument ViewZoomToFit		"qhelp=Fit the complete view in this window"
+      dis_MenuAddItemArgument ViewResetZoom		"qhelp=Reset the view's magnification to the default"
+
+#
+# Help
+# ----
+
+  dis_MenuAddMenuArgument HelpMenu			"qhelp="
+
+      dis_MenuAddItemArgument HelpContentsItem		"qhelp="
+

@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# echo "test_internal_run: $1 - file with Tests  $2 - outdir  
+# echo "                   [$3 - executable] [$4 - exclusions] "
+# echo "                   [$5 - file with IA pruned test list]"
+
+# A loop for execution of every single test from given file
+
+mkdir -p "$2"
+echo "Output Directory: $2"
+t_log="$2/test.log"
+echo "Output Protocol: $t_log"
+
+file_flag=""
+init_continue=""
+echo_n="echo -n"
+[ "$Arch" = "hp700" ] && echo_n="echo "
+
+if [ "X$PTEST_CONTINUE" != "X" -a "X$PTEST_THE_TEST" != "X" ] ; then
+	init_continue="$PTEST_THE_TEST"
+	echo "***Continue: `date`"
+	echo "***Continue: `date`" >> $t_log
+else
+	echo "Start: `date`" > $t_log
+fi
+
+for ii  in `cat $1`
+do
+      if [ -d $ii ] ; then
+         file_flag=""
+      else
+         file_flag="1"
+      fi
+
+      if [ "X$init_continue" != "X" -a "$init_continue" != "$ii" ] ; then
+         echo "CONTINUE: skip test $ii"
+      else
+         init_continue=""
+         PTEST_TMPDIR=${PTEST_TMPDIR:="/usr/tmp"}; export PTEST_TMPDIR
+         echo "$ii" > $PTEST_TMPDIR/the_test
+         ptest_one_run "$ii" " $2" " $3" "$file_flag" "$4" "$5"
+         if [ $? -ne 0 ] ; then
+            echo "Problem executing test $ii"
+         else
+            [ "X$PTESTSLAY" != "X" ] && slay -9
+            unset PTEST_THE_TEST
+
+            if [ "$ii" != "$PSETTEST" ] ; then
+            $echo_n "ptest_run:  Wiping away $PSETTEST ... "
+# Please, do not remove next line: timing problems with files like 
+# that '.nfs4D7F'
+               sleep 10
+               cd $PSETTEST/..
+               \rm -rf $PSETTEST > /dev/null 2>&1
+	       mkdir -p $PSETTEST
+	       cd $PSETTEST
+               echo "Done"
+            fi
+	 fi
+      fi
+done
+
+\rm $PTEST_TMPDIR/the_test > /dev/null 2>&1
+
+echo "  End: `date`" >> $t_log
+exit 0

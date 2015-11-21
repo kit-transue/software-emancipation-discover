@@ -1,0 +1,114 @@
+# For use with Code Integrity Browser
+
+Home : $privateModelRoot [[ W ]] <-> /src
+{
+
+#private Rules
+#""		: $privateSrcRoot/(**).([cChH])/%/.pset		=> $privateModelRoot/pset/(1).(2).pset
+#""		: $privateSrcRoot/(**).(cxx|hxx)/%/.pset	=> $privateModelRoot/pset/(1).(2).pset
+#""		: $privateSrcRoot/(**).(cpp|hpp)/%/.pset	=> $privateModelRoot/pset/(1).(2).pset
+#""		: $privateSrcRoot/(**).(cc|hh)/%/.pset		=> $privateModelRoot/pset/(1).(2).pset
+""		: $privateModelRoot/(**).pmod/%/.pmoddir	=> $privateModelRoot/pmod/(1).pmod
+}
+
+ROOT  :  C:/  <->  /ROOT  {
+  "c_drive/program files/swemancipation/prebuilt/source/xerces"  :  "$sharedSrcRoot"<->  "c_drive/program files/swemancipation/prebuilt/source/xerces" {
+      org  {
+        xml/sax  {
+          *.java
+          helpers  {
+            *.java
+          }
+          ext  {
+            *.java
+          }
+        }
+        w3c/dom  {
+          *.java
+          traversal  {
+            *.java
+          }
+          ranges  {
+            *.java
+          }
+          html  {
+            *.java
+          }
+          events  {
+            *.java
+          }
+        }
+        apache  {
+          xml/serialize  {
+            *.java
+          }
+          xerces  {
+            validators  {
+              schema  {
+                *.java
+                identity  {
+                  *.java
+                }
+              }
+              dtd  {
+                *.java
+              }
+              datatype  {
+                *.java
+              }
+              common  {
+                *.java
+              }
+            }
+            utils  {
+              *.java
+              regex  {
+                *.java
+              }
+            }
+            readers  {
+              *.java
+            }
+            parsers  {
+              *.java
+            }
+            msg  {
+              *.java
+            }
+            jaxp  {
+              *.java
+            }
+            framework  {
+              *.java
+            }
+            domx  {
+              *.java
+            }
+            dom  {
+              *.java
+              events  {
+                *.java
+              }
+            }
+          }
+          html/dom  {
+            *.java
+          }
+          wml  {
+            *.java
+            dom  {
+              *.java
+            }
+          }
+        }
+      }
+      javax/xml/parsers  {
+        *.java
+      }
+   }
+}
+__rules  :  /  <->  /__rules  {
+  ""  :  $sharedSrcRoot/(**)/(*)/%/.pset  =>  $ADMINDIR/model/pset/c_drive/program files/swemancipation/prebuilt/source/xerces/(1)/(2).pset
+  ""  :  $sharedSrcRoot/(**)/(*)/%/.make  =>  ""$PSETHOME/bin/disperl" "$PSETHOME/mb/cr_GetFlags.pl"  "$sharedSrcRoot/(1)/(2)"  "
+  ""  :  C:/(*).pmod/%/.pmoddir  =>  $ADMINDIR/model/pmod/(1).pmod
+}

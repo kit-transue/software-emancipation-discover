@@ -1,0 +1,7 @@
+CPPROOTS=\
+                IntegratorSocket\
+                Integrator\
+		CMIntegrator\
+		CMCommand\
+		CMIntegratorCtrlr\
+		CMAttributesDlg

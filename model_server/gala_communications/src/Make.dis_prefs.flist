@@ -1,0 +1,9 @@
+CPROOTS=\
+	Application\
+	ResourceNameIterator\
+	SelectionIterator\
+        getResource\
+
+
+CROOTS=\
+

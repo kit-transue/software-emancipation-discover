@@ -1,0 +1,49 @@
+
+/******************************************************************************/
+/*                                                                            */
+/* Abstrakter Datentyp fuer UNGERICHTETE GRAPHEN                              */
+/*                                                                            */
+/* Autor               Martin Schmidt, Martin-Luther-Str.1, 7630 Lahr         */
+/*                     Tel.: 07821 / 41748                                    */
+/*                                                                            */
+/* Letzte Aenderung    07.01.88                                               */
+/*                                                                            */
+/*                                                                            */
+/* Operatoren          ( siehe ADTUGRAPH.C )                                  */
+/*                                                                            */
+/* Datentyp            UNDIR_GRAPH   					      */
+/*                                                                            */
+/******************************************************************************/
+
+typedef
+struct NODE                	/* Ein Knoten in einer Adjazezliste           */
+{
+  int	 name;                 		/* interner Knotenname                */
+  struct NODE *next;           		/* Zeiger auf naechsten Knoten        */
+} NODE;
+
+
+
+#ifdef csource
+  typedef
+  struct UNDIR_GRAPH         	/* Beschreibung eines ungerichteten Graphen   */
+  { 
+    int     n;            		  /* Anzahl der Knoten des Graphen      */
+    NODE    *((*first)[]);                /* Adjazenzlisten                     */
+    int     (*trans)[];               	  /* Transformationstabelle             */
+    int     (*flags)[];               	  /* Zeiger auf eine Flagtabelle        */
+  } UNDIR_GRAPH;
+#else
+  typedef
+  struct UNDIR_GRAPH         	/* Beschreibung eines ungerichteten Graphen   */
+  { 
+    int     n;                 		  /* Anzahl der Knoten des Graphen      */
+    NODE    ***first;                     /* Adjazenzlisten                     */
+    int     (*trans)[];               	  /* Transformationstabelle             */
+    int     (*flags)[];               	  /* Zeiger auf eine Flagtabelle        */
+  } UNDIR_GRAPH;
+#endif
+
+
+/* end of UGRAPH.STC */
+

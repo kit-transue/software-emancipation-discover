@@ -1,0 +1,907 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc query_closure {max query src} {
+    setinit
+    set src [eval $query $src]
+    closure_intern 1 $max $query $src 
+    set res [setget]
+    setinit
+    return $res
+}
+
+proc query_closure_by_file {max query src} {
+    setinit
+    foreach lname ii $src {
+        set obj [set_copy $src $ii]
+	set m [where defined $obj 1]
+	closure_intern 1 $max $query $obj
+	if {"$m" != "" } { src_unload $m }
+    }
+    set obj [setget]
+    src_unload $obj
+    setinit
+    return $obj
+}
+
+proc closure_intern { level max_level query src } {
+    while { [size $src] > 0 } {
+	if {($max_level != 0) && ($level > $max_level)} { break}
+
+	set new [setinsert $src]
+
+	if { [size $new] == 0 } { break }
+
+	set src [eval $query $new]
+	incr level
+    }
+
+    return $level
+}
+
+proc puts_dfa_verbose message {
+    global env
+
+    catch {
+	if {$env(DISCOVER_DFA_VERBOSE)} {
+	    puts_verbose $message
+	}
+    }
+}
+
+proc cache_init {} {
+    global dfa_cache
+    catch {unset dfa_cache}
+}
+
+proc cache_init2 {} {
+    global dfa_cache2
+    catch {unset dfa_cache2}
+}
+
+proc cache_append {cell func} {
+    global dfa_cache
+    set tag [itag $func]
+    set cell [set_copy $cell]
+
+    if [info exists dfa_cache($tag)] {
+	sappend $dfa_cache($tag) $cell
+    } else {
+	set dfa_cache($tag) $cell
+    }
+}
+
+proc cache_append2 {cell func} {
+    global dfa_cache2
+    set tag [itag $func]
+    set cell [set_copy $cell]
+
+    if [info exists dfa_cache2($tag)] {
+	sappend $dfa_cache2($tag) $cell
+    } else {
+	set dfa_cache2($tag) $cell
+    }
+}
+
+proc cache_eval query {
+    global dfa_cache
+    set result [nil_set]
+
+    foreach {tag val} [array get dfa_cache] {
+	set func [set_copy $tag]
+	set cells [set_copy $val]
+	sappend $result [eval $query $cells $func]
+	graph unload $func
+    }
+
+    return $result
+}
+
+proc cache_eval2 query {
+    global dfa_cache2
+    set result [nil_set]
+
+    foreach {tag val} [array get dfa_cache2] {
+	set func [set_copy $tag]
+	set cells [data find [set_copy $val] $func]
+	sappend $result [eval $query $cells $func]
+	graph unload $func
+    }
+
+    return $result
+}
+
+proc dfa_outflow {list scope} {
+    set list [set_copy $list]
+    set graphs [filter {function || module} $scope]
+    set projects [filter project $scope]
+    set special [filter {constant || string || evalue} $list]
+    set result [nil_set]
+
+    if {[size $special] > 0} {
+	set list [set_subtract $list $special]
+	set result [data outflow $special $graphs]
+        if {[size $result] > 0} {
+	    sappend $result [data outflow $special $projects]
+        } else {
+            set result [data outflow $special $projects]
+        }
+        if {[size $list] > 0} {
+	    sappend $list $result
+        } else {
+	    set list $result
+        }
+    }
+
+    if {[size $result] > 0} {
+	sappend $result [data outflow $list $graphs]
+    } else {
+	set result [data outflow $list $graphs]
+    }
+
+    if {[size $projects] > 0} {
+	set global [data outflow $list $projects]
+
+	if {[size $result] > 0} {
+	    sappend $result $global
+	} else {
+	    set result $global
+	}
+
+	set global [set_subtract $global $result]
+
+	if {[size $result] > 0} {
+	    sappend $result [data outflow $global $projects]
+	} else {
+	    set result [data outflow $global $projects]
+	}
+    }
+
+    return [set_unique $result]
+}
+
+proc dfa_inflow {list scope} {
+    set list [set_copy $list]
+    set graphs [filter {function || module} $scope]
+    set projects [filter project $scope]
+    set list [filter {!constant && !string && !evalue} $list]
+    set result [data inflow $list $graphs]
+
+    if {[size $projects] > 0} {
+	set global [data inflow $list $projects]
+
+	if {[size $result] > 0} {
+	    sappend $result $global
+	} else {
+	    set result $global
+	}
+
+	set global [set_subtract $global $result]
+
+	if {[size $result] > 0} {
+	    sappend $result [data inflow $global $projects]
+	} else {
+	    set result [data inflow $global $projects]
+	}
+    }
+
+    return [set_unique $result]
+}
+
+proc dfa_query {query depth list} {
+    global dfa_cache
+    global dfa_cache2
+    set start [clock seconds]
+
+    puts_dfa_verbose "DFA: dfa_query: ---------- Local Phase ----------"
+    set start_local [clock seconds]
+    set locals [filter !global $list]
+    set result [nil_set]
+
+    foreach lname index $locals {
+	set file [set_copy $lname]
+	set was_loaded 1
+
+	if {[size $file] > 0} {
+	    set was_loaded [is_loaded $file]
+	}
+
+	set all [set_copy $locals $index]
+	set cells [filter cell $all]
+	set nodes [set_subtract $all $cells]
+	set graphs [data context $cells]
+	sappend $graphs [data symbol [tree navigate {r(<-) function_def} $nodes]]
+	sappend $result [eval $query $all $graphs]
+	graph unload $graphs
+
+	if {$was_loaded == 0} {
+	    src_unload $file
+	}
+    }
+
+    puts_dfa_verbose "DFA: local phase: [expr [clock seconds]-$start_local] seconds"
+    puts_dfa_verbose "DFA: dfa_query: ---------- Global Phase ----------"
+    set start_global [clock seconds]
+    set globals [filter global $list $result]
+    set projects [get_pmod_proj [where referenced [data symbol $globals]]]
+    set old_projs $projects
+    set count 1
+
+    while {([size $projects] > 0) && (($depth == 0) || ($count <= $depth))} {
+	puts_dfa_verbose "DFA: dfa_query: ---------- Iteration $count ----------"
+	set new [eval $query $globals $projects]
+	sappend $result $new
+	sappend $globals $new
+	set call_args [filter {global == 2} $new]
+	set projects [get_pmod_proj [where defined [data symbol $call_args]]]
+	set projects [set_subtract $projects $old_projs]
+	sappend $old_projs $projects
+	incr count
+    }
+
+    set globals [set_unique $globals]
+    puts_dfa_verbose "DFA: global phase: [expr [clock seconds]-$start_global] seconds"
+
+    puts_dfa_verbose "DFA: dfa_query: ---------- Final Phase ----------"
+    set start_final [clock seconds]
+
+    set call_args [filter {global == 2} $globals]
+    set globals [set_subtract $globals $call_args]
+    set defn_args [filter {cell && type} $globals]
+    set globals [set_subtract $globals $defn_args]
+    cache_init
+    cache_init2
+
+    foreach cell $call_args {
+	set defn [data symbol $cell]
+	set func [data context $cell]
+
+	if {[size $func] == 0} {
+	    continue
+	}
+
+	cache_append2 $cell $defn
+	cache_append $cell [data symbol $func]
+    }
+
+    foreach cell $defn_args {
+	cache_append $cell [data symbol $cell]
+    }
+
+    foreach cell $globals {
+	set var [data symbol $cell]
+	set graphs [filter function [where used $var]]
+	sappend $graphs [where referenced $var]
+
+	foreach graph $graphs {
+	    cache_append $cell $graph
+	}
+    }
+
+    set new [cache_eval $query]
+    sappend $new [cache_eval2 $query]
+    set new [set_subtract $new $result]
+    set call_args [filter {global == 2} $new]
+    sappend $result $new
+    cache_init2
+
+    foreach s.itag dtag index $call_args {
+	set defn [set_copy $dtag]
+	set cells [set_copy $call_args $index]
+
+	foreach cell $cells {
+	    cache_append2 $cell $defn
+	}
+    }
+
+    puts_dfa_verbose "DFA: final phase: [expr [clock seconds]-$start_final] seconds"
+    puts_verbose "DFA: dfa_query: done"
+    puts_dfa_verbose "DFA: dfa_query: [expr [clock seconds]-$start] seconds"
+    return [set_unique $result]
+}
+
+proc dfa_assign {depth direction option format args} {
+    puts_verbose "DFA: running command \"dfa_assign $depth $direction $option $format $args\""
+    set list [set_copy -warn $args]
+    set local [filter local $list]
+    set list [set_subtract $list $local]
+    sappend $list [data decl $local]
+    set result [nil_set]
+
+    switch $direction {
+	"out" {
+	    sappend $result [dfa_query dfa_outflow $depth $list]
+	}
+
+	"in" {
+	    sappend $result [dfa_query dfa_inflow $depth $list]
+	}
+
+	"bi" {
+	    sappend $result [dfa_query dfa_outflow $depth $list]
+	    sappend $result [dfa_query dfa_inflow $depth $list]
+	}
+
+	default {
+	    puts "dfa_assign $depth $direction $option $format: $direction is a wrong option"
+	    puts "   must be: in out bi"
+	    return -code 1
+	}
+    }
+
+    set result [set_unique $result]
+    set cells $result
+
+    switch $format {
+	"decl" {
+	    set result [filter {!cell && !function && !call_expr} [data decl $cells]]
+	}
+
+	"field" {
+	    set result [filter {!cell && !function && !call_expr} [data field $cells]]
+	}
+
+	"cell" {}
+
+	default {
+	    puts "dfa_assign $depth $direction $option $format: $format is a wrong option"
+	    puts "   must be: decl field cell"
+	    return -code 1
+	}
+    }
+
+    switch $option {
+	"extern" {
+	    set arglist [filter type $cells]
+	    set funlist [filter !project [data graph $cells]]
+	    set defns [filter {(global == 1) && !lname} $arglist]
+	    set calls [filter {global == 2} $arglist]
+	    sappend $calls [filter ast $funlist]
+	    sappend $result [data symbol $defns]
+	    sappend $result [filter !ast $funlist]
+
+	    foreach call $calls {
+		set filename [lname [data symbol $call]]
+
+		if {[string length $filename] == 0} {
+		    sappend $result [data node $call]
+		}
+	    }
+
+	    graph unload $funlist
+	    src_unload [apply lname $calls]
+	}
+
+	"all" {
+	    set arglist [filter type $cells]
+	    set funlist [filter !project [data graph $cells]]
+	    set defns [filter {global == 1} $arglist]
+	    set calls [filter {global == 2} $arglist]
+	    sappend $result [data symbol $defns]
+	    sappend $result [data node $calls]
+	    sappend $result $funlist
+	    graph unload $funlist
+	}
+
+	"none" {}
+
+	default {
+	    puts "dfa_assign $depth $direction $option $format: $option is a wrong option"
+	    puts "   must be: none all extern"
+	    return -code 1
+	}
+    }
+
+    return [set_unique $result]
+}
+
+proc dfa_assign_opt {depth direction option args} {
+    return [dfa_assign $depth $direction $option decl $args]
+}
+
+proc dfa_trace {source target args} {
+    global dfa_cache
+    set start [clock seconds]
+    puts_verbose "DFA: running command \"dfa_trace $source $target $args\""
+
+    set source [set_copy $source]
+    set target [set_copy $target]
+    set args [set_copy $args]
+    set result [nil_set]
+
+    foreach scope $args {
+	set current [nil_set]
+	set src_func [nil_set]
+	set trg_func [nil_set]
+	set src_mode 0
+	set trg_mode 0
+
+	if {([project $scope]) && ([apply global $source] == 0)} {
+	    set src_func [tree navigate {r(<-) function_def} $source]
+	    set src_func [data symbol $src_func]
+	    set src_set [dfa_outflow $source $src_func]
+	    set src_set [filter global $src_set]
+	    sappend $src_set $source
+	} else {
+	    set src_set $source
+	    set src_mode 1
+	}
+
+	if {([project $scope]) && ([apply global $target] == 0)} {
+	    set trg_func [tree navigate {r(<-) function_def} $target]
+	    set trg_func [data symbol $trg_func]
+	    set trg_set [dfa_inflow $target $trg_func]
+	    set trg_set [filter global $trg_set]
+	    sappend $trg_set $target
+	} else {
+	    set trg_set $target
+	    set trg_mode 1
+	}
+
+	foreach src $src_set {
+	    set flow [dfa_outflow $src $scope]
+	    set call_args [filter {global == 2} $flow]
+	    set flow [set_subtract $flow $call_args]
+	    set defn_args [filter type $flow]
+	    cache_init
+
+	    foreach call $call_args {
+		cache_append $call [data symbol $call]
+		cache_append $call [data context $call]
+	    }
+
+	    foreach defn $defn_args {
+		cache_append $defn [data symbol $defn]
+	    }
+
+	    foreach trg $trg_set {
+		sappend $current [data trace $src $trg $scope]
+	    }
+
+	    foreach {tag val} [array get dfa_cache] {
+		set func [set_copy $tag]
+
+		foreach trg $trg_set {
+		    foreach cell $val {
+			set trace [data trace $cell $trg $func]
+
+			if {[size $trace] == 0} {
+			    set check [data unique $cell $trg]
+
+			    if {[size $check] != 1} {
+				continue
+			    }
+			}
+
+			sappend $current $trace
+			sappend $current [data trace $src $cell $scope $func]
+		    }
+		}
+
+		graph unload $func
+	    }
+	}
+
+	if {[size $current] > 0} {
+	    if {$src_mode == 0} {
+		sappend $current [data trace $source $src $src_func]
+	    }
+
+	    if {$trg_mode == 0} {
+		sappend $current [data trace $trg $target $trg_func]
+	    }
+	}
+
+	graph unload $src_func $trg_func
+	sappend $result $current
+    }
+
+    graph unload $scope
+    puts_verbose "DFA: dfa_trace: done"
+    puts_dfa_verbose "DFA: dfa_trace: [expr [clock seconds]-$start] seconds"
+    return [set_unique $result]
+}
+
+proc array_level symbol {
+    set symbol [set_copy -warn $symbol]
+    set level 0
+
+    while {[size $symbol] == 1} {
+	set symbol [get_type $symbol]
+	set type [name $symbol]
+	set index [string first \[ $type]
+
+	if {$index == -1} {
+	    continue
+	}
+
+	set index [string first \] $type]
+
+	if {$index == -1} {
+	    continue
+	}
+
+	incr level
+    }
+
+    return $level
+}
+
+proc stack_violations {args} {
+    set start [clock seconds]
+    puts_verbose "DFA: running command \"stack_violations $args\""
+    set scope [set_copy -warn $args]
+    set all_modules [defines -mod $scope]
+    set result [nil_set]
+
+    foreach module $all_modules {
+	set was_loaded [is_loaded $module]
+	sappend $result [stack_violations_for_file $module]
+
+	if {$was_loaded == 0} {
+	    src_unload $module
+	}
+    }
+
+    puts_verbose "DFA: stack_violations: done"
+    puts_dfa_verbose "DFA: stack_violations: [expr [clock seconds]-$start] seconds"
+    return $result
+}
+
+proc stack_violations_for_file {file} {
+    set start [clock seconds]
+    puts_verbose "DFA: running command \"stack_violations_for_file [name $file]\""
+    set file [set_copy -warn $file]
+
+    if {[string tolower [language $file]] == "java"} {
+	return
+    }
+
+    set functions [defines -fun $file]
+    set result [nil_set]
+
+    foreach graph $functions {
+	set start_aux [clock seconds]
+	puts_dfa_verbose "DFA: stack_violations_for_function: Working on [name $graph]"
+	set export [data cells $graph]
+	sappend $export [uses -var $graph]
+	set first [dfa_inflow $export $graph]
+	set suspects [nil_set]
+
+	foreach cell $first {
+	    if {[apply global $cell] != 0} {
+		continue
+	    }
+
+	    if {[offset [data node $cell]] == 0} {
+		continue
+	    }
+
+	    set level [array_level [data field $cell]]
+
+	    if {[level $cell] < $level} {
+		set second [dfa_inflow $cell $graph]
+		set globals [filter {global == 1} $second]
+
+		if {[size $globals] == 0} {
+		    sappend $suspects $cell
+		}
+	    }
+	}
+
+	set criminals [filter !static [data symbol $suspects]]
+
+	if {[size $criminals] > 0} {
+	    sappend $result $graph
+	}
+
+	graph unload $graph
+	puts_dfa_verbose "DFA: stack_violations_for_function: [expr [clock seconds]-$start_aux] seconds"	
+    }
+
+    puts_verbose "DFA: stack_violations_for_file: done"
+    puts_dfa_verbose "DFA: stack_violations_for_file: [expr [clock seconds]-$start] seconds"
+    return $result
+}
+
+proc alloc_violations {depth mode args} {
+    set start [clock seconds]
+    puts_verbose "DFA: running command \"alloc_violations $depth $mode $args\""
+    set scope [set_copy -warn $args]
+    set result [nil_set]
+
+    if {$mode != "none" && $mode != "many"} {
+	puts "	alloc_violations: mode should be one of the following: none many"
+	return
+    }
+
+    sappend $result [check_correspondence malloc return free $mode $depth $scope]
+    sappend $result [check_correspondence calloc return free $mode $depth $scope]
+    sappend $result [check_correspondence realloc return free $mode $depth $scope]
+    sappend $result [check_correspondence strdup return free $mode $depth $scope]
+
+    #   The general pattern:
+    #
+    #   sappend $result [check_correspondence <source function> <return or argument number> <target function> <none|many> $depth $scope]
+
+    set new [tree find -ignore nw_expr $scope]
+    set ctors [tree navigate {-> call_expr} $new]
+    set target [nil_set]
+
+    if [catch {set target [set_copy -error "operator delete(void *)"]}] {
+	if {$mode != "many"} {
+	    sappend $result $ctors
+	}
+    } else {
+	catch {sappend $result [check_correspondence $ctors return $target $mode $depth $scope]}
+    }
+
+    set vec_new [tree find -ignore vec_nw_expr $scope]
+    set vec_ctors [tree navigate {-> call_expr} $vec_new]
+
+    if [catch {sappend $target [set_copy -error "operator delete\[\](void *)"]}] {
+	if {$mode != "many"} {
+	    sappend $result $vec_ctors
+	}
+    } else {
+	catch {sappend $result [check_correspondence $vec_ctors return $target $mode $depth $scope]}
+    }
+
+    set result [tree navigate {r(<-) ast_offset} $result]
+    puts_verbose "DFA: alloc_violations: done"
+    puts_dfa_verbose "DFA: alloc_violations: [expr [clock seconds]-$start] seconds"
+    return [set_unique $result]
+}
+
+proc check_correspondence_for_calls {source orig_cells argument target mode depth} {
+    set result [nil_set]
+    set source [filter call_expr $source]
+
+    if [catch {set target [set_copy -error $target]}] {
+	if {$mode == "none"} {
+	    return $source
+	}
+    }
+
+    foreach call $source {
+	if {[size $orig_cells] == 0} {
+	    set cells [data cells $call]
+
+	    if {$argument == "return"} {
+		set cells [filter {type == "return"} $cells]
+	    } else {
+		catch {set cells [filter {type == "argument" && argno == [expr $argument]} $cells]}
+	    }
+
+	    set cells [filter {level <= 0} $cells]
+	} else {
+	    set cells $orig_cells
+	}
+
+	if {[size $cells] == 0} {
+	    graph unload $call [data graph $cells]
+	    continue
+	}
+
+	set curr $cells
+	set function [data symbol [tree navigate {r(<-) function_def || ast_root} $call]]
+	sappend $curr [data find $cells $function]
+	set data [dfa_outflow $curr $function]
+	sappend $data $curr
+
+	if {[size $data] == 0} {
+	    if {$mode == "none"} {
+		sappend $result $call
+	    }
+
+	    graph unload $function [data graph $cells]
+	    src_unload [apply lname $data]
+	    continue
+	}
+
+	set check [nil_set]
+
+	if {$mode == "none"} {
+	    foreach trg $target {
+		sappend $check [filter {$trg} [data symbol [filter {type && depth == 0} $data]]]
+	    }
+
+	    if {[size $check] > 0} {
+		graph unload $function [data graph $cells]
+		src_unload [apply lname $data]
+		continue
+	    }
+	}
+
+	set globals [filter {global == 1} $data]
+	set new_cells [set_intersect $data [data cells $function]]
+	set globals [set_subtract $globals $new_cells]
+	set call_args [filter {global == 2} $data]
+
+	foreach s.itag dtag index $call_args {
+	    set temp [set_copy $call_args $index]
+	    set defn [set_copy $dtag]
+	    set temp [data find $temp $defn]
+
+	    if {$mode == "none"} {
+		set tempdata [dfa_outflow $temp $defn]
+
+		foreach trg $target {
+		    sappend $check [filter {$trg} [data symbol [filter {type && depth == 0} $tempdata]]]
+		}
+
+		if {[size $check] > 0} {
+		    graph unload $function [data graph $cells]
+		    src_unload [apply lname $data]
+		    break
+		}
+	    }
+
+	    sappend $globals $temp
+	    graph unload $defn
+	}
+
+	if {($mode != "none") || ([size $check] == 0)} {
+	    set data [dfa_assign $depth out none cell $globals]
+
+	    foreach trg $target {
+		sappend $check [filter {$trg} [data symbol [filter {type && depth == 0} $data]]]
+	    }
+	}
+
+	if {$mode == "none" && [size $check] == 0} {
+	    if {[size $new_cells] == 0} {
+		sappend $result $call
+	    } else {
+		sappend $result $new_cells
+	    }
+	} elseif {$mode == "many"} {
+	    if {[size $check] > 1} {
+		sappend $result $call
+	    } elseif {[size $check] == 0} {
+		sappend $result $new_cells
+	    } else {
+		set extra [dfa_assign $depth out none cell $new_cells]
+
+		foreach trg $target {
+		    sappend $check [filter {$trg} [data symbol [filter {type && depth == 0} $extra]]]
+		}
+
+		if {[size $check] > 1} {
+		    sappend $result $call
+		}
+	    }
+	}
+
+	graph unload $function [data graph $cells]
+	src_unload [apply lname $data]
+    }
+
+    return [set_unique $result]
+}
+
+proc check_correspondence_for_file {source argument target mode depth file} {
+    set start [clock seconds]
+
+    if [catch {set source [set_copy -error $source]}] {
+	return
+    }
+
+    set cells [filter cell $source]
+    set calls [filter call_expr $source]
+    set source [data symbol [set_subtract $source $calls]]
+    sappend $calls [tree find "call_expr -> name == \"[name $source]\"" $file]
+
+    if [catch {set target [set_copy -error $target]}] {
+	if {$mode == "none"} {
+	    return $calls
+	}
+    }
+
+    set result [check_correspondence_for_calls $calls $cells $argument $target $mode $depth]
+    puts_dfa_verbose "DFA: check_correspondence_for_file: [expr [clock seconds]-$start] seconds"
+    return $result
+}
+
+proc check_correspondence_for_function {source argument target mode depth scope} {
+    set start [clock seconds]
+
+    if [catch {set source [set_copy -error $source]}] {
+	return
+    }
+
+    set scope [set_copy -warn $scope]
+    set modules [where referenced $source]
+    set all_modules [defines -modules $scope]
+    sappend $all_modules [filter module $scope]
+    set modules [set_intersect $modules $all_modules]
+    set result [nil_set]
+
+    foreach file $modules {
+	puts_verbose "DFA: check_correspondence: Working on [name $file] ..."
+	set was_loaded [is_loaded $file]
+	sappend $result [check_correspondence_for_file $source $argument $target $mode $depth $file]
+
+	if {$was_loaded == 0} {
+	    src_unload $file
+	}
+    }
+
+    puts_dfa_verbose "DFA: check_correspondence_for_function: [expr [clock seconds]-$start] seconds"
+    return [set_unique $result]
+}
+
+proc check_correspondence {source argument target mode depth args} {
+    set start [clock seconds]
+    puts_verbose "DFA: running command \"check_correspondence $source $argument $target $mode $depth $args\""
+
+    if [catch {set source [set_copy -error $source]}] {
+	return
+    }
+
+    set scope [set_copy -warn $args]
+    set calls [filter call_expr $source]
+    set source [set_subtract $source $calls]
+    set source [filter "name == \"[name $source]\"" [uses -fun $scope]]
+    sappend $source $calls
+
+    if {[size $source] == 0} {
+	return
+    }
+
+    set start_aux [clock seconds]
+    puts_verbose "DFA: check_correspondence: ---------- Initial Phase ----------"
+    set result [check_correspondence_for_function $source $argument $target $mode $depth $scope]
+    set old_cells [filter cell $result]
+    set result [set_subtract $result $old_cells]
+    set cells [set_unique $old_cells]
+    set count 1
+    puts_dfa_verbose "DFA: check_correspondence: iteration 0: [expr [clock seconds]-$start_aux] seconds"
+
+    while {[size $cells] > 0} {
+	set start_aux [clock seconds]
+	puts_verbose "DFA: check_correspondence: ---------- Iteration $count ----------"
+	set new_cells [nil_set]
+
+	foreach cell $cells {
+	    set argument [argno $cell]
+	    sappend $result [check_correspondence_for_function $cell $argument $target $mode $depth /]
+	    sappend $new_cells [set_subtract [filter cell $result] $old_cells]
+	    set result [filter !cell $result]
+	}
+
+	sappend $old_cells $new_cells
+	set cells [set_unique $new_cells]
+	puts_dfa_verbose "DFA: check_correspondence: iteration $count: [expr [clock seconds]-$start_aux] seconds"
+	incr count
+    }
+
+    set result [tree navigate {r(<-) ast_offset} $result]
+    puts_verbose "DFA: check_correspondence: done"
+    puts_dfa_verbose "DFA: check_correspondence: [expr [clock seconds]-$start] seconds"
+    return [set_unique $result]
+}

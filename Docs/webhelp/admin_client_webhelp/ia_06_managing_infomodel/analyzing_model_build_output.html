@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Analyzing Model Build Output</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 2.7px 1.0px; text-indent: 19.2px; font: 11.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 1.3px 1.0px; text-indent: 19.2px; font: 11.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    p.p8 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p9 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana; min-height: 4.0px}
+    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Times}
+    p.p11 {margin: 0.0px 1.0px 1.0px 1.0px; text-align: center; font: 3.0px Verdana}
+    p.p12 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 79.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 297.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 79.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 297.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Analyzing Model Build Output</b></p>
+<p class="p2">The first time you build a model, watch the model build log output and make sure it is progressing well. If there are serious errors, interrupt the build, correct the problem, then resume the model build. Serious errors are all errors except parse and preprocessor errors.</p>
+<p class="p2">The following table describes the message types that may appear during a model build:</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p3"><b>Icon</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p4"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p5"><img src="./tmp259382.jpg" alt="tmp259382.jpg"> </p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">Information message.</p>
+        <p class="p6">No action should be taken.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p5"><img src="./tmp259383.jpg" alt="tmp259383.jpg"> </p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">Warning message.</p>
+        <p class="p6">Something went wrong during the build that should be examined after the model is built.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p5"><img src="./tmp259384.jpg" alt="tmp259384.jpg"> </p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">Error message.</p>
+        <p class="p6">An error occurred during building (i.e. a compilation problem), but it will not prevent the build from continuing.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p5"><img src="./tmp259385.jpg" alt="tmp259385.jpg"> </p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">Catastrophic error message.</p>
+        <p class="p6">A serious error occurred that prevented the model from building. The error must be resolved.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p2">Build log messages appear in a tree diagram, allowing you to expand and collapse the detailed messages that appear for each stage of the build. Messages related to the processing of each compiled file appear in the <span class="s1">processing units</span> branch. For parallel parsing, each parse process appears in a different branch of the tree.</p>
+<p class="p8"><b>Note: </b>For Java source code, the parser runs on groups of compiled files, not individual files.</p>
+<p class="p2">At the bottom of the Model Build Information panel, clicking an error icon (<img src="./tmp259386.jpg" alt="tmp259386.jpg">) displays a numbered list of errors that occurred during the build.</p>
+<p class="p9"><br></p>
+<p class="p10"><img src="./tmp259387.jpg" alt="tmp259387.jpg"></p>
+<p class="p11"> </p>
+<p class="p2">From the error list, selecting an error highlights the error in the Model Build Details.</p>
+<p class="p9"><br></p>
+<p class="p10"><img src="./tmp259388.jpg" alt="tmp259388.jpg"></p>
+<p class="p11"> </p>
+<p class="p2">To assist you in identifying errors and their causes, the model build log displays the following:</p>
+<p class="p12">•<span class="s2">   </span>all files and parse errors that occurred in them</p>
+<p class="p12">•<span class="s2">   </span>all files that did not get built into the model, either because the file reached a parse error limit or had a catastrophic error</p>
+<p class="p12">•<span class="s2">   </span>all files that had parse errors in them</p>
+<p class="p12">•<span class="s2">   </span>all files that are part of your <span class="s1">sharedSrcRoot</span>, but are not used or called in your source code</p>
+</body>
+</html>

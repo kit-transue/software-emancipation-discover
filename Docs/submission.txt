@@ -1,0 +1,202 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+To:  Software Developers
+From:  Dave Angel
+Date:  6/8/94,  7/5/94
+Subject:  Software submission process
+
+In an effort to maintain and improve the robustness of our code,
+we must all follow these rules when submitting changes to the system
+area.  This means that for any project or bug fix, the following
+guidelines must be followed before the PUT is done.
+
+Any questions, please see the monitor, who is currently Dave Angel.
+
+---------------------------------------------------------------------
+COMMENTING
+
+Any file modified should have the following verified before checking back
+in:
+
+FILE INFORMATION
+
+  1) $Log:   present
+  2) At beginning, a file header block containing:
+     o	purpose of the file
+     o	if the file has special constraints, list of them
+          (eg. This file is used by both aset and cp_parser,
+           or  This header file is included from both C and C++)
+
+FUNCTION and CLASS INFORMATION
+
+  1) Any modified functions should have a comment after the function
+     definition line, and before the curly brace, indicating:
+       o  a brief description of the function (what it does, not how)
+       o  its argument constraints
+       o  meaning of any return value
+       o  any data it uses that is neither from its own class
+          instance  nor its argument list
+
+    In addition, if the function is a static member function, it should
+    have a comment so indicating.  Similarly, if it is a virtual function.
+
+  2) Any modified class should have comments in it, indicating:
+       o  the major classes in its parentage, including especially Relational,
+            app, and/or appTree. 
+       o  related classes, and what the relationship is.
+       o  any functions that are overloading functions in a parent class
+       o  Each virtual function should be labeled, either in the code
+          or in a comment on same line.
+
+  3) Similar documentation should be added for any other program element
+     modified.
+
+INCLUDES
+
+  In a header files, the nested includes should be of form
+	#include <file.h>
+     instead of  #include "file.h"
+
+---------------------------------------------------------------------
+CODE QUALITY
+
+DEFENSIVE CODING
+  1) Check your arguments, including global values (pre-conditions).
+     If the test is too time-consuming for customer, write an 
+     assertion for debug version.  If it's still too time-consuming
+     for debug version, comment well.
+  2) For highly optimized or tricky code, write a simplified version as
+     well (or write inverse function).  Write a block of code that can
+     validate the tricky code by comparing it against a simple version.
+     Provide a way for regression tests to exercise this test.
+  3) Where there exists a simple inverse function, validate your results
+     (post-conditions).  Again, if this is too time-consuming for
+     customer, write an assertion for debug version.
+  4) When calling a function, if that function does more than what you
+     need, add a comment saying what you need.  For example, if you call
+     usort() on a symbolArr, just to eliminate duplicates, the line might
+     look like
+         arr->usort()   // eliminate duplicates
+     This way somebody might later be able to go in and improve it by
+     using the (newer and faster) 
+         arr->remove_dup_syms()     // eliminate duplicates
+  5) After writing a test harness, leave it in the code.  Either enclose
+     it in  #ifdef _PSET_DEBUG ,  or use  #if 0
+     But comment it as a test harness, so somebody doesn't delete it when
+     cleaning up the file.
+  6) The file should compile without any warnings.
+
+UNIT and REGRESSION TESTS
+
+  1) For any project, and any bug that cannot be tested with standard
+     regression tests, develop and run unit tests
+     for a reasonable portion of the code.  This should check boundary
+     conditions, and check any legal inputs that can reasonably be
+     simulated.  This test should have an entry point declared as
+     extern "C", and arguments simple enough that it can be called
+     from a normal regression test.
+  2) For all submissions, run the ptest_all regression tests.  Validate
+     that any failures are also failing in the system area.  If any failures
+     remain, and the fix is non-trivial, re-run the whole regression suite.
+
+REGRESSION FAILURES
+
+  1) If a change will cause one or more regressions to begin failing, tell
+     Bella immediately.  If she is not available, or cannot make the change
+     right away, rename the affected scripts to have a suffix .nw (for not work).
+     (Where should we keep a log of such affected scripts, and the reasons for change??)
+     From the appropriate directory, do a rename something like
+         mv  bug7313-05-18.ccc  bug7313-05-18.ccc.nw
+
+---------------------------------------------------------------------
+END-USER ISSUES
+
+ONLINE-HELP
+
+  1) Any changes that might require changes to the online help must be
+     discussed with Bruce.  He may require specific documentation, or he
+     may write it for you.
+
+PRINTED DOCUMENTATION
+
+  1) Any changes that might affect the printed documentation, including the
+     release notes, must be discussed with Bruce.
+
+DIALOG BOXES
+
+  1) Any new dialog boxes should have a help button.  Bruce will assign the
+     help path, and aid in writing the help text.
+
+  2) Any changed dialog boxes should be discussed with Bruce.
+
+  3) Any new or changed messages to the message logger must have help paths,
+     assigned by Bruce.
+
+USER VISIBLE CHANGES
+
+  1) Any changes visible to the user must be discussed with MG.
+
+---------------------------------------------------------------------
+THE CHECKIN MECHANISM
+
+FILES LOCKED BY OTHERS, and MERGING
+
+  1) Before running regression tests, verify that all files are still
+     locked by you.  If any had not been locked, but now can be, do the lock
+     and the merge at this time.  If any are still locked, discuss it with
+     the other developer, to see who is likely to be able to submit earlier.
+     That person should own the lock, and the other should expect to merge.
+     If both believe they'll be ready about the same time, consider an offline
+     merge before testing.  Then only one submits the file.
+  2) After running regression tests, make sure you still own the locks.
+	Then, after the monitor reviews the files, do the submissions.
+     If some file has been changed by someone else who either had it locked,
+     or who broke your lock, inspect the extent of the changes to
+     decide if retesting will be needed after the merge.  If there are any
+     non-trivial overlaps, retesting will be needed.  Even if full retesting is
+     not needed, the merged file must be recompiled & reparsed, the
+     executable re-run, and at least one ptest_run completed.
+************************
+*  SUBMISSION PROCESS  *
+************************
+   1) Run the regression tests, and resolve any problems as described above
+   2) Have a linked executable ready
+   3) Have a viewer with all source files loaded
+   4) Have difference logs available, showing what changed
+   5) Call the monitor for approval -   Currently, this is Dave Angel
+   6) After approval, do the puts
+   7) Use bugtool to submit the bug
+
+---------------------------------------------------------------------
+EXTRA READING FOR DEVELOPERS
+
+    /sysDoc/code_stds_TOC.txt
+    /sysDoc/coding_standards.v1.921119.txt
+
+This document will be available as:
+    /sysDoc/submission.txt

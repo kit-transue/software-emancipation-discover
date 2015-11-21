@@ -1,0 +1,848 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+global _SUBCHK_DIS_SOURCED
+global env
+
+if { ( ! [ info exists _SUBCHK_DIS_SOURCED ] ) || [ info exists env(DISCOVER_VERBOSE) ] } {
+
+proc subchk:run { trees } {
+
+  puts_verbose "subchk:run $trees"
+
+  subchk:status init
+
+  global _SUBCHK_SOURCELIB
+  if { ! [ info exists SUBCHK_SOURCELIB ] } {
+    catch { querytree source }
+    set _SUBCHK_SOURCELIB 1
+  }
+
+  set code [ catch {
+    subchk:run_p $trees
+    set filter [ querytree moduleof [ lindex $trees 0 ] ]
+    #if { $filter != "" } {
+    #  catch { setvar GLOBAL_SUBCHK_REPORT [ subchk:report $filter detailed html ] }
+    #}
+  } errmsg ]
+
+  if { $code != 0 } {
+    global errorInfo
+    if { [ info exists errorInfo ] } { set errmsg $errorInfo }
+    subchk:status 3 $errmsg
+  }
+
+  return [ subchk:status ]
+}
+
+proc subchk:run_p { trees } {
+  subchk:clrall
+  set queries ""
+  foreach tree $trees {
+    set runners [ querytree runners $tree ]
+    foreach q $runners { lappend queries $q }
+  }
+  if { [ llength $queries ] > 0 } {
+    set root [ querytree root [ lindex $trees 0 ] ]
+    set domain [ querytree get $root domain ]
+    set modules [ set_unique [ filter { language != "UNKNOWN" } [ defines -module $domain ] ] ]
+    if { [ size $modules ] > 0 } {
+      if { [ subchk:prepare_modules $modules ] } {
+        set analyze_changes [ get_bool_pref SubmissionCheck.AnalyzeChanges ]
+        set modcnt [ size $modules ]
+        set tasksize [ expr ( $modcnt * [ llength $queries ] ) ]
+        #set tasksize [ expr $tasksize + $modcnt ]
+        subchk:progress_init $tasksize
+        foreach module $modules {
+          set m [ set_copy $module ]
+          set lname [ lname $m ]
+          subchk:progress_check "Processing file: [ file tail $lname ]" 1
+          subchk:query_local $m $queries
+          subchk:postprocess $m $queries $analyze_changes
+        }
+        subchk:progress_end
+        subchk:status 0 [ querytree get $root disposition ]
+      }
+    } else {
+      subchk:status 1 "You must select at least one project or module for analysis."
+    }
+  } else {
+    subchk:status 1 "No queries to run."
+  }
+}
+
+proc subchk:prepare_modules { modules } {
+  set ret 1
+
+  set modules \
+    [ set_unique [ set_union [ filter module $modules ] [ defines -module $modules ] ] ]
+
+  set outdated [ filter outdated&&module $modules ]
+
+  if { [ size $outdated ] > 0 } {
+    set unparsed ""
+    foreach module $outdated { append unparsed "\t[ lname $module ]\n" }
+    if { [ size $outdated ] == 1 } {
+      set noun file ; set verb is
+    } else {
+      set noun files ; set verb are
+    }
+    set msg "The following source $noun $verb outdated:\n\n$unparsed"
+    append msg "\nAre you sure you want to continue?"
+    set answer [ question -title "SubmissionCheck" $msg "Continue" "Update and Continue" ]
+    if { $answer == "Update and Continue" } {
+      catch { push_busy_cursor }
+      catch { update_module $outdated }
+      catch { pop_cursor }
+      set bad [ filter outdated&&module $outdated ]
+      if { [ size $bad ] > 0 } {
+        set failed ""
+        foreach module $bad { append failed "                    [ lname $module ]\n" }
+        if { [ size $bad ] == 1 } { set noun file } else { set noun files }
+        subchk:status 1 "The following source $noun could not be parsed:\n\n$failed"
+        set ret 0
+      }
+    } elseif { $answer != "Continue" } {
+      subchk:status 4 ""
+      set ret 0
+    }
+  }
+
+  return $ret
+}
+
+proc subchk:query_local { module queries } {
+  set lname [ lname $module ]
+  puts_verbose "subchk:query_local $lname"
+  subchk:exec $module $queries
+  global SUBCHK_RESULTS_MODIFIED
+  set SUBCHK_RESULTS_MODIFIED($lname) [ modified_objects $module ]
+}
+
+proc subchk:exec { module queries } {
+  global SUBCHK_RESULTS
+
+  set was_loaded [ is_loaded $module ]
+  set n [ llength $queries ]
+  set i 1
+
+  foreach query $queries {
+    set name [ querytree get $query name ]
+    set cmd [ querytree get $query cmd ]
+    set lname [ lname $module ]
+    set dbgcmd "$cmd $lname"
+    catch { puts_verbose "Running command: $dbgcmd" }
+    subchk:progress_check "" 1
+
+    set status [ catch {
+      set rval [ eval $cmd $module ]
+      set sel [ parse_selection $rval ]
+      if { $sel != "" } {
+        set syms [ sort lname [ set_unique $rval ] ]
+        set SUBCHK_RESULTS($query,syms) $syms
+        for { set i 0 } { $i < [ size $syms ] } { incr i } {
+          set el [ set_copy $syms [ expr $i + 1 ] ]
+          set SUBCHK_RESULTS($query,$i,line) [ nearline $el ]
+        }
+      }
+    } errmsg ]
+
+    if { $status != "0" } {
+      global errorInfo
+      if { [ info exists errorInfo ] } { set errmsg $errorInfo }
+      regsub -all "\n+" $errmsg "\n\t" errmsg
+      set msg "ERROR: Query \"$name\" was aborted ($dbgcmd)"
+      if { $errmsg != "" } { append msg ":\n\t$errmsg" } else { append msg . }
+      subchk:status 2 "$msg\n\n"
+    }
+    incr i
+  }
+
+  if { $was_loaded != "1" && [ is_loaded $module ] == "1" } {
+    catch { src_unload $module }
+  }
+}
+
+proc subchk:plain_diff_exec { new old } {
+
+  catch { puts_verbose "subchk:plain_diff_exec: $new $old" }
+
+  foreach file [ list $new $old ] {
+    if { ! [ file exists $file ] } {
+      return -code 1 "File does not exist: \"$file\"."
+    }
+  }
+
+  global env
+  set path $env(PSETHOME)/bin/diff
+  set cmd [ list $path $old $new ]
+  set pipe [ open "| $cmd" ]
+  set diff [ read $pipe ]
+  catch { close $pipe }
+
+  return $diff
+
+}
+
+proc subchk:pset_diff_exec { new_src old_pset } {
+
+  catch { puts_verbose "subchk:pset_diff_exec: $new_src $old_pset" }
+
+  foreach file [ list $new_src $old_pset ] {
+    if { ! [ file exists $file ] } {
+      return -code 1 "File does not exist: \"$file\"."
+    }
+  }
+
+  set tmpdir ""
+  global env
+  if { [ info exists env(TMPDIR) ] } { set tmpdir $env(TMPDIR) }
+  set tmp [ tempnam $tmpdir subchk_diff ]
+  > $tmp { print_pset_file $old_pset }
+
+  set diff [ subchk:plain_diff_exec $tmp $new_src ]
+
+  catch { file_rm $tmp }
+
+  return $diff
+
+}
+
+proc subchk:cm_diff_exec { new old } {
+
+  set retcode 1
+  set retval "Failed to perform CM diff of \"$new\" and predecessor."
+
+  catch { puts_verbose "subchk:cm_diff_exec: $new $old" }
+
+  if { ! [ is_windows ] } {
+    global env
+    if { [ info exists env(PSETCFG) ] } {
+      set dir $env(PSETCFG)
+      set path_diff $dir/cm_diff
+      set path_setup $dir/cm_setup_src
+      set path_version $dir/cm_version
+      set ok 1
+      foreach path [ list $path_diff $path_setup $path_version ] {
+        if { ! ([ file isfile $path ] && [ file executable $path ]) } {
+          set retval "File does not exist or is not executable: \"$path\"."
+          set ok 0
+          break
+        }
+      }
+
+      set work_file $new
+      set sys_file $old
+      set revision_file $old      
+      set version ""
+
+      if { $ok } {
+
+        # cm_setup_src:
+
+        set cmd [ list $path_setup [ file dir $new ] [ file tail $new ] \
+                       [ file dir $old ] [ file tail $old ] diff "" ]
+        set pipe [ open "| $cmd" ]
+        set output [ read $pipe ]
+        catch { close $pipe }
+        set lines [ split $output \n ]
+        set sys_file [ lindex $lines 0 ]
+        set revision_file [ lindex $lines 1 ]
+        set envs "cm_workfile=\"$work_file\" cm_sysfile=\"$sys_file\" cm_revision_file=\"$revision_file\""
+
+        # cm_version:
+
+        set shell_cmd "$envs \"$path_version\""
+        set cmd "sh -c \{$shell_cmd\}"
+        set pipe [ open "| $cmd" ]
+        set output [ read $pipe ]
+        catch { close $pipe }
+        set lines [ split $output \n ]
+        set version [ lindex $lines 0 ]
+
+        # cm_diff:
+
+        set envs "$envs cm_version=\"$version\""
+        set shell_cmd "$envs \"$path_diff\""
+        set cmd "sh -c \{$shell_cmd\}"
+        set pipe [ open "| $cmd" ]
+        set output [ read $pipe ]
+        catch { close $pipe }
+
+        set retcode 0
+        set retval $output
+      }
+    } else {
+      set retval "Environment variable is not set: \"PSETCFG\"."
+    }
+  } else {
+    set retval "CM diff not available on Windows platform."
+  }
+
+  return -code $retcode $retval
+
+}
+
+
+proc subchk:modified_lines { lname diff changesvar } {
+
+  upvar $changesvar changes
+
+  set lines [ split $diff \n ]
+
+  array set numbers "1 {} 2 {} 3 {} 4 {} 5 {} 6 {} 7 {} 8 {} 9 {}"
+
+  foreach line $lines {
+    set c [ string index $line 0 ]
+    if { [ info exists numbers($c) ] } {
+      if { [ regexp {(.*)([ac])(.*)} $line m x y z ] } {
+        set zz [ split $z , ]
+        if { [ llength $zz ] == 1 } {
+          set start $zz
+          set end $zz
+        } else {
+          set start [ lindex $zz 0 ]
+          set end [ lindex $zz 1 ]
+        }
+        for { set i $start } { $i <= $end } { incr i } {
+          set changes($lname:$i) $y
+        }
+      }
+    }
+  }
+
+}
+
+proc subchk:diff { module changesvar } {
+
+  set ret ""
+
+  upvar $changesvar changes
+  foreach key [ array names changes ] { unset changes($key) }
+
+  set files [ module_file_info $module ]
+
+  set local_src [ lindex $files 0 ]
+  set system_src [ lindex $files 1 ]
+  set local_pset [ lindex $files 2 ]
+  set system_pset [ lindex $files 3 ]
+
+  set diff ""
+
+  set exists_local_src [ file exists $local_src ]
+  set exists_system_src [ file exists $system_src ]
+  set exists_local_pset [ file exists $local_pset ]
+  set exists_system_pset [ file exists $system_pset ]
+
+  set code [ catch {
+    if { ($local_src != $system_src) && $exists_local_src && $exists_system_src } {
+      set diff [ subchk:plain_diff_exec $local_src $system_src ]
+    } elseif { ([ cm_info ] != "") && $exists_local_src && (! [ is_windows ]) } {
+      set diff [ subchk:cm_diff_exec $local_src $system_src ]
+    } elseif { ($local_pset != $system_pset) && $exists_local_src && $exists_system_pset } {
+      set diff [ subchk:pset_diff_exec $local_src $system_pset ]
+    } else {
+      # do nothing
+    }
+    set lines [ split $diff \n ]
+    set diff ""
+    foreach line $lines {
+      if { [ regexp {^[0-9<>-]} $line ] } {
+        append diff "$line\n"
+      }
+    }
+  } errmsg ]
+
+  if { $code != 0 } {
+    global errorInfo
+    if { [ info exists errorInfo ] } { set errmsg $errorInfo }
+    set ret $errmsg
+  } else {
+    set lname [ lname $module ]
+    if { $diff != "" } {
+      subchk:modified_lines $lname $diff changes
+    } else {
+      catch { puts_verbose "subchk:diff: File has no diff \"$lname\"." }
+    }
+  }
+
+  return $ret
+
+}
+
+proc subchk:qualifyhits { module syms athome newvar oldvar changesvar } {
+
+  upvar $newvar new
+  upvar $oldvar old
+  upvar $changesvar changes
+
+  set new [ nil_set ]
+  set old [ nil_set ]
+
+  if { [ array size changes ] > 0 } {
+    set lname [ lname $module ]
+    foreach sym $syms {
+      if { [ lname $sym ] == $lname } {
+        set line [ nearline $sym ]
+        if { [ info exists changes($lname:$line) ] } {
+          sappend $new $sym
+        } else {
+          sappend $old $sym
+        }
+      } else {
+        sappend $old $sym
+      }
+    }
+  } elseif { $athome } {
+    set old $syms
+  } else {
+    set new $syms
+  }
+
+}
+
+proc subchk:is_local_module { module } {
+
+  set home [ home_proj ]
+  set defs [ defines -module $home ]
+  set lname [ lname $module ]
+  set mods [ filter "lname==\"$lname\"" $defs ]
+  return [ size $mods ]
+
+}
+
+proc subchk:postprocess { module queries analyze_changes } {
+
+  global SUBCHK_RESULTS
+
+  set athome [ subchk:is_local_module $module ]
+  set diffok 0
+  if { $analyze_changes } {
+    set err [ subchk:diff $module changes ]
+    if { $err == "" } {
+      set diffok 1
+    } else {
+      #subchk:status 2 "WARNING: $err\n\n"
+      puts_verbose "WARNING: $err\n"
+    }
+  }
+
+  foreach query $queries {
+    set newhits [ nil_set ]
+    set remhits [ nil_set ]
+    if { $analyze_changes == "1" } {
+      if { [ info exists SUBCHK_RESULTS($query,syms) ] } {
+        set syms $SUBCHK_RESULTS($query,syms)
+        if { $diffok } {
+          subchk:qualifyhits $module $syms $athome newhits remhits changes
+        } else {
+          set newhits $syms
+        }
+      }
+    } else {
+      if { [ info exists SUBCHK_RESULTS($query,syms) ] } {
+        set newhits [ set_copy $SUBCHK_RESULTS($query,syms) ]
+      }
+    }
+    set cres [ querytree get $query cres ]
+    set pres [ querytree get $query pres ]
+
+    querytree set $query cres [ set_union $cres $newhits ]
+    querytree set $query pres [ set_union $pres $remhits ]
+    querytree set $query exec 1
+  }
+
+  if { [ info exists SUBCHK_RESULTS ] } { unset SUBCHK_RESULTS }
+}
+
+proc subchk:clrall {} {
+  set vars [ info globals SUBCHK* ]
+  foreach var $vars {
+    global $var
+    if { [ info exists $var ] } {
+      unset $var
+    }
+  }
+  sev_clear_cache
+}
+
+proc subchk:status { args } {
+  global SUBCHK_STATUS
+  global SUBCHK_OUTPUT
+  if { [ llength $args ] == 2 } {
+    set status [ lindex $args 0 ]
+    set output [ lindex $args 1 ]
+    if { ( ! [ info exists SUBCHK_STATUS ] ) || \
+         ( $SUBCHK_STATUS == $status       ) || \
+         ( $SUBCHK_STATUS == 0             ) } {
+      set SUBCHK_STATUS $status
+      append SUBCHK_OUTPUT $output
+    }
+  } elseif { $args == "init" } {
+    set SUBCHK_STATUS 0
+    set SUBCHK_OUTPUT ""
+  } else {
+    if { ! [ info exists SUBCHK_STATUS ] } { set SUBCHK_STATUS 0  }
+    if { ! [ info exists SUBCHK_OUTPUT ] } { set SUBCHK_OUTPUT "" }
+    return [ list $SUBCHK_STATUS $SUBCHK_OUTPUT ]
+  }
+}
+
+proc subchk:cmp_action { a b } {
+  set ret 0
+
+  set actions [ lindex [ wftype sc_action ] 1 ]
+
+  set i [ lsearch -exact $actions $a ]
+  set j [ lsearch -exact $actions $b ]
+
+  if { $i > $j } {
+    set ret 1
+  } elseif { $i == $j } {
+    set ret 0
+  } else {
+    set ret -1
+  }
+
+  return $ret
+}
+
+proc subchk:progress_init { tasksize } {
+  global SUBCHK_PROGRESS_COUNT
+  global SUBCHK_PROGRESS_TEXT
+  global SUBCHK_PROGRESS_SIZE
+  set SUBCHK_PROGRESS_COUNT 0
+  set SUBCHK_PROGRESS_TEXT ""
+  set SUBCHK_PROGRESS_SIZE $tasksize
+  catch { 
+    status start -ok -title               \
+    "SubmissionCheck"                     \
+    "                         Initializing...                         " \
+    $tasksize
+  }
+}
+
+proc subchk:progress_check { args } {
+  set cancelled 0
+  global SUBCHK_PROGRESS_COUNT
+  global SUBCHK_PROGRESS_TEXT
+  global SUBCHK_PROGRESS_SIZE
+  set txt [ lindex $args 0 ]
+  set add [ lindex $args 1 ]
+  if { $add != "" } {
+    set SUBCHK_PROGRESS_COUNT [ expr $SUBCHK_PROGRESS_COUNT + $add ]
+    if { $SUBCHK_PROGRESS_COUNT > $SUBCHK_PROGRESS_SIZE } {
+      set SUBCHK_PROGRESS_COUNT $SUBCHK_PROGRESS_SIZE
+    }
+  }
+  if { $txt != "" } {
+    set SUBCHK_PROGRESS_TEXT $txt
+  }
+  catch { status query $SUBCHK_PROGRESS_TEXT $SUBCHK_PROGRESS_COUNT } cancelled
+  if { $cancelled == "1" } {
+    subchk:status 4 "Operation cancelled by user."
+    return -code 1
+  }
+}
+
+proc subchk:progress_end {} {
+  global SUBCHK_PROGRESS_COUNT
+  global SUBCHK_PROGRESS_TEXT
+  global SUBCHK_PROGRESS_SIZE
+  while { $SUBCHK_PROGRESS_COUNT < $SUBCHK_PROGRESS_SIZE } {
+    subchk:progress_check "" 1
+  }
+  set SUBCHK_PROGRESS_COUNT 0
+  set SUBCHK_PROGRESS_TEXT ""
+  set SUBCHK_PROGRESS_SIZE 0
+  
+  catch { status end }
+}
+
+proc subchk:qrun { args } {
+
+  subchk:status init
+
+  set code [ catch {
+
+    set name      [ lindex $args 0 ]
+    set selection [ nil_set ]
+    set len       [ llength $args ]
+    set post ""
+
+    if { $len > 1 } {
+      set selection [ set_copy [ lindex $args 1 ] ]
+      set post [ lindex $args 2 ]
+    } else {
+      catch { set selection [ sel2sym selection "" ] }
+    }
+
+    set list [ querytree list ]
+    if { [ lsearch -exact $list $name ] != -1 } {
+      set tree [ querytree open $name ]
+      querytree set $tree domain $selection
+      set status [ querytree run $tree ]
+      set status_code [ lindex $status 0 ]
+      if { $status_code == 0 && $post != "0" } {
+        subchk:qpost $name
+      }
+    } else {
+      subchk:status 1 "Specified filter does not exist: \"$name\"."
+    }
+
+  } errmsg ]
+
+  if { $code != 0 } {
+    global errorInfo
+    if { [ info exists errorInfo ] } { set errmsg $errorInfo }
+    subchk:status 3 $errmsg
+  }
+
+  set status [ subchk:status ]
+  set status_code [ lindex $status 0 ]
+  set status_text [ lindex $status 1 ]
+
+  if { $status_code != 0 && 
+       $status_code != 4 &&
+       $status_text != "" } {
+    msg -error $status_text
+  }
+
+  return $status
+}
+
+proc subchk:qpost { name args } {
+  set tree [ querytree open $name ]
+  set root [ querytree root $tree ]
+  set disposition [ querytree get $root disposition ]
+  if { $disposition == "Warn" || $disposition == "Reject" } {
+    set total [ querytree get $root total ]
+    set msg "SubmissionCheck found $total violation"
+    if { $total != 1 } { append msg s }
+    append msg " ("
+    set warnings [ querytree get $root warnings ]
+    set rejects [ querytree get $root rejects ]
+    set num_warning [ size $warnings ]
+    set num_reject [ size $rejects ]
+    append msg "$num_warning warning"
+    if { $num_warning != 1 } { append msg s }
+    append msg " and "
+    append msg "$num_reject error"
+    if { $num_reject != 1 } { append msg s }
+    append msg ")."
+    set hits [ nil_set ]
+    sappend $hits $warnings
+    sappend $hits $rejects
+    if { $args != "" } {
+      set buttons $args
+    } else {
+      set buttons [ list "View Results" ]
+    }
+    set answer \
+      [ eval question -title SubmissionCheck \{\n  $msg  \n\} $buttons ]
+    if { $answer == "View Results" } { subchk:gui $name }
+    return $answer 
+ } else {
+    set domain [ querytree get $root domain ]
+    set nelem [ size $domain ]
+    set msg "\n   File"
+    if { $nelem != "1" } { append msg s }
+    append msg " passed all submission criteria.   \n"
+    question -title SubmissionCheck $msg
+    return ""
+  }
+}
+
+proc subchk:clear_symbols { filter } {
+
+  if { [ catch { set tree [ querytree open $filter ] } ] == 0 } {
+    querytree set $tree domain [ nil_set ]
+    set queries [ querytree runners $tree ]
+    foreach query $queries {
+      querytree set $query cres [ nil_set ]
+      querytree set $query pres [ nil_set ]
+    }
+  }
+
+}
+
+proc subchk:submit { args } {
+
+  set ret 0
+
+  set code [ catch {
+
+    set subchk_enabled 0
+    set subchk_source ""
+    set subchk_procs ""
+    set subchk_enforce 1
+
+    set subchk_enabled [ get_pref_value SubmissionCheck.Enabled    ]
+    set subchk_source  [ get_pref_value SubmissionCheck.SourceList ]
+    set subchk_procs   [ get_pref_value SubmissionCheck.Procedures ]
+    set subchk_enforce [ get_pref_value SubmissionCheck.Enforce    ]
+
+    if { $subchk_enabled == "1"  } {
+      source_dis subchk.dis
+      if { $subchk_source != "" } {
+        foreach file $subchk_source { source $file }
+      }
+      set subchk_procs [ concat subchk:submit_p $subchk_procs ]
+      foreach proc $subchk_procs {
+        set rval [ eval $proc $args ]
+        if { $rval != 0 && $subchk_enforce != "0" && $ret == 0 } {
+          set ret $rval
+        }
+      }
+    }
+  } errmsg ]
+
+  if { $code != 0 } {
+    global errorInfo
+    if { [ info exists errorInfo ] } { set errmsg $errorInfo }
+    msg -error $errmsg
+    set ret 1
+  }
+
+  return $ret
+
+}
+
+proc subchk:submit_p { args } {
+
+  set ret 0
+
+  set filter [ get_pref_value SubmissionCheck.Filter ]
+
+  if { $filter != "" } {
+    set selection [ lindex $args 0 ]
+    set bugid     [ lindex $args 1 ]
+    set comment   [ lindex $args 2 ]
+    set status [ subchk:qrun $filter $selection 0 ]
+    set status_code [ lindex $status 0 ]
+    set status_text [ lindex $status 1 ]
+    if { $status_code == "0" } {
+      set tree [ querytree open $filter ]
+      if { [ llength $bugid ] == "1" } { set bugid [ lindex $bugid 0 ] }
+      if { [ llength $comment ] == "1" } { set comment [ lindex $comment 0 ] }
+      querytree set $tree bugid $bugid
+      querytree set $tree comment $comment
+      subchk:notify $filter
+      if { $status_text == "Warn" } {
+        set answer [ subchk:qpost $filter "View Results" "Force Submission" ]
+        if { $answer != "Force Submission" } {
+          set ret -1
+        }
+      } elseif { $status_text == "Reject" } {
+        subchk:qpost $filter
+        set ret -1
+      }
+    } else {
+      set ret -1
+    }
+    if { $ret == 0 } { subchk:clear_symbols $filter }
+  } else {
+    set msg ""
+    append msg "SubmissionCheck is enabled, but no filter has been specified.\n"
+    append msg "Set the value of the following preference to the name of the\n"
+    append msg "filter you would like to run at submission time:\n"
+    append msg "\n               SubmissionCheck.Filter"
+    msg -warning "$msg"
+  }
+
+  return $ret
+
+}
+
+#
+# GUI Procedures:
+#
+
+# utility procedure to detect if we are in windows:
+proc is_windows {} {
+  set ret 0
+  global tcl_platform	
+  if { [ info exists tcl_platform(platform) ] && $tcl_platform(platform) == "windows" } {
+    set ret 1
+  }
+  return $ret
+}
+
+# called whenever a new query set is created:
+proc subchk:creation_hook { name } {
+  if { ! [ is_windows ] } {
+    set menu [ subchk:menu_name ]
+    if { $menu != "" } {
+      global _SUBCHK_MENU_ITEMS
+      if { ! [ info exists _SUBCHK_MENU_ITEMS ] } { set _SUBCHK_MENU_ITEMS "" }
+      catch {
+        set len [ llength $_SUBCHK_MENU_ITEMS ]
+        if { $len == 0 } { add_separator $menu }
+        lappend _SUBCHK_MENU_ITEMS $name
+        add_item $menu "Apply $name" "subchk:qrun \"$name\" ; return \"\"" -none
+      }
+    }
+  }
+
+  return ""
+}
+
+# access the menu name:
+proc subchk:menu_name { args } {
+  set ret ""
+  global _SUBCHK_MENU_NAME
+  if { $args != "" } { set _SUBCHK_MENU_NAME [ lindex $args 0 ] }
+  if { [ info exists _SUBCHK_MENU_NAME ] } { set ret $_SUBCHK_MENU_NAME }
+  return $ret
+}
+
+# invoke the gui:
+proc subchk:gui { args } {
+  if { ! [ is_windows ] } {
+    global env
+    setvar GLOBAL_SUBCHK_QUERYSET [ lindex $args 0 ]
+    catch { push_busy_cursor }
+    catch { status_bar_msg "Loading SubmissionCheck..." }
+    exec $env(PSETHOME)/java/jre/bin/dis_jre QA.QaUI [ get_server_port ] &
+  } else {
+    catch { open_window SubmissionCheck }
+  }
+}
+
+# used by the gui to determine what the active query set is:
+proc subchk:get_set_to_load {} {
+  return [ getvar GLOBAL_SUBCHK_QUERYSET ]
+}
+
+proc subchk:get_report {} {
+  return [ getvar GLOBAL_SUBCHK_REPORT ]
+}
+
+catch { source_dis subchkrep.dis }
+
+set _SUBCHK_DIS_SOURCED 1
+}

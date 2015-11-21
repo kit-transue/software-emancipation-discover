@@ -1,0 +1,313 @@
+#!/usr/bin/perl
+#
+# $Id: makemf.linux2 1.1 1999/08/17 16:33:55EDT rpasseri Exp  $
+#
+
+$srcdir = `pwd`;
+$srcdir =~ s/obj\/$ENV{'ARCH'}/src/;
+$logsrcdir = `pwd`;
+$logsrcdir =~ s/^.*\/$ENV{'ARCH'}/\$(BASE)\/src/;
+
+$logsrcdir =~ s/[ \t\n]*$//;
+$srcdir =~ s/[ \t\n]*$//;
+
+opendir(DIR, $srcdir) || die "Cannot open source directory: $!\n";
+@filelist = readdir(DIR);
+closedir(DIR);
+# Build arrays of object and source files.
+foreach (sort @filelist)
+{
+    if(($basename, $extension) = /^(.+)\.([cC]|if|lt|asm|bits)$/)
+    {
+	$objfiles{"$basename.o"} = 1;
+	$srcfiles{$_} = 1;
+	push(@uimxfiles, $_) if($extension eq 'if');
+	push(@cfiles, $_) if($extension eq 'c');
+	push(@Cfiles, $_) if($extension eq 'C');
+	push(@ltfiles, $_) if($extension eq 'lt');              
+    }
+    if(($basename, $extension) = /^(.+)\.([l])$/)
+    {
+	$objfiles{"$basename.lex.o"} = 1;
+	$srcfiles{$_} = 1;
+    }
+    if(($basename, $extension) = /^(.+)\.([y])$/)
+    {
+	$objfiles{"$basename.yacc.o"} = 1;
+	$srcfiles{$_} = 1;
+    }
+}
+
+# Flag C files that have corresponding UIM/X files.
+foreach $cfile (@uimxfiles)
+{
+    $cfile =~ s/\.if$/.c/;
+    $srcfiles{$cfile} = 0;
+}
+
+# Extract the parent directory, module names,
+# and debug option from the current directory.
+($src_dir, $arch, $debug, $system, $module, $submodule) =
+    (`pwd` =~ m%(.*)/obj/([^-]*(-[^/]))/(.*)/(.*)/(.*)$%);
+
+# Patch for CFRONT debugger switch.
+if($debug eq '-g') { $debug = '-g0 -D_PSET_DEBUG'; }
+# Patch for our optimization mode.
+elsif($debug eq '-O') { $debug = '-O -D_ASET_OPTIMIZE'; }
+
+if($submodule eq 'src') { $name = $module; }
+else { $name = $module . '_' . $submodule; }
+
+print "SYSTEM = $system\n";
+print "NAME = $name\n";
+print "DEBUG = $debug\n\n";
+
+print "OBJ = ";
+foreach (sort keys %objfiles) { print "\\\n\t$_"; }
+print "\n\n\n";
+
+print "CFILES = \\\n";
+foreach (@cfiles) { print "\t$logsrcdir/$_ \\\n"; }
+print "\t\n\n";
+
+print "CCFILES = \\\n";
+foreach (@Cfiles) { print "\t$logsrcdir/$_ \\\n"; }
+print "\t\n\n";
+
+print "LTFILES = \\\n";                                         
+foreach (@ltfiles) { print "\t$logsrcdir/$_ \\\n"; }            
+print "\t\n\n";                                                 
+
+print <<'END_OF_BOILERPLATE';
+###########################################################################
+# Boilerplate
+###########################################################################
+
+CCC = /usr/local/KAI/KCC/KCC_BASE/bin/KCC --cfront_3.0 --bool
+CC = /usr/local/KAI/KCC/KCC_BASE/bin/KCC --c
+AS = /usr/bin/as
+AR = /usr/bin/ar
+LEX = /paraset/admin/int_tools/bin/linux2/lex
+YACC  = /paraset/admin/int_tools/bin/linux2/yacc
+MAKEMF = $(TOOL)/makemf.linux2
+UXCGEN = /paras
+FLEX = /paraset/admin/int_tools/bin/linux2/flex
+SUBLEX = /paraset/admin/int_tools/bin/linux2/sublex
+
+ASETINCLUDES = \
+	-I$(BASE)/include \
+	-I$(SYSBASE)/include \
+	-I$(SYSBASE)/obj/$(ARCH)/gcc/src \
+	-I$(SYSBASE)/src/gcc/src/cp \
+	-I$(SYSBASE)/src/gcc/src/config 
+
+XINCLUDES = \
+	-I/usr/include/Xm \
+	-I/usr/include/X11 \
+	-I/usr/local/uimx/include
+
+FRAMEINCLUDES = \
+	-I$(FMHOME)/fdk/include
+
+CCDEFINES = -DGCC2 -Dcplusplus_3_0_1 -Div2_6_compatible -DNEWCPP -Dlinux2
+
+CCINCLUDES = \
+	$(ASETINCLUDES) \
+	-I/usr/local/iv/src/include/InterViews/2.6 \
+	-I/usr/local/iv/src/include/IV-look/2.6 \
+        -I/usr/local/iv/src/include \
+	$(XINCLUDES)
+
+TARGET_ARCH = -Dlinux2 
+
+CCFLAGS = $(DEBUG) $(CCDEFINES) $(CCINCLUDES) $(TARGET_ARCH)
+
+CDEFINES = -DGCC2 -D_NO_PROTO
+
+CINCLUDES = -I. $(ASETINCLUDES) $(XINCLUDES)
+
+CFLAGS = $(DEBUG) $(CDEFINES) $(CINCLUDES) $(TARGET_ARCH) $(FRAMEINCLUDES)
+
+###########################################################################
+
+# Default make target
+all: $(OBJ)
+
+# Delete junk files
+clean: 
+	rm -f *.o *~ \#*\#
+
+makemf:
+	@rm -f Makefile.new
+	$(MAKEMF) > Makefile.new
+	mv Makefile.new Makefile
+
+depend:
+	$(CCC) -M $(CCFLAGS) ../*.[Cc] | \
+	sed -e '/: \/usr\//d' -e '/\/CC\//d' -e '/\/nihcl\/lib\//d' | \
+	sort -u > .depend
+	$(MAKE) makemf
+
+#rule to force compilation when $FORCE="FORCE"
+FORCE:
+
+LOCKFILE = makelock
+LOCKID = makelock.`hostname`
+LOCKSTAMP = echo `date '+%d-%h-%y %H:%M '; who am i | sed 's/^\([^ ]*\)[^(]*\([^)]*\)/\1 \2/'`
+
+.INIT:
+	@ if [ -f $(LOCKFILE) ]; then \
+	    echo 1>&2 ''; \
+	    echo 1>&2 '====================================================='; \
+	    echo 1>&2 'Make in progress under '`pwd`':'; \
+	    echo 1>&2 -n 'Current $(LOCKFILE) is:    '; cat $(LOCKFILE); \
+	    echo 1>&2 -n 'Your $(LOCKFILE) would be: '; $(LOCKSTAMP); \
+	    echo 1>&2 'To proceed, verify that current make is finished,'; \
+	    echo 1>&2 'then remove $(LOCKFILE)* if necessary.'; \
+	    echo 1>&2 '====================================================='; \
+	    echo 1>&2 ''; \
+	    false [causes make to fail immediately]; \
+	  fi
+	@ $(LOCKSTAMP) > $(LOCKFILE); ln $(LOCKFILE) $(LOCKID)
+
+.DONE:
+	@ if [ -f $(LOCKID) ]; then \
+	    rm -f $(LOCKFILE) $(LOCKID); \
+	  fi
+
+LIBDIR = $(BASE)/lib.new/$(ARCH)/$(SYSTEM)
+RFILE = lib_$(NAME).o
+AFILE = lib_$(NAME).a
+
+END_OF_BOILERPLATE
+###########################################################################
+
+# Dump explicit rules for each source/object pair.
+#
+foreach (sort keys %srcfiles)
+{
+    next unless $srcfiles{$_};	# Skip C files made for UIM/X
+
+    ($basename, $extension) = /^(.+)\.([cCly]|lt|if|asm|bits)$/;
+
+    $source = "$logsrcdir/$_";
+
+    if($extension eq 'C')
+    {
+	print "$basename.o: \$(FORCE) $source\n";
+	print "\t", '@ echo Compiling C++ file ', $_, "\n";
+	print "\t", '@ $(TIME) $(CCC) -c $(CCFLAGS) -o $@ ', $source, "\n";
+	print "\n";
+    }
+    elsif($extension eq 'y')
+    {
+	print "#$basename.yacc.h: \$(FORCE) $basename.yacc.o\n";
+
+    	print "$basename.yacc.o: \$(FORCE) $source\n";
+	print "\t", '$(TIME) $(YACC) -d ', "$source\n";
+	# Create a sed command file for changing all yy variables and functions.
+	# This makes unique names if we use more than one yacc file.
+	print "\t", 'sed s/replace/', "$basename", '/g $(TOOL)/yy-lsed > ', "$basename.sed\n";
+	# Execute the sed command file.
+	print "\t", 'sed -f ', "$basename.sed", ' y.tab.c > ', "$basename.yacc.c", "\n";
+	print "\t", 'sed -f ', "$basename.sed", ' y.tab.h > ', "$basename.yacc.h", "\n";
+	print "\t", 'rm -f y.tab.c y.tab.h ', "$basename.sed\n";
+	print "\t", '$(TIME) $(CC) -c $(CFLAGS) -o $@ ', "$basename.yacc.c\n";
+	print "\n";
+    }
+    elsif($extension eq 'l')
+    {
+	if($srcfiles{"$basename.y"}){print "$basename.lex.o: \$(FORCE) $basename.yacc.o $source\n";}
+	else{print "$basename.lex.o: \$(FORCE) $source\n";}
+	print "\t", '$(TIME) $(LEX) ', "$source\n";
+	# Create a sed command file for changing all yy variables and functions.
+	# This makes unique names if we use more than one lex file.
+	print "\t", 'sed s/replace/', "$basename", '/g $(TOOL)/yy-lsed > ', "$basename.sed\n";
+	# Execute the sed command file.
+	print "\t", 'sed -f ', "$basename.sed", ' lex.yy.c > ', "$basename.lex.c\n";
+	print "\t", 'rm -f lex.yy.c ', "$basename.sed\n";
+	print "\t", '$(TIME) $(CC) -c $(CFLAGS) -o $@ ', "$basename.lex.c", "\n";
+	print "\n";
+    }
+    elsif($extension eq 'if')
+    {
+    print "$basename.o: \$(FORCE) $source\n";
+
+	print "\t", '@ echo Compiling UIM/X file ', $_, "\n";
+	print "\t", '$(UXCGEN) ', $source, "\n";
+	print "\t", '$(TIME) $(CC) -c -Xs $(CFLAGS) -o $@ ', "$basename.c", "\n";
+	print "\n";
+    }
+    elsif($extension eq 'c')
+    {
+    print "$basename.o: \$(FORCE) $source\n";
+
+	print "\t", '@echo Compiling C file ', $_, "\n";
+	print "\t", '$(TIME) $(CC) -c -Xs $(CFLAGS) -o $@ ', $source, "\n";
+	print "\n";
+    }
+    elsif($extension eq 'asm')
+    {
+	    print "$basename.o: \$(FORCE) $source\n";
+
+	print "\t", '@echo Compiling asm file ', $_, "\n";
+	print "\t", '$(AS) -o $@ ', $source, "\n";
+	print "\n";
+    }
+    elsif($extension eq 'bits')
+    {
+	    print "$basename.o: \$(FORCE) $source\n";
+
+	print "\t", '@echo Copying bits file ', $_, "\n";
+	print "\t", 'rm -f ', ' $@', "\n";
+	print "\t", 'cp ', $source, ".sun5", ' $@', "\n";
+	print "\n";
+    }                                                           
+    elsif($extension eq 'lt')                                   
+    {                                                           
+	    print "$basename.o: \$(FORCE) $source\n";
+
+	print "\t", '@echo converting ltfiles ', $_, "\n";
+	print "\t", '$(SUBLEX)  ', "$srcdir/", "$basename.inc",  '  <  ', "$srcdir/", "$basename.lt", '  >  ', "$basename.lex" , "\n";
+	print "\t", '$(FLEX) -S', "$srcdir", '/flex.skel.cpp -8 -t ', "$basename.lex" , ' > ', "$basename.C" , "\n";
+	print "\t", '@ $(TIME) $(CCC) -c $(CCFLAGS) -o $@ ', " $basename.C ", "\n";
+	print "\n";
+    }
+}
+
+if(%objfiles && ! -f "$srcdir/.norfile")
+{
+    print q%
+$(LIBDIR):
+	mkdir -p $(LIBDIR)
+
+afile: $(LIBDIR) $(LIBDIR)/$(AFILE)
+$(LIBDIR)/$(AFILE): $(OBJ)
+	@rm -f $@ $(AFILE)
+	$(AR) cq $(AFILE) $(OBJ)
+	mv $(AFILE) $@
+
+rfile: $(LIBDIR) $(LIBDIR)/$(RFILE)
+$(LIBDIR)/$(RFILE): $(OBJ)
+	@rm -f $@ $(RFILE)
+	ld -r -o $(RFILE) $(OBJ)
+	mv $(RFILE) $@
+%;
+
+}
+else
+{
+    print q%
+afile:
+	@echo "No object files."
+
+rfile:
+	@echo "No object files."
+%;
+}
+
+print qq%
+
+include $logsrcdir/.depend
+% if (-f "$srcdir/.depend");
+

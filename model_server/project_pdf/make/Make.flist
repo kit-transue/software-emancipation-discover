@@ -1,0 +1,77 @@
+CROOTS=\
+    path_simplify
+
+CXXROOTS=\
+    path.h \
+    path0.h \
+    path1.h \
+    pathcheck.h \
+    patherr.h \
+    pathor.h \
+    pdf_debug \
+    pdf_flat \
+    pdf_parser \
+    pdf_scope.h \
+    pdf_selector.h \
+    pdf_tree.h \
+    proj_hash.h \
+    projMap.h \
+    scope_cli \
+    scopeClone.h \
+    scopeLeaf.h \
+    scopeMaster.h \
+    scopeMgr.h \
+    scopeNode.h \
+    scopeRoot.h \
+    scopeUnit.h \
+    util \
+    verify_pdf \
+    
+LEXROOTS=pdf_load
+
+YLROOTS=path
+
+CPP_INCLUDES=\
+-I../include \
+-I$(LOCAL_SRC_ROOT)/model_server/api/include \
+-I$(BUILD_SRC_ROOT)/model_server/api/include \
+-I$(LOCAL_SRC_ROOT)/model_server/dd/include \
+-I$(BUILD_SRC_ROOT)/model_server/dd/include \
+-I$(LOCAL_SRC_ROOT)/model_server/driver_aset/include \
+-I$(BUILD_SRC_ROOT)/model_server/driver_aset/include \
+-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+-I$(LOCAL_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(BUILD_SRC_ROOT)/model_server/machine_prefs/include \
+-I$(LOCAL_SRC_ROOT)/model_server/obj/include \
+-I$(BUILD_SRC_ROOT)/model_server/obj/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project/include \
+-I$(BUILD_SRC_ROOT)/model_server/project/include \
+-I$(LOCAL_SRC_ROOT)/model_server/project_cm/include \
+-I$(BUILD_SRC_ROOT)/model_server/project_cm/include \
+-I$(LOCAL_SRC_ROOT)/model_server/rtl/include \
+-I$(BUILD_SRC_ROOT)/model_server/rtl/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt/include \
+-I$(LOCAL_SRC_ROOT)/model_server/smt_metric/include \
+-I$(BUILD_SRC_ROOT)/model_server/smt_metric/include \
+-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+-I$(LOCAL_SRC_ROOT)/model_server/xref/include \
+-I$(BUILD_SRC_ROOT)/model_server/xref/include \
+-I$(LOCAL_SRC_ROOT)/dis_tcl8.3/generic \
+-I$(BUILD_SRC_ROOT)/dis_tcl8.3/generic \
+-I$(LOCAL_SRC_ROOT)/dis_tk8.3/generic \
+-I$(BUILD_SRC_ROOT)/dis_tk8.3/generic \
+-I$(LOCAL_SRC_ROOT)/gen/include \
+-I$(BUILD_SRC_ROOT)/gen/include \
+-I$(LOCAL_SRC_ROOT)/gt/include \
+-I$(BUILD_SRC_ROOT)/gt/include \
+-I$(LOCAL_SRC_ROOT)/machine/include \
+-I$(BUILD_SRC_ROOT)/machine/include \
+-I$(LOCAL_SRC_ROOT)/nihcl/include \
+-I$(BUILD_SRC_ROOT)/nihcl/include \
+-I$(LOCAL_SRC_ROOT)/paracancel/include \
+-I$(BUILD_SRC_ROOT)/paracancel/include \
+-I$(LOCAL_SRC_ROOT)/stream_message/include \
+-I$(BUILD_SRC_ROOT)/stream_message/include \

@@ -1,0 +1,46 @@
+
+    A. Harlap
+
+    1. Input - not tokenized code. 2. Output - cpp out and table : for each byte in cpp out it's source position (file, line, offset from the beginning of file / line ).
+
+    Current way : REPORTED from cpp :
+
+    a. MACRO definitions 
+
+    b. FILE inclusion
+
+    c. MACRO calls from regualar code 
+
+    d. MACRO calls from #ifdef, #ifndef, #elif 
+
+    e. COMMENTS (mostly stripped by aset before cpp) These reports are done in terms of lines (lines matched to tokens in sources).
+
+    Addition to it we supply line numbers for macro arguments for the top level macro calls. This feature implemented by inserting @____LINE markers into macro arguments by function aset_insert_line_info(). After we convert in function aset_get_line_info() these markers to # LINE directives.
+
+    New way - Not tokenized input : REPORTED from cpp : 
+
+    a. MACRO definitions 
+
+    b. FILE inclusion 
+
+    c. MACRO calls from regualar code 
+
+    d. MACRO calls from #ifdef, #ifndef, #elif 
+
+    e. COMMENTS These reports should be rearranged in terms of positions in sources
+
+    To implement extra position information for macro expansion we will use list of such structures :
+
+    struct MARKER { 
+
+    int output_offset; /* offset from the beginning of output buffer */ 
+
+    char * fname; /* name of source file */ 
+
+    int source_offset; /* offset from the beginning of source file */ 
+
+    struct MARKER * next;
+
+    };
+
+    We will create markers similar to inserting @____LINE. In main loop of cpp we will keep truck of these markers pointed to input buffers and will create new markers pointed to output buffers. As result we will together with cpp out file list of markers pointed to this output.

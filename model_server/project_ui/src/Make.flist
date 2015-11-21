@@ -1,0 +1,10 @@
+CXXROOTS=\
+    getFileSelector \
+    getUI \
+    merge \
+    projmerge \
+    proj_path \
+    proj_util \
+    putUI \
+    restore \
+    targetProject 

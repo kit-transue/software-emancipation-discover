@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="/" unrecognized="warning"><equivalent nameintro="-"/>
+<compilername>Visual C++ in C mode</compilername>
+C --microsoft_bugs -w --preinclude "%%PSETHOME%%/include/dis_nt.h" -D_MSC_EXTENSIONS=1 -D__DISCOVER__ -U__STDC__ --c --display_error_number --incl_suffixes "::"
+<translate>
+  <option           name="link" remarg="1"/>                           <!-- optns to linker -->
+  <option           name="D"    immarg="1" separg="1">-D%</option>     <!-- define a symbol -->
+  <option           name="E"    noarg="1">-E</option>                  <!-- preprocess -->
+  <option           name="EP"   noarg="1">-E</option>                  <!-- preprocess -->
+  <option           name="P"    noarg="1">-E</option>                  <!-- preprocess -->
+  <option name="FI"   immarg="1" separg="1">--preinclude %</option>    <!-- force include -->
+  <option name="GR"   noarg="1"><!-- rtti -D_CPPRTTI--></option>       <!-- aset_CCcc doesn't digest rtti in C mode. -->
+  <option name="Gd"   noarg="1">--default_calling_convention __cdecl</option> <!-- calling convention -->
+  <option name="Gr"   noarg="1">--default_calling_convention __fastcall</option> <!-- calling convention -->
+  <option name="Gz"   noarg="1">--default_calling_convention __stdcall</option> <!-- calling convention -->
+  <option           name="GX"   noarg="1"><!-- exceptions--></option>  <!-- excptn handling on,
+									    but aset_CCcc says no exceptions
+									    in C mode -->
+  <option           name="I"    immarg="1" separg="1">-I%</option>     <!-- include directory -->
+  <option name="J" noarg="1">--unsigned_chars -D_CHAR_UNSIGNED</option><!-- dflt char unsigned -->
+  <option           name="LD"   noarg="1"/>                            <!-- which runtime lib -->
+  <option           name="LDd"  noarg="1">-D_DEBUG</option>            <!-- which runtime lib -->
+  <option           name="MD"   noarg="1">-D_MT -D_DLL</option>        <!-- which runtime lib -->
+  <option           name="MDd" noarg="1">-D_DEBUG -D_MT -D_DLL</option><!-- which runtime lib -->
+  <option           name="ML"   noarg="1"/>                            <!-- which runtime lib -->
+  <option           name="MLd"  noarg="1">-D_DEBUG</option>            <!-- which runtime lib -->
+  <option           name="MT"   noarg="1">-D_MT</option>               <!-- which runtime lib -->
+  <option           name="MTd"  noarg="1">-D_DEBUG -D_MT</option>      <!-- which runtime lib -->
+  <option           name="Tc"   immarg="1">--c %</option>              <!-- specify C language -->
+  <option           name="Tp"   immarg="1">--c++ %</option>            <!-- specify C++ language -->
+  <option           name="TC"   noarg="1">--c</option>                 <!-- specify C language -->
+  <option           name="TP"   noarg="1">--c++</option>               <!-- specify C++ language -->
+  <option           name="U"    immarg="1" separg="1">-U%</option>     <!-- undefine symbol -->
+  <option           name="u"    noarg="1">-U</option>                  <!-- undef all predefined syms ?? -->
+  <option           name="w"    noarg="1">-w</option>                  <!-- suppress warnings -->
+  <option           name="W0"   noarg="1">-w</option>                  <!-- suppress warnings -->
+  <!-- option name="X" suppresses standard include: unimplemented -->
+
+  <!-- The following options have no effect on the model, but are included here
+       for improved commmand line diagnostics. -->
+  <option name="C" noarg="1"/>
+  <option name="EH" immarg="1"/>
+  <option name="FA" noarg="1" immarg="1"/>
+  <option name="FD" noarg="1"/>
+  <option name="Fa" immarg="1" separg="1"/>
+  <option name="Fd" immarg="1" separg="1"/>
+  <option name="Fe" immarg="1" separg="1"/>
+  <option name="Fm" immarg="1" separg="1"/>
+  <option name="Fo" immarg="1" separg="1"/>
+  <option name="Fp" immarg="1" separg="1"/>
+  <option name="FR" immarg="1" noarg="1"/>
+  <option name="Fr" immarg="1" noarg="1"/>
+  <option name="G3" noarg="1"/>
+  <option name="G4" noarg="1"/>
+  <option name="G5" noarg="1"/>
+  <option name="G6" noarg="1"/>
+  <option name="GB" noarg="1"/>
+  <option name="GA" noarg="1"/>
+  <option name="Gf" noarg="1"/>
+  <option name="GF" noarg="1"/>
+  <option name="GT" noarg="1"/>
+  <option name="GZ" noarg="1"/>
+  <option name="Ge" noarg="1"/>
+  <option name="Gf" noarg="1"/>
+  <option name="Gh" noarg="1"/>
+  <option name="Gi" noarg="1"/>
+  <option name="Gm" noarg="1"/>
+  <option name="Gs" immarg="1" separg="1"/>
+  <option name="Gy" noarg="1"/>
+  <option name="HELP" noarg="1"/>
+  <option name="H" immarg="1" separg="1"/>
+  <option name="O" immarg="1"/>
+  <option name="Q" immarg="1"/>
+  <option name="V" immarg="1" separg="1"/>
+  <option name="W1" noarg="1"/>
+  <option name="W2" noarg="1"/>
+  <option name="W3" noarg="1"/>
+  <option name="W4" noarg="1"/>
+  <option name="WX" noarg="1"/>
+  <option name="YX" noarg="1"/>
+  <option name="Yc" noarg="1" immarg="1"/>
+  <option name="Yd" noarg="1"/>
+  <option name="Yu" noarg="1" immarg="1"/>
+  <option name="Z7" noarg="1"/>
+  <option name="ZI" noarg="1"/>
+  <option name="Za" noarg="1"/>
+  <option name="Zd" noarg="1"/>
+  <option name="Ze" noarg="1"/>
+  <option name="Zg" noarg="1"/>
+  <option name="Zi" noarg="1"/>
+  <option name="Zl" noarg="1"/>
+  <option name="Zm" immarg="1" separg="1"/>
+  <option name="Zn" noarg="1"/>
+  <option name="Zp" noarg="1" immarg="1"/>
+  <option name="Zs" noarg="1"/>
+  <option name="c" noarg="1"/>
+  <option name="nologo" noarg="1"/>
+  <option name="vd" immarg="1"/>
+  <option name="vm" immarg="1"/>
+
+  <!-- Hack so that scandsp has a way to pass along the import directory. -->
+  <option name="-import_dir" separg="1">--import_dir %</option>
+</translate>
+<list separator=";" getenv="INCLUDE">-I"%"</list>
+<switch when="!(&quot;%0%&quot;==&quot;&quot;)">
+    -I%0%\\ATL\\INCLUDE -I%0%\\INCLUDE -I%0%\\MFC\\INCLUDE
+</switch>
+</cmdline>

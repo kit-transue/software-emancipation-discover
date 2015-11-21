@@ -1,0 +1,27 @@
+#ifndef _CONST_DEF
+#define _CONST_DEF
+
+/******************************************************************************/
+/*									      */
+/* Include-File 	CONST.DEF					      */
+/*									      */
+/* Letzte Aenderung     08.02.88					      */
+/*									      */
+/*									      */
+/* Konstantenvereinbarungen fuer     nil, true, false                         */
+/*									      */
+/******************************************************************************/
+
+
+#define 	nil    0
+
+#define 	true   1
+#define 	false  0
+
+#define         MAXINT  32267
+#define         MININT -32267
+
+
+/* end of Include-File  CONST.DEF */
+
+#endif

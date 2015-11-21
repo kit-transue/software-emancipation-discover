@@ -1,0 +1,104 @@
+##############################################################################
+# Use one or more of the following to indicate
+# how you build the code that's going into the model.
+##############################################################################
+#BUILD=FixedLocationLog(/home/user/src/build.log)
+#BUILD=ParseDSX(/home/user/src/build.dsw)
+#BUILD=ScanDSX(/home/user/src/build.dsw)
+
+BUILD=FileListFromFileSystem(javac,0,%sharedSrcRoot%,-classpath "%PSETHOME%/jre/lib/rt.jar;%sharedSrcRoot%",java,%sharedSrcRoot%)
+#BUILD=FileListFromFileSystem(sqlc,0,/home/user/src,-include /usr/local/sql/include,sql spb sps ff fp fpp sf sp spp)
+#BUILD=FileListFromFileSystem(CL,0,c:/src,"-IC:\Program Files\Microsoft Visual Studio\VC98\INCLUDE" "-IC:\Program Files\Microsoft Visual Studio\VC98\MFC\INCLUDE" "-IC:\Program Files\Microsoft Visual Studio\VC98\ATL\INCLUDE",c cxx cpp)
+#BUILD=ClearCase
+#BUILD=ClearCase(/vob1/obj,myview)
+#BUILD=ClearCase(PATTERN)
+#BUILD=FixedLocationTable(/home/user/src/build.table)
+#BUILD=Custom
+
+##############################################################################
+# These values reflect model specific information.
+##############################################################################
+EXTENSION=CompileFiles:c cxx cpp cc C java sql
+#EXTENSION=CompileFiles: sql spb sps ff fp fpp sf sp spp # for SQL
+
+PARALLEL_PARSE=$HOST:4
+#PARALLEL_UPDATE=$HOST:1
+
+#COMPILER=CC:sunccpp(/usr/SUNWspro/SC5.0)
+#EXTRA_FLAGS=ntclcpp:--no_wchar_t -D_MSC_EXTENSIONS="1"
+#EXTRA_FLAGS=--no_wchar_t -D_MSC_EXTENSIONS="1"
+#VAR=LogIsJustFiles:1
+
+##############################################################################
+# For Java only.
+##############################################################################
+#VAR=CLASSPATH:/
+
+##############################################################################
+# MainSrcRoot is needed in a few cases,
+# such as with a FixedLocationLog that uses relative path names
+# and has no "cd" commands.
+##############################################################################
+#VAR=MainSrcRoot:/
+
+##############################################################################
+# BuildHost may be set to the name of the system where the build log is
+# generated, or to 'other',
+# to suppress reminders to use the same system for model build.
+##############################################################################
+#VAR=BuildHost:other
+
+##############################################################################
+# In general, this should be left unmolested but
+# on occasion some clients like the root directory
+# in discover clients to display something other
+# than "ROOT", in which case, just edit PROJECT.
+##############################################################################
+PROJECT=ROOT
+#SUB_PROJECT=/ROOT/foo_1
+#SUB_PROJECT=/ROOT/foo_2
+
+##############################################################################
+# Leave the rest of the values alone,
+# except that NT_sharedSrcRoot should agree with
+# the drive containing sources (if applicable).
+##############################################################################
+VAR=sharedSrcRoot:/
+VAR=privateSrcRoot:$HOME/CODEINTEGRITY/$MODELNAME/$USER/src
+VAR=sharedModelRoot:$ADMINDIR/model
+VAR=privateModelRoot:$HOME/CODEINTEGRITY/$MODELNAME/$USER
+VAR=NT_sharedSrcRoot:%PSETHOME%\prebuilt\source\xerces
+VAR=NT_sharedModelRoot:%ADMINDIR%\model
+VAR=NT_privateSrcRoot:%TEMP%\CODEINTEGRITY\%MODELNAME%
+VAR=NT_privateModelRoot:%TEMP%\CODEINTEGRITY\%MODELNAME%
+VAR=SUN5_PATH:$PSETHOME/bin:$PATH
+VAR=HP10_PATH:$PSETHOME/bin:$PATH
+VAR=IRIX_PATH:$PSETHOME/bin:$PATH
+VAR=cCompiler:C
+VAR=cPlusCompiler:CPP
+VAR=NT_cCompiler:CL
+VAR=NT_cPlusCompiler:CL
+
+##############################################################################
+# The following variables control incremental model
+# build process. Incremental build can occur in two ways:
+#    Automatic analysis of outdated files using one of following methods: 
+#       TS (using time stamps)
+#       CS (using checksum)
+#       TS_CS (using both time stamps and checksum)  
+#    User specified list of files(UserSpecifiedList variable should point 
+#       to a file containing a list of files that need to be updated.)
+# By default Automatic analysis using TS is enabled, uncomment 
+# appropriate line to use enable another method.
+##############################################################################
+VAR=AutomaticAnalysis:TS
+#VAR=AutomaticAnalysis:CS
+#VAR=AutomaticAnalysis:TS_CS
+#VAR=UserSpecifiedList:$HOME/incremental_build.lst
+
+##############################################################################
+# The following variable is used to control if, after an 
+# incremental model build, model should be published even if
+# it is identical to the baseline model.
+##############################################################################
+VAR=PublishIfIdentical:yes

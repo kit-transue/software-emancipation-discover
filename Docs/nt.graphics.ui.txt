@@ -1,0 +1,271 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+						2 Oct 96
+						J. Pouliot
+
+Revision History:
+________________
+
+3 Oct 96 - Jeff - Updated to include schedule and to incorporate comments
+made in review.
+
+Purpose and Scope:
+_________________
+
+The purpose of this document is to give a PRELIMINARY estimation on how long it
+will take to modify the User Interface to provide support for graphical views. 
+This is just a preliminary estimation.  The estimation will evolve as more 
+knowledge is obtained either from researching or from experience.
+
+The scope of this document is to deal specifically with integrating support for
+graphical views into the User Interface (gala).  Issues that are outside the 
+scope of this document and thus not supported are: fixing the existing 
+deficiencies of the User Interface such as multiple viewer support, emacs, the 
+debugger, links, toolbar customization, etc.
+
+
+Assumptions:
+___________
+
+1)  The User Interface (gala) will provide a 'placeholder' or empty layer, for 
+the graphics server to draw on.  Most events, such as mouse clicks, mouse moves,
+will be processed directly by the graphics server.  Other events, such as 
+resize events, will be passed on to the graphics server to interpret.  The 
+graphics server will translate these low-level messages into high-level 
+messages.  These high level messages will either be processed in the graphics 
+server, or the graphics server may pass these on to the pset-server for 
+processing.
+
+2)  The User Interface will also generate high-level messages.  These will be 
+the results of menu selections (be it popup menus or the horizontal menus).  
+These messages will either be passed to the graphics server or (maybe in some 
+rare cases) directly to the pset_server.
+
+3)  It is assumed that other then the specified changes, all necessary User 
+Interface components and communication protocols are provided for, and are in 
+good working condition.
+
+4)  The following items will NOT be developed as part of this project:
+	1) Emacs views, and any Emacs related menu items
+	2) CM integration, and any CM related menu items
+	3) Links, Link menu, and any Link related items
+	4) The Debugger, Debug menu, and any Debugger related items
+	5) Merge and Merge menu
+	6) Toolbar Customization
+	7) Multiple Viewer support (This is similar to multiple viewerShells in 
+Aset)
+	8) No Browser Enhancements will be done (such as load/unload, etc) 
+above and beyond what is currently provided.
+	9) Partition will not be available from views (as there is no text
+editor and no mini-browser associated with a graphical view any more, it does
+not make sense).
+
+
+Changes necessary: 
+_________________
+
+1)  A new 'type' of layer that will provide a 'placeholder' for the graphics 
+server to draw on.  This must be integrated with the window menu to provide
+a history of views available.  This must also provide a state for each type
+of view.  This state is used to turn specific menus on and off.  We may need
+to subclass a different layer class for each view type.
+
+2)  The current way of operating on a selection is to pass an RTL ID from 
+the client to the server.  The function (such as Update File) will then 
+look up the RTL using the ID, and take the selection from that RTL.  We need
+to develop a way to expand that to view selections.  We need to update 
+commands that use this, to also check view selections.
+
+3)  Mode buttons need to be implemented.  These are the only way to create 
+user-defined relations.
+
+4)  Popup menu support needs to be implemented.  These need to include 
+paramatized menu items (for example, in the subsystem map, if a public member
+is selected and the right mouse button is activated, the popup menu that is 
+displayed has an item labeled 'Make Private'.  Whereas if a private member
+is selected and the right mouse button is activated, the popup menu that is
+displayed has an item labeled 'Make Public').
+
+5)  Toggle menu items need to be implemented.
+
+6)  A new menu for each flavor of graphics (i.e. ERD, inheritance, etc) needs
+to be implemented.  See below for a complete list of menu commands that need 
+to be implemented.
+
+7)  Dialogs specific to graphical views need to be implemented.  See below for
+a complete list of dialogs that need to be implemented.
+
+8)  As Create/sw is used by many of the views, it must be revived and fully 
+implemented.
+
+9)  A selection Browser needs to be implemented. 
+
+
+Issues and Concerns:
+___________________
+
+1)  The graphics server will be necessary to test the user interface.  Since 
+they are both being developed in parallel, the the bulk of the user interface 
+will be written before it can be tested.
+
+
+Time needed:
+__________
+
+1)  Develop a new 'type' of layer ~ 1 week.
+
+2)  Update the selection mechanism to handle views as well as RTLs ~ 3 days.
+
+3)  Implement mode buttons ~ 1 week.
+
+4)  Implement popup menu support ~ 1 week.
+
+5)  Implement a toggle menu item ~ 2 days.
+
+6)  The following menu commands will have to be developed (not including 
+commands generated from popup dialogs):
+
+	1)  Open Source
+	2)  Open Outline
+	3)  Open Flowchart
+	4)  Open Call Tree
+	5)  Open Inheritance
+	6)  Open Relations
+	7)  Open Datachart
+	8)  Open Group/Subsystem map
+	9)  Open Graph
+	10) Reduce View ?
+	11) Clear Selection ?
+	12) Collapse View
+	13) Expand View
+	14) Display ->1 level, 2 levels, ...
+	15) Refresh View
+	16) Zoom In
+	17) Zoom Out
+	18) Zoom to Fit
+	19) Reset Zoom
+	20) Inheritance: Expert Mode
+	21) Inheritance: Make Current
+	22) Inheritance: Show Default Members/Hide Members
+	23) Call Tree: Display Arguments (on/off)
+	24) Call Tree: Make Current Root
+	25) Relations: Show All Attributes, Operations (on/off)
+	26) Relations: Delete User Defined Relation
+	27) Relations: Remove Class
+	28) Group/Subsystem: Remove Member
+	29) Group/Subsystem: Remove Group/Subsystem
+	30) Group/Subsystem: Add Selected
+	31) Data Chart: Show All Attributes, Operations (on/off)
+	32) Data Chart: Remove Struct
+	33) Outline: Collapse Children
+	34) Outline: Expand Children
+
+~ 2 weeks
+
+
+7)  The following popup dialogs will have to be deveoped:
+
+	1)  Entity Search Dialog
+	2)  Print Dialog
+	3)  View: Graph
+	4)  View: Preferences
+	5)  Inheritance: Display Related Entities
+	6)  Inheritance: Show Members
+	7)  Inheritance: Sort Members
+	8)  Inheritance: Change Attributes
+	9)  Inheritance: Insert Member
+	10) Inheritance: Add Superclass
+	11) Inheritance: Add Subclass
+	12) Inheritance: Add Relation * (uses selection browser)
+	13) CallTree: Prune
+	14) CallTree: Show Paths
+	15) Relations: Show Builtin Relations
+	16) Relations: Show Other Relations
+	17) Relations: Show Members
+	18) Relations: New Class * (Create/sw)
+	19) Relations: Insert Class * (uses selection browser)
+	20) Relation: Define Relation
+	21) Subsystem Map: Show Members
+	22) Subsystem Map: Sort Members
+	23) Subsystem Map: Insert New Struct * (Create/sw)
+	24) Subsystem Map: Insert New Class * (Create/sw)
+	25) Subsystem Map: Insert New Function * (Create/sw)
+	26) Subsystem Map: Insert New Group/Subsystem * (New Group Dialog)
+	27) Subsystem Map: Insert Member * (uses selection browser)
+	28) Subsystem Map: New Group/Subsystem * (New Group Dialog)
+	29) Subsystem Map: Insert Group/Subsystem ?
+	30) Data Chart: Show Builtin Relations 
+	31) Data Chart: Show Other Relations * (Same as Relations: ...)
+	32) Data Chart: Show Members
+	33) Data Chart: New Struct * (Create/sw)
+	34) Data Chart: Insert Struct * (uses selection browser)
+	35) Data Chart: Add Member
+	36) Data Chart: Add Relation * (uses selection browser)
+
+~ 5 weeks
+
+
+8)  Revive Create/sw ~ 4 days
+
+9)  Create a selection browser ~ 3 days 
+
+
+Schedule
+========
+
+
+Person          Task                            Duration        Dates
+______          ____                            ________        _____
+ 
+Jeff            Implement Popup Menu Support    1 week          Oct 4 - 10
+ 
+Jeff            Implement New Layer Type        1 week          Oct 11 - 17
+ 
+Jeff            Update Selection Mechanism to   3 days          Oct 18 - 22
+                handle views 
+ 
+Jeff            Implement toggle menu item      2 days          Oct 23 - 24
+ 
+Max             Come up to speed on graphic     3 days          Oct 22 - 24
+                views, etc.
+ 
+-----------------
+24 Oct 96 - At this point, we will need some graphics support in the pset server
+-----------------
+
+Jeff            Revive Create/sw                4 days          Oct 25 - 30
+ 
+Max             Implement menus                 2 weeks         Oct 25 - Nov 7
+ 
+Jeff            Create a selection browser      3 days          Oct 31 - Nov 4
+ 
+Jeff            Popup Dialogs                   3 weeks         Nov 5 - Nov 25
+ 
+Max             Popup Dialogs                   3 weeks         Nov 8 - Nov 29
+ 
+Jeff            Implement Mode buttons          1 week          Nov 26 - Dec 2

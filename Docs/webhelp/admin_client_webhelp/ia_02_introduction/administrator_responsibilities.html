@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Administrator Responsibilities</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 8.0px 24.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 9.0px 'Times New Roman'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Administrator Responsibilities</b></p>
+<p class="p2">As an administrator of DIScover in the enterprise environment, you have several key responsibilities, all of which revolve around the ready availability of a current and complete information model to your end users.</p>
+<p class="p2">Once DIScover is fully deployed, however, you are responsible for the daily maintenance tasks and routine procedures that ensure smooth operation of your organization’s DIScover system.</p>
+<p class="p2">These tasks include:</p>
+<p class="p3"><b>•</b><span class="s1"><b>   </b></span><b>Building and validating models</b></p>
+<p class="p4">The information model is the center of your DIScover deployment. As administrator, it is your responsibility to ensure that a valid model of your source code exists and is available through a model server. Often, your model builds coincide with your regular development build cycle; however, it may be necessary to maintain more than one version of a single model for historical and quality assurance purposes.</p>
+<p class="p3"><b>•</b><span class="s1"><b>   </b></span><b>Starting and stopping servers</b></p>
+<p class="p4">Once you build a model, you need to start a model server so that your host machines can serve the model to Developer Xpress and Access clients. You also need to start a build server if your users plan to use Submission Check. Each instance of a model that you want to serve requires the operation of one model server. For example, if you want to serve a version of Model A that was built on 1/1/03 and another that was built on 10/1/02, you need to start two model servers to enable this. The single model-to-model server ratio ensures your end users’ ability to perform submission checks. You also need to know how to stop a model server on demand in the event that a model or process needs attention.</p>
+<p class="p3"><b>•</b><span class="s1"><b>   </b></span><b>Housekeeping</b></p>
+<p class="p4">Model building requires temporary disk space; for this reason, you need to periodically clear out the temporary directory and Tempbuild area. This prevents model builds from failing due to lack of adequate space on your disks.</p>
+<p class="p3"><b>•</b><span class="s1"><b>   </b></span><b>Clearing old models</b></p>
+<p class="p4">Similar to standard file housekeeping, it is necessary to remove old models—and their directories—that are no longer valid or useful to provide the most efficient and relevant model environment and to prevent the waste of space on your disks.</p>
+<p class="p3"><b>•</b><span class="s1"><b>   </b></span><b>Setting up new DIScover users</b></p>
+<p class="p4">Before a new user can begin working with information models in the DIScover environment, you must ensure that his or her machine can properly communicate with the central system. This includes the complete installation of DIScover client software, the setting of specific environment variables, and alteration of the user’s system path. Once you have completed this preliminary task, the user is free to choose the DIScover Browser, the lightweight Developer Xpress client, or an Access command line to connect to the desired information model.</p>
+<p class="p2"> </p>
+<p class="p2"> </p>
+<p class="p5"> </p>
+</body>
+</html>

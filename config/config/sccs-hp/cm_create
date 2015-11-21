@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd `dirname $cm_workfile`
+file=`basename $cm_workfile`
+echo "admin -i$file SCCS/s.$file"
+      admin -i$file SCCS/s.$file"
+
+exit $?

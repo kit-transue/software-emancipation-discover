@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<!-- The language for a GCC compilation is based the suffix,
+     possibly overridden by -x <language>.
+     If no suffix is recognized, the gcc compiler does not default to
+     C or C++, but assumes an object file which we need to ignore.
+  -->
+<cmdline nameintro="-" unrecognized="no_message">
+<compilername>GNU C/C++</compilername>
+reconfigure object
+<translate>
+  <filesuffix name="cpp">gcccpp(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="cxx">gcccpp(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="cc">gcccpp(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="c">gccc(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="C">gcccpp(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="h">gccc(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="i">gccc(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+  <filesuffix name="ii">gcccpp(%0%)(%1%)(%2%)(%3%)(%4%)</filesuffix>
+
+  <option name="x" immarg="1" separg="1">gcc%(%0%)(%1%)(%2%)(%3%)(%4%)</option>
+				<!-- Incomplete implementation of this option.  The argument
+				     should determine the language as follows:
+					 -x c               C    gccc  support
+					 -x c-header        C    gccc
+					 -x cpp-output      C    gccc (?)
+					 -x c++             C++  gcccpp   support
+					 -x c++-cpp-output  C++  gcccpp
+                                     But this file can't support it
+				     due to parsercmd limitations. -->
+</translate>
+</cmdline>

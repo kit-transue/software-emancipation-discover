@@ -1,0 +1,7 @@
+CC = ${ADMINDIR}/bin/nqacc
+
+a.o : ../src/a.cc
+	${CC} -c ../src/a.cc -o a.o -I../incl ${CFLAGS}
+
+clobber :
+	rm *.o

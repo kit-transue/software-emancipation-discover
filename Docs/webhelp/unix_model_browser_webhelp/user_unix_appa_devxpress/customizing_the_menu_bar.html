@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Customizing the Menu Bar</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 11.0px 'Courier New'}
+    p.p5 {margin: 0.0px 1.0px 2.7px 1.0px; font: 11.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 1.3px 1.0px; font: 11.0px Verdana}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; min-height: 15.0px}
+    p.p8 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p9 {margin: 0.0px 1.0px 8.0px 48.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 15.0px Palatino}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {font: 11.0px 'Courier New'}
+    span.s4 {font: 12.0px 'Courier New'}
+    span.s5 {font: 12.0px Verdana}
+    span.s6 {font: 13.0px Courier}
+    span.s7 {font: 13.0px Helvetica}
+    table.t1 {padding: 8.0px 8.0px 4.0px 8.0px}
+    td.td1 {width: 92.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td2 {width: 284.0px; background-color: #b2b2b2; border-style: solid; border-width: 3.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td3 {width: 92.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+    td.td4 {width: 284.0px; border-style: solid; border-width: 0.0px 0.0px 3.0px 0.0px; border-color: #000000 #000000 #000000 #000000; padding: 1.0px 1.0px 1.0px 1.0px}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Customizing the Menu Bar</b></p>
+<p class="p2">You can customize your Developer Xpress menu bar by changing the appearance of menu items and enabling or disabling certain menu items.</p>
+<p class="p3"><b>Note: </b>The<span class="s1"> </span><b>File</b>, <b>Access</b>, and <b>Help</b> menus are predefined and cannot be modified.</p>
+<p class="p2">To customize the Developer Xpress menu bar, edit either of the following menu bar preferences files:</p>
+<p class="p4">•<span class="s2">   </span>&lt;CodeIntegrityInstalldir&gt;/lib/dislite/menu.dat</p>
+<p class="p4">•<span class="s2">   </span>$HOME/dislite/user.dat</p>
+<p class="p2">When Developer Xpress is initialized, it searches for <span class="s3">menu.dat</span>. If <span class="s4">menu.dat</span> is not found, <span class="s3">user.dat</span> is searched for in the same order.</p>
+<p class="p4"><span class="s5">•</span><span class="s2">   </span>$HOME/dislite/Model_name/menu.dat<span class="s6"> </span><span class="s4">(</span>user.dat<span class="s4">)</span></p>
+<p class="p4"><span class="s5">•</span><span class="s2">   </span>$HOME/dislite/menu.dat<span class="s6"> </span><span class="s4">(</span>user.dat<span class="s4">)</span></p>
+<p class="p2">To edit the menu bar for the server version, edit <span class="s3">menu.dat</span> and include it in the installation path. To edit your local version, edit <span class="s3">user.dat</span> in <span class="s3">$HOME/dislite</span>.</p>
+<p class="p2">The following arguments apply:</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="middle" class="td1">
+        <p class="p5"><b>Symbol</b></p>
+      </td>
+      <td valign="middle" class="td2">
+        <p class="p5"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p6">+ (plus sign)</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">Enabled.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p6">- (minus sign)</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">Disabled.</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p6">0 (zero)</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">First character of selected menu item is underlined. You can underline any character in a menu item by defining the position of the character from left to right (0 is first position, 1 is second position, and so on).</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="middle" class="td3">
+        <p class="p6">-1 (minus one)</p>
+      </td>
+      <td valign="middle" class="td4">
+        <p class="p6">No character is underlined.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p7"><br></p>
+<p class="p2"><b>SEP </b>adds a separator between items in a menu drop-down list.</p>
+<p class="p2">The following example shows edits to <span class="s3">menu.dat</span>:</p>
+<p class="p8">•<span class="s2">   </span><b>ClassUtil</b> is added to the menu bar with the following menu items: <b>Constructors</b><span class="s7">, </span><b>Destructor</b><span class="s7">, </span><b>Methods</b><span class="s7">, </span><b>Fields</b>, <b>Sub Classes</b><span class="s7">, </span><b>Super Classes</b></p>
+<p class="p8">•<span class="s2">   </span><span class="s4">Source</span> is added at the end of the <span class="s3">menu.dat</span> file for you to add your own scripts and Tcl or Access commands.</p>
+<p class="p4"><span class="s5">•</span><span class="s2">   </span>proc get_constructors<span class="s5"> and </span>proc get_destructor<span class="s5"> are user-defined scripts.</span></p>
+<p class="p8">•<span class="s2">   </span><span class="s4">args</span>, which represent the selection, must be the last argument when you create a query.</p>
+<p class="p9">MENU ClassUtil 5<br>
+<span class="s2">      </span>+ Constructors 0 get_constructors<br>
+<span class="s2">      </span>+ Destructor 0 get_destructor<br>
+<span class="s2">      </span>+ Methods 0 get_member_functions<br>
+<span class="s2">      </span>+ Fields 0 get_member_data<br>
+<span class="s2">      </span>+ "Sub Classes" 2 get_sub_classes<br>
+<span class="s2">      </span>+ "Super Classes" 2 get_super_classes</p>
+<p class="p9">SOURCE</p>
+<p class="p9">proc get_constructors {args} {<br>
+<span class="s2">      </span>filter constructor [get_member_functions $args]</p>
+<p class="p9">}<br>
+proc get_destructor {args} {<br>
+<span class="s2">      </span>filter destructor [get_member_functions $args]<br>
+}</p>
+<p class="p9"> </p>
+</body>
+</html>

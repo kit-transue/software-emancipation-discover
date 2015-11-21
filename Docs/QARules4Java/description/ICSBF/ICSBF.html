@@ -1,0 +1,39 @@
+<html>
+<body>
+
+<p><b>ICSBF - Instantiated Classes Should Be Final</b></p>
+
+<p>This rule recommends to make all instantiated classes final.
+It checks classes which present in the object model.
+Classes from search/classpath are ignored.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class ICSBF {<br>
+&nbsp; &nbsp; private Class1 attr1 = new Class1();<br>
+&nbsp; &nbsp; // something... <br>
+}<br>
+<font color='red'>class Class1 </font> {<br>
+&nbsp; &nbsp; // something... <br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+Make all instantiated classes final.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class ICSBF {<br>
+&nbsp; &nbsp; private Class1 attr1 = new Class1();<br>
+&nbsp; &nbsp; // something... <br>
+}<br>
+<font color='blue'>final </font> class Class1 {<br>
+&nbsp; &nbsp; // something... <br>
+}
+</code></p></nobr>
+
+</body>
+</html>

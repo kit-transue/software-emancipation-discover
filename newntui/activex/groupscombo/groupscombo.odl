@@ -1,0 +1,81 @@
+// GroupsCombo.odl : type library source for OLE Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (GroupsCombo.tlb) that will become a resource in
+// GroupsCombo.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(1487DD51-1CB6-11D2-AEF0-00A0C9B71DC4), version(1.0),
+  helpstring("GroupsCombo OLE Control module"), control ]
+library GROUPSCOMBOLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CGroupsComboCtrl
+
+	[ uuid(1487DD52-1CB6-11D2-AEF0-00A0C9B71DC4),
+	  helpstring("Dispatch interface for GroupsCombo Control"), hidden ]
+	dispinterface _DGroupsCombo
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CGroupsComboCtrl)
+			[id(1)] BSTR SelectionVariable;
+			[id(2)] IDispatch* DataSource;
+			[id(3)] BSTR OutputVariable;
+			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+			[id(4)] boolean ControlsEnable;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CGroupsComboCtrl)
+			[id(5)] void Update();
+			[id(6)] BSTR GetSelectedGroups();
+			[id(7)] void CreateGroup();
+			[id(8)] void AddElements();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CGroupsComboCtrl
+
+	[ uuid(1487DD53-1CB6-11D2-AEF0-00A0C9B71DC4),
+	  helpstring("Event interface for GroupsCombo Control") ]
+	dispinterface _DGroupsComboEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CGroupsComboCtrl)
+			[id(1)] void GroupChanged(BSTR newGroup);
+			[id(2)] void GroupCreated(BSTR name);
+			[id(3)] void GroupRemoved(short amount);
+			[id(4)] void GroupRenamed(BSTR newName);
+			[id(5)] void SelectionInserted();
+			[id(6)] void SelectionRemoved();
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CGroupsComboCtrl
+
+	[ uuid(1487DD54-1CB6-11D2-AEF0-00A0C9B71DC4),
+	  helpstring("GroupsCombo Control"), control ]
+	coclass GroupsCombo
+	{
+		[default] dispinterface _DGroupsCombo;
+		[default, source] dispinterface _DGroupsComboEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+};

@@ -1,0 +1,11 @@
+10d9
+< set auto_index(tcl_findLibrary) [list source [file join $dir auto.tcl]]
+29a29,34
+> set auto_index(unknown) [list source [file join $dir init.tcl]]
+> set auto_index(auto_load) [list source [file join $dir init.tcl]]
+> set auto_index(auto_load_index) [list source [file join $dir init.tcl]]
+> set auto_index(auto_qualify) [list source [file join $dir init.tcl]]
+> set auto_index(auto_import) [list source [file join $dir init.tcl]]
+> set auto_index(tcl_findLibrary) [list source [file join $dir init.tcl]]
+77a83
+> set auto_index(::safe::AliasEncoding) [list source [file join $dir safe.tcl]]

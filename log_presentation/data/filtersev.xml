@@ -1,0 +1,54 @@
+<percolate>
+<group><name>dsp file</name>
+   <filter sev="warning">
+      <messageid>Output_Dir $1 does not exist.</messageid>
+      <severity val="error"/>
+   </filter>
+</group>
+<group><name>parse file</name>
+   <filter sev="normal">
+      <severity val="warning"/>
+      <isgroup/>
+   </filter>
+   <filter sev="warning">
+      <severity val="error"/>
+      <isgroup/>
+   </filter>
+   <filter sev="error">
+      <severity val="catastrophe"/>
+      <messageid>Error limit reached.</messageid>
+   </filter>
+   <filter sev="error">
+      <severity val="catastrophe"/>
+      <messageid>Failed compiling $1</messageid>
+   </filter>
+</group>
+<group><name>files with a common package name, compilation dir, and flags</name>
+   <filter sev="error">
+      <groupid>intermediate file extraction</groupid>
+      <severity val="error"/>
+   </filter>
+   <filter sev="warning">
+      <groupid>intermediate file extraction</groupid>
+      <severity val="warning"/>
+   </filter>
+   <filter sev="normal">
+      <severity val="warning"/>
+      <isgroup/>
+   </filter>
+   <filter sev="warning">
+      <severity val="error"/>
+      <isgroup/>
+   </filter>
+</group>
+<group><name>update pass</name>
+   <filter sev="normal">
+      <messageid>Position $1 out of line for $2</messageid>
+      <severity val="warning"/>
+   </filter>
+   <filter sev="normal">
+      <messageid>Position $1/$2 out of line for $3</messageid>
+      <severity val="warning"/>
+   </filter>
+</group>
+</percolate>

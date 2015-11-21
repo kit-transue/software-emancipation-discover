@@ -1,0 +1,449 @@
+
+#
+# Outline
+# Right Click on any Outline Item
+#
+
+set m [dis_MenuCreate OutlinePopup "Outline" "All=S"]
+
+    dis_MenuAppendItem $m OutlineCollapse "Collapse" {
+    }
+
+    dis_MenuAppendItem $m OutlineExpand "Expand" {
+    }
+
+#
+# Call Trees
+# Right Click on a Function
+#
+
+set m [dis_MenuCreate CallTreePopup "CallTree" "All=S" {dis_MenuSetToggleItem CTShowArguments 1}]
+
+    set sm [dis_MenuAppendSubmenu $m CTOpen "Open"]
+	dis_MenuAppendItem $sm CTOpenSource "Definition" {
+	}
+
+	dis_MenuAppendItem $sm CTOpenOutline "Outline" {
+	  leval DISmain "dis_open_view -2 Outline"
+	}
+
+	dis_MenuAppendItem $sm CTOpenFlowChart "Flowchart" {
+	  leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+	dis_MenuAppendSeparator $sm
+
+	dis_MenuAppendItem $sm CTMakeCurrentRoot "As Root" {
+	}
+
+    dis_MenuAppendSeparator $m
+
+    set sm [dis_MenuAppendSubmenu $m CTExpand "Expand"]
+	dis_MenuAppendItem $sm CTExpand1 "1st Level" {
+	}
+
+	dis_MenuAppendItem $sm CTExpand2 "2nd Level" {
+	}
+
+	dis_MenuAppendItem $sm CTExpand3 "3rd Level" {
+	}
+
+	dis_MenuAppendItem $sm CTExpand4 "4th Level" {
+	}
+
+	dis_MenuAppendItem $sm CTExpand5 "5th Level" {
+	}
+
+	dis_MenuAppendSeparator $sm
+
+	dis_MenuAppendItem $sm CTExpand5 "All" {
+	}
+
+    dis_MenuAppendSeparator $m
+
+    dis_MenuAppendToggleItem $m CTShowArguments "Show Arguments" {
+    	} {
+        }
+
+
+#
+#  Inheritance
+#  Right click on a class
+#
+
+set m [dis_MenuCreate InheritanceClassPopup "InheritanceClass" "All=S"]
+
+  dis_MenuAppendItem $m InherClassMakeCurrent 	"Continue as Root" {
+	}
+
+  dis_MenuAppendSeparator $m
+  set sm1 [dis_MenuAppendSubmenu $m InherClassOpen	"Open"]
+    dis_MenuAppendItem $sm1 InherClassOpenSource	"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 InherClassOpenOutline	"Outline" {
+	  leval DISmain "dis_open_view -2 Outline"
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendToggleItem $m InherClassShowDef		"Show Default Members" {
+	} {
+	}
+
+  set sm1 [dis_MenuAppendSubmenu $m InherClassDisplay	"Display"]
+    dis_MenuAppendItem $sm1 InherClassSelectMembers	"Select Members ..." {
+      dis_launch_dialog IShowMembers -modal
+	}
+
+    dis_MenuAppendItem $sm1 InherClassSortMembers	"Sort Members ..." {
+      dis_launch_dialog ISortMembers -modal
+	}
+
+    dis_MenuAppendItem $sm1 InherClassSelectRelated	"Select Related ..." {
+      dis_launch_dialog IShowRelated -modal
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m InherClassImpact		"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+#  set sm1 [dis_MenuAppendSubmenu $m InherClassAdd	"Add"]
+#    dis_MenuAppendItem $sm1 InherClassAddMember		"Member ..." {
+#      dis_launch_dialog IAddMember -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 InherClassAddRelation	"Relation ..." {
+#	dis_launch_selBrowser "Select target entities for relation" "dis_puts" -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 InherClassAddSuperclass	"Superclass ..." {
+#      dis_launch_dialog IAddInheritance -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 InherClassAddSubclass	"Subclass ..." {
+#      dis_launch_dialog IAddInheritance -modal
+#	}
+
+
+#
+#  Inheritance
+#  Right click on a Data Member
+#
+
+set m [dis_MenuCreate InheritanceDataPopup "InheritanceData" "All=S"]
+
+  set sm1 [dis_MenuAppendSubmenu $m InherDataOpen	"Open"]
+    dis_MenuAppendItem $sm1 InherDataOpenSource		"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 InherDataOpenOutline	"Outline" {
+	  leval DISmain "dis_open_view -2 Outline"
+	}
+
+    dis_MenuAppendItem $sm1 InherDataOpenFlowchart	"Flowchart" {
+	  leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m InherDataImpact		"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+  dis_MenuAppendItem $m ImherDataChangeAttr	"Change Attributes ..." {
+    dis_launch_dialog IChangeAttributes -modal
+	}
+
+#
+#  Inheritance
+#  RIght Click on a Method Member
+#
+
+set m [dis_MenuCreate InheritanceMethodPopup "InheritanceMethod" "All=S"]
+  set sm1 [dis_MenuAppendSubmenu $m InherMethodOpen 	"Open"]
+    dis_MenuAppendItem $sm1 InherMethodOpenSource	"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 InherMethodOpenOutline	"Outline" {
+      leval DISmain "dis_open_view -2 Outline"
+	}
+
+    dis_MenuAppendItem $sm1 InherMethodOpenFlowchart	"Flowchart" {
+	leval DISmain "dis_open_view -2 Flowchart"
+	}
+	
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m InherMethodImpact	"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+  dis_MenuAppendItem $m InherMethodChangeAttr	"Change Attributes ..." {
+    dis_launch_dialog IChangeAttributes -modal
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendToggleItem $m InherMethodShowArgs "Show Arguments" {
+	} {
+	}
+
+#
+#  Relations
+#  Right click on a class
+#
+
+set m [dis_MenuCreate RelationsClassPopup "RelationsClass" "All=S"]
+  set sm1 [dis_MenuAppendSubmenu $m RelationClassOpen	"Open"]
+    dis_MenuAppendItem $sm1 RelationClassOpenSource	"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 RelationClassOpenOutline	"Outline" {
+	leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+    dis_MenuAppendItem $sm1 RelationClassOpenInheritance "Inheritance" {
+	leval DISmain "dis_open_view -2 Inheritance"
+	}
+
+  dis_MenuAppendSeparator $m
+  set sm1 [dis_MenuAppendSubmenu $m RelationClassShow	"Show"]
+    dis_MenuAppendItem $sm1 RelationClassShowMembers	"Members ..." {
+      dis_launch_dialog RShowMembers -modal
+	}
+
+    dis_MenuAppendToggleItem $sm1 RelationClassShowAttr	"Attributes" {
+	} {
+	}
+
+    dis_MenuAppendToggleItem $sm1 RelationClassShowOper	"Operations" {
+	} {
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m RelationClassImpact	"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+#  set sm1 [dis_MenuAppendSubmenu $m RelationClassAdd	"Add"]
+#    dis_MenuAppendItem $sm1 RelationClassAddMember	"Member ..." {
+#      dis_launch_dialog IAddMember -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 RelationClassAddRelation	"Relation ..." {
+#	dis_launch_selBrowser "Select target entities for relation" "dis_puts" -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 RelationClassAddSuperclass	"Superclass ..." {
+#    dis_launch_dialog IAddInheritance -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 RelationClassAddSubclass	"Subclass ..." {
+#      dis_launch_dialog IAddInheritance -modal
+#	}
+#
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m RelationClassRemove	"Hide" {
+	}
+
+#
+#  Relations
+#  Right Click on a Method or Attribute
+#
+
+set m [dis_MenuCreate RelationsMemberPopup "RelationsMember" "All=S"]
+  set sm1 [dis_MenuAppendSubmenu $m RelationsMemberOpen	"Open"]
+    dis_MenuAppendItem $sm1 RelationsMemberOpenSource	"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 RelationsMemberOpenOutline	"Outline" {
+	leval DISmain "dis_open_view -2 Outline"
+	}
+
+    dis_MenuAppendItem $sm1 RelationsMemberOpenFlowchart "Flowchart" {
+	leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m RelationsMemberImpact		"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+  dis_MenuAppendItem $m RelationsMemberChangeAttr 	"Change Attributes ..." {
+    dis_launch_dialog IChangeAttributes -modal
+	}
+
+#
+#  Relations
+#  Right Click on a System Relation Line
+#
+
+#set m [dis_MenuCreate RelationsSysRelPopup "RelationsSysRelPopup" "All=S"]
+#  dis_MenuAppendLabelItem $m RelationsSysRelName	"Relation Name Here"
+
+#
+#  Relations
+#  Right Click on a User Defined Relation Line
+#
+
+#set m [dis_MenuCreate RelationsUDRPopup	"RelationsUDRPopup" "All=S"]
+#  dis_MenuAppendLabelItem $m RelationsUDRName		"Relation Name Here"
+#
+#  dis_MenuAppendSeparator $m
+#  dis_MenuAppendItem $m RelationsUDREdit		"Edit ..." {
+#    dis_launch_dialog RDefineRelation -modal
+#	}
+#
+#  dis_MenuAppendItem $m RelationsUDRDelete		"Delete" {
+#	}
+
+#
+#  Data Charts
+#  Right click on a structure
+#
+
+set m [dis_MenuCreate DCStructPopup "DataChartStructPopup" "All=S"]
+  set sm1 [dis_MenuAppendSubmenu $m CDStructOpen	"Open"]
+    dis_MenuAppendItem $sm1 CDStructOpenSource		"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 CDStructOpenOutline		"Outline" {
+	leval DISmain "dis_open_view -2 Outline"
+	}
+
+    dis_MenuAppendItem $sm1 CDStructOpenFlowchart	"Flowchart" {
+	leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+  dis_MenuAppendSeparator $m
+  set sm1 [dis_MenuAppendSubmenu $m CDStructShow	"Show"]
+    dis_MenuAppendItem $sm1 CDStructShowMembers		"Members ..." {
+      dis_launch_dialog DCShowMembers  -modal
+	}
+
+    dis_MenuAppendToggleItem $sm1 CDStructShowAttributes "Attributes" {
+	} {
+	}
+
+    dis_MenuAppendToggleItem $sm1 CDStructShowOperations "Operations" {
+	} {
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m CDStrictImpact			"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+#  set sm1 [dis_MenuAppendSubmenu $m CDStructAdd		"Add"]
+#    dis_MenuAppendItem $sm1 CDStructAddMember		"Member ..." {
+#      dis_launch_dialog DCAddMember -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 CDStructAddRelation		"Relation ..." {
+#	dis_launch_selBrowser "Select target entities for relation" "dis_puts" -modal
+#	}
+#
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m CDStructRemove			"Hide" {
+	}
+
+
+#
+#  Data Chart
+#  Right Click on an element
+#
+
+set m [dis_MenuCreate DCElementPopup "DataChartElementPopup" "All=S"]
+  set sm1 [dis_MenuAppendSubmenu $m CDElementOpen 	"Open"]
+    dis_MenuAppendItem $sm1 CDElementOpenSource		"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 CDElementOpenOutline	"Outline" {
+	leval DISmain "dis_open_view -2 Outline"
+	}
+
+    dis_MenuAppendItem $sm1 CDElementOpenFlowchart	"Flowchart" {
+	leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m CDElementImpact			"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+#
+#  Group/subsystems
+#  Right click on a group or subsystem
+#
+
+set m [dis_MenuCreate SubGroupPopup "SubGroupPopup" "All=S"]
+  dis_MenuAppendItem $m SubGroupOpen			"Open" {
+	}
+
+  dis_MenuAppendSeparator $m
+  set sm1 [dis_MenuAppendSubmenu $m SubGroupDisplay "Display"]
+    dis_MenuAppendItem $sm1 SubGroupDspSelContents	"Select Contents ..." {
+      dis_launch_dialog SMShowMembers -modal
+	}
+
+    dis_MenuAppendItem $sm1 SubGroupDspSortContents	"Sort Contents ..." {
+      dis_launch_dialog SMSortMembers -modal
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m SubGroupImpact			"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+  dis_MenuAppendItem $m SubGroupAdd			"Add ..." {
+	dis_launch_selBrowser "Select entities to add to group" "dis_puts" -modal
+	}
+
+#  set sm1 [dis_MenuAppendSubmenu $m SubGroupAddNew 	"Add New"]
+#    dis_MenuAppendItem $sm1 SubGroupAddNewFunction	"Function ..." {
+#	dis_launch_dialog CreateFunction -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 SubGroupAddNewGroup		"Group ..." {
+#	}
+#
+#    dis_MenuAppendItem $sm1 SubGroupAddNewClass		"Class ..." {
+#	dis_launch_dialog CreateClass -modal
+#	}
+#
+#    dis_MenuAppendItem $sm1 SubGroupAddNewStruct	"Struct ..." {
+#	dis_launch_dialog CreateStruct -modal
+#	}
+
+  dis_MenuAppendItem $m SubGroupRemoveFromGroup		"Remove From Group" {
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m SubGroupExtract			"Extract Sub-groups" {
+	}
+
+#
+#  Group/subsystems
+#  Right click on a group member
+#
+
+set m [dis_MenuCreate SubMemberPopup "SubMemberPopup" "All=S"]
+  set sm1 [dis_MenuAppendSubmenu $m SubMemberOpen	"Open"]
+    dis_MenuAppendItem $sm1 SubMemberOpenSource		"Definition" {
+	}
+
+    dis_MenuAppendItem $sm1 SubMemberOpenOutline	"Outline" {
+	leval DISmain "dis_open_view -2 Outline"
+	}
+
+    dis_MenuAppendItem $sm1 SubMemberOpenFlowchart	"Flowchart" {
+	leval DISmain "dis_open_view -2 Flowchart"
+	}
+
+  dis_MenuAppendSeparator $m
+  dis_MenuAppendItem $m SubMemberImpact			"Impact/Propagate ..." {
+	reval_async "DISui" {dis_layer -open DialogLayer "Impact/Propagation" -2}
+	}
+
+  dis_MenuAppendToggleItem $m SubMemberPublic		"Public" {
+	} {
+	}
+

@@ -1,0 +1,75 @@
+#!/bin/sh
+#boris
+
+f1="$1"
+#echo "first file: $f1"
+f2="$2"
+#echo "second file: $f2"
+labl="$3"
+#echo "label: $labl"
+
+if [ "$f1" = "" -o ! -r "$f1" ] ;  then
+	echo "***cmdError: $labl, no old file $f1"
+	exit 1
+fi
+
+if [ "$f2" = "" -o ! -r "$f2" ] ;
+  then
+	echo "***cmdError: $labl, no new file $f2"
+	exit 1
+  fi
+
+if [ $f1 = $f2 ]
+ then
+	echo "cmdWarning: $labl old and new value is the same file"
+	exit 0
+ fi
+
+#echo "cmdWarning: unsorted $labl differ"
+
+sort $f1 > $f1.srt
+sort $f2 > $f2.srt
+
+tt=`diff $f1.srt $f2.srt | wc -l`
+if [ $tt = 0 ]
+then
+	\rm $f1.srt $f2.srt
+	exit 0
+fi	
+
+no_diff=0
+
+egrep '( dl 0|false|true|__nw|__dl|__vn|__vd)' $f1.srt > $f1.tmp
+egrep '( dl 0|false|true|__nw|__dl|__vn|__vd)' $f2.srt > $f2.tmp
+
+tt=`diff $f1.tmp $f2.tmp | wc -l`
+if [ ! $tt = 0 ]
+then
+	echo ""
+	echo  "**cmdWarning: $labl generated differ"
+	echo ""
+	echo "Diffs:"
+	diff $f1.tmp $f2.tmp
+	no_diff=1
+fi
+
+egrep -v '( dl 0|false|true|__nw|__dl|__vn|__vd)' $f1.srt > $f1.tmp
+egrep -v '( dl 0|false|true|__nw|__dl|__vn|__vd)' $f2.srt > $f2.tmp
+
+tt=`diff $f1.tmp $f2.tmp | wc -l`
+if [ ! $tt = 0 ]
+then
+	echo ""
+	echo "***cmdError: $labl differ"
+	echo ""
+	echo "Diffs old new:"
+	diff $f1.tmp $f2.tmp
+else
+	if [ $no_diff = 0 ] 
+	then
+		echo "***cmdError: $labl is misunderstood"
+	fi
+fi
+
+\rm $f1.srt $f2.srt $f1.tmp $f2.tmp
+exit 1

@@ -1,0 +1,22 @@
+
+
+TARGETS =
+	listitem.o
+	parray.o
+	pstack.o
+	argParam.o
+	argPrmAssign.o
+	cstring.o
+	intrCont.o
+	indAccess.o
+	indFSet.o
+	dataSort.o
+	heapSort.o
+
+VPATH =
+	/paraset/src/extern/ads/source
+
+CCINCLUDES =
+	/paraset/src/extern/ads/include
+	/paraset/src/extern/osport/include
+	${CXXINC}

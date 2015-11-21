@@ -1,0 +1,272 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "./include/resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""res\\ServerStart.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\ServerStart.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 217, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Service Manager"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Service Manager Version 1.0.1",IDC_STATIC,45,19,119,8,
+                    SS_NOPREFIX
+    DEFPUSHBUTTON   "OK",IDOK,178,7,32,14,WS_GROUP
+END
+
+IDD_SERVERSTART_DIALOG DIALOGEX 0, 0, 424, 236
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Service Manager"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,216,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,62,216,50,14
+    LTEXT           "Application settings (*.prefs)",IDC_STATIC,206,8,138,10
+    EDITTEXT        IDC_PREFS,205,18,141,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse",IDC_BROWSEPREFS,347,17,46,12
+    LTEXT           "Project definition file (*.pdf)",IDC_STATIC,205,32,140,
+                    9
+    EDITTEXT        IDC_PDF,205,43,141,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse",IDC_BROWSEPDF,347,43,46,12
+    LTEXT           "Home project:",IDC_STATIC,205,58,141,8
+    EDITTEXT        IDC_HOME,205,68,142,12,ES_AUTOHSCROLL
+    GROUPBOX        "Environment",IDC_STATIC,205,82,206,84
+    LTEXT           "Admindir:",IDC_STATIC,210,92,59,10
+    LTEXT           "Shared source root:",IDC_STATIC,210,107,62,10
+    LTEXT           "Private source root:",IDC_STATIC,210,123,64,10
+    LTEXT           "Shared model root:",IDC_STATIC,210,137,62,10
+    LTEXT           "Private model root:",IDC_STATIC,210,152,62,10
+    EDITTEXT        IDC_ADMIN,275,90,132,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SHAREDSOURCE,275,105,132,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PRIVATESOURCE,275,120,132,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SHAREDMODEL,275,135,132,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PRIVATEMODEL,275,151,132,12,ES_AUTOHSCROLL
+    CONTROL         "Server log window",IDC_DEBUG,"Button",BS_AUTOCHECKBOX | 
+                    NOT WS_VISIBLE | WS_TABSTOP,304,218,113,12
+    LISTBOX         IDC_SERVICELIST,9,35,190,131,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | LBS_WANTKEYBOARDINPUT | 
+                    WS_VSCROLL | WS_TABSTOP,WS_EX_CLIENTEDGE
+    LTEXT           "Services Available:",IDC_STATIC,10,23,65,10
+    CONTROL         "Name Server log  window",IDC_NAMEDEBUG,"Button",
+                    BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,304,204,
+                    113,13
+    PUSHBUTTON      "<<  Add Service",IDC_ADD,205,169,81,13
+    CONTROL         "Start client",IDC_CLIENTCHECK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,136,221,57,9
+    PUSHBUTTON      ">>  Remove Service",IDC_REMOVE,205,186,82,13
+    PUSHBUTTON      "Save Changes",IDC_SAVE,331,168,81,13,WS_DISABLED
+    LTEXT           "Timeout:",IDC_TIMEOUT,148,179,29,9
+    COMBOBOX        IDC_TIMEOUTSELECTOR,147,190,49,66,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_NAMEEDITEDIT,16,190,127,12,ES_AUTOHSCROLL
+    GROUPBOX        "New services",IDC_NEWSERVICES,12,169,186,37
+    LTEXT           "Name:",IDC_NEWNAME,17,179,127,9
+    CONTROL         "Tab1",IDC_MODESELECTOR,"SysTabControl32",0x0,6,7,196,
+                    203
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "ServerStart MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "ServerStart\0"
+            VALUE "LegalCopyright", "Copyright (C) 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "ServerStart.EXE\0"
+            VALUE "ProductName", "ServerStart Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SERVERSTART_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 417
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 230
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SERVERSTART_DIALOG DLGINIT
+BEGIN
+    IDC_TIMEOUTSELECTOR, 0x403, 9, 0
+0x6e49, 0x6966, 0x696e, 0x6574, "\000" 
+    IDC_TIMEOUTSELECTOR, 0x403, 6, 0
+0x2035, 0x6573, 0x0063, 
+    IDC_TIMEOUTSELECTOR, 0x403, 7, 0
+0x3031, 0x7320, 0x6365, "\000" 
+    IDC_TIMEOUTSELECTOR, 0x403, 7, 0
+0x3032, 0x7320, 0x6365, "\000" 
+    IDC_TIMEOUTSELECTOR, 0x403, 7, 0
+0x3033, 0x7320, 0x6365, "\000" 
+    IDC_TIMEOUTSELECTOR, 0x403, 6, 0
+0x2031, 0x696d, 0x006e, 
+    IDC_TIMEOUTSELECTOR, 0x403, 6, 0
+0x2035, 0x696d, 0x006e, 
+    IDC_TIMEOUTSELECTOR, 0x403, 7, 0
+0x3033, 0x6d20, 0x6e69, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Service Manager..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "res\ServerStart.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,144 @@
+#!/bin/sh
+#08/95 by Reggie Zhu
+
+
+#Initialize
+#set -x
+umask 022
+echo This program creates a new patch level from the new distribution directory.
+echo 
+if test "$1" = '-help'; then
+  echo 'Check detailed information in ~support/bin/README_patch .'
+  exit 0
+fi
+if test `whoami` != support; then
+  echo Sorry, you must be support to run this program. Exiting.
+  exit 1
+fi
+#if test `hostname` != ambient; then
+#  echo Sorry, you must be on ambient to run this program. Exiting.
+#  exit 1
+#fi
+
+echo Please make sure that you want to create a new patch in 
+echo "  $1" 
+echo based on the new release directory 
+echo "  $2"
+echo
+echo If not, type Control-c to exit now. Otherwise just wait.
+sleep 10
+echo
+
+
+if test ! -d "$1"; then
+  echo "$1" does not exist. Exiting.
+  exit 1
+fi
+cd "$1" || exit
+NewDis="$2"
+if test ! -d "$NewDis"; then
+  echo "$NewDis" does not exist. Exiting.
+  exit 1
+fi
+
+
+
+#Create new patch dir
+if test ! -d patch; then
+  mkdir -p patch
+fi
+NewPatch=`ls patch |wc -w`
+NewPatch=`expr $NewPatch + 1`
+if test $NewPatch -lt 10; then
+  NewPatch=0"$NewPatch"
+fi
+
+if test -n "$PSET_PATCH_DEBUG"; then
+  NewPatch='.debug'
+  rm -rf patch/.debug
+fi
+
+if mkdir patch/"$NewPatch" ; then
+  echo New patch directory patch/"$NewPatch" created.
+  echo
+else
+  echo Can not create New patch directory patch/"$NewPatch"
+  exit 1
+fi
+
+
+#Generate README in patches
+touch patch/"$NewPatch"/README
+echo >> patch/"$NewPatch"/README
+echo "=====" Patch No. "$NewPatch" "========================" >> patch/"$NewPatch"/README
+echo "=====" Generated from "$NewDis", `date` >> patch/"$NewPatch"/README
+cat "$NewDis"/../memo >> patch/"$NewPatch"/README
+
+
+echo Looking for new files...
+echo
+touch patch/"$NewPatch"/New
+for i in `cd "$NewDis"; find . \( -type f -o -type l \) -print`; do
+  if test -f discover/"$i" -o -h discover/"$i"; then
+    :
+  else
+    echo $i >> patch/"$NewPatch"/New
+    (cd "$NewDis"; tar cf - "$i") | (cd patch/"$NewPatch"; tar xBf -)
+  fi
+done
+
+
+echo Looking for deleted and replaced files...
+echo
+touch patch/"$NewPatch"/Delete
+touch patch/"$NewPatch"/Replace
+for i in `cd discover; find . \( -type f -o -type l \) -print`; do
+  if test -f "$NewDis"/"$i"; then
+    if cmp -s discover/"$i" "$NewDis"/"$i"; then
+      :
+    else
+      echo $i >> patch/"$NewPatch"/Replace
+      (cd "$NewDis"; tar cf - "$i") | (cd patch/"$NewPatch"; tar xBf -)
+    fi
+  else
+    if test -h "$NewDis"/"$i" -a -h discover/"$i"; then
+      :
+    else
+      if test "$i" != "./README"; then
+        echo $i >> patch/"$NewPatch"/Delete
+      fi
+    fi
+  fi
+done
+echo $NewPatch > patch/"$NewPatch"/VERSION
+
+if test -n "$PSET_PATCH_DEBUG"; then
+  echo Debug mode. discover/ not modified. 
+  echo Please remove patch/"$NewPatch" later.
+else
+  echo Copying new "discover/" and Create new README in discover...
+  echo
+  if rm -rf discover; then
+    mkdir -p discover
+    (cd "$NewDis"; tar cf - .) | (cd discover; tar xBf -)
+    cat base/README > discover/README
+    for i in `ls patch`; do
+      cat patch/"$i"/README >> discover/README
+      echo $NewPatch > discover/VERSION
+    done
+
+    echo Automatically generating tar.Z files in ~ftp/patches...
+    echo
+    FtpPath=`pwd`
+    FtpPath=`echo "$FtpPath"|sed 's%^.*Patches%%'`
+    (cd patch; tar cf /net/pragma/canoe/ambient.ftp/pub/patches"$FtpPath"/"$NewPatch".tar "$NewPatch")
+    compress /net/pragma/canoe/ambient.ftp/pub/patches"$FtpPath"/"$NewPatch".tar
+    cp discover/README /net/pragma/canoe/ambient.ftp/pub/patches"$FtpPath"/README
+    echo Done.
+  else
+    rm -rf patch/"$NewPatch"
+    echo Can not remove discover directory.
+    exit 1
+  fi
+fi
+

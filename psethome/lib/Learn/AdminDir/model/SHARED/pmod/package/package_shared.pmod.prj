@@ -1,0 +1,24 @@
+#ADMINDIR=/users/tatiana/New_Learn/AdminDir
+#HOST=10.19.0.4
+X 25446 /package_shared $sharedSrcRoot/package_FLDX_1011 /package $sharedModelRoot/pmod/package/package_shared.pmod.sym_FLDX_1001
+  N 0 /package_shared/oldApplication $sharedSrcRoot/package/oldApplication_FLDX_1011 /package/oldApplication NULL
+    s 0 /package_shared/oldApplication/bits.c $sharedSrcRoot/package/oldApplication/bits.c_FLDX_1001 /package/oldApplication/bits.c $sharedModelRoot/pset/package/oldApplication/bits.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/crypt.c $sharedSrcRoot/package/oldApplication/crypt.c_FLDX_1001 /package/oldApplication/crypt.c $sharedModelRoot/pset/package/oldApplication/crypt.c.pset_FLDX_1001
+    h 0 /package_shared/oldApplication/crypt.h $sharedSrcRoot/package/oldApplication/crypt.h_FLDX_1001 /package/oldApplication/crypt.h $sharedModelRoot/pset/package/oldApplication/crypt.h.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/deflate.c $sharedSrcRoot/package/oldApplication/deflate.c_FLDX_1001 /package/oldApplication/deflate.c $sharedModelRoot/pset/package/oldApplication/deflate.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/getopt.c $sharedSrcRoot/package/oldApplication/getopt.c_FLDX_1001 /package/oldApplication/getopt.c $sharedModelRoot/pset/package/oldApplication/getopt.c.pset_FLDX_1001
+    h 0 /package_shared/oldApplication/getopt.h $sharedSrcRoot/package/oldApplication/getopt.h_FLDX_1001 /package/oldApplication/getopt.h $sharedModelRoot/pset/package/oldApplication/getopt.h.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/gzip.c $sharedSrcRoot/package/oldApplication/gzip.c_FLDX_1001 /package/oldApplication/gzip.c $sharedModelRoot/pset/package/oldApplication/gzip.c.pset_FLDX_1001
+    h 0 /package_shared/oldApplication/gzip.h $sharedSrcRoot/package/oldApplication/gzip.h_FLDX_1001 /package/oldApplication/gzip.h $sharedModelRoot/pset/package/oldApplication/gzip.h.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/inflate.c $sharedSrcRoot/package/oldApplication/inflate.c_FLDX_1001 /package/oldApplication/inflate.c $sharedModelRoot/pset/package/oldApplication/inflate.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/lzw.c $sharedSrcRoot/package/oldApplication/lzw.c_FLDX_1001 /package/oldApplication/lzw.c $sharedModelRoot/pset/package/oldApplication/lzw.c.pset_FLDX_1001
+    h 0 /package_shared/oldApplication/lzw.h $sharedSrcRoot/package/oldApplication/lzw.h_FLDX_1001 /package/oldApplication/lzw.h $sharedModelRoot/pset/package/oldApplication/lzw.h.pset_FLDX_1001
+    h 0 /package_shared/oldApplication/revision.h $sharedSrcRoot/package/oldApplication/revision.h_FLDX_1001 /package/oldApplication/revision.h $sharedModelRoot/pset/package/oldApplication/revision.h.pset_FLDX_1001
+    h 0 /package_shared/oldApplication/tailor.h $sharedSrcRoot/package/oldApplication/tailor.h_FLDX_1001 /package/oldApplication/tailor.h $sharedModelRoot/pset/package/oldApplication/tailor.h.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/trees.c $sharedSrcRoot/package/oldApplication/trees.c_FLDX_1001 /package/oldApplication/trees.c $sharedModelRoot/pset/package/oldApplication/trees.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/unlzh.c $sharedSrcRoot/package/oldApplication/unlzh.c_FLDX_1001 /package/oldApplication/unlzh.c $sharedModelRoot/pset/package/oldApplication/unlzh.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/unlzw.c $sharedSrcRoot/package/oldApplication/unlzw.c_FLDX_1001 /package/oldApplication/unlzw.c $sharedModelRoot/pset/package/oldApplication/unlzw.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/unpack.c $sharedSrcRoot/package/oldApplication/unpack.c_FLDX_1001 /package/oldApplication/unpack.c $sharedModelRoot/pset/package/oldApplication/unpack.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/unzip.c $sharedSrcRoot/package/oldApplication/unzip.c_FLDX_1001 /package/oldApplication/unzip.c $sharedModelRoot/pset/package/oldApplication/unzip.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/util.c $sharedSrcRoot/package/oldApplication/util.c_FLDX_1001 /package/oldApplication/util.c $sharedModelRoot/pset/package/oldApplication/util.c.pset_FLDX_1001
+    s 0 /package_shared/oldApplication/zip.c $sharedSrcRoot/package/oldApplication/zip.c_FLDX_1001 /package/oldApplication/zip.c $sharedModelRoot/pset/package/oldApplication/zip.c.pset_FLDX_1001

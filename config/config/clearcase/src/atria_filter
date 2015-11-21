@@ -1,0 +1,11 @@
+#!/bin/sh
+while read files; do
+ for file in $files; do
+  if cleartool describe -short -pre -ver ".../$1/LATEST" $file 2> /dev/null > /dev/null
+  then
+   echo $file
+  else
+    echo
+  fi
+ done
+done

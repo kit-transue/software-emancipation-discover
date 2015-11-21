@@ -1,0 +1,56 @@
+(1)_private : %privateSrcRoot%/(xip)	<-> /(1) {
+
+  **.[CH]
+
+} 
+
+(1)_private : %privateSrcRoot%/(ttt)	<-> /(1) {
+
+  **.H
+  **.CPP
+
+} 
+
+(1)_shared : %sharedSrcRoot%/(xip) [[ R ]] <-> /(1) {
+
+  * {
+    *.[CH]
+  }
+
+}
+
+(1)_shared : %sharedSrcRoot%/(ttt) [[ R ]] <-> /(1) {
+
+  * {
+    *.H
+    *.CPP
+  }
+
+}
+
+
+(1) : %sharedSrcRoot%/(sysinclude) [[ R ]] <-> /(1) {
+
+  **.H
+
+}
+
+__ruleShared : %sharedSrcRoot% <-> /__ruleShared {
+
+  .  : %sharedSrcRoot%/(*)/**/(*).([CH]|CPP)/%/.make	=> ""%ADMINDIR%\prefs\(1)_defs.bat" shared (2).obj"
+
+  "" : %sharedSrcRoot%/(**)/(*).([CH]|CPP)/%/.pset	=> %sharedModelRoot%/pset/(1)/(2).(3).pset
+
+  "" : %sharedSrcRoot%/(**).pmod/%/.pmoddir		=> %sharedModelRoot%/pmod/(1).pmod
+
+}
+
+__rulePrivate : %privateSrcRoot% <-> /__rulePrivate {
+
+  .  : %privateSrcRoot%/(*)/**/(*).([CH]|CPP)/%/.make	=> ""%ADMINDIR%\prefs\(1)_defs.bat" private (2).obj"
+
+  "" : %privateSrcRoot%/(**)/(*).([CH]|CPP)/%/.pset	=> %privateModelRoot%/pset/(1)/(2).(3).pset
+
+  "" : %privateSrcRoot%/(**).pmod/%/.pmoddir		=> %privateModelRoot%/pmod/(1).pmod
+
+}

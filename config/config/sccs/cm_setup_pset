@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+if [ "$cm_file_type" = "NOT_SRC" ] ; then
+    $PSETCFG/cm_setup_src $1 $2 $3 $4 $5
+    exit 0
+fi
+
+wf=$2 # working file
+wd=$1 # working dir
+sf=$4
+sd=$3
+
+if [ "$cm_optscripts" != "" -a -f $cm_optscripts/cm_pendfilt ] ; then
+  pd=`echo $sd | $cm_optscripts/cm_pendfilt`
+  if [ $? != 0 ] ; then
+    echo "error in filter: $cm_optscripts/cm_pendfilt" >&2
+    exit 1
+  fi
+  if [ ! -f $pd/$sf -a "$5" = "copy_pset" ] ; then
+    pd=$sd
+  fi
+else
+  pd=$sd
+fi
+
+echo $pd/$sf >&1

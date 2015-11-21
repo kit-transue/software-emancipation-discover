@@ -1,0 +1,10 @@
+CPROOTS=\
+	pduio\
+	pdumem\
+	pdupath\
+	pdustring \
+        bitMEM \
+        pdufile
+
+
+CROOTS=\

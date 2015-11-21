@@ -1,0 +1,7 @@
+CXXROOTS=\
+    feedback \
+    mrg_group \
+    projModule \
+    sdo \
+    tpopen \
+

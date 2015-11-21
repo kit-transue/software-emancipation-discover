@@ -1,0 +1,2 @@
+#!/bin/sh
+exec $PSETCFG/cm_delete_src

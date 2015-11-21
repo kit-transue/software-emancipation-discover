@@ -1,0 +1,30 @@
+<html>
+<body>
+
+<p><b>DNTEFNP - Do Not throw Exceptions for Normal Processing</b></p>
+
+<p>Throwing an exception is costly and should be reserved for exceptional situations. Something that you
+expect to happen normally during execution of your code is <i>not exceptional</i>. For example, if you are writing
+ validation rules that either pass or fail, you should not generate an exception on your rule failure. Control anything 
+ you can directly with code. Exceptions are designed to handle situations for which you cannot possibly code.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+<font color='red'>
+try // DON'T DO IN THIS WAY <br>
+{<br>
+&nbsp; &nbsp; int i = 0;<br>
+&nbsp; &nbsp; while ( true ) <br>
+&nbsp; &nbsp; {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; process(array[i++]);<br>
+&nbsp; &nbsp; }<br>
+} <br>
+catch (ArrayIndexOutOfBoundsException e) <br>
+{<br>
+}</font>
+</code></p></NOBR>
+
+
+</body>
+</html>

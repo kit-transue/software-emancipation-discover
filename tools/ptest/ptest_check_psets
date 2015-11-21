@@ -1,0 +1,80 @@
+#!/bin/sh -f
+# Usage: ptest_pset_batch executable project
+# remove all pset, pmods
+# build pset, pmod from scratch
+# dump pset
+# compare psets
+#
+
+aset=$1
+echo "Executable = $aset"
+
+home_proj=$2
+echo "Home proj = $home_proj"
+
+pdf_file=$PSETTEST/test.pdf
+echo "PDF = $pdf_file"
+
+sysPrefs="-sysPrefs /job1/prefs/asetTest.prefs.$Arch"
+echo "SysPrefs = $sysPrefs"
+
+prefs=$PSETTEST/test.prefs
+if [ -f $prefs ]; then 
+  prefs="-prefs $prefs"
+else
+  prefs=""
+fi
+echo "Prefs = $prefs"
+
+echo "Removing pmod and pset files"
+
+for pmod_file in `find . -name '*.pmod.*' -print`
+do
+  echo "Remove $pmod_file"
+  rm $pmod_file
+done
+
+for pset_file in `find . -name '*.pset' -print`
+do
+  echo "Remove $pset_file"
+  rm $pset_file
+done
+
+echo "Building fresh .pset files"
+discover -batch -exec $aset -pdf $pdf_file -update $home_proj $prefs $sysPrefs
+
+echo "Dumping .pset files"
+discover -batch -exec $aset -pdf $pdf_file -dump_psets $home_proj $prefs $sysPrefs
+
+retval=0
+for pset_file in `find . -name '*.pset.save' -print`
+do
+  dump_pset_file=`dirname $pset_file`/`basename $pset_file .save`.dump
+  if [ -f "$dump_pset_file" ]; then
+    pset_diff $pset_file $dump_pset_file > $pset_file.diff
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo "catastrophe: diff $pset_file $dump_pset_file"
+      echo ""
+      if [ -f $pset_file.diff ]; then
+         echo ""
+         cat $pset_file.diff
+         echo ""
+      fi
+      retval=1
+      if [ -d "$ptest_save_dir" ] ; then
+	tar cf - $dump_pset_file | (cd $ptest_save_dir; tar xf -)
+      fi
+    else
+      echo "---- $pset_file has no diff"
+      rm $dump_pset_file
+      rm $pset_file.diff
+    fi
+  else
+    echo ""
+    echo "catastrophe: dumped pset file $dump_pset_file missing"
+    echo ""
+    retval=1
+  fi
+done
+exit $retval

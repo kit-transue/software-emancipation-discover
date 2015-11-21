@@ -1,0 +1,221 @@
+#!/bin/sh
+#
+# Create hooks for given filename and given parser, among other arguments. -oldParser
+# command line option name is kept for historical reasons.
+#
+[ -z "$1" ] &&
+{
+	echo "usage: $0"
+	echo " -outdir    directory /* These two args have to precede all others. */"
+	echo " -file       filename for hook files"
+	echo " -parse      directory"
+	echo " -oldMachine remoteMachineName"
+	echo " -oldParser  oldparser"
+	echo " -enum  /* don't create .tok file */" 
+	echo " -ifile /* creates .i file */" 
+	echo " -quiet /* turn output off  */" 
+	echo " -clean /* removes .new .old .tok files */" 
+	echo " -dirty /* removes nothing */"
+	echo " -incl  +dir1 /* No hooks for include files except for dir1 ... */"
+	echo "        ~dir2 /* No hooks for include files in dir2 ... */"
+	echo " -cpp   /* use cpp for parsing (default is gcc -E) */"
+	exit 0
+}
+
+oldMachine=""
+outdir="."
+file="hooks"
+enum="t" 
+ifil="f" 
+quiet="f" 
+dirty="f" 
+clean="f" 
+incl="f"
+#
+# Create hooks for given filename and given parser, among other arguments. -oldParser
+# flag name is kept for historical reasons.
+#
+[ -z "$1" ] &&
+{
+	echo "usage: $0"
+	echo " -outdir    directory /* These two args have to precede all others. */"
+	echo " -file       filename for hook files"
+	echo " -parse      directory"
+	echo " -oldMachine remoteMachineName"
+	echo " -oldParser  oldparser"
+	echo " -enum  /* don't create .tok file */" 
+	echo " -ifile /* creates .i file */" 
+	echo " -quiet /* turn output off  */" 
+	echo " -clean /* removes .new .old .tok files */" 
+	echo " -dirty /* removes nothing */"
+	echo " -incl  +dir1 /* No hooks for include files except for dir1 ... */"
+	echo "        ~dir2 /* No hooks for include files in dir2 ... */"
+	echo " -cpp   /* use cpp for parsing (default is gcc -E) */"
+	exit 0
+}
+
+oldMachine=""
+outdir="."
+file="hooks"
+enum="t" 
+ifil="f" 
+quiet="f" 
+dirty="f" 
+clean="f" 
+incl="f"
+#
+# Note that for Interviews test suite you have to insert -traditional. That is
+# because there they have comments such as:  //  timer's expiration. The ' causes 
+# gcc to complain. With -traditional, the complaint goes away. Also -D__PARASET__ 
+# -x c++ are used for Interviews only.
+#
+# NO_NATIVE_GENERIC_H constant has to be defined for rogue test suite. Probably does
+# not make any difference for other tests. But maybe it does, so remove it when
+# done with rogue.
+#
+CPP="gcc -E -w -DNO_NATIVE_GENERIC_H"
+#
+# Scan for -outdir and -file flags so that -incl flag knows where and what name to
+# give temporary files.
+#
+# Note: This is not a foolproof way to pre-read args.  Quoted string like "hi there"
+#       turns into two args.  But for the above purpose it works fine.
+#
+for arg in $*
+do
+  [ -n "$lastarg" ]
+  {
+    if [ "$lastarg" = "-outdir" ] ; then
+	outdir=$arg ;
+    elif [ "$lastarg" = "-file" ] ; then
+	file=$arg ;
+    fi
+  }
+  lastarg=$arg ;
+done
+
+
+# Get the rest of the args.
+while true 
+do
+
+if [ "$1" = "-outdir" ] ; then
+	[ -n "$2" ] && { shift ; }
+	shift ;
+elif [ "$1" = "-parse" ] ; then
+	[ -n "$2" ] && { parsedir=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-oldMachine" ] ; then
+	[ -n "$2" ] && { oldMachine="rsh $2" ; shift ; }
+	shift ;
+elif [ "$1" = "-oldParser" ] ; then
+	[ -n "$2" ] && { oldParser=$2 ; shift ; }
+	shift ;
+elif [ "$1" = "-file" ] ; then
+	[ -n "$2" ] && { shift ; }
+	shift ;
+elif [ "$1" = "-ifile" ] ; then
+	ifil="t" ;
+	shift ;
+elif [ "$1" = "-enum" ] ; then
+	enum="f" ;
+	shift ;
+elif [ "$1" = "-quiet" ] ; then
+	quiet="t" ;
+	shift ;
+elif [ "$1" = "-clean" ] ; then
+	clean="t" ;
+	shift ;
+elif [ "$1" = "-dirty" ] ; then
+	dirty="t" ;
+	shift ;
+elif [ "$1" = "-incl" ] ; then
+	incl="t"
+	shift ;
+	sedfile2a="$file.sed2a"
+	echo "s/^\(# [0-9]* \"\)++:\(\/.*\.[^cC]\".*\)/\1--:\2/" > $outdir/$sedfile2a
+	while true
+	do	
+	  fc=""
+	  [ -n "$1" ] &&	fc=`expr substr "$1" 1 1` ;
+	  [ "$fc" != "+" -a "$fc" != "~" ] && break ;
+	  dir=`expr "$1" : '.\(.*\)'`
+	  dir=`echo $dir | sed 's/\//\\\\\//g'`
+	  if [ "$fc" = "+" ] ; then
+	    echo "s/^\(# [0-9]* \"\)--:\($dir.*[^cC]\".*\)/\1++:\2/" >> $outdir/$sedfile2a ;
+	  else
+	    echo "s/^\(# [0-9]* \"\)++:\($dir.*[^cC]\".*\)/\1--:\2/" >> $outdir/$sedfile2a ;
+	  fi
+	  shift
+	done
+elif [ "$1" = "-cpp" ] ; then
+	CPP="$PSETHOME/bin/aset_cpp";
+	shift ;
+else
+	break;
+fi
+
+done
+
+oldfile="$file.hook"
+tokfile="$file.tok"
+ioldfile="$file.o.i"
+errfile="$file.err"
+sedfile1="$file.sed1"
+sedfile2="$file.sed2"
+echo "s/^\(# [0-9]* \"\)\(.*\".*\)/\1++:\2/" > $outdir/$sedfile2
+[ "$incl" = "t" ] &&
+{
+	cat $outdir/$sedfile2a >> $outdir/$sedfile2
+	rm $outdir/$sedfile2a 
+}
+
+[ $quiet = "f" -a -n "$oldMachine" ] && echo "oldMachine = $oldMachine"
+[ $quiet = "f" ] && echo "oldParser = $oldParser"
+[ $quiet = "f" ] && echo "outdir    = $outdir"
+[ $quiet = "f" ] && echo "hookfile  = $oldfile"
+[ $quiet = "f" ] && echo "tokfile   = $tokfile"
+[ $quiet = "f" ] && echo "enum      = $enum"
+[ $quiet = "f" ] && echo "incl      = $incl"
+[ $quiet = "f" ] && echo "cpp args  = [$*]"
+
+#
+# If running in "standard" mode leave the header file names in various hooks.  This is neccessary
+# in order to identify the tokens.
+#
+
+echo 's/0x[0-9a-f]*//g
+s/^\[[0-9]*\]//' > $outdir/$sedfile1
+
+$CPP $* | tokenizer | sed -f $outdir/$sedfile2 > $outdir/$ioldfile ;
+
+[ "$enum" = "t" ] && enumerate_tokens  $outdir/$ioldfile > $outdir/$tokfile ;
+#
+#  Parse file and create hook info.  The $oldMachine allows ptest_create_hooks 
+#  to run remotely.  The `which ptest_exec_parser` insures that the full
+#  path name of that script will be used if "rsh" is used.
+#
+parseerr=0
+$oldMachine ${PROJ_ROOT}/tools/ptest/ptest_exec_parser $oldParser -w -quiet -fsyntax-only -fexternal-templates $outdir/$ioldfile > $outdir/$oldfile 2> $outdir/$errfile
+parseerr=$? 
+
+if [ $parseerr -ne 0 ] ; then
+	echo "Parse error!" ;
+else
+	egrep -v '(^time in parse|^$)' $outdir/$errfile 
+	if [ $? -eq 0 ] ; then
+		echo "Parse warnings!" ;
+	else
+		[ $dirty = "f" ] && rm $outdir/$errfile ;
+	fi
+fi	
+
+[ $dirty = "f" ] && rm -f $outdir/$oldfile.* $outdir/$sedfile1 $outdir/$sedfile2 $outdir/$file*.s
+
+[ $ifil = "f" -a  $dirty = "f" ] && rm -f $outdir/$file*.i
+
+[ $clean = "t" ] && rm -f $outdir/$tokfile
+#
+# Move parse errors to separate directory.
+#
+[ "$parseerr" -ne 0 -a -n "$parsedir" -a "$parsedir" != "$outdir" ] && mv -f $outdir/$file.* $parsedir ;

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+wd=`dirname $cm_workfile`
+if [ ! -d $wd ] ; then
+  echo "ccm create -t dir $wd"
+  ccm create -t dir $wd
+fi

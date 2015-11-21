@@ -1,0 +1,7 @@
+CROOTS=\
+
+CXXROOTS=\
+	clconvert \
+	clinterpret \
+	configpar \
+	main

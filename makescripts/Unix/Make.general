@@ -1,0 +1,295 @@
+MAKEFLAGS:=$(MAKEFLAGS) -r
+.PHONY: no_target FORCE
+
+no_target:
+	@echo "Error: target must be specified explicitly"
+	@false
+
+FORCE:
+
+GALAXYLIBS:=-L$(GALAXYHOME)/lib -lvgalaxy++
+
+ifeq "$(ARCH)" "win32"
+  D:=/D # with a final space character
+  I:=/I # with a final space character
+  DARCH:=WIN32
+  ifeq "$(VARIANT)" "-g"
+    DEBUG:=/Z7 /Od /Ob1 /D "_DEBUG"
+  else
+    DEBUG:=/O2 /D "NDEBUG"
+  endif
+else
+  D:=-D
+  I:=-I
+  DARCH:=$(ARCH)
+  ifeq "$(VARIANT)" "-g"
+    DEBUG:=-g -D_PSET_DEBUG
+  else
+    DEBUG:=-O -D_ASET_OPTIMIZE
+  endif
+endif
+
+ifeq "$(ARCH)" "sun5"
+  LYDIR:=/usr/ccs/bin
+else
+  ifeq "$(ARCH)" "irix6"
+    LYDIR:=/usr/bin
+  else
+    LYDIR:=$(TOOLDIR)/$(ARCH)
+  endif
+endif
+
+LEX:=$(LYDIR)/lex
+TOOLS:=$(BUILD_SRC_ROOT)/tools
+SUBLEX:=$(TOOLDIR)/$(ARCH)/sublex
+OLDFLEX:=$(TOOLDIR)/$(ARCH)/flex
+FLEX:=$(TOOLDIR)/$(ARCH)/flex
+UXCGEN:=$(TOOLDIR)/$(ARCH)/uxcgen
+EXTLIB:=$(BUILD_SRC_ROOT)/extlib/$(ARCH)
+YLPPINC:=
+CHECK_FLAG:=$(TOOLDIR)/check_flag.sh
+
+# General compiler support
+# Note that since the paraset code is not partitioned properly, some files
+# include just about every include file under the sun.
+
+GCC_INC:=-I$(LOCAL_SRC_ROOT)/gcc/src -I$(BUILD_SRC_ROOT)/gcc/src
+
+IV_DIR:=$(BUILD_SRC_ROOT)/xincludes/iv
+IV_FLAG:=-I$(IV_DIR)
+IV2_FLAG:=-Div2_6_compatible -I$(IV_DIR)/InterViews/2.6 -I$(IV_DIR)/IV-look/2.6 -I$(IV_DIR)
+
+UIMX_INC:=-I$(LOCAL_SRC_ROOT)/xincludes/uimx -I$(BUILD_SRC_ROOT)/xincludes/uimx
+
+XML_INC:=-I$(LOCAL_SRC_ROOT)/thirdparty/xml4c/src -I$(BUILD_SRC_ROOT)/thirdparty/xml4c/src
+XML_LIB=$(THREADLIB) -L$(EXTLIB) -lxerces-c1_2 -licu-uc -licudata
+
+TCL_INC:=-I$(LOCAL_SRC_ROOT)/dis_tcl8.3/generic -I$(BUILD_SRC_ROOT)/dis_tcl8.3/generic
+TK_INC:=-I$(LOCAL_SRC_ROOT)/dis_tk8.3/generic -I$(BUILD_SRC_ROOT)/dis_tk8.3/generic
+
+# Platform specific defines.  Must define:
+# compilation stuff:
+#    CC:	Full path to C compiler
+#    CCC:	Full path to C++ compiler
+#    CPLUS_INC:	C++ include directories
+#    X_FLAG:	Xm and X11 include directories, and any needed defines
+# linking stuff:
+#    JC:	flag to indicate "just compile"; no link
+#    GC:	flag to indicate "debug" to compiler
+#    OU:	flag to indicate linker output
+#    PRE_OBJ:	flags to pass before any other libraries/objects
+#    POST_OBJ:  flags to pass after libraries/objects
+#    LD:	full path to ld
+#    LDO:	designator for ld output
+#    LINK:	name of tool to link executable
+#    DL:	Flag to indicate libraries to be linked dynamically
+#    SL:	Flag to indicate libraries to be linked statically
+#    LDL:	Dynamically link the dynamic loader
+#    LMGRARCH:	FLEXlm architecture string (under /paraset/src/FLEXlm/flexlm/v7.1
+#    LMGRLIB:	Links to lmgr library.
+#    XLIBS:	X11 libraries
+#    EXE_EXT:	Extension for executables
+# additional defines may be made as required
+#    CXXLIBS:	C++ libraries
+#    THREADLIB: thread library or libraries
+#    SOCKETLIB:	sockets
+
+ifeq "$(ARCH)" "sun5"
+  CC_ROOTDIR:=${OS_ROOTDIR}/SC5.0
+  CC:=${CC_ROOTDIR}/bin/cc
+  CARCHFLAGS:= -Xa
+  CCC:=${CC_ROOTDIR}/bin/CC
+  CCARCHFLAGS:= -features=no%conststrings -instances=explicit
+  CLDCTRL:=-R /usr/dt/lib:/usr/openwin/lib:/usr/lib
+  CPLUS_INC:=-I${CC_ROOTDIR}/include/CC
+  X_FLAG:=-I$(BUILD_SRC_ROOT)/xpm-3.4k/src -I/usr/dt/share/include -I/usr/openwin/include
+  LD:=/usr/ccs/bin/ld -r -o
+  LDO:=
+  LINK:=$(CCC) $(CCARCHFLAGS)
+  DL:=-Bdynamic
+  SL:=-Bstatic
+  LDL:=$(DL) -ldl
+  LMGRARCH:=sun4_u5
+  LMGRLIB:=liblmgr.a
+  XLIBS:=$(SL) -L$(EXTLIB) -lXpm $(DL) -L/usr/dt/lib -lXm -L/usr/openwin/lib -lXt -lXext -lX11
+  # don't link anything--esp. libC--by default:
+  PRE_OBJ:=-nolib
+  # libc should be last on the link line:
+  POST_OBJ:=$(SL) -lgen $(DL) -lintl -lw -lc $(CPLUS_INC)
+  #additional:
+  CXXLIBS:=$(SL) -lCstd -lCrun
+  THREADLIB:=$(DL) -lthread -lposix4
+  SOCKETLIB:=$(DL) -lsocket -lnsl
+  JC:=-c
+  GC:=-g
+  OU:=-o # with a final space character
+  EXE_EXT:=
+endif
+
+ifeq "$(ARCH)" "hp10"
+  CC_ROOTDIR:=/opt/aCC
+  CC:=/bin/cc
+  CARCHFLAGS:= -Aa -Wp,-H500000 +DAportable +DS2.0
+  CCC:=${CC_ROOTDIR}/bin/aCC
+  CCARCHFLAGS:= +W829 +DAportable +DS2.0
+  CPLUS_INC:=-I${CC_ROOTDIR}/include/CC -I/opt/aCC/include/iostream
+  YLPPINC=-I${CC_ROOTDIR}/include/SC
+  X_FLAG:=-I$(BUILD_SRC_ROOT)/xpm-3.4k/src -I/usr/include/Motif1.2 -I/usr/include/X11R5 -I/usr/include/X11R5/X11
+  PRE_OBJ:=-L/usr/lib -Wl,+s
+  LD:=/opt/aCC/lbin/ld -r -o
+  LDO:=
+  LINK:=$(CCC) $(CCARCHFLAGS)
+  DL:=-Wl,-a,shared
+  SL:=-Wl,-a,archive
+  POST_OBJ:=$(DL) -lc $(SL) -lPW
+  CXXLIBS:=$(SL) -lCsup
+  THREADLIB:=$(DL) -ldce
+  LDL:=$(DL) -ldld
+  LMGRARCH:=hp700_u10
+  LMGRLIB:=liblmgr.a
+  XLIBS:=$(SL) -L$(EXTLIB) -lXpm $(DL) -lXm -L/usr/lib/X11R5 -lXt -lXext -lX11
+  DBMLIB:=$(DL) -ldbm
+  SOCKETLIB:=
+  JC:=-c
+  GC:=-g
+  OU:=-o # with a final space character
+  EXE_EXT:=
+endif
+
+ifeq "$(ARCH)" "irix6"
+  CC_ROOTDIR:=/usr
+  CC:=/usr/bin/cc
+  CARCHFLAGS:= -xgot -signed
+  CCC:=/usr/bin/CC
+  CCARCHFLAGS:= -xgot -Wl,-multigot -signed -ptused -DIRIX
+  CPLUS_INC:=-I${CC_ROOTDIR}/include/CC
+  X_FLAG:=-I$(BUILD_SRC_ROOT)/xpm-3.4k/src -I/usr/include/Xm -I/usr/include/X11
+  LD:=/usr/bin/ld -r -o
+  LDO:=
+  LINK:=$(CCC) $(CCARCHFLAGS)
+  DL:=-B dynamic
+  SL:=-B static
+  POST_OBJ:=$(DL) -lc
+  CXXLIBS:=$(DL) -L/usr/lib32 -lC
+  THREADLIB:=$(DL) -lpthread
+  #LDL:=
+  LMGRARCH:=sgi32_u6
+  LMGRLIB:=liblmgr.a
+  XLIBS:=$(SL) -L/usr/lib32 -lXpm $(DL) -lXm -lXt -lXext -lX11
+  JC:=-c
+  GC:=-g
+  OU:=-o # with a final space character
+  EXE_EXT:=
+endif
+
+ifeq "$(ARCH)" "linux2"
+  CC_ROOTDIR:=/usr/lib/gcc-lib/i486-suse-linux/2.95.3
+  CC:=/usr/bin/gcc
+  CARCHFLAGS:= 
+  CCC:=/usr/bin/g++
+  CCARCHFLAGS:=
+  CLDCTRL:=
+  CPLUS_INC:=
+  X_FLAG:=
+  LD:=/usr/bin/ld -r -o
+  LDO:=
+  LINK:=$(CCC) $(CCARCHFLAGS)
+  DL:=-Bdynamic
+  SL:=-Bstatic
+  LDL:=$(DL) -ldl
+  LMGRARCH:=sun4_u5
+  LMGRLIB:=liblmgr.a
+  XLIBS:=$(SL) -L$(EXTLIB) -lXpm $(DL) -L/usr/dt/lib -lXm -L/usr/openwin/lib -lXt -lXext -lX11
+  # don't link anything--esp. libC--by default:
+  PRE_OBJ:=
+  # libc should be last on the link line:
+  POST_OBJ:=$(DL) -lc $(CPLUS_INC)
+  #additional:
+  CXXLIBS:=$(SL)
+  THREADLIB:=$(DL) -lpthread
+  SOCKETLIB:=$(DL) -lnsl
+  JC:=-c
+  GC:=-g
+  OU:=-o # with a final space character
+  EXE_EXT:=
+endif
+
+ifeq "$(ARCH)" "win32"
+  CC_ROOTDIR:=C:/Program Files/Microsoft Visual Studio/VC98
+  CC:=cl.exe
+  CARCHFLAGS:=/MT /nologo /W3 /GX
+  CLDCTRL:=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib comctl32.lib netapi32.lib odbccp32.lib wsock32.lib libcpmt.lib /nodefaultlib:msvcrt.lib
+  CCC:=cl.exe
+  CCARCHFLAGS:=/MT /nologo /W3 /GX
+  CPLUS_INC:=/I ${CC_ROOTDIR}/Include
+  X_FLAG:=
+  LD:=link.exe -lib /nologo
+  LDO:=/out:
+  LINK:=link.exe
+  DL:=
+  SL:=
+  POST_OBJ:=$(DL)
+  CXXLIBS:=$(DL)
+  THREADLIB:=$(DL)
+  #LDL:=
+  LMGRARCH:=i86_n3
+  LMGRLIB:=lmgr.lib
+  XLIBS:=$(SL)
+  JC:=/c
+  GC:=/Z7 /Od /Ob1 /D "_DEBUG"
+  OU:=/out:
+  EXE_EXT:=.exe
+
+  ifeq "$(VARIANT)" "-g"
+    INTDIR:=.\Debug
+  else
+    INTDIR:=.\Release
+  endif
+endif
+
+ARCHDEF=$(DARCH)
+
+ifeq "$(ARCH)" "sun5"
+  ifeq "$(ARCHV)" "4"
+    ARCHDEF=sun54
+  endif
+endif
+
+ifeq "$(ARCH)" "sun5"
+  ifeq "$(ARCHV)" "5"
+    ARCHDEF=sun55
+  endif
+endif
+
+ifeq "$(ARCH)" "irix6"
+  ARCHDEF:=SGIxUX
+endif
+
+# License management libraries
+LMGRHOME:=$(BUILD_SRC_ROOT)/FLEXlm/flexlm/current
+FLEXLM:=$(LMGRHOME)/$(LMGRARCH)
+
+LICSTAT:=$(FLEXLM)/lm_new.o $(FLEXLM)/$(LMGRLIB)
+LIC_INC:=-I$(LOCAL_SRC_ROOT)/xxinterface/include -I$(BUILD_SRC_ROOT)/xxinterface/include
+
+# TCL and Tk libraries
+TCLLIBS:=$(SL) -L$(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tcl -ldis_tcl
+TKLIBS:= $(SL) -L$(OBJ_ROOT)/$(ARCH)$(VARIANT)/obj/dis_tk -ldis_tk
+
+# Math library
+MATHLIB:=$(DL)
+ifneq "$(ARCH)" "win32"
+  MATHLIB:=$(MATHLIB) -lm
+endif
+
+# XML Parser library
+EXPATLIBS:=$(EXTLIB)/libexpat.a
+
+# Visix Galaxy libraries (soon to disappear... :-)
+GALAXYLIBS:=$(SL) $(GALAXYLIBS)
+
+BIN_DIR:=$(OBJ_ROOT)/$(ARCH)$(VARIANT)/bin/$(VERSION)
+BIN_DR:=$(OBJ_RT)/$(ARCH)$(VARIANT)/bin/$(VERSION)
+TARGET_EXEC:=$(BIN_DIR)/$(TARGET)
+
+#.DEPENDENCY_IGNORED_FOR_REUSE: $(NASTY_CACHE_FILES)

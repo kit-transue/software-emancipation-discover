@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "cleartool findmerge $cm_workfile -flatest -merge -abort"
+cleartool findmerge $cm_workfile -flatest -merge -abort
+exit 0

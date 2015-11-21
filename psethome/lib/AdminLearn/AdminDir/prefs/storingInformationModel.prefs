@@ -1,0 +1,12 @@
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/quickBuildRules.pdf $ADMINDIR/pdf/storingInformationModel.pdf
+*psetPrefs.pdfFileBuild:		$ADMINDIR/pdf/quickBuildRules.pdf $ADMINDIR/pdf/storingInformationModel.pdf
+
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src/storingInformationModel
+
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED/storingInformationModel
+
+*psetPrefs.projectList:			Application1
+
+*psetPrefs.logFileCreate:		yes
+*psetPrefs.logFileNameFixed:		yes
+*psetPrefs.logFileMonitor:		yes

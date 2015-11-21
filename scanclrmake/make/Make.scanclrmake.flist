@@ -1,0 +1,6 @@
+CXXROOTS = \
+	crparser \
+	idcompiler \
+	main \
+	parseline \
+	util

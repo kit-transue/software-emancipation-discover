@@ -1,0 +1,100 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Local Install Procedures
+Mar 1, 1994 - revised 3/16/94
+
+=====================================
+
+Ideally, to create a fresh install.new:
+
+1) Tell Bruce Fredericks that we are about to blow away install.new
+
+2) Decide whether install.new is good enough to replace install.  Ask Bella how
+the regression tests have gone.  If you're not going to replace install, skip
+to step 3.
+    Rotate the older install to make room for the new
+
+	> rlogin pragma -l builder
+	> cd $SYSBASE
+	> rm -rf install.old
+	> mv install install.old
+	> mv install.new install
+   Send mail telling everyone that install has changed
+
+3) Create install.new
+
+	> rlogin pragma -l builder
+	> local_install.sh
+
+
+=====================================
+The following discussion elaborates on step 2, if you're not sure there's 
+enough room for all three directory trees.
+
+2) Decide whether install.new is good enough to replace install.  Ask Bella how
+the regression tests have gone.  If you're not going to replace install, skip
+to step 3.
+
+Now decide whether there's enough room on /ParaSET for all three:
+
+Each local install takes up over 165 meg. This breaks down as
+follows:
+
+	parasniff	9   meg
+	sun4-O		52  meg
+	sun4-g		104 meg
+
+Start by checking current free space, using
+    df  /ParaSET
+
+Then check whether deleting the present install.old will free up enough space.
+    du -s $sb/install.old
+
+When there is not enough disk space for all three installs, I end up deleting
+stuff that is not needed as much from the older installs. For example, you usually only
+need one parasniff directory, so you can get 9 megs by deleting it from install
+and/or install.old.  You can even delete the sun4-g side of install.old and just
+leave sun4-O This will cause users of sun4-g who have not restarted since the rename
+of install to install.old to crash, but most people use sun4-O. You can always send a
+mail message giving them 15 minutes warning too.
+
+Lots of times install.new never makes it to install.  Often, instead of rotating
+the local install, I just delete install.new and create another one. I don't usually
+send mail in this case. In any case, install.new should not be moved to install
+until Bella has had a chance to run regression tests on it. Ask Bella if she thinks
+the current install.new is bug-free enough to be moved to install.
+
+-jef
+
+
+$Log: LocalInstallProcedures.doc  $
+Revision 1.1 1994/03/16 16:57:51EST davea 
+made from unix file
+# Revision 1.2  1994/03/16  21:57:49  davea
+# /usr/tmp/caaa03476
+#

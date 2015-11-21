@@ -1,0 +1,62 @@
+#!/bin/sh
+#08/95 by Reggie Zhu
+
+
+#Initialize
+#set -x
+umask 022
+echo This program sets up a new patch directory structure and gets the 
+echo base and discover directories ready.
+if test "$1" = '-help'; then
+  echo 'Check detailed information in ~support/bin/README_patch .'
+  exit 0
+fi
+
+echo 
+if test `whoami` != support; then
+  echo Sorry, you must be support to run this program. Exiting.
+  exit 1
+fi
+#if test `hostname` != ambient; then
+#  echo Sorry, you must be on ambient to run this program. Exiting.
+#  exit 1
+#fi
+
+echo Please specify the path of the patch directories root:
+read PatDir
+echo
+if mkdir -p $PatDir; then
+  :
+else
+  exit 1
+fi
+rm -rf "$PatDir"/*
+
+echo Please specify the path of the release directory which will be the
+echo base patch level:
+read NewDir
+echo
+if test ! -d "$NewDir"; then
+  echo This release directory does not exist! exiting.
+  exit 1
+fi
+
+mkdir "$PatDir"/base
+mkdir "$PatDir"/discover
+echo Please give the Release and platform info regarding this patch tree.
+echo End the description with Control-d :
+echo > "$PatDir"/base/README
+echo "=====" base "========================" >> "$PatDir"/base/README
+cat >> "$PatDir"/base/README
+echo 
+
+echo Copying from "$NewDir" to base...
+echo
+(cd "$NewDir"; tar cf - .) | (cd "$PatDir"/base; tar xBf -)
+
+echo Copying from base to discover...
+echo
+(cd "$PatDir"/base; tar cf - .) | (cd "$PatDir"/discover; tar xBf -)
+
+echo done.
+

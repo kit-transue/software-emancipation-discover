@@ -1,0 +1,22 @@
+HKCR
+{
+	LoggerTrace.Logger.1 = s 'LoggerTrace Class'
+	{
+		CLSID = s '{74A56661-1A59-11D1-96A6-00A0245836D0}'
+	}
+	LoggerTrace.Logger = s 'LoggerTrace Class'
+	{
+		CurVer = s 'LoggerTrace.Logger.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {74A56661-1A59-11D1-96A6-00A0245836D0} = s 'LoggerTrace Class'
+		{
+			ProgID = s 'LoggerTrace.Logger.1'
+			VersionIndependentProgID = s 'LoggerTrace.Logger'
+			ForceRemove 'Programmable'
+			LocalServer32 = s '%MODULE%'
+			val AppID = s '{62432511-1A4F-11D1-96A6-00A0245836D0}'
+		}
+	}
+}

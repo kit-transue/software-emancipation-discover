@@ -1,0 +1,37 @@
+<html>
+<body>
+
+<p><b>BLAD - Badly Located Array Declarators</b></p>
+
+<p>Array declarators must be placed next to the type
+descriptor of their component type.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+class BLAD {<br>
+&nbsp; &nbsp; <font color='red'>int attr[];</font> <br>
+&nbsp; &nbsp; int oper (<font color='red'>int param[]</font>) <font color='red'>[]</font> {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='red'>int var[][];</font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+<p><b>Tip:</b>
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+class BLAD {<br>
+&nbsp; &nbsp; <font color='blue'>int[] attr;</font><br>
+&nbsp; &nbsp; int[] oper (<font color='blue'>int[] param</font>) <font color='red'></font> {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color='blue'>int[][] var;</font><br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></nobr>
+
+</body>
+</html>

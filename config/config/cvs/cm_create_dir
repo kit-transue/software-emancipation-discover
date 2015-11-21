@@ -1,0 +1,6 @@
+#!/bin/sh -f
+
+wd=`dirname $cm_workfile`
+if [ ! -d $wd ] ; then
+  mkdir -p $wd
+fi

@@ -1,0 +1,49 @@
+Creating, and Running Regression Tests for aset_CCcc
+====================================================
+
+1. Create a directory that can be used as the regression test directory
+   for aset_CCcc
+
+	use 'testct.sh' script to create such directory:
+
+		$1:	the name of the regression test directory;
+			by default $1 gets set to ./testedg
+
+		$2:	the name of the directory that contains
+			source code (C, and C++ files); these are the
+			files that will constitute the regression suite
+
+
+	the test directory will contain three subdirectories:
+
+		base:	the .if files that will be used as the reference
+			when comparing with the new version of aset_CCcc
+
+			NOTE: PATH (which) is used to resolve aset_CCcc
+			      that is used to build these reference .if
+			      files
+
+		source:	the .[cC] files that new aset_CCcc will use to
+			generate the corresponding .if files
+
+		log:	log directory
+
+	example:
+
+		$ cd /net/slice/sunny/edg.2.37.xtra_pos/release/tests
+		$ testct.sh /users/tests/edg.2.37
+
+2. Use 'testedg.sh' to run regression tests
+
+	$1:	the name of the regression test directory;
+		by default $1 gets set to ./
+
+	$2:	the location of aset_CCcc to be tested;
+		be default $2 gets resolved with `which aset_CCcc`
+
+	the results should be logged to some file in the log directory
+
+	example:
+
+		$ cd /users/tests/edg.2.37/log
+		$ testedg.sh /users/tests/edg.2.37 /bin/sun5-O/6.0.0.8/aset_CCcc > 6.0.0.8.log

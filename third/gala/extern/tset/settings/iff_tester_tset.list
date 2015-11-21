@@ -1,0 +1,7 @@
+VPATH=/paraset/src/extern/tset/settings
+
+TARGETS=\
+	item.o \
+	itemenv.o \
+	persistent.o \
+	settings.o

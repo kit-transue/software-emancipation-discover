@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+$PSETCFG/cm_create_dir
+echo "ccm create $cm_workfile"
+ccm create $cm_workfile

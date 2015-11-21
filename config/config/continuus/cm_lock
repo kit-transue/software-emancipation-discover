@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "Lock does not exist in Continuus"

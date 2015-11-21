@@ -1,0 +1,37 @@
+#!/bin/sh
+
+nm=ptest_create
+source_dir=${PROJ_ROOT}/tools/ptest/template_dir
+if [ $# -lt 1 ]
+ then
+  echo " purpose: create a simple test environment for scripting bugs "
+  echo ' directory $1 is created in $PTEST_LOCAL'
+  echo " usage: $nm <bug_number> " 
+  exit 1
+fi
+
+if [ ! -d ${PTEST_LOCAL:=$HOME/ptest} ]; then mkdir $PTEST_LOCAL; fi 
+
+if [ ! -w $PTEST_LOCAL ];
+ then
+  echo "$nm: $PTEST_LOCAL is not writable"
+  exit 1
+fi
+
+test_dir=$PTEST_LOCAL/bug$1
+
+if [ "$2" = "dismb" ] ; then
+	source_dir=${PROJ_ROOT}/tools/ptest/dismb_template_dir
+fi
+
+if [ -d $test_dir ]; then
+  echo "$nm: $test_dir  exists" >&2
+else
+  mkdir $test_dir
+  cd $source_dir
+  tar cf - * | (cd $test_dir ; tar xf -)
+fi
+cd $test_dir
+chmod -R +w *
+echo  $test_dir
+exit 0

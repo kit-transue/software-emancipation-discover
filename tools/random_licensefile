@@ -1,0 +1,23 @@
+#!/bin/sh
+
+rand=`/bin/date +%S`
+case `expr $rand % 3` in
+	0)
+		server=loner
+		;;
+	1)
+		server=oxen
+		;;
+	2)
+		server=drift
+		;;
+	3)
+		server=groucho
+		;;
+	*)
+		echo UNEXPECTED!
+		;;
+
+esac
+
+echo "7572@${server}:/users/admin/licenses.combined.electra"

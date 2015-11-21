@@ -1,0 +1,11 @@
+#!/bin/sh -f
+# runs shell whithout .cshrc initializer(s)
+# resets env var SHELL to DISSHELL if specified
+
+SHELL="${DISSHELL:=$SHELL}"; export SHELL
+
+if [ "$1" = "-c" ] ; then
+   shift
+fi
+
+eval $*

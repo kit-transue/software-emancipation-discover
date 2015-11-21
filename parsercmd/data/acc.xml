@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE cmdline
+  PUBLIC "-//THECOMPANY//DTD DISCOVER 7.3.x//EN"
+  "cmdline.dtd">
+<cmdline nameintro="-" unrecognized="warning"><alternate nameintro="+"/>
+<compilername>HP aC++</compilername>
+CPP -D__STDCPP__ -D__cplusplus=199711L -D__hp9000s800 -D__hp9000s700 -D__hppa -D__hpux -D__unix -D__HP_aCC=12700 -I%0%/include/CC -I%0%/include/iostream -I%0%/include -I/usr/include -I/usr --c++ --no_warnings --old_for_init --diag_suppress 265 --no_microsoft --anachronisms -D_INCLUDE_POSIX_SOURCE= -D_INCLUDE_AES_SOURCE= -D_INCLUDE_XOPEN_SOURCE= -D_INCLUDE_HPUX_SOURCE= -U__STDC__ -D_PA_RISC2_0
+  <translate>
+    <option name="I-" noarg="1">-I-</option>          <!-- Detailed control over #include lookup. -->
+    <option name="I" immarg="1" separg="1">-I%</option>
+                                                      <!-- Add <dir> to preprocessor #include file search path. -->
+    <option name="D" immarg="1" separg="1">-D%</option>
+                                                      <!-- Associate name with token as if by #define. -->
+    <option name="E" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to stdout. -->
+    <option name="P" noarg="1">-E</option>            <!-- Compile source through preprocessor only, output to .i  file. -->
+    <option name="U" immarg="1" separg="1">-U%</option>
+                                                      <!-- Delete initial definition of preprocessor symbol <name>. -->
+    <option name="w" noarg="1">-w</option>            <!-- Suppress compiler warning messages. -->
+
+    <option name="l" immarg="1" separg="1"/>          <!-- Indicates library to link with. -->
+    <option name="Aa" noarg="1"/>                     <!-- Standard overloaded func lookup and for loop.
+                                                           To accurately support this option, "-=old_for_init" must
+                                                           be removed from the default list above. -->
+    <!--
+    <switch name="old for" initial="enabled">-=old_for_init</switch>
+    <switch name="old lookup" initial="enabled">-=no_arg_dep_lookup</switch>
+    <option name="Aa" noarg="1" disable="old for" disable="old lookup/>
+    -->
+    <option name="b" noarg="1"/>                      <!-- Generate a shared library. -->
+    <option name="c" noarg="1"/>                      <!-- Compile only. -->
+    <option name="ext" noarg="1"/>                    <!-- Enable extensions such as long long. -->
+    <option name="." immarg="1" separg="1"/>          <!-- Determine -E output files. -->
+    <option name="fast" noarg="1"/>                   <!-- -fast  optimize generated code -->
+    <option name="g0" noarg="1"/>                     <!-- Control symbolic information in object file. -->
+    <option name="g" noarg="1"/>                      <!-- Control symbolic information in object file. -->
+    <option name="g1" noarg="1"/>                     <!-- Control symbolic information in object file. -->
+    <option name="G" noarg="1"/>                      <!-- Gprof support. -->
+    <option name="L" immarg="1" separg="1"/>          <!-- Indicate search path during linking. -->
+    <option name="n" noarg="1"/>                      <!-- Linker output is sharable. -->
+    <option name="N" noarg="1"/>                      <!-- Linker output is unsharable. -->
+    <option name="o" immarg="1" separg="1"/>          <!-- Linker output name. -->
+    <option name="O" immarg="1"/>                     <!-- Optimization. -->
+    <option name="q" noarg="1"/>                      <!-- Linker output is demand loadable. -->
+    <option name="Q" noarg="1"/>                      <!-- Linker output is not demand loadable. -->
+    <option name="s" noarg="1"/>                      <!-- Control symbolic information in object file. -->
+    <option name="t" immarg="1" separg="1"/>          <!-- (no correspondence) Substitute compilation passes. -->
+    <option name="v" noarg="1"/>                      <!-- Verbose compilation. -->
+    <option name="V" noarg="1">-v</option>            <!-- Display compiler version. -->
+    <option name="W" immarg="1" separg="1"/>          <!-- (no correspondence) Pass argument to compilation pass. -->
+    <option name="We" separg="1"/>                    <!-- Specify warning to be error. -->
+    <option name="y" noarg="1"/>                      <!-- SoftBench support. -->
+    <option name="Y" noarg="1">--multibyte_chars</option>
+                                                      <!-- Enable EUC characters. -->
+    <option name="z" noarg="1"/>                      <!-- For debugging null pointers. -->
+    <option intro="+" name="A" noarg="1"/>            <!-- Linker control. -->
+    <option intro="+" name="d" noarg="1"/>            <!-- Suppress expansion of inlines. -->
+    <option intro="+" name="DA" immarg="1" separg="1"/>
+                                                      <!-- Specify architecture. -->
+    <option intro="+" name="DD" immarg="1" separg="1"/>
+                                                      <!-- Specify data model. -->
+    <option intro="+" name="df" immarg="1" separg="1"/>
+                                                      <!-- Optimizer control. -->
+    <option intro="+" name="DO" immarg="1" separg="1"/>
+                                                      <!-- Specify operating system. -->
+    <option intro="+" name="dryrun" noarg="1"/>       <!-- Subprocess control. -->
+    <option intro="+" name="DS" immarg="1" separg="1"/>
+                                                      <!-- Specify scheduling model. -->
+    <option intro="+" name="ES" immarg="1"/>          <!-- Code generation. -->
+    <option intro="+" name="FP" immarg="1" separg="1"/>
+                                                      <!-- Which floating point traps to enable. -->
+    <option intro="+" name="help" noarg="1"/>         <!-- (no correspondence) Online help. -->
+    <option intro="+" name="inline_level" immarg="1" separg="1"/>
+                                                      <!-- Code generation. -->
+    <option intro="+" name="I" noarg="1"/>            <!-- Profile-based optimization. -->
+    <option intro="+" name="k" noarg="1"/>            <!-- Code generation. -->
+    <option intro="+" name="m" noarg="1">-M</option>  <!-- Make dependency support. -->
+    <option intro="+" name="md" noarg="1">-M</option> <!-- Make dependency support. -->
+    <option intro="+" name="M" noarg="1">-M</option>  <!-- Make dependency support. -->
+    <option intro="+" name="Md" noarg="1">-M</option> <!-- Make dependency support. -->
+    <option intro="+" name="noeh" noarg="1">--no_exceptions</option>
+                                                      <!-- Disable exception handling in generated code. -->
+    <option intro="+" name="nostl" noarg="1"/>        <!-- Suppress default include dirs.
+                                                           To accurately support this option, -I directives must
+                                                           be removed from the default list above. -->
+    <option intro="+" name="p" noarg="1"/>            <!-- Disallow anachronistic constructs. -->
+    <option intro="+" name="P" noarg="1"/>            <!-- Profile-based optimization. -->
+    <option intro="+" name="pa" noarg="1"/>           <!-- +pa  profiling -->
+    <option intro="+" name="pal" noarg="1"/>          <!-- +pal  profiling -->
+    <option intro="+" name="pgm" immarg="1" separg="1"/>
+                                                      <!-- Profile-based optimization. -->
+    <option intro="+" name="S" noarg="1"/>            <!-- Produce assembly output. -->
+    <option intro="+" name="time" noarg="1"/>         <!-- Display compilation time. -->
+    <option intro="+" name="tm" immarg="1" separg="1"/>
+                                                      <!-- Specify target hardware. -->
+    <option intro="+" name="u" immarg="1" separg="1"/><!-- Code generation. -->
+    <option intro="+" name="uc" immarg="1" separg="1">--unsigned_chars</option>
+                                                      <!-- Char is unsigned. -->
+    <option intro="+" name="w" noarg="1"/>            <!-- Warn. -->
+    <option intro="+" name="W" immarg="1" separg="1">-w</option>
+                                                      <!-- Suppress warning. -->
+    <option intro="+" name="We" immarg="1" separg="1"/>
+                                                      <!-- Treat as error. -->
+    <option intro="+" name="z" noarg="1"/>            <!-- Code generation. -->
+    <option intro="+" name="Z" noarg="1"/>            <!-- Code generation. -->
+    <option intro="+" name="hdr_v" noarg="1"/>        <!-- Precompiled header. -->
+    <option intro="+" name="hdr_use" immarg="1" separg="1"/>
+                                                      <!-- Precompiled header. -->
+    <option intro="+" name="hdr_cache" noarg="1"/>    <!-- Precompiled header. -->
+    <option intro="+" name="hdr_create" immarg="1" separg="1"/>
+                                                      <!-- Precompiled header. -->
+    <option intro="+" name="hdr_dir" immarg="1" separg="1"/>
+                                                      <!-- Precompiled header. -->
+    <option intro="+" name="hdr_info" noarg="1"/>
+                                                      <!-- Precompiled header. -->
+    <option intro="+" name="hugesize=" immarg="1"/>   <!-- Manage huge data objects. -->
+    <option intro="+" name="inst_all" noarg="1">-tall</option>
+                                                      <!-- Instantiate all templates. -->
+    <option intro="+" name="inst_auto" noarg="1">--auto_instantiation</option>
+                                                      <!-- Instantiate templates in a linked file. -->
+    <option intro="+" name="inst_close" noarg="1"/>   <!-- Prevent instantiation of templates at link time. -->
+    <option intro="+" name="inst_compiletime" noarg="1">-tused</option>
+                                                      <!-- Instantiate all used or explicitly instantiated templates. -->
+    <option intro="+" name="inst_directed" noarg="1">-tnone</option>
+                                                      <!-- Instantiate no templates. -->
+    <option intro="+" name="inst_implicit_include" noarg="1">--implicit_include</option>
+                                                      <!-- Locate template definition file. -->
+    <option intro="+" name="inst_include_suffixes=" immarg="1" separg="1"/>
+                                                      <!-- (no correspondence) Locate template definition file. -->
+    <option intro="+" name="inst_none" noarg="1">-tnone</option>
+                                                      <!-- Instantiate no templates. -->
+    <option intro="+" name="inst_used" noarg="1">-tused</option>
+                                                      <!-- Instantiate all used templates. -->
+    <option intro="+" name="inst_v" noarg="1"/>       <!-- Verbose instantiation. -->
+  </translate>
+</cmdline>

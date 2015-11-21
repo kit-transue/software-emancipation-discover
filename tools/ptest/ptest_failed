@@ -1,0 +1,31 @@
+#!/bin/sh
+#boris
+
+set -a
+
+if [ "$1" = "help" ]; then
+	echo ""
+	echo "         ptest_failed outdir"
+	echo ""
+	echo "ptest_failed analyse outdir/test.log and return 0 if all scripts succeeded,"
+        echo "return 1 otherwise."
+	echo ""
+	exit 0
+fi
+
+if [ ! -d "$1" ] ; then
+	echo "ptest_failed: wrong output directory $1"
+	exit 1
+fi
+
+if [ ! -f "$1/test.log" ] ; then
+	echo "ptest_failed: failed no such file $outdir/test.log"
+	exit 1
+fi
+
+# grep for "failed" in the summary log and return error if found:
+if `grep "failed" $1/test.log > /dev/null` ; then
+	exit 1
+fi
+
+exit 0

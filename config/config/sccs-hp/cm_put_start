@@ -1,0 +1,15 @@
+#!/bin/sh
+echo === bug number ===
+cat $cm_bugno
+echo === comment ===
+cat $cm_comment
+echo === put file names ===
+cat $cm_files
+
+if [ "$cm_optscripts" != "" -a -x $cm_optscripts/put_start ] ; then
+  $cm_optscripts/put_start
+  if [ $? -ne 0 ] ; then 
+      echo "%% put start fail" >&2
+      exit 1
+  fi
+fi

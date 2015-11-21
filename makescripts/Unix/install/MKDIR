@@ -1,0 +1,6 @@
+#!/bin/sh
+DESTDIR=`pwd`
+
+if [ ! -d ${DESTDIR}/$1 ]; then
+	mkdir -p ${DESTDIR}/$1
+fi

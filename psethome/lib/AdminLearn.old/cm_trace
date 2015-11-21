@@ -1,0 +1,46 @@
+#!/bin/sh 
+
+if [ "${CM_DEBUG}" != "ON" ]
+ then
+  exit 0
+fi
+
+outfile=/tmp/trace.out
+
+echo '---------------------------'`date` 		>>$outfile
+echo $1 						>>$outfile
+echo  							>>$outfile
+echo '$cm_workfile:'		$cm_workfile  		>>$outfile
+echo '$cm_sysfile:'		$cm_sysfile   		>>$outfile
+echo '$cm_revision_file:'	$cm_revision_file	>>$outfile
+echo '$cm_file_type:'		$cm_file_type		>>$outfile
+echo '$1'			$2			>>$outfile
+echo '$2'			$3 			>>$outfile
+echo '$3'			$4			>>$outfile
+echo '$4' 			$5			>>$outfile
+echo '$5'			$6			>>$outfile
+echo '$6'			$7			>>$outfile
+echo '$7'			$8			>>$outfile
+echo '$8'			$9			>>$outfile
+echo							>>$outfile
+echo '$cm_bugno:'		$cm_bugno		>>$outfile
+if [ -f "$cm_bugno" ] ; then
+cat $cm_bugno 						>>$outfile
+fi
+echo '$cm_comment:'		$cm_comment		>>$outfile
+if [ -f "$cm_comment" ] ; then
+cat $cm_comment						>>$outfile
+fi
+echo '$cm_c_file:'		$cm_c_file		>>$outfile
+echo '$cm_date:'		$cm_date		>>$outfile
+echo '$cm_description:'		$cm_description		>>$outfile
+echo '$cm_files:'		$cm_files		>>$outfile
+if [ -f "$cm_files" ] ;  then
+cat $cm_files						>>$outfile
+fi
+echo '$cm_local_project:'	$cm_local_project	>>$outfile
+echo '$cm_options:'		$cm_options		>>$outfile
+echo '$cm_pset_search:'		$cm_pset_search		>>$outfile
+echo '$cm_sys_proj:'		$cm_sys_proj		>>$outfile
+echo '$cm_version:'		$cm_version		>>$outfile
+echo '$cm_rmpset:'		$cm_rmpset		>>$outfile

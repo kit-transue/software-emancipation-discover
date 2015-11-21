@@ -1,0 +1,9 @@
+CXXROOTS= \
+	machdep \
+	cLibraryFunctions  \
+
+CPP_INCLUDES= \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include

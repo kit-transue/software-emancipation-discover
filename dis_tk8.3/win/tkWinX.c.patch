@@ -1,0 +1,40 @@
+13c13
+<  * RCS: @(#) $Id: tkWinX.c,v 1.10.2.2 2001/04/06 00:13:24 hobbs Exp $
+---
+>  * RCS: @(#) $Id: tkWinX.c 1.2 2001/10/30 10:22:31EST Sudha Kallem (sudha) Exp  $
+506a507,535
+> 
+> /* Jason */
+> void read_pipe(read_event, interp)
+> HANDLE read_event;
+> Tcl_Interp *interp;
+> {
+> char buf[300], cmd[325];
+> char x=0;
+> int count=0;
+> int gotit=0;
+> 	while((_eof(0)==FALSE) && (_read(0,&x,1)==1)) {
+> 		if(x=='\r') continue;
+> 		if(x=='\n') {
+> 		    gotit = 1;
+> 			break;
+> 		}
+> 		buf[count++] = x;
+> 	}
+>     buf[count]=0;
+> 	if(gotit == 1) {
+>         strcpy(cmd, "ReadPipe ");
+>         strcat(cmd, "\"");
+>         strcat(cmd, buf);
+>         strcat(cmd, "\"");
+>         Tcl_Eval(interp, cmd);
+> 	}
+>     SetEvent(read_event);
+> }
+> 
+571a601,605
+>         case PIPE_READY:
+> 	    read_pipe((HANDLE)wParam, (Tcl_Interp*)lParam);
+> 	    result = TRUE;
+> 	    break;
+> 

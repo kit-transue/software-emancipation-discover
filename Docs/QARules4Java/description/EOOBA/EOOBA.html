@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>EOOBA - Equality Operations On Boolean Arguments</b></p>
+
+<p>Avoid performing equality operations on boolean 
+operands. You should not use <code>true </code>and <code>false</code>       
+      literals in conditional clauses.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+int oper (boolean bOk) {<br>
+&nbsp; &nbsp; if (bOk) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return 1;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; while ( <font color='red'> bOk == true </font> ) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; return ( <font color='red'> bOk == false </font> ) ? 1 : 0; <br>
+}
+</code></p></NOBR>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+int oper (boolean bOk) {<br>
+&nbsp; &nbsp; if (bOk) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; return 1;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; while ( <font color='blue'> bOk </font>) { </FONT><br>
+&nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; return ( <font color='blue'> ! bOk </font>) ? 1 : 0; 
+</FONT><br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

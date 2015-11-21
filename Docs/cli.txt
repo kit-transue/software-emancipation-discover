@@ -1,0 +1,1041 @@
+
+
+
+
+
+         Command-line Interface and scripting (CLI) specification
+         ========================================================
+
+
+
+  The descriptions in this document assume a familiarity with basic DISCOVER concepts. 
+  Please refer to appropriate documents if needed. 
+   
+
+
+
+           Chapter 1. Introduction
+
+              Overview
+
+  CLI is intended to provide command-level access to model querying and other
+  DISCOVER capabilities to facilitate:
+   - User writable extensions (queries and commands)
+   - Interfacing customer tools and processes 
+
+  CLI is implemented on top of the Tcl language and interpreter.
+  In addition to Tcl data types, strings and arrays (lists) of
+  strings, CLI has additional built-in data types: 
+  entities and sets (of entities). All the queries work on both sets
+  and entities and always return sets (maybe empty).
+
+  The following functionality is available initially:
+   - Project Browser queries
+   - Model Browser queries (scan mode)
+   - Groups utility
+   - Selection and Filtering 
+   - External Interfaces
+      - Emacs commands
+      - Interactive UI
+
+  CLI is invokable in both client-server (clish) and interactive DISCOVER modes.
+  
+  In client-server mode, the user can specify a file to be executed. If no script 
+  is specified, CLI will accept commands from the input stream.
+
+  In interactive mode, the user can execute both files and interactive commands.
+  In addition, in interactive mode the user can attach his commands to menus 
+  and use those menus the way he uses the standard DISCOVER browser. In this way 
+  the user can extend and customize DISCOVER capabilities relatively easily.
+
+  Specialized packages of menus and customized commands can be provided based
+  on specific customer needs and business arrangements. Of course the 
+  CLI environment is extensible and powerful enough for customers to 
+  write what they need on their own.
+  
+
+           Functional Scope
+            
+ 1. Project Query
+    Commands to navigate project hierarchy.
+    These commands deal with projects and files.
+
+     roots
+     contents
+     subprojects
+     parent
+     modules 
+  
+ 2. Model Query
+    All the scan-mode queries, a partial list:
+
+     where referenced
+     where used
+     uses (-all -classes -variables ...)
+     defines (-all -functions ...)
+     ...
+
+ 3. Filter Utility
+    Commands to help user to efficiently find an entity to
+    apply queries to. This is a CLI counterpart of the selection mechanism
+    in the Interactive DISCOVER. 
+
+    filter  regexp(regexp-pattern) set
+    filter  match(wildcard-pattern) set
+    filter  attribute-expression set
+
+    Additional ways to find entities are addressed in the section
+    on 'CurrentSet'.
+
+ 4. Attributes and Expressions
+    Attributes are a set of properties of a given symbol and provide a way
+    of getting information about that symbol (eg name, filename, kind...). The
+    attributes can return strings (eg filename) or integers (eg function). Attributes 
+    or expressions of attributes can be used to filter a set.
+    In addition, the user can create new attributes out of frequently used
+    attribute expressions.
+	
+	attribute element  ==> result
+
+	'filter' attribute-expression set ==> filtered set	
+
+	'add_attribute' att-name att-expression	
+
+
+ 5. Set Operations
+    Basic set-theoretic operations. 
+    These commands take sets as arguments and return the resulting set.
+
+      set_union
+      set_add		quicker than set_union but does not remove duplicates
+      set_intersect
+      set_subtract
+      set_unique        removes dublicates
+      sappend           appends set(s) to the first argument set
+
+      set_copy
+      new_set           creates empty set if called with no (zero) args, otherwise
+                        is equivalent to set_copy
+
+ 6. Group Utility (only works in interactive DISCOVER)
+    Basic groups commands. Groups are treated as normal entities, so that
+    all the query commands and set operations can take the names of groups 
+    as arguments.
+
+     group get       	group-name
+     group create	group-name	set
+     group save		group-name
+
+ 
+ 7. Selection and Placement utility
+    A group of commands to retrieve the DISCOVER selection stack
+    and to return entities for further interactive processing, either
+    as selection or into the (mini or regular) browser column.
+
+     selection
+     set_result
+ 
+  
+ 8. Prompting
+    The helper commands to allow user input in command scripts.
+    The 'prompt' command displays a dialog box containing the specified
+    prompt-text and an empty text field for the user's input.
+    The command returns the user's input.
+    The message command displays text to the mini-buffer.
+
+      prompt  prompt-text
+      message  message text
+
+ 9. External tools interface
+    CLI will enable the user to interface external tools by means of
+    invocation of UNIX commands and by saving lists into files
+    for later processing by the external tools.    
+    In the  '>' and '>>' commands, anything explicitly printed (using
+    the print or puts commands) will be written to the file.
+
+    >  filename command  (analogous to UNIX shell's "command > filename")
+    >> filename command  (analogous to UNIX shell's "command >> filename")
+    exec shell-command
+    emacs_command <command>
+    
+    The selection mechanism can be also uses to import lists of objects from external
+    applications, e.g
+         set_copy [exec shell-command]
+    returns set objects printed by the shell-command
+    
+ 10. Formatting
+    The user can specify the default output format when printing sets to 
+    control how much information is automatically supplied. In addition the
+    user can specify if and how the set should be sorted (see next section).
+
+    'printformat' [-s] format-string ([-d | -a] attribute)...
+
+    EX: default is 'printformat "(%s) %s \n" kind name'
+
+ 11. Sorting
+    A given set can be sorted by any number of attributes using the 
+    sort command. The '-a' and '-d' flags are used to specify ascending
+    or descending order of sorting for the attributes listed after them.
+    If no flags are given, '-a' is assumed.
+
+    sort ([-d | -a] attribute)... set
+
+    EX: sort -d kind lname -a name          This will sort elements of the current-set by
+    					    kind and lname in descending order and name
+					    in ascending order.
+
+
+
+    In addition, if the `-s` flag is specified after the printFormat
+    command, every set will be sorted right before it gets printed out.
+    This means that results of commands will not be sorted if they
+    do not get printed (e.g. scripts, chains of commands). This sorting 
+    may also re-sort the result of the normal 'sort' command.
+
+    
+
+  12. Customizing Interactive Environment
+    A set of commands that allow the users to create reusable commands and
+    bind them to menus in the browser.  These commands are explained in more 
+    detail in Chapter 5.
+
+  add_menu <menu_tag> [Selection Option] [Display Option]
+  add_item <menu_tag> <item_tag> <command> [Selection Option] [Display Option]
+  add_category <item_tag> <command> [Selection Option] [Display Option]
+  add_query    <item_tag> <command> [Selection Option] [Display Option]
+  add_action   <item_tag> <command> [Selection Option] [Display Option]
+  add_filter   <item_tag> <command> [Selection Option] [Display Option]
+
+
+
+            Chapter 2. Basic Concepts
+ 
+             Entity, Set, Iteration
+
+  An entity is the fundamental DISCOVER object. The DISCOVER model (pmod) 
+  consists of entities and their relations. Results of queries are sets of 
+  entities. Sets of entities are displayed in the browser as results of 
+  queries.
+
+  In the CLI environment, an entity is a transient object and is converted 
+  to a set of size 1 right away.
+
+  There are two ways to retrieve an entity directly: 
+   - by calling an entity by name (and implicitly looking it up)
+   - by getting an element of a set
+   (see the Chapter 3 for more information)  
+
+  Programmatically (in scripts) entities are used in iterators in the 
+  'foreach' and 'apply' commands. `filter` can technically be viewed as an 
+  iterator as well.
+
+  `foreach` takes an expression and a set as parameters and evaluates the expression 
+  for each element of the set. The current element of the set is bound to 'el',
+  so its value should be referenced in the expression as '$el'. The return
+  value of 'foreach' is null.
+
+  The 'foreach' command can also group the elements of the set according to the value
+  of a particular attribute expression. This will execute the desired command once for 
+  each occurring value of the expression. In the command the user can access the
+  following variables: 
+      $expr_value, the value of the expression;  
+      $ind_list, the list of indexes of the elements with the current expression value
+
+	The two 'flavors' of foreach:
+		foreach                            el set { ....}
+		foreach      expr expr_value ind_list set { ....}
+
+  
+  The 'apply' command takes an attribute expression and a set. It returns a
+  list containing the results of applying that expression to every element in 
+  the group.  Duplicates are removed, and the order of the list is unspecified.
+		
+	syntax:  apply <expression> set
+
+
+  The apply command could be written as a TCL procedure using foreach:
+
+	proc apply {expr set} {
+	  set list ""  # optional
+	  foreach $expr evalue i_list $set {
+	    lappend list $evalue
+	  }
+	  return $list
+	}
+
+
+
+             Attributes 
+
+  An attribute is a function on an entity.  Attributes can have string or integer 
+  return values (but not entity or set).
+
+  The two key attributes identifying the entity are kind and name. Each
+  valid entity has them. The full list of valid kinds is the same as the
+  list of categories in the DISCOVER browser (first column). 
+  In CLI, both kind and name are implemented as Tcl strings.
+
+  The name is considered to be the main attribute. The implicit conversion 
+  from entity to string is achieved by applying the name attribute.
+
+  Here is a list of attributes (incomplete, see appendix):
+
+  Generic 
+   string   lname        logical name of the definition file
+   string   fname        file name (physical (real) name of the definition file)
+   
+  Function
+   string   type        return type
+   string   args
+   int      numargs	
+   bool     member 
+   bool     static
+   bool     inline
+
+  Member-function
+   bool     virtual
+
+  Variable 
+   string   type
+   bool     const
+
+  Module
+   string   language
+   string   psetfile
+   bool     included
+   bool     header
+   bool     outdated
+
+  Project
+   bool     has_pmod
+
+
+  Any attribute can be used on any element, but not all yield meaningful results.
+  For example, asking if a project is const has no real meaning, but it will return 
+  false anyway. (WARNING: the expression "!const" will return true for all elements 
+  which are not functions or variables)
+
+
+
+				Attribute Expressions
+	
+  The power of attributes can be expanded by combining them into expressions.
+  Attribute expressions are formed like standard C expressions with the normal
+  C operators (see appendix for full list). Expressions can also make use of several
+  additional functions (strlen, regexp ...). Some operators and functions have modified
+  or extended functionality, see the appendix for more details. 
+  Also, CLI attribute expressions have no side effects, so the use of certain functions
+  (eg assignment, comma-expressions, function that modify arguments) is not supported.
+  
+  Attribute expressions are used as the argument of a filter command. In addition, 
+  the user can use the add_attribute command to create new a new attribute name 
+  for an attribute expression. This new "derived-attribute" can be used the same way 
+  ordinary attributes are used. 
+ 
+
+
+                 String Matching/Subexpressions
+
+  The CLI provides two styles of string matching: wildcard (called 'match') and 
+  regular expression (called 'regexp'). These functions can be used in attribute 
+  expressions and thus can be used in filters. 
+
+  Both functions take two strings as arguments: a pattern string and a text string.  
+  They return true only if the pattern can be found in the text. Wildcard expressions 
+  need to match the entire string in question, so to find all elements with a 'g' in 
+  their name use  'match("*g*",name)' not 'match("g",name)'. Regular expressions only 
+  need to match part of the name, so `regexp("g",name)' is fine.  If the second argument 
+  is left out, the 'name' attribute is assumed.
+
+  In addition, wildcard subexpressions and substitutions are supported in attribute 
+  expressions in a similar fashion to that used in pdf files. This function allows the
+  user to specify a wildcard expression with subexpressions grouped in parentheses and
+  a format for outputting them. The function is denoted by the [,] operators. 
+  For example:
+  
+  Given an element with a filename of /Src/cli/file.C:
+  
+  fname["/([A-Z]??)/(*/*)","(2) -- (1)"]   ==>	"cli/file.C -- Src"
+	
+
+  NOTE: If an output format is not specified, "(1)/(2)/(3) .../(n)" is assumed.
+	Also a '*' will not match a '/' character, just like in PDFs.
+
+
+
+                     Filtering
+
+  Filtering is the extraction of subsets of a set based on user-specified
+  criteria. Technically, the filter-function is a function which takes a single 
+  entity as argument and returns a boolean value. During filtering, the function
+  is applied to each element of the list. The 'true' return value is interpreted 
+  as 'accept' and 'false' as 'reject'. Typically, but not always, the filtering 
+  function works on attributes of entities.
+
+  Filtering is performed by applying the 'filter' command, which comes in two
+  flavors: with bool expression and with bool tcl command
+	
+    filter attribute-expression set (the expression can be a single attribute)
+    filter command              set
+
+  When an expression is applied to an an element of the set, the element is bound to 
+  'el', so it's value should be referenced as '$el'.
+
+  A boolean/integer attribute can be directly used as a filter.  When applied to set, 
+  it returns the subset of entities having the attribute not equal to 0.
+
+  String arguments can also be used directly as a filter to eliminate all elements
+  which would return an empty string.
+
+  The following expression should be used to perform a standard wildcard match on a set:
+
+     filter match("/**/a.c") set
+
+  The Tcl boolean operators (as well as other Tcl capabilities) can be used for 
+  writing compound filters.
+
+
+
+
+               Chapter 3. Selection Utility
+
+      CLI selection and entity identification.
+
+  The CLI selection paradigm is quite different form that of interactive 
+  DISCOVER. In Interactive mode the user first selects entities
+  and then operations (object-oriented), In CLI, the command name is specified
+  first and then the parameters/entities (functional). Additionally, the CLI
+  selection mechanism must be powerful and flexible to provide both
+  interactive usage and writing extensions (scripts and commands).
+
+
+  CurrentSet
+
+    The result of each query becames the CurrentSet. 
+ 
+    The CurrentSet serves several purposes:
+     - used as default argument to the next command. Thus, queries
+       can be easily chained
+     - it's element can be referred to by index. This gives the interactive user
+       an easy way to select entities from a list. 
+
+
+  Selection BNR definition:
+
+    selection =  null | set-variable | range | set-variable  range | name
+    range     =  integer | integer '-' integer | range ',' range 
+    name      =  physical-name | logical-name | project-name | obj-name | group-name
+    obj-name  =  symbol-name | kind@symbol-name | 'group'@group-name
+  
+	NOTE: If a kind is not specified for an obj-name, the CLI will first try 
+	to find a function with that name. If it fails it will then look through 
+	variables, macros classes/structures and groups in that order.  Also groups 
+	can only be used in emacs-mode.
+
+
+  Example:
+      CLI> roots =>
+       (1) /server
+       (2) /local
+       (3) /gcc
+       (4) /client
+
+      CLI> defines  1,3-4 =>
+        <list of entities defined in /server, /gcc, /client>
+           CLI invocation
+
+
+
+
+
+               Chapter 4. CLI Language Environment
+
+ Tcl environment.
+  CLI uses a Tcl environment. All the standard Tcl commands are available to the user.
+  Of particular interest are:
+  - printing
+  - loading/executing command files
+  - Programming Language: Conditionals, loops, etc
+
+ command-line options 
+  -source <file-name>   executes file
+  <no option>           uses stdin
+
+  Delayed loading.
+   Files with definition of commands can be loaded on demand.
+   (This is part of the standard Tcl)
+
+  Top level loop
+   In the Interactive mode, each command (line) is evaluated (executed)
+   and the result is printed applying the print function (eval - print loop)
+
+   The user can control the format of print by means of the printformat 
+	command (see Chapter 1, part 10).
+
+
+  Garbage Collection
+   The result of a query becomes the CurrentSet. It gets overwritten
+   after the next query. To preserve the list for later usage, it
+   must be assigned to a variable (bound to a name). Then the list
+   becomes permanent for the lifespan of the variable.
+
+
+  Customization
+   On start-up, an the file '$HOME/.discover.cli' is executed which will 
+   load user's extensions and commands.
+
+
+ Commands have (usually) one positional argument. Optional arguments
+ are keyword arguments. Examples:
+
+  where used 
+  uses -functions 
+  modules -level 4 
+
+
+
+
+               Chapter 5. DISCOVER Customization with CLI
+
+
+In the Interactive DISCOVER environment, the user can add new CLI commands/queries 
+which:
+  - extend the capabilities of the browser
+  - interface external tools
+  - interface system (exec)
+  - interface DISCOVER emacs (emacs_command)
+  - provide useful utilities (print, load, etc)
+
+A new menu can be created by calling the 'add_menu <menu_tag>'
+command in the CLI interpreter. The new menu appears at the end of the 
+browser shell menu-bar. A new menu item is inserted into the menu as
+a result of execution of the 'add_item <menu_tag> <item_tag> <command>'
+command by the CLI interpreter. When this new menu item is selected, the 
+interpreter will execute "<command-string> [sel]".
+
+The user can both add new items to the existing pull-down menus and to 
+create new groups (menus) of commands
+
+
+  add_menu <menu_tag> [Selection Option] [Display Option]
+  add_item <menu_tag> <item_tag> <command> [Selection Option] [Display Option]
+
+Selection Options:
+  -scope       use scope
+  -selection   use browser selection, reject null selections (default)
+  -filter      use the whole column where something is selected
+  -none        no selection
+  -optional    use selection, but null selections are accepted too
+
+Display options:
+  -result      use the Results column
+  -element     use the Elements column
+ the default to use the other (non-active) column (ping-ponging)
+
+(Abbreviations can also be used, e.g '-sel'  instead of '-selection')
+
+The selection is (by default) is passed down as the argument to the command
+There are options available to specify how (and if) the selection is done.
+
+
+
+Discover comes with several prepackaged groups:
+
+  add_category <item_tag> <command> [Selection Option] [Display Option]
+  add_query    <item_tag> <command> [Selection Option] [Display Option]
+  add_action   <item_tag> <command> [Selection Option] [Display Option]
+  add_filter   <item_tag> <command> [Selection Option] [Display Option]
+
+  Category:  
+    -takes scope as selection
+    -display result in the Elements column
+
+  Query:
+    -takes browser selection as selection
+    -display result in default column
+
+  Action:
+   - similar to query, but intended primarily for utilities, e.g load, grep, etc
+  
+  Filter:
+   - takes the whole column as input (rather then selection)
+   - comes with simple GUI to add filter to the filter list 
+
+
+
+   EXAMPLES 
+
+Example 1. Copy the scope from the project scope into the elements column.
+
+ add_category scope return 
+
+Explanation: the 'category' group takes selection form the scope, so no 
+selection option need be specified. To achieve the same effect in, say query
+menu, -scope would have to be specified, (e.g. add_query scope expr -s).
+
+'return' is a Tcl built-in command that just returns its argument without change. 
+This is exactly what we need to perform this copy, so we do not need to write a 
+new command at all.
+
+
+
+Example 2. Project Browser Emulator. Create a menu group 'Project' which
+supports project navigation.
+
+  add_menu Project 
+  add_item Project scope expr -s -e
+  add_item Project roots roots
+  add_item Project parent parent
+  add_item Project contents contents
+  add_item Project files    modules
+
+Again, luckily we did not have to develop new commands
+
+
+
+Example 3. Filtering. Enamble the user to specify expression for
+filtering and save those expressions for reuse. 
+
+  proc gen_filter { sel } {
+    set fff [prompt "filter"]
+    add_filter $fff "filter $fff"
+    if {[size $sel] > 0} {
+	return [filter $fff  $sel]
+    } else {
+	return "Created filter $fff"
+    }
+  }
+ 
+  add_filter "new filter" gen_filter -optional
+
+Explanation: This example creates a new tcl procedure and then binds it to
+a menu.  The gen_filter procedure first uses the 'prompt' command to input
+a filter expression from the user.  It then creates a new element in the 
+filter menu with the filter expression as its name, and binds it to the 
+command "filter <filter-expression>".
+
+If there was a selection initially, the procedure goes on to perform the
+filter on that selection, otherwise it simply informs the user that the
+filter was created. DISCOVER know to display a textual result in the 
+minibuffer and a set of elements in the appropriate browser column.
+
+
+
+
+               Chapter 6. CLI Invocation
+
+
+1. Within Interactive session:
+
+   CLI mode in Emacs works identically to the tcl mode, with the exception that commands
+   are not sent to tclsh, but to the built-in CLI interpreter.
+
+
+			Running the CLI through DISCOVER's viewer:
+			
+	To run a script:
+	1. Open a viewer in emacs mode.
+	2. Open a buffer with the desired script
+	3. Switch to cli-mode by typing 'M-x cli-mode'
+	4. Run script by selecting 'send buffer' from CLI menu
+
+	To enter interactive mode:
+	1. Open a viewer in emacs mode.
+	2. Open an empty buffer (not necessary)
+	3. Switch to cli-mode by typing 'M-x cli-mode'
+	4. Type in your first command
+	5. Select 'send buffer' from CLI menu 
+		(or highlight the command and select 'send selection' from CLI menu)
+	6. Now use CLI interactively in the newly created '*cli*' buffer
+
+
+2. As a pmod_server client:
+
+   A CLI shell client can be attached to a running pmod_server. It works similarly 
+   to the tclsh: it reads the standard input (stdin) line by line, sends it to the 
+   pmod_server's CLI interpreter, and then prints the result on the standard output. 
+
+   Invocation:  
+           clish <pmod-service-name> [-s[ource] file] [-c[ommand] command-string] [-exit]
+
+   Any number of clish-es can connect to the same server. Each client gets its own copy
+   of the CLI-interpreter, so that clients are protected from each other. 
+
+   The client-server communication is done through the DISCOVER's galaxy-based RPC.
+   This means that clish can only be invoked if the Galaxy's name server (vdasserv) 
+   is running on the local host (as well as on pmod_server's host, of course).
+
+   The clish client can be used for integration with other (external) applications 
+   (web browser, Testing tools, etc) by invoking it as a 2-way pipe from within the 
+   application.
+
+   Another usage is for running 'batch-mode' CLI application (e.g to gather statistics 
+   on the source code or to validate adherence to the coding standards)
+
+   Of course, clish can be run interactively simply to act as the text-mode interface 
+   to the DISCOVER model.
+
+
+
+
+
+
+
+
+
+
+
+                      Appendix 1. Examples
+
+Example 1. Interactive CLI: Browser functionality
+  => means CR (return key)
+  indented numbered lines represent output
+
+  roots =>
+    1 (proj) /proj_a
+    2 (proj) /proj_b
+
+  modules /proj_b =>
+    1 (module) /usr/local/src/aaa.c
+    2 (module) /usr/local/src/bbb.c
+    3 (module) /usr/local/include/ccc.h
+
+  defines 3 =>              // list of all objects defined in ccc.h
+    1 (struct)    ccc
+    2 (typedef)   cccPtr
+
+  where referenced =>       // default list: result of previous query 
+    1 (module) /usr/local/src/aaa.c
+    ...
+
+
+
+
+Example 2. Querying DISCOVER model from within external application.
+Assume customer's application needs to know which functions are defined in a 
+certain module, Assume the name of the module is in the variable 'module_name'.
+Then the following UNIX command line will do the job:
+
+  clish <service-name> -command "defines_functions $module_name" -exit
+
+
+
+Example 3. DISCOVER-assisted C to C++ transition: Finding candidates for member functions
+ print list of structures and for each structure print list of functions
+ which have pointer to this structure as first argument
+
+ proc is_member {function} {
+    global struct_name
+    add_attribute arg1 arg(1)
+    set first_arg [arg1 $function]
+    if { "$first_arg" == [concat $struct_name "*"] } { return 1 } {return 0 }
+ }
+
+
+ proc print_members {struct} {
+  global struct_name
+  global functions
+  set struct_name [name $struct]
+  set members [ filter is_member $functions] 
+  print $members
+ }
+
+ set functions [defines -functions [roots]]
+ set structs   [defines -classes [roots]]
+ 
+ foreach currentStruct $structs {print_members $currentStruct}
+
+
+
+ We can, of course repackage (reuse) the just written commands to turn them
+ into customer's 'suggest_members' query. After that the interactive DISCOVER user
+ will be able to select a structure in the the DISCOVER
+ view and push query->suggest_members, after which the selected list will be put
+ in the answer column of the browser.
+
+
+
+
+Example 4.  DISCOVER assisted cleanup: staticazible functions
+
+  Filter to collect the names of functions which are called
+  only in the same file they are defined in, and thus can (and should)
+  be made static. a function is defined which can be used as filter and then is
+  installed as filter under label 'staticize'.
+
+  The function, which takes an entity, first tests if the entity type is 'function
+  and returns 'false' if not, otherwise it calls 'where referenced' to collect
+  the list of files the function is used in, and subtract from the result the
+  definition file. if the resulting set is empty, it returns 'true', otherwise
+  it returns 'false'.
+ 
+  After that, whenever the interactive DISCOVER user pushes the "Filters' pull-down,
+  the item 'staticize' will be on the list, and pushing it will cause the list of
+  entities in the current (e.g. browser column 4) list to be filtered.
+
+   proc staticize {el} {
+    if { 
+       0 == [size [set_subtract [where referenced $el] [where defined $el]]]
+    } { return 1 } { return 0 }
+   }
+
+   add_query  Staticize  staticize
+    
+  To generate total list of staticizable functions sorted by filename:
+
+   sort fname [filter staticize [defines -functions [roots]]]
+
+
+
+
+  Example 4.  Filters and Expressions
+
+  Note that curly braces can be used around the expressions with spaces or strings 
+  to prevent TCL from interpreting them.
+
+  To filter the set 'ss' for all element defined in file /proj_1/*.C:
+
+	filter {match("/proj_1/*.C",lname)}     $ss
+  or	filter {regexp("/proj_1/.*\.C",lname)}  $ss
+
+
+  To find all macros and non-member functions in the set 'ss' :
+
+	filter {(macro || (function && !method))} $ss
+
+
+  To find all files with names longer than 15 characters:
+
+	filter {module ? (strlen(name) > 15) : 0 }
+
+
+  To find all variables in 'ss' where the last letter of their name is '_':
+
+	filter {(var && (name[-1] == '_'))}  
+	
+  For the user's convenience, the full name of the attribute is not needed, only enough
+  letters to uniquely identify it.
+
+
+
+
+			APPENDIX 2 : Available Functions and Attributes
+			-----------------------------------------------
+
+CLI commands:
+=============
+
+NOTE: Chapter 3 describes the method of specifying the set upon which to perform a 
+    command or query. The current-set is the default if no other set is specified. 
+    Command arguments are preceded with a '-' if they are optional and multiple args
+    can be listed (eg `defines -functions -macros`). Mandatory arguments are not
+    preceded with a '-' (eg `where defined`).
+
+Navigational commands:
+ roots				root projects
+ contents			immediate contents
+ subprojects			immediate subprojects
+ parent				immediate superproject
+ modules	(-level n)		all modules contained in project up to n levels deep 
+                                        (default is infinite)
+
+
+Query commands:
+ defines (-all, -functions, -variables, -classes, -unions, -enums, 
+          -enumval, -typedefs, -macros, -fields, -modules, -templates, 
+          -errors, -groups)
+
+ uses (-functions, -classes ...)
+ where (defined, referenced, used, included, declared)
+ get_include_files
+ get_member_functions
+ get_member_data
+ get_friends
+ get_super_classes
+ get_sub_classes
+
+Set operations:
+ set_copy
+ set_add
+ set_union
+ set_subtract
+ set_intersect
+
+Group Operations (don't work with pmod server):
+ group create
+ group get
+ group save
+
+Auxiliary commands:
+ print					prints set
+ printformat				determines the output format (see Chapter 1, section 10)
+ sort
+ >
+ >>
+ filter (command | expression)
+ apply
+ name					name of element
+ size					size of set
+ add_attribute				create new attribute name for an attribute expr.
+
+User Interface and External Interface:
+ selection
+ add_query
+ add_action
+ prompt
+ set_result
+ get_selection
+ emacs_command
+ message
+
+
+Attributes:
+===========
+
+Integer (and boolean) Attributes:
+	function	is element function?
+	variable	is element variable?
+	macro		...
+	typedef
+	field
+	enum		enumerated type
+	evalue		enumerated value
+	class
+	struct
+	template
+	project
+	module
+	union
+	subsystem
+
+	static
+	virtual
+	private
+	protected
+	purevirt		pure virtual
+	constant
+	method 			member function
+ 	member			member function or data member
+	reference
+	generated		compiler generated
+	inline
+	volatile
+	
+	numargs			number of arguments
+	cfunction		returns 1 if element is a C function
+	included		returns 1 if file is included in another file
+	header			returns 1 if file is a header file
+	outdated		is file's pset outdated?
+	haspmod			does this project have a pmod?
+
+
+Metric Attributes (all are integers):	
+
+	met_CC         		Cyclomatic Complexity
+    	met_LOC		 	lines of code
+    	met_MYERS        	MET_CC + MET_AND_ORS
+    	met_FANIN        	Base classes
+    	met_FANOUT       	Derived Classes
+    	met_BYTES	     	Func/File length in bytes.
+    	met_DEPTH        	Depth of nested control structures.
+    	met_DANG_EI	  	Dangling else-ifs
+    	met_DANG_SW	  	Switch without default clause
+   	met_START_LN	   	starting line of definition.
+   	met_RETURNS      	Number of Returns in code.
+   	met_ULOC         	Uncommented lines of code.
+   	met_XLOC         	Same but don't count ifdef'd out parts or function declarations.
+   	met_IFS			number of 'if' statements
+   	met_SWITCHES		number of 'switch' statements
+   	met_LOOPS		number of loops
+   	met_DEFAULTS		number of switch statements with a 'default' clause
+
+
+String Attributes:
+	kind			(module, function, macro...) 
+	name			element name
+	type			return type for vars and functions
+	arguments		(for functions) returns argument string
+	args			same as above				
+	cname			returns name of symbol as it would appear in code (without 
+									arguments or scope)
+	lname			logical path of defining file
+	fname			file name of defining file (physical path)
+	context			the class name for members (everything before the 
+									last '::' in a name)
+	vname			name without scope (everything after the last '::' in a name)
+	language		language of file
+	psetfile		name of corresponding pset file
+	
+
+
+Valid Functions for Attribute Expressions:
+===============
+  	string 	arg(int)			   	returns the kind of the nth 
+							   argument (for functions)
+
+	bool 	match(pattern-string,text-string)	wildcard matching
+	bool 	regexp(pattern-string,text-string)	regular expression matching
+
+	int 	strlen(string)				Like standard C functions...
+	int 	strcmp(string,string)
+	int 	strncmp(string,string,int)
+	string 	strchr(string,char)
+	string 	strrchr(string,char)
+	string 	strpbrk(string,string)
+	int 	strspn(string,string)
+	int 	strcspn(string,string)
+	string 	strstr(string,string)
+
+	int 	count(string,char)			returns number of occurrences of
+							  character in string
+
+	string	strnchar(string,char,int n)		just like strchr, but resulting
+							  string begins at the nth
+							  occurrence of the character
+
+
+VALID OPERATORS (in order of decreasing precedence)
+===============
+Unary Operators:
+	-
+	!
+	+
+	~
+
+Binary Operators:
+	*
+	/
+	%
+	+		if used on 2 strings, + will concatenate them
+	-
+	<<
+	>>
+	==		if used on 2 strings, works like strcmp()==0
+	!=		if used on 2 strings, works like strcmp()!=0
+	<=
+	>=
+	<
+	>
+	&
+	^
+	|
+	&&
+	||
+
+Misc:
+	? :			standard C if-expression
+	string[int]		string offset (negative integers denote position from end)
+	string[int,int]		string range
+	string[string,string]	wildcard subexpression (see chapter 2:substitution/subexpressions)
+	<function_name>(<args>)	function call
+	() 			use for nesting
+
+Valid tokens:
+	integer   	(append `l` or `u` to denote long or unsigned)
+	character	put in single quotes
+	string		put in double quotes (or use '@' followed by a string with no spaces)
+	attribute	just write its name with no quotes
+
+
+
+

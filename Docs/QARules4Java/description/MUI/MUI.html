@@ -1,0 +1,66 @@
+<html>
+<body>
+
+<p><b>MUI - Minimize Use of <i>instanceof</i></b></p>
+
+<p>Excessive use of <i>instanceof</i> will slow your programm, as will most reflection operations.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+&nbsp; double annualCompensation = 0;<br>
+&nbsp; if (<font color='red'>employee instanceof Contractor</font>) { <br>
+&nbsp; &nbsp; annualCompensation = <br>
+&nbsp; &nbsp; &nbsp; ((Contractor)employee).getHourlyRate() * 2000;<br>
+&nbsp; } <br>
+&nbsp; else <br>
+&nbsp; &nbsp; if (<font color='red'>employee instanceof Grunt</font>) { <br>
+&nbsp; &nbsp; &nbsp; annualCompensation = <br>
+&nbsp; &nbsp; &nbsp; &nbsp; ((Grunt)employee).getMonthlySalary() * 12;<br>
+&nbsp; &nbsp; } <br>
+&nbsp; &nbsp; else <br>
+&nbsp; &nbsp; &nbsp; if (<font color='red'>employee instanceof Manager</font>) { <br>
+&nbsp; &nbsp; &nbsp; &nbsp; annualCompensation = <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ((Manager)employee).getContractRate() * <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ((Manager)employee).getContractPeriod();<br>
+&nbsp; &nbsp; &nbsp; } <br>
+</code></p></NOBR>
+
+<p><b>Tip:</b>
+ Rename packages, classes, members etc. in a proper way.
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+public class Contractor <br>
+{ <br>
+&nbsp; &nbsp; // .... <br>
+&nbsp; &nbsp; <font color='blue'>public double getAnnualCompensation() <br>
+&nbsp; &nbsp; { <br>
+&nbsp; &nbsp; &nbsp; return getHourlyRate() * 2000; <br>
+&nbsp; &nbsp; }</font><br>
+} <br>
+<br>
+public class Grunt <br>
+{ <br>
+&nbsp; &nbsp; // .... <br>
+&nbsp; &nbsp; <font color='blue'>public double getAnnualCompensation() <br>
+&nbsp; &nbsp; { <br>
+&nbsp; &nbsp; &nbsp; return getMonthlySalary() * 12; <br>
+&nbsp; &nbsp; }</font><br>
+} <br>
+<br>
+public class Manager <br>
+{ <br>
+&nbsp; &nbsp; // .... <br>
+&nbsp; &nbsp; <font color='blue'>public double getAnnualCompensation() <br>
+&nbsp; &nbsp; { <br>
+&nbsp; &nbsp; &nbsp; return getHContractRate() * <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; getContractPeriod(); <br>
+&nbsp; &nbsp; }</font><br>
+} <br>
+</code></p></NOBR>
+
+</body>
+</html>

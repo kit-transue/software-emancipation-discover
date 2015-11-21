@@ -1,0 +1,7 @@
+CPROOTS = \
+	QualityCockpitUI \
+	QC_ReportUI \
+	sessionListUI \
+	errorOutputUI
+
+

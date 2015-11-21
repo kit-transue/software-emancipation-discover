@@ -1,0 +1,21 @@
+#!/bin/sh
+# To work aroung signal bug in csh in Solaris
+
+$PSETHOME/bin/pset-which xset 1>/dev/null 2>&1
+if [ $? != 0 ] ; then
+    echo " "
+else
+   if [ "$BM" = "1" ]; then 
+      if  [ "$AM" = "1" ]; then
+         xset -q
+         xset -fp "$PSETHOME/lib/fonts" -fp "$PSETHOME/lib/fonts/" >& /dev/null
+         xset fp rehash
+         xset -q
+      fi
+   fi
+fi
+
+# remove temp directory unless debug flag is set
+if [ "$PSET_SAVE_TMPDIR" = "" ]; then
+   rm -fr $TMPDIR
+fi

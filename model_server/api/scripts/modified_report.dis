@@ -1,0 +1,544 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+proc closure_reset {} {
+    global all in
+    if { [info exists all] } { unset all }
+    if { [info exists in] } { unset in }
+}
+
+proc closure { proc src} {
+ closure_reset
+ set src [new_set $src]
+ set lev [closure_intern 1 $src $proc]
+ global all
+ return [set_copy [array names all]]
+
+}
+
+proc closure_intern { level src proc } {
+    global all
+    set new ""
+    set sz [size $src]
+    for { set i 1 } {$i <= $sz } {incr i} {
+       set tag [itag $src $i]
+
+       if {! [info exists all($tag)] } {
+          set all($tag) $level
+          lappend new $tag
+       }
+   }
+   if { [llength $new] > 0 } {
+       set calls [ eval $proc [new_set $new] ]
+       incr level
+       return [closure_intern $level $calls $proc  ]
+   } else {
+     return 0
+   }
+}
+
+proc 	closure_print {} {
+  global all in 
+  set max_lev 0
+  foreach el [array names all] {
+      set lev $all($el)
+      if {$lev > $max_lev } { set max_lev $lev }
+      lappend nnn($lev) $el
+  }
+  for { set i 1 } { $i <= $max_lev } { incr i } {
+      set lll $nnn($i)
+      puts " -- $i -- [llength $lll]"
+      print $lll
+  }
+}
+
+add_attribute depend_filter {(!macro) && (!function || inline) && included}
+proc dependency_proc { src } {
+    set x [ filter depend_filter [where used $src]]]
+    if { [size $x ] == 0 } { return [new_set]}
+    return $x
+}
+
+proc dependency { src } {
+ set x [closure dependency_proc [new_set $src]]
+ return [filter !field $x]
+}
+
+proc recompile { src } {
+  set head [filter header $src]
+  set src  [filter !header $src]
+  set dep [filter header [dependency $head]]
+
+  set s1  [filter !header [where referenced $dep]]
+  
+  return [set_union $s1 [where defined $src]]
+
+}
+
+
+#---------------------------------------------------------------------
+
+
+proc load_modules {} {
+    global modules_loaded
+    global system_modules
+
+    if { [info exists modules_loaded] == 0 } { set modules_loaded 0 }
+    if { $modules_loaded == 0 } {
+	set projects [set_subtract [roots] [home_proj]]
+	set system_modules [defines -modules $projects]
+	set modules_loaded 1
+    }
+}
+
+proc find_system_module { mod } {
+    global system_modules
+
+    load_modules
+    set mod_name [name $mod]
+    set ret [filter  name=="$mod_name" $system_modules]
+    return $ret
+}
+
+proc get_kind_string { obj } {
+    set k [kind $obj]
+    if { $k == "macro" }   { return "Macro          " }
+    if { $k == "funct" }   { return "Function       " }
+    if { $k == "field" }   { return "Data member    " }
+    if { $k == "struct" }  { return "Class/Structure" }
+    if { $k == "var" }     { return "Variable       " }
+    if { $k == "typedef" } { return "Typedef        " }
+    if { $k == "subsys" }  { return "Subsystem      " }
+    if { $k == "module" }  { return "File           " }
+}
+
+proc get_local_lines { obj } {
+    set lines [src_lines $obj]
+    set ret [lindex $lines 0]
+    append ret "-" [lindex $lines 1]
+    return $ret
+}
+
+proc print_new_object_info { obj } {
+    set out_str [get_kind_string $obj]
+    append out_str "\t\t" [name $obj] ", " [get_local_lines $obj] ", " [fname $obj]
+    puts $out_str
+}
+
+proc print_deleted_object_info { obj } {
+    set out_str [get_kind_string $obj]
+    append out_str "\t\t" [name $obj] ", " [fname $obj]
+    puts $out_str
+}
+
+proc print_modified_object_info { mod sys_mod obj } {
+    set out_str [get_kind_string $obj]
+    append out_str "\t\t" [name $obj] ", " [get_local_lines $obj] ", " [fname $obj]
+    puts $out_str
+}
+
+proc report_new_objects { loc_defs sys_defs } {
+    set new_objects [set_subtract $loc_defs $sys_defs]
+    foreach obj $new_objects {
+	print_new_object_info $obj
+    }
+    return $new_objects;
+}
+
+proc report_deleted_objects { loc_defs sys_defs } {
+    set deleted_objects [set_subtract $sys_defs $loc_defs]
+    foreach obj $deleted_objects {
+	print_deleted_object_info $obj
+    }
+    return $deleted_objects
+}
+
+proc report_modified_objects { mod sys_mod loc_defs sys_defs } {
+    #filter out new objects
+    set new_objects [set_subtract $loc_defs $sys_defs]
+    set mod_objects [modified_objects $mod]
+    set mod_objects [set_subtract $mod_objects $new_objects]
+    foreach obj $mod_objects {
+	print_modified_object_info $mod $sys_mod $obj
+    }
+    return $mod_objects
+}
+
+proc find_system_object { sys_mod obj } {
+    set defs [defines $sys_mod]
+    set nm [name $obj]
+    return [filter name=="$nm" $defs]
+}
+
+proc print_diff { mod sys_mod obj sys_obj } {
+    set start_ln [met_START_LN $sys_obj]
+    if { $start_ln >= 0 } {
+	append start_ln "l"
+	set sys_file_name [fname $sys_mod]
+	append sys_file_name "@@" [src_version $mod]
+	exec "tail" "+$start_ln" "$sys_file_name" ">" "/tmp/cli_demo.tmp"
+	set func_lines [met_LOC $sys_obj]
+	exec "head" "-$func_lines" "/tmp/cli_demo.tmp" ">" "/tmp/cli_demo1.tmp"
+
+	set new_lines [src_lines $obj]
+	set new_start_ln [lindex $new_lines 0]
+	append new_start_ln "l"
+	exec "tail" "+$new_start_ln" [fname $mod] ">" "/tmp/cli_demo.tmp"
+	set func_lines [expr [lindex $new_lines 1] - [lindex $new_lines 0] + 1]
+	exec "head" "-$func_lines" "/tmp/cli_demo.tmp" ">" "/tmp/cli_demo0.tmp"
+	catch { exec "diff" "/tmp/cli_demo0.tmp" "/tmp/cli_demo1.tmp" ">" "/tmp/cli_demo.tmp" }
+	set diff_result [exec "cat" "/tmp/cli_demo.tmp"]
+	puts $diff_result
+    } else {
+	puts "No metric information found"
+    }
+}
+
+proc report_var_change { mod sys_mod obj sys_obj } {
+    >> /tmp/cli_vchange {
+	print_new_object_info $obj
+#	print_diff $mod $sys_mod $obj $sys_obj
+    }
+}
+
+proc report_macro_change { mod sys_mod obj sys_obj } {
+    >> /tmp/cli_mchange {
+	print_new_object_info $obj
+    }
+}
+
+proc report_typedef_change { mod sys_mod obj sys_obj } {
+    >> /tmp/cli_tchange {
+	print_new_object_info $obj
+    }
+}
+
+proc report_function_change { mod sys_mod obj sys_obj } {
+    >> /tmp/cli_fchange {
+	print_new_object_info $obj
+	print_diff $mod $sys_mod $obj $sys_obj
+    }
+}
+
+proc report_class_new_member { new_member } {
+    set out_str [get_kind_string $new_member]
+    append out_str "\t\t" [name $new_member] ", " [get_local_lines $new_member] ", " [fname $new_member]
+    puts $out_str
+}
+
+proc report_class_new_members { class new_members } {
+    >> /tmp/cli_cnewchange {
+	foreach mem $new_members {
+	    report_class_new_member $mem
+	}
+    }
+}
+
+proc report_class_deleted_member { del_member } {
+    set out_str [get_kind_string $del_member]
+    append out_str "\t\t" [name $del_member] ", " [fname $del_member]
+    puts $out_str
+}
+
+proc report_class_deleted_members { class del_members } {
+    >> /tmp/cli_cdelchange {
+	foreach mem $del_members  {
+	    report_class_deleted_member $mem
+	}
+    }
+}
+
+proc report_class_new_access { class member } {
+    >> /tmp/cli_cachange { 
+	set out_str [get_kind_string $member]
+	append out_str " " [ppp $member] "\t" [name $member] ", " [get_local_lines $member] ", " [fname $member]
+	puts $out_str
+    }
+}
+
+proc report_class_inheritance_change { class sys_class } {
+    >> /tmp/cli_cichange {
+	print_modified_object_info "" "" $class
+    }
+}
+
+proc report_class_change { mod sys_mod obj sys_obj } {
+    #Check for new/deleted data/methods
+    set ul [uses $obj]
+    set us [uses $sys_obj]
+    set new [set_subtract $ul $us]
+    if { [size $new] != 0 } {
+	report_class_new_members $obj $new
+    }
+    set del [set_subtract $us $ul]
+    if { [size $del] != 0 } {
+	report_class_deleted_members $obj $new
+    }
+    #Check for member access change
+    foreach mem $us {
+	set name_array([name $mem]) [ppp $mem]
+    }
+    foreach new_mem $ul {
+	if [info exists name_array([name $new_mem])] {
+	    set new_access [ppp $new_mem]
+	    if { "$new_access" != "$name_array([name $new_mem])" } {
+		report_class_new_access $obj $new_mem
+	    }
+	}
+    }
+    #Check for inheritance change
+    set super_local [get_super_classes $obj]
+    set super_system [get_super_classes $sys_obj]
+    set res [set_subtract $super_local $super_system]
+    if { [size $res] != 0 } {
+	report_class_inheritance_change $obj $sys_obj
+    }
+    set res [set_subtract $super_system $super_local]
+    if { [size $res] != 0 } {
+	report_class_inheritance_change $obj $sys_obj
+    }
+}
+
+proc report_object_change { mod sys_mod obj sys_obj } {
+    set k [kind $obj]
+    if { $k == "funct" } { report_function_change $mod $sys_mod $obj $sys_obj }
+    if { $k == "struct" } { report_class_change $mod $sys_mod $obj $sys_obj }
+    if { $k == "var" } { report_var_change $mod $sys_mod $obj $sys_obj }
+    if { $k == "macro" } { report_macro_change $mod $sys_mod $obj $sys_obj }
+    if { $k == "typedef" } { report_typedef_change $mod $sys_mod $obj $sys_obj }
+}
+
+proc collect_modifications { mod } {
+    set sys_mod [find_system_module $mod]
+    set sys_defs [defines $sys_mod]
+    set loc_defs [defines $mod]
+    #filter out new objects
+    set new_objects [set_subtract $loc_defs $sys_defs]
+    set mod_objects [modified_objects $mod]
+    set mod_objects [set_subtract $mod_objects $new_objects]
+    foreach obj $mod_objects {
+	set sys_obj [find_system_object $sys_mod $obj]
+	report_object_change $mod $sys_mod $obj $sys_obj
+    }
+}
+
+proc print_file { fname } {
+    set cont [exec "cat" "$fname"]
+    puts $cont
+}
+
+proc print_modifications {} {
+    puts "Change Notice"
+    puts "-------------"
+    puts ""
+    if { [file exists "/tmp/cli_vchange"] != 0 } {
+	puts "CHANGE TYPE : Global variable changed"
+	print_file "/tmp/cli_vchange"
+	puts ""
+    }
+    if { [file exists "/tmp/cli_mchange"] != 0 } {
+	puts "CHANGE TYPE : Macro changed"
+	print_file "/tmp/cli_mchange"
+	puts ""
+    }
+    if { [file exists "/tmp/cli_tchange"] != 0 } {
+	puts "CHANGE TYPE : Typedef changed"
+	print_file "/tmp/cli_tchange"
+	puts ""
+    }
+    if { [file exists "/tmp/cli_fchange"] != 0 } {
+	puts "CHANGE TYPE : Content changed"
+	print_file "/tmp/cli_fchange"
+	puts ""
+    }
+    if { [file exists "/tmp/cli_cnewchange"] != 0 } {
+	puts "CHANGE TYPE : New methods/data members"
+	print_file "/tmp/cli_cnewchange"
+	puts ""
+    }
+    if { [file exists "/tmp/cli_cdelchange"] != 0 } {
+	puts "CHANGE TYPE: Deleted methods/data members"
+	print_file "/tmp/cli_cdelchange"
+	puts ""
+    }
+    if { [file exists "/tmp/cli_cachange"] != 0 } {
+	puts "CHANGE TYPE: Class member changed access"
+	print_file /tmp/cli_cachange 
+	puts ""
+    }
+    if { [file exists "/tmp/cli_cichange"] != 0 } {
+	puts "CHANGE TYPE: Inheritance hierarchy changed"
+	print_file /tmp/cli_cichange
+	puts ""
+    }
+}
+
+proc report_cleanup {} {
+    catch { [exec "rm" "/tmp/cli_vchange"] }
+    catch { [exec "rm" "/tmp/cli_mchange"] }
+    catch { [exec "rm" "/tmp/cli_tchange"] }
+    catch { [exec "rm" "/tmp/cli_fchange"] }
+    catch { [exec "rm" "/tmp/cli_cnewchange"] }
+    catch { [exec "rm" "/tmp/cli_cdelchange"] }
+    catch { [exec "rm" "/tmp/cli_cachange"] }
+    catch { [exec "rm" "/tmp/cli_cichange"] }
+}
+
+proc print_new_objects { mod } {
+    set sys_mod [find_system_module $mod]
+    set sys_defs [defines $sys_mod]
+    set loc_defs [defines $mod]
+    report_new_objects $loc_defs $sys_defs
+}
+
+proc print_modified_objects { mod } {
+    set sys_mod [find_system_module $mod]
+    set sys_defs [defines $sys_mod]
+    set loc_defs [defines $mod]
+    set mod_objects [report_modified_objects $mod $sys_mod $loc_defs $sys_defs]
+    return $mod_objects
+}
+
+proc print_deleted_objects { mod } {
+    set sys_mod [find_system_module $mod]
+    set sys_defs [defines $sys_mod]
+    set loc_defs [defines $mod]
+    set deleted_objects [report_deleted_objects $loc_defs $sys_defs]
+    return $deleted_objects
+}
+
+proc print_objects_affected { objs } {
+    puts ""
+    puts "IMPACT TYPE: Objects Affected"
+    set affected [where used $objs]
+    foreach obj $affected {
+	print_deleted_object_info $obj
+    }	
+}
+
+proc print_files_affected { objs } {
+    puts ""
+    puts "IMPACT TYPE: Files Affected"
+    set affected [where referenced $objs]
+    foreach obj $affected {
+	set str "File\t\t\t"
+	append str [fname $obj]
+	puts $str
+    }	
+}
+
+proc print_files_to_recompile { objs } {
+    puts ""
+    puts "IMPACT TYPE: Files requiring recompilation"
+    set files [recompile $objs]
+    foreach obj $files {
+	set str "File\t\t\t"
+	append str [fname $obj]
+	puts $str
+    }	
+    return $files
+}
+
+proc print_subsystems_affected { files } {
+    puts ""
+    puts "IMPACT TYPE: Subsystems affected"
+    set subsystems [apply {lname["/(*)/**", "(1)"]} $files]
+    foreach sub $subsystems {
+	puts $sub
+    }
+}
+
+proc print_impact { del_obj mod_obj } {
+    puts "Impact Analysis Report"
+    puts "----------------------"
+    set objs [set_add $del_obj $mod_obj]
+    print_objects_affected $objs
+    print_files_affected $objs
+    set files_to_recompile [print_files_to_recompile $objs]
+    print_subsystems_affected $files_to_recompile
+}
+
+proc do_generate { sel } {
+    report_cleanup
+    puts "Following new program object were added:"
+    puts "----------------------------------------"
+    puts ""
+    foreach mod $sel { 
+ 	if { [kind $mod] == "module" } {
+	    print_new_objects $mod
+	}
+    }
+    puts ""
+    puts ""
+    set all_modified_objects [nil_set]
+    puts "Following program object were modified:"
+    puts "---------------------------------------"
+    puts ""
+    foreach mod $sel { 
+ 	if { [kind $mod] == "module" } {
+	    set all_modified_objects [set_add $all_modified_objects [print_modified_objects $mod]]
+	}
+    }
+    puts ""
+    puts ""
+    set all_deleted_objects [nil_set]
+    puts "Following program object were deleted:"
+    puts "--------------------------------------"
+    puts ""
+    foreach mod $sel { 
+ 	if { [kind $mod] == "module" } {
+	    set all_deleted_objects [set_add $all_deleted_objects [print_deleted_objects $mod]]
+	}
+    }
+    puts ""
+    puts ""
+    foreach mod $sel { 
+ 	if { [kind $mod] == "module" } {
+	    collect_modifications $mod
+	    print_modifications
+	}
+    }
+    puts ""
+    puts ""
+    print_impact $all_deleted_objects $all_modified_objects
+}
+
+proc generate_report { sel } {
+    set output_file [prompt -title "Report" "Enter filename:"]
+    if { $output_file == "" } { return "canceled" }
+    >> $output_file {
+	do_generate $sel
+    }
+    return "report generated"
+}
+
+set modules_loaded 0
+
+add_action "Generate Report" generate_report
+#add_menu "Report"
+#add_item "Report" "Generate Report" generate_report
+

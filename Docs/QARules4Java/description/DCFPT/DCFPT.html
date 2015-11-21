@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<p><b>DCFPT - Don't Compare Floating Point Types</b></p>
+
+<p>
+Avoid testing floating point numbers for equality: 
+floating-point numbers that should be equal
+are not exactly equal due to rounding problems.
+</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void oper (double d) {<br>
+&nbsp; &nbsp; if ( <font color='red'> d != 15.0 </font> ) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; for ( double f = 0.0; <font color='red'>f &lt; d</font>; f += 1.0 ) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+<p><b>Tip:</b>
+Replace direct comparison with estimation of absolute value of difference
+</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void oper (double d) {<br>
+&nbsp; &nbsp; if ( <font color='blue'> Math.abs(d - 15.0) &lt; Double.MIN_VALUE * 2  </font> ) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; for ( double f = 0.0; <font color='blue'>d - f &gt; DIFF</font>; f += 1.0 ) {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // do something<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; }<br>
+}
+</code></p></NOBR>
+
+</body>
+</html>

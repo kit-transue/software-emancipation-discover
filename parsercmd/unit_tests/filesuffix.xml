@@ -1,0 +1,30 @@
+<!-- Test of filesuffix. -->
+<!-- Test with:
+	x.C
+	x.c
+	x.cxx
+	x.CXX
+	x.Cxx
+	x.cXX
+	x.d
+	x.D
+     Result:
+        CPP
+        C
+	CXX
+        CXX
+        CXX
+        CXX
+	D
+	DPP
+-->
+<cmdline nameintro="-">
+ <translate>
+  <filesuffix name="C" foldcase="0">CPP</filesuffix>
+  <filesuffix name="c" foldcase="0">C</filesuffix>
+  <filesuffix name="D">DPP</filesuffix>
+  <filesuffix name="d">D</filesuffix>
+  <filesuffix name="cxx" foldcase="1">CXX</filesuffix>
+ </translate>
+</cmdline>
+

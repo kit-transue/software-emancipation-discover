@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Parse Errors</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {text-decoration: underline ; color: #ff6262}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Parse Errors</b></p>
+<p class="p2">If parse errors occur during the model build, they indicate that the Code<br>
+Integrity parser is failing to mimic the compiler that you use to process source code and build an executable file. This is a common problem, but one that you can remedy with one of several approaches. Although most developers program with standard languages, even slight differences among compliers can turn up in the course of processing thousands of lines of code. To address this behavior, Code<br>
+Integrity parsers are automatically configured to behave like various compilers.</p>
+<p class="p2">In the build log, you can view the invocation of parsers by searching for <span class="s1">aset_CCcc</span> or <span class="s1">aset_jfe</span> for C/C++ or Java, respectively.</p>
+<p class="p2">On occasion, you may need to provide additional guidance in order for the Code<br>
+Integrity parser to perform correctly. To alleviate parser errors, you can change Code<br>
+Integrity parser configuration by modifying the following specifications:</p>
+<p class="p3">•<span class="s2">   </span>compiler that it is emulating</p>
+<p class="p3">•<span class="s2">   </span><span class="s1">#include</span> search path</p>
+<p class="p3">•<span class="s2">   </span>predefined macros</p>
+<p class="p3">•<span class="s2">   </span>compatibility modes</p>
+<p class="p2">You can adjust all of these by modifying the model version’s <span class="s1">Setup.txt</span> file. For more information on editing this configuration file, see <a href="../ia_06_managing_infomodel/editing_model_configuration_information.html#XREF_Displaying_Available"><span class="s3">Editing Model Configuration Information</span></a>.</p>
+</body>
+</html>

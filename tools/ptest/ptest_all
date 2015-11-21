@@ -1,0 +1,99 @@
+#!/bin/csh -f 
+
+unsetenv PSET_EPOCH_LIST
+source ${PROJ_ROOT}/tools/ptest/ptest_set_tmpdir
+
+if ($status != 0) exit 1
+
+set old_psettest = ""
+if ($?PSETTEST) then
+	set old_psettest = "$PSETTEST"
+endif
+
+if ($?PTEST_NO_TIMEOUT) then
+	echo "Unset environment variable PTEST_NO_TIMEOUT"
+	unsetenv PTEST_NO_TIMEOUT
+endif
+
+if (! $?PTEST_TMPDIR) then
+	setenv PTEST_TMPDIR /usr/tmp
+endif
+if (! $?PTEST_ROOT) then
+	setenv PTEST_ROOT ${PROJ_ROOT}/job1/tests
+endif
+
+setenv PSETTEST $PTEST_TMPDIR/current_test
+set to_out = "$PTEST_TMPDIR/test_outdir"
+
+echo ""
+echo "Using PSETTEST $PSETTEST"
+echo "Using outdir   $to_out"
+echo ""
+
+if ($?PTEST_PSETHOME) then
+	setenv PSETHOME $PTEST_PSETHOME
+	echo "Using specified PSETHOME: $PTEST_PSETHOME" 
+else
+	echo "Using default PSETHOME: $PSETHOME"
+endif
+
+if (! $?meg) then
+	set t_exec = "$PSETHOME/bin/aset"
+	setenv meg "$PSETHOME/bin"
+	echo "Using default meg: $PSETHOME/bin"
+else
+	set t_exec = "$meg/aset"
+	echo "using specified meg: $meg"
+endif
+
+if (! $?PTEST_CONTINUE) then
+	echo ""
+	echo "==> start INIT"
+	ptest_init $PSETTEST $to_out
+	echo "<== end INIT"
+	echo ""
+
+	if ($status != 0) then
+	    echo "PTEST_ALL: failed."
+	    exit 1
+	endif
+else
+	echo "Cleaning $PSETTEST ..."
+	\rm -rf $PSETTEST/* >&! /dev/null
+endif
+
+# Resolve PSETTEST into realpath
+cd $PSETTEST
+setenv PSETTEST `pwd`
+
+if (! $?PTEST_LOCATION) then
+	set t_loc  = "$PTEST_MASTER_LOCATION"
+	echo "default test location: $t_loc"
+else
+	set t_loc = "$PTEST_LOCATION"
+	echo "Setting test location to $t_loc"
+endif
+
+echo ""
+
+if (! -x $PSETHOME/bin/discover) then
+	echo "ERROR: failed to find $PSETHOME/bin/discover"
+	exit 1
+else if (! -x "$t_exec" ) then
+	echo "ERROR: failed to find $t_exec"
+	exit 1
+endif
+
+setenv LD_LIBRARY_PATH $PSETHOME/lib/$Arch-g:$LD_LIBRARY_PATH 
+echo "Setting LD_LIBRARY_PATH to $LD_LIBRARY_PATH"
+
+setenv PTEST_ALL ""
+
+echo ""
+echo ptest_run -exec $t_exec -location $t_loc -outdir $to_out -group R -group S -group B -group C -group M -group Y
+
+ptest_run -exec $t_exec -location $t_loc -outdir $to_out -group R -group S -group B -group C -group M -group Y
+
+if ($old_psettest != "") then
+	setenv PSETTEST old_psettest
+endif

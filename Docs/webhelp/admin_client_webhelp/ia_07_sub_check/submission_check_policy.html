@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Submission Check Policy</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 48.0px 16.0px 48.0px; font: 11.0px Verdana; background-color: #eaf4ff}
+    p.p4 {margin: 0.0px 1.0px 0.0px 1.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p6 {margin: 0.0px 1.0px 8.0px 1.0px; font: 13.0px Tahoma; color: #af0a16}
+    p.p7 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; color: #ff6262}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px Courier}
+    span.s3 {font: 11.0px 'Courier New'}
+    span.s4 {font: 9.0px 'Times New Roman'}
+    span.s5 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Submission Check Policy</b></p>
+<p class="p2">The first task is to create a Submission Check policy for your site. The policy is stored in a policy file, the location of which is specified by the preference <span class="s1">*psetPrefs.SubmissionCheck.Policy</span>.<span class="s2"> </span>If this preference is not set or if the file specified does not exist, Submission Check uses <span class="s1">&lt;CodeIntegrityInstalldir&gt;/lib/baselib.sc</span><span class="s2"> </span>as its default.</p>
+<p class="p3"><b>Note: </b>The model build caches the preference values. For this reason, it is best to specify the path to the policy file (we recommend <span class="s3">&lt;repository&gt;/prefs/baselib.sc</span>) before running the model build.</p>
+<p class="p2">If it is necessary to change the path of the policy file after the model build starts, the cached preference file, <span class="s1">&lt;repository&gt;/tmp/disbuild/ mb.prefs</span>, should be edited. This is necessary because the DIScover process started by the build server reads the cached preferences, not the original ones.</p>
+<p class="p3"><b>Note: </b>Environment variables cannot be used in the cached preference file, so the <span class="s3">&lt;repository&gt;</span> value should be expanded in the preference in <span class="s3">&lt;repository&gt;/prefs/baselib.sc</span>.</p>
+<p class="p4">The Submission Check policy has two parts:</p>
+<p class="p5">•<span class="s4">   </span>a list of queries to run when checking files</p>
+<p class="p5">•<span class="s4">   </span>a list of recipients for the generated reports</p>
+<p class="p6"><b>Related Topics</b></p>
+<p class="p7"><span class="s5"><a href="../ia_07_sub_check/to_disable_a_query.html#XREF_To_disable_a_query">To disable a query</a></span></p>
+<p class="p7"><span class="s5"><a href="../ia_07_sub_check/to_change_the_list_of_recipients_of_the_submission_reports.html#XREF_To_change_the_list_of">To change the list of recipients of the submission reports</a></span></p>
+</body>
+</html>

@@ -1,0 +1,42 @@
+#!/bin/sh
+# cm_makehlink (ClearCase) - Create hyperlink between .pset ($pset) & source ($source) files.
+
+set +e
+
+# Check if file exists, exit if it doesn't
+if [ ! -f $pset ] ; then
+    exit 0
+fi
+if [ ! -f $source ] ; then
+    exit 0	
+fi
+
+# Create a hyperlinks between .pset and source
+dir=`dirname $pset`
+dir=`echo "$dir/."`
+# Resolve all symbolic links
+dir=`cleartool describe -short $dir`
+cleartool mkhltype -nc -vob $dir PSET_SRC_LINK 2> /dev/null
+
+# Create the same hyperlink type for source (.pset & source might be in
+# different VOBS)
+dir=`dirname $source`
+dir=`echo "$dir/."`
+# Resolve all symbolic links
+dir=`cleartool describe -short $dir`
+cleartool mkhltype -nc -vob $dir PSET_SRC_LINK 2> /dev/null
+
+branch=`cleartool describe -pre -short $source | sed -e 's%/main/\(.*\)/[^/]*%\1%' -e 's%/main/[^/]*%main%'`
+# Get the current version for this file
+currentversion=`cleartool lshistory -branch $branch $source 2> /dev/null \
+               | $PSETCFG/util/atria_revisions_only | head -1`
+if [ "$currentversion" != "" ] ; then
+	c_file=`echo $source | sed -e 's/@@.*$//'`
+	c_file="$c_file@@$currentversion"
+	hyperlink=`cleartool describe -ahlink PSET_SRC_LINK $c_file | \
+    		   grep 'PSET_SRC_LINK' | head -1 | sed -e 's%\(PSET_SRC_LINK\@[^ ]*\).*%\1%'`
+	if [ "$hyperlink" != "" ] ; then
+		cleartool rmhlink $hyperlink 2> /dev/null
+	fi
+	cleartool mkhlink PSET_SRC_LINK $c_file $pset 2> /dev/null 
+fi

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Advanced Applications</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 8.0px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    p.p5 {margin: 0.0px 72.0px 13.3px 72.0px; text-align: center; font: 11.0px Verdana; color: #00007f}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 9.0px 'Times New Roman'}
+    span.s3 {text-decoration: underline ; color: #ff6262}
+    span.s4 {font: 13.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Advanced Applications</b></p>
+<p class="p2"><b>Example 1: Strings in Function Calls</b></p>
+<p class="p3">The task is to locate function calls that pass a string literal in the argument list. Your first impulse might be to use something like the following TPM command:</p>
+<p class="p4">tree find { call_expr find(string) } /proj</p>
+<p class="p3">This, however, matches expressions which contain strings inside of subexpressions, as well as those that use strings directly. The following code fragment yields two matches—<span class="s1">foo(...)</span> and <span class="s1">bar(...)</span>:</p>
+<p class="p4">foo(bar("abc"), x)</p>
+<p class="p3">In addition, this command is not as efficient as it could be. The domain of possible matches is every node in the specified scope. To narrow down the domain, use traditional Access queries in combination with patterns, as in the following example:</p>
+<p class="p4">set strings [ uses -string /proj ]<br>
+set instances [ instances $strings ]<br>
+tree navigate { r(&lt;- ast_expr) call_expr } $instances</p>
+<p class="p3">The instances are converted to nodes by <span class="s1"><b>tree</b></span>, which then moves upwards along the AST until an expression is found. If the expression represents a function call, then the function call expression is a match.</p>
+<p class="p3">The only problem with the above sequence of commands is that when <span class="s1"><b>tree</b></span> converts the instances to nodes, model information for an arbitrary number of source files may get loaded, depending on how many strings there are in the project and where these strings are located. This can be memory intensive if the project is extremely large. In addition, you would have to unload these files manually after the pattern is executed by using the <span class="s1"><b>src_unload</b></span> command or <b>File &gt; Unload</b> in the Browser.</p>
+<p class="p3">The <span class="s1"><b>apply_per_file</b></span> wrapper loads files as necessary, and unloads them when they are no longer needed. Using the <span class="s1"><b>apply_per_file</b></span> wrapper can assist in the handling of memory intensive task, as in the preceding example. The following sequence of commands is a scalable solution for the task at hand:</p>
+<p class="p4">set strings [ uses -string /proj ]<br>
+set instances [ instances $strings ]<br>
+apply_per_file<span class="s2">         </span> "string args”<span class="s2">                        </span>\<br>
+<span class="s2">   </span>"tree navigate {r (&lt;-ast_expr) call_expr}"<span class="s2">                              </span>\<br>
+<span class="s2">   </span>$instances</p>
+<p class="p3">The <span class="s1"><b>apply_per_file </b></span>command also provides you with the added benefit of a visual progress indicator and cancel button. For more information on using the apply_per_file wrapper, see <a href="../access_appa_commands/auxiliary_commands1.html#XREF_Auxiliary_Commands"><span class="s3">Auxiliary Commands</span></a>.</p>
+<p class="p2"><b>Example 2: Unterminated Varargs Parameter List</b></p>
+<p class="p3">Many functions that take a variable number of arguments require that the last argument be <span class="s1">NULL</span> or some other distinct value to terminate the list of parameters. If the caller fails to terminate the parameter list, the behavior is undefined. This type of error could result in data corruption or abnormal termination of the program. For example, the <span class="s4">XtVa</span> family of functions in the <span class="s4">Xt</span> library (available on the Unix platform for use with the <span class="s4">X11</span> windowing system) are variable argument functions that require the last argument to be <span class="s1">NULL</span> (or simply <span class="s4">0</span>). A properly formed call to an <span class="s4">XtVa</span> routine might look like the following (this example uses identifiers found in the Motif user interface library):</p>
+<p class="p4">Widget frame = XtVaCreateWidget("frame”,<br>
+<span class="s2">   </span>xmFrameWidgetClass, base,<br>
+<span class="s2">   </span>XmNtopAttachment, XmATTACH_FORM,<br>
+<span class="s2">   </span>XmNtopOffset, 1,<br>
+<span class="s2">   </span>NULL);</p>
+<p class="p3">To identify malformed calls in which the last argument is not <span class="s1">NULL</span>, you first need to find all of the calls to <span class="s1">XtVa</span> functions. Once you have completed this task, navigate to the last argument, and test if it is zero. (Since <span class="s1">NULL</span> is a macro defined to be <span class="s1">0</span> or <span class="s1">0L</span>, it is treated as an integer constant whose <span class="s1">cname</span> is <span class="s1">0</span>.) The following is a handy procedure that can be used to find malformed <span class="s1">XtVa</span> calls in any file or project:</p>
+<p class="p4">proc dangling_varargs { domain } {<br>
+<span class="s2">   </span>set func [ uses -functions $domain ]<br>
+<span class="s2">   </span>set varargs [ filter {regexp("XtVa”, name)} $func ]<br>
+<span class="s2">   </span>set inst [ instances $varargs ]<br>
+<span class="s2">   </span>set calls [ tree navigate {(-- nil) &lt;- call_expr} $inst ]<br>
+<span class="s2">   </span>set bad [ tree filter {-&gt; r(,)(, nil) cname!=”0”} $calls ]<br>
+<span class="s2">   </span>return $bad<br>
+}</p>
+<p class="p3">For example:</p>
+<p class="p4">% dangling_varargs /proj<br>
+1 call_expr 578 55 `XtVaSetValues ... idget, toolb)’<br>
+2 call_expr 525 51 `XtVaCreateWid ... tClass, base)’</p>
+<p class="p3">To avoid cases where an <span class="s1">XtVa</span> routine is used in a function call expression, but is not the target of the function call (for example, passing the address of an <span class="s1">XtVa</span> routine to another function), the first <span class="s1"><b>tree</b></span> command removes nodes that are not the primary child of a call expression, and then returns the call expressions themselves. The <span class="s1"><b>second tree</b></span> command filters these call expression nodes for argument lists that are not terminated by zero.</p>
+<p class="p3">The <span class="s1"><b>dangling_varargs</b></span> procedure could be easily modified to handle any function declared with variable arguments by defining the following procedure:</p>
+<p class="p4">proc is_varargs { func } {<br>
+<span class="s2">   </span>set inst [ instances $func ]<br>
+<span class="s2">   </span>set decl [ tree navigate &lt;-function_decl $inst ]<br>
+<span class="s2">   </span>set va [ tree filter {regexp("\.\.\.”,ast_text)} $decl ]<br>
+<span class="s2">   </span>return [ size $va ]<br>
+}</p>
+<p class="p3">This searches the declaration of a function for the ellipsis (<span class="s1">...</span>) construct and returns a value greater than zero if the function is elliptical. To use this procedure in <span class="s1">dangling_varargs</span>, remove the attribute filter statement and replace it with a loop that collects the elliptical functions:</p>
+<p class="p4">proc dangling_varargs { domain } {<br>
+<span class="s2">      </span>set func [ uses -functions $domain ]<br>
+<span class="s2">   </span>set varargs [ nil_set ]<br>
+<span class="s2">   </span>foreach f $func {<br>
+<span class="s2">      </span>if { [ is_varargs $f ] } {<br>
+<span class="s2">      </span>sappend $varargs $f<br>
+<span class="s2">   </span>}<br>
+<span class="s2">   </span>}<br>
+set inst [ instances $varargs ]<br>
+<span class="s2">   </span>set calls [ tree navigate {(-- nil) &lt;- call_expr} $inst ]<br>
+<span class="s2">   </span>set bad [ tree filter {-&gt; r(,)(, nil) cname!=”0”} $calls ]<br>
+<span class="s2">   </span>return $bad<br>
+}</p>
+<p class="p3"> </p>
+<p class="p5"> </p>
+</body>
+</html>

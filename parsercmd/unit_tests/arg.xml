@@ -1,0 +1,41 @@
+<!-- Test of:
+	remarg
+	noarg
+	immarg
+	separg
+	immarg together with separg
+-->
+<!-- Test with:
+        x.c -no -immimm -sep sep -bothboth -something -both both
+        x.c -imm -something -imm something
+        x.c -sep -something -sep something -something
+	x.c -both -something -both something -something
+	x.c -immtember -september -sepsomething
+        x.c -imm1 -rem -imm2
+	x.c "-imm/foo foo" "-imm" -sep "" -imm""
+
+     Results:
+	-immimm -sep sep -both both -something -both both
+	-imm -something -imm
+	-sep -something -sep something -something
+	-both -something -both something -something
+	-immtember -noseptember
+	-imm1
+	"-imm/foo foo" -imm -sep "" -imm
+     Also try with
+	--unrecognized error
+     on the command line to report the unrecognized options.
+-->
+<cmdline nameintro="-">
+ <translate>
+  <option name="no" noarg="1"/>
+  <option name="imm" immarg="1">-imm%</option>
+  <option name="immtember" noarg="1">-noimmtember</option>
+  <option name="sep" separg="1">-sep %</option>
+  <option name="september" noarg="1">-noseptember</option>
+  <option name="both" immarg="1" separg="1">-both %</option>
+  <option name="something" noarg="1">-something</option>
+  <option name="rem" remarg="1"/>
+ </translate>
+</cmdline>
+

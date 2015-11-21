@@ -1,0 +1,72 @@
+<head>
+<title>Severity Percolation</title>
+</head>
+<body bgcolor="white">
+<h2 align="center">Severity Percolation</h2>
+<table>
+<tr><td align="right">From:<td width="2%"><td>Scott Turner
+<tr><td align="right">To:<td width="2%"><td>Peter Goodrich
+<tr><td align="right">Date:<td width="2%"><td>2000 July 21
+</table>
+<p>
+Percolation is the determination of the severity that is
+labeled on a message group (including root).
+The severity is the maximum of the severities
+propagated from any child node, 
+but <em>the propagated severity may be different from
+the severity of the child</em>.
+A configuration file determines how the severity of the
+child node is adjusted, prior to factoring it into the
+parent's severity. 
+This is the spec for the configuration file.
+</p>
+<p>This spec is embodied in /paraset/src/logpresent/filtersev.C.
+It is used in /paraset/src/logpresent/data/filtersev.xml, which is
+installed as %CODE_ROVER_HOME%/lib/filtersev.xml.
+</p>
+<h4>XML Spec</h4>
+<p>The element types are:
+<ul>
+<li>percolate
+  <br>Wraps the entire XML file.
+  <br>Contains zero or more &lt;group&gt; elements as children.
+<li>group
+  <br>Contains a &lt;name&gt; element.
+  <br>Contains zero or more &lt;filter&gt; elements.
+<li>name
+  <br>contains text
+<li>filter
+  <br>a boolean function which filters the children
+  <br>indicates conditions,
+      each a &lt;messageid&gt;, a &lt;severity&gt;, or a &lt;groupid&gt;.
+      Additional conditions make the filter more selective.
+  <br>has a sev attribute of "normal", etc. indicating
+      the severity to propagate from the selected child
+<li>messageid
+  <br>contains text
+<li>severity
+  <br>has val attribute of "normal", etc.
+<li>groupid
+  <br>contains text
+<li>isgroup
+</ul>
+</p>
+
+<pre>
+group ::= name, filter-list
+filter ::= severity, condition-list
+condition ::= messageid | severity | groupid | isgroup
+</pre>
+
+<h4>Meaning of the Severities</h4>
+<p>Once a severity value percolates to the
+root, it has a meaning as follows:
+<table border>
+<tr><td><td><th>meaning<th>consequence
+<tr><td>normal<td>green<td>Everything is good.<td>Start the model automatically.
+<tr><td>warning<td>yellow/green<td>Almost everything is good, i.e. minor parse errors.<td>Start the model automatically.
+<tr><td>error<td>red<td>Gross error, e.g. a source module is missing.<td>Can start the model, by explicit user action.
+<tr><td>catastrophe<td>xxx<td>Unrecoverable failure to create a model.<td>Don't start model.
+</table>
+
+</body>

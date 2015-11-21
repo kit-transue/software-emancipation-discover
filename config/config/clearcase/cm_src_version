@@ -1,0 +1,17 @@
+#!/bin/sh
+# cm_src_version (ClearCase) - Extract version from source file
+
+# exit script if we get any errors
+set -e
+
+# Report version via stdout
+cleartool describe $cm_workfile | head -1 \
+	| $PSETCFG/util/atria_revisions
+
+exit 0
+
+
+#### Parameters    : None
+#### Return values : 0 = success, !0 = failure
+#### Output	   : stdout = version of file
+		   : stderr = ignored(?)

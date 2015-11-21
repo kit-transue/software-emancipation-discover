@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Subject: Classes for Browser Support</title>
+  <meta name="Author" content="Denis Peleshchuk">
+  <meta name="LastAuthor" content="Denis Peleshchuk">
+  <meta name="Company" content=" ">
+  <meta name="CreationTime" content="1998-07-09T18:50:00Z">
+  <meta name="ModificationTime" content="1998-07-10T15:20:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px 'Times New Roman'}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px 'Times New Roman'; min-height: 15.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 14.0px 'Times New Roman'}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 14.0px 'Times New Roman'; min-height: 16.0px}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px 'Courier New'}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px 'Courier New'; min-height: 14.0px}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 36.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 14.0px 'Times New Roman'}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1">Subject:<span class="s1"> </span><b>Browser support for ELS</b></p>
+<p class="p1">Prepared by: Denis Peleshchuk</p>
+<p class="p1">Last modified: July 9, 1998</p>
+<p class="p2"><br></p>
+<p class="p3"><b>1. Classes</b></p>
+<p class="p2"><br></p>
+<p class="p1">The following four classes have been introduced to make structure of both NT and Unix browsers more flexible:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">BrowserController</p>
+<p class="p1">LanguageUI</p>
+<p class="p1">BrowserData</p>
+<p class="p1">LanguageController.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">A browser needs to be aware only of BrowserController class, which uses other classes to provide necessary functionality. To get an instance of BrowserController, LanguageController::GetBrowserController() function should be used. It returns a pointer to BrowserController object which is set to all languages that are enabled in a preference file.</p>
+<p class="p2"><br></p>
+<p class="p1">Interface of BrowserController includes functions to get list of categories and queries, as well as functions to get Access commands that correspond to those categories and queries.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">Internally, BrowserController keeps an array of LanguageUI objects for all enabled languages. When a certain function needs to be called, it queries all LanguageUI objects and then merges the results. It might also call BrowserData class directly if requested information is not language specific.</p>
+<p class="p2"><br></p>
+<p class="p1">BrowserData class stores category and query information for all languages. For every query it keeps query name, corresponding Access command, and submenu index which is used by Minibrowser. For every category it keeps category name, an Access command which is invoked when this category is selected, and optionally its ddKind and command used when double click occurred on a symbol of this kind.<span class="Apple-converted-space">  </span>ddKind needs to be specified only for Discover internal categories, such as Files, Functinos, etc. For example, when a new category “Constructors” is created, ddKind should not be specified because ddKind of all symbols of this category is DD_FUNC_DECL, and this ddKind was already specified for a broader category “Functions”. In this case, “Constructors” behaves more like a query but shown in Categories column. BrowserData class is initialized from browser.dat file.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1">LanguageUI class stores information about all Categories that are available for a given language as well as all Queries that are applicable for a given category. When a symbol of this category, i.e. with the same ddKind, is selected in Browser, only queries that are specified here are going to be displayed in Ask column. For each category, we can specify whether it should be shown in the Categories column and what should be shown in status line when a symbol of this category is selected. Similar to the list of applicable queries, status line information only makes sense if there is a unique ddKind associated with a category. For initialization, LanguageUI uses a file passed to its constructor.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">By specifying information like Access commands in one file (browser.dat) common to all languages, we do not allow to overwrite queries and categories in different languages. If we did that, and a category or a query with the same name had different Access command associated with it for different languages, we would not be able to resolve ambiguity when multiple languages are enabled at the same time.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">LanguageController provides mechanism for creating instances of LanguageUI, BrowserData and BrowserController classes. To get an instance of BrowserData class, call LanguageController::GetBrowserData() static function to make sure that no more than one instance of the class is created for an application. To get an instance of LanguageUI for a class, call LanguageController::GetLanguageUI(elsLanguage lang). This way, no more than one instance of LanguageUI is created for any one language. Internally, LanguageController keeps information about all loaded instances of those classes, so when GetLanguageUI function is called, LanguagesController first checks if an instance of this class for a given language was already loaded. If so, it just returns a pointer to it. Otherwise, it creates a new instance of that class using $PSETHOME/lib//browser_data/&lt;languagename&gt;.ui file for initialization (similar to browser.dat file, LanguageController first looks for *.ui files in $HOME/.browser_data).<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3"><b>2. Preferences</b></p>
+<p class="p2"><br></p>
+<p class="p1">To initialize an instance of BrowserController class, LanguageController needs to know what languages are enabled, so that categories and queries only for those languages are loaded. For this purpose, the following three preferences are used: ELS.List, cPlusDisabled and cDisabled. LanguageController first checks if there are any languages specified in ELS.List section. If so, it loads data for all those languages. Then it checks cPlusDisabled preference, and if is not set, data for C++ are loaded. If cPlusDisabled is set, it then checks cDisabled and loads data for C if it is not set (there is no need to load data for both C++ and C because C is a subset of C++).</p>
+<p class="p2"><br></p>
+<p class="p4"><b>3. Access commands</b></p>
+<p class="p2"><br></p>
+<p class="p1">The following Access commands have been added to make use of new available functionality:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">browser add category &lt;name&gt; &lt;command&gt;</p>
+<p class="p1">browser add query &lt;name&gt; &lt;command&gt;</p>
+<p class="p1">browser remove category &lt;name&gt;</p>
+<p class="p1">browser remove query &lt;name&gt;</p>
+<p class="p1">browser set elements &lt;symbol set&gt;</p>
+<p class="p1">browser set results &lt;symbol set&gt;.<span class="Apple-converted-space"> </span></p>
+<p class="p1">browser set next &lt;symbol set&gt;</p>
+<p class="p1">open_view</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;browser add category&gt; and &lt;browser add query&gt; can be used to add an item to the first of third column of the Browser respectively. They take either one or two arguments. The first argument is a name that is going to be shown by browser, and the second is an Access command that is going to be executed when this item is selected. If second argument is missing, name and command are going to be the same. &lt;browser remove category&gt; and &lt;browser remove query&gt; take one argument and remove an item with that name from Categories or Ask column of the browser respectively. Remove commands can only be used on an item that was added using an add command, i.e. they cannot be used to remove a query or category specified in a data file.</p>
+<p class="p1">&lt;browser set elements&gt; and &lt;browser set results&gt; replace old set_elements and set_results<span class="Apple-converted-space">  </span>commands. &lt;browser set next&gt; is similar to them, but it should be used to set the content if a next available RTL. If the last selection was in the Elements column of the browser, it is going to set the Results column and vise versa. It also works for miniBrowser, i.e. if the last selection was in list1, list2 is going to be set.</p>
+<p class="p1">To get the list of all available browser subcommands, type &lt;browser&gt; with no arguments.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1">open_view is now supported for both new and old UI. It can take two arguments. The first is the mode to use for opening and the second is a set of symbols. If no mode is specified, “-definition” is used. The following switches can be used to specify mode:</p>
+<p class="p1">-text (same as –definition)</p>
+<p class="p1">-outline</p>
+<p class="p1">-flowchart</p>
+<p class="p1">-dependency</p>
+<p class="p1">-inheritance</p>
+<p class="p1">-relations</p>
+<p class="p1">-datachart</p>
+<p class="p1">-subsystems</p>
+<p class="p2"><br></p>
+<p class="p1">Also, the following commands have been added more recently because they are needed for projects that deal with reengineering NT/Unix browser.</p>
+<p class="p2"><br></p>
+<p class="p1">get_category_command &lt;CategoryName&gt;</p>
+<p class="p1">get_query_command &lt;QueryName&gt;</p>
+<p class="p1">get_categories</p>
+<p class="p1">get_queries</p>
+<p class="p1">get_queries -selection &lt;set&gt;</p>
+<p class="p1">get_queries -categories &lt;CategoryNames&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">get_category_command &lt;CategoryName&gt; returns an Access command that is associated with given category. For example, “get_category_command Functions” returns “defines -functions”.</p>
+<p class="p2"><br></p>
+<p class="p1">get_query_command does the same, but only for queries.</p>
+<p class="p2"><br></p>
+<p class="p1">get_categories returns the list of all categories that would be displayed in the first column of the browser.</p>
+<p class="p2"><br></p>
+<p class="p1">get_queries returns the list of all queries.</p>
+<p class="p2"><br></p>
+<p class="p1">get_queries -selection &lt;set&gt; returns only queries that should be available for a given set. Sample usage: get_queries -selection [defines -functions /]</p>
+<p class="p2"><br></p>
+<p class="p1">get_queries -categories &lt;CategoryNames&gt; returns only queris that should be available for given categories. Sample usage: get_queries -categories Files Functions “Local Variables”.</p>
+<p class="p2"><br></p>
+<p class="p1">This commands currently are only available in pset server and cannot be used in pmod server because els/src is not part of pmod server. If needed, this can be done later.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>4. Data files</b></p>
+<p class="p5"><b></b><br></p>
+<p class="p1">These files are located in /paraset/src/paraset/els/browser_data directory and copied to $PSETHOME/lib/browser_data during installation.</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1">There is one file, browser.dat, which is common to all languages. For each used language, LanguageName.ui file must also be present. When trying to load these files, Discover first checks in $HOME/.browser_data directory. If they cannot be found there, it then goes to $PSETHOME/lib/browser_data. This way, users can have their own customized version of any one of these files.</p>
+<p class="p2"><br></p>
+<p class="p1">Unfortunately, at this point there are actually two versions of browser.dat, not one. One is for Unix/OldUI and one is for NT/NewUI. Those files are almost absolutely identical with the exception that browser.dat.newui supplied a double-click action for projects, where as browser.dat does not. This was done because of Minibrowser which has some special handing when you double-click on a project and we did not want to lose that functionality. Ideally, we, of course, want to have one common version of browser.dat.</p>
+<p class="p2"><br></p>
+<p class="p1">General formatting guidelines for these files:</p>
+<p class="p2"><span class="Apple-converted-space">  </span></p>
+<p class="p1">White spaces and empty lines are ignored (as long as they are not in double quotes of course). Comments start with ‘#’ as a first character on a line. Anything inside &lt;&gt; is not necessary. &lt;ws&gt; means any number of white spaces.</p>
+<p class="p2"><br></p>
+<p class="p4"><b>4.1. browser.dat file</b></p>
+<p class="p2"><br></p>
+<p class="p1">This file has the following four sections:</p>
+<p class="p2"><br></p>
+<p class="p1">[SUBMENU]</p>
+<p class="p1">[QUERY]</p>
+<p class="p1">[CATEGORY]</p>
+<p class="p1">[DEFAULT_SYMBOL_FORMAT]</p>
+<p class="p2"><br></p>
+<p class="p1">Every section except for default symbol format section has to be terminated by [END] on a separate line.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">The structure looks like this:</p>
+<p class="p2"><br></p>
+<p class="p6">[SUBMENU]</p>
+<p class="p6"><span class="Apple-tab-span">	</span>"submenu0"</p>
+<p class="p6"><span class="Apple-tab-span">	</span>"submenu1"</p>
+<p class="p6"><span class="Apple-tab-span">	</span>.</p>
+<p class="p6">[END]</p>
+<p class="p7"><br></p>
+<p class="p6">[QUERY]</p>
+<p class="p6"><span class="Apple-tab-span">	</span>"Query Name 1" "Access Command" SubmenuIndex</p>
+<p class="p6"><span class="Apple-tab-span">	</span>"Query Name 2" "Access Command" SubmenuIndex</p>
+<p class="p6"><span class="Apple-tab-span">	</span>.</p>
+<p class="p6"><span class="Apple-tab-span">	</span>.</p>
+<p class="p6">[END]</p>
+<p class="p7"><br></p>
+<p class="p6">[CATEGORY]</p>
+<p class="p6"><span class="Apple-tab-span">	</span>"Category Name 1"<span class="Apple-tab-span">	</span>"Access Command"<span class="Apple-tab-span">	</span>ddKind "Access Command"</p>
+<p class="p6"><span class="Apple-tab-span">	</span>"Category Name 2"<span class="Apple-tab-span">	</span>"Access Command"<span class="Apple-tab-span">	</span>ddKind</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.</p>
+<p class="p6"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>.</p>
+<p class="p6">[END]</p>
+<p class="p2"><br></p>
+<p class="p6">[DEFAULT_SYMBOL_FORMAT]</p>
+<p class="p6">“format_str” attribute_list</p>
+<p class="p2"><br></p>
+<p class="p1"><b>4.1.1. Query section</b></p>
+<p class="p2"><br></p>
+<p class="p1">Every query should be defined on one line in the following format:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">&lt;ws&gt;"Query Name"&lt;ws&gt;”cmd”&lt;ws&gt;&lt;SubmenuIndex&gt;&lt;anything&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">QueryName is the name that is going to be shown in the third column of the browser and in the Query menu in miniBrowser.</p>
+<p class="p2"><br></p>
+<p class="p1">cmd is an Access command that is going to be executed when this query is selected. Current selection is going to be passed to this command as an argument.</p>
+<p class="p2"><br></p>
+<p class="p1">SubmenuIndex shows to which submenu this query belongs (submenus are only used by Query button in Minibrowser). This index should be taken from the order of submenus in [SUBMENU] section. Indexes start with 0. If a query does not belong to any submenu, use –1 or simply do not specify any index.</p>
+<p class="p2"><br></p>
+<p class="p1"><b>4.1.2. Submenu section</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p1">All submenus must be specified on separate lines with the following format:</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;ws&gt;"Submenu name"&lt;anything&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">If submenus are not used, this section can be omitted, but if it is used, it should proceed the Query section.</p>
+<p class="p2"><br></p>
+<p class="p1"><b>4.1.3. Category section.</b></p>
+<p class="p2"><b></b><br></p>
+<p class="p1">Each category should be defined on one line in the following format:</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;ws&gt;"Category Name"&lt;ws&gt;”cmd1”&lt;ws&gt;&lt;kind&gt;&lt;ws&gt;&lt;”cmd2”&gt;&lt;anything&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">CategoryName is the name that is going to be displayed in the first column of the browser.</p>
+<p class="p1">cmd1 is an Access command that is going to be executed when this category is selected in the browser. Current project is going to be passed to this command as an argument.</p>
+<p class="p1">kind should be specified for categories that have Discover internal ddKind associated with them. When it is not specified, this category is basically used as a query, but is displayed in Categories column.</p>
+<p class="p1">cmd2 is an Access command that is going to be executed when a user double clicks on a symbol of this kind in a browser. This symbol is going to be passed to this command as an argument. Supplying this command only makes sense if ddKind was given for this category. If this command is not specified, Discover is going to perform some default action.</p>
+<p class="p2"><br></p>
+<p class="p1"><b>4.1.4. Default symbol format section</b></p>
+<p class="p2"><br></p>
+<p class="p1">This format is used for displaying symbol information in a status line when a symbol was selected. This format can be redified for any symbol in any language in .ui files.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">Format should be defined on one line following the rules similar to printformat Access command:</p>
+<p class="p2"><br></p>
+<p class="p1">“format string” attribute_list</p>
+<p class="p2"><br></p>
+<p class="p1">Currently, the following special characters are supported in format string (same as for printformat):</p>
+<p class="p2"><br></p>
+<p class="p1">%s: print a string attribute</p>
+<p class="p1">%S: same as %s, but use all capital letters</p>
+<p class="p1">%b: print a boolean attribute. This prints a name of a boolean attribute if it returns true and empty string if it returns false. For example, [“%b” static] is going to print the word “static” if static attribute returns true for a selected symbol and nothing if it returns false.</p>
+<p class="p1">%B: same as “b”, but use all capital letters.</p>
+<p class="p2"><br></p>
+<p class="p1">Any other characters are simply printed as is. Any other character after % is also printed as is. If this section is missing, the following default format is going to be used:</p>
+<p class="p1"><span class="Apple-converted-space"> </span>“%s%s%s ==&gt; %s” kind type name fname.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4"><b>4.2. LanguageName.ui files</b></p>
+<p class="p7"><br></p>
+<p class="p1">These files are used to specify what categories should be displayed in the first column of the browser and what queries should be available when a symbol of some kind is selected. Also, if a category has associated kind defined in browser.dat file, status line format can be redefined for symbols of this kind.</p>
+<p class="p2"><br></p>
+<p class="p1">The structure looks like this:</p>
+<p class="p7"><br></p>
+<p class="p6">"Category Name1" [HIDE] ["format string" attribute_list]<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="Apple-tab-span">	</span>"Query Name 1"</p>
+<p class="p8">"Query Name 1"</p>
+<p class="p8">.</p>
+<p class="p8">.</p>
+<p class="p8">[END]</p>
+<p class="p6">"Category Name2" [SHOW]</p>
+<p class="p8">[END]</p>
+<p class="p6">.</p>
+<p class="p6">.</p>
+<p class="p7"><br></p>
+<p class="p1">Every category should be defined on a separate line, and every query for that category should be on a separate line. Make sure that the names of categories and queries exactly match those in browser.dat file. The list of queries for a category should always be terminated by [END] on a separate line, even if no queries are specified.</p>
+<p class="p2"><br></p>
+<p class="p1">The first line of a category definition should have the following format:</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;ws&gt;"CategoryName"&lt;ws&gt;[SHOW/HIDE]&lt;ws&gt;&lt;[Status Line Format]&gt;&lt;anything&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">Use [SHOW] to display a category in Categories column and [HIDE] otherwise.</p>
+<p class="p2"><br></p>
+<p class="p1">More detailed description of status line format specification can be found in description of browser.dat file. The only difference is that it should be enclosed in square brackets here. If format for a symbol is missing, default format specified in browser.dat file is used.</p>
+<p class="p2"><br></p>
+<p class="p1">Status line formats and queries only need to be supplied for categories for which ddKind was specified in browser.dat file.</p>
+</body>
+</html>

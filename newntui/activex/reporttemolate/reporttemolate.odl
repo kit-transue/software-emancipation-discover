@@ -1,0 +1,87 @@
+// ReportTemplate.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (ReportTemplate.tlb) that will become a resource in
+// ReportTemplate.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(B0A92BA3-41AC-11D2-AF18-00A0C9B71DC4), version(1.0),
+  helpfile("ReportTemplate.hlp"),
+  helpstring("ReportTemplate ActiveX Control module"),
+  control ]
+library REPORTTemplateLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CReportTemplateCtrl
+
+	[ uuid(B0A92BA4-41AC-11D2-AF18-00A0C9B71DC4),
+	  helpstring("Dispatch interface for ReportTemplate Control"), hidden ]
+	dispinterface _DReportTemplate
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CReportTemplateCtrl)
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CReportTemplateCtrl)
+			[id(1)] void AddChild(short type, BSTR tag, BSTR text);
+			[id(2)] void AddSibling(short type, BSTR tag, BSTR text);
+			[id(3)] void Save(BSTR fname);
+			[id(4)] boolean Load(BSTR fname);
+			[id(5)] void DeleteCurrent();
+			[id(6)] BSTR MakeXML();
+			[id(7)] boolean ChangeCurrent(short type, BSTR tag, BSTR text);
+			[id(8)] short GetType();
+			[id(9)] BSTR GetTag();
+			[id(10)] BSTR GetText();
+			[id(11)] BSTR GetTagsList();
+			[id(12)] void Clear();
+			[id(13)] void AddParent(short type, BSTR tag, BSTR text);
+			[id(14)] long FindToken(BSTR token);
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CReportTemplateCtrl
+
+	[ uuid(B0A92BA5-41AC-11D2-AF18-00A0C9B71DC4),
+	  helpstring("Event interface for ReportTemplate Control") ]
+	dispinterface _DReportTemplateEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CReportTemplateCtrl)
+			[id(1)] void SelectionChanged(BSTR name, BSTR text, short type);
+			[id(2)] void NodeRemoving(BSTR tag);
+			[id(3)] void AskAttributeFile(BSTR name, BSTR nodes);
+			[id(4)] void IncludeAttributeFile(BSTR name);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CReportTemplateCtrl
+
+	[ uuid(B0A92BA6-41AC-11D2-AF18-00A0C9B71DC4),
+	  helpstring("ReportTemplate Control"), control ]
+	coclass ReportTemplate
+	{
+		[default] dispinterface _DReportTemplate;
+		[default, source] dispinterface _DReportTemplateEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

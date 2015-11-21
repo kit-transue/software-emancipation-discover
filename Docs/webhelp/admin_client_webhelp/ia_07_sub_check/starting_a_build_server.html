@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Starting a Build Server</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 0.0px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p4 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px Verdana}
+    p.p5 {margin: 0.0px 1.0px 8.0px 1.0px; font: 13.0px Tahoma; color: #af0a16}
+    p.p6 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana; color: #ff6262}
+    span.s1 {font: 12.0px 'Courier New'}
+    span.s2 {font: 11.0px Courier}
+    span.s3 {font: 9.0px 'Times New Roman'}
+    span.s4 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Starting a Build Server</b></p>
+<p class="p2">The build server launches DIScover to build models of your files and run Submission Check queries against them. When you ask Submission Check to check some files, a copy of each file is sent to the build server; a model is built of all the files sent, based on the flags used during the original model build; and the queries are run. Because the build processes need to build a model, its environment should be as close as possible to that of the original model build. It is possible that you need to run it on the same machine the model was built on. If it is run on a differ­ent machine, the model has to be updated so that the client is able to locate the build server; this can be done by editing the file <span class="s1">&lt;repository&gt;/tmp/disbuild/build_info</span><span class="s2"> </span>and changing the <span class="s1">#HOST</span><span class="s2"> </span>line to refer to the desired host.</p>
+<p class="p3">Note the following:</p>
+<p class="p4">•<span class="s3">   </span>If you are a ClearCase user, the build server launches each build with its own view; no view is required for the server itself.</p>
+<p class="p4">•<span class="s3">   </span>You <i>must</i><b> </b>perform this on the machine the model was built on, so that the paths used during the build for source and include files are still valid. Only one build server is required per machine.</p>
+<p class="p5"><b>Related Topics</b></p>
+<p class="p6"><span class="s4"><a href="../ia_07_sub_check/to_start_a_build_server_in_the_graphical_user_interface.html#XREF_To_start_a_build_server">To start a build server in the graphical user interface</a></span></p>
+</body>
+</html>

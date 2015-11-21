@@ -1,0 +1,41 @@
+#!/bin/sh
+
+dir=$1
+
+case "$dir" in
+  xip)	private_inc="-I../../../private/xip/include"
+	shared_inc="-I../../../src/xip/include"
+	flags="-DDEBUG"
+	;;
+  ttt)	private_inc="-I../../../private/ttt/include"
+	shared_inc="-I../../../src/ttt/include"
+	flags="--cfront_3.0"
+	;;
+  pa*)	private_inc="-I../../../private/package/oldApplication"
+	shared_inc="-I../../../src/package/oldApplication"
+	;;
+  xc*)	private_inc="-I../../../private/xcalentool/src"
+	shared_inc="-I../../../src/xcalentool/src"
+	flags="--preinclude $ADMINDIR/include/preinc.h -U__STDC__"
+	;;
+  ex*)	private_inc="-I../../../private/extract/src"
+	shared_inc="-I../../../src/extract/src"
+	;;
+  *)	private_inc="-I../../../private/$dir/include"
+	shared_inc="-I../../../src/$dir/include"
+esac
+
+sysinc="-I$PSETHOME/lib/Learn/src/sysinclude"
+CCinc="-I$PSETHOME/lib/Learn/src/sysinclude/g++"
+
+flags="$flags $private_inc $shared_inc $sysinc"
+
+lang=$2
+
+case "$lang" in
+  C)	compiler=CC
+	flags="-D_WCHAR_T -D__cplusplus $flags $CCinc" ;;
+  *)	compiler=cc ;;
+esac
+
+echo $compiler $flags

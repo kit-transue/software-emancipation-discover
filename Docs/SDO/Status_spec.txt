@@ -1,0 +1,90 @@
+##########################################################################
+# Copyright (c) 2015, Synopsys, Inc.                                     #
+# All rights reserved.                                                   #
+#                                                                        #
+# Redistribution and use in source and binary forms, with or without     #
+# modification, are permitted provided that the following conditions are #
+# met:                                                                   #
+#                                                                        #
+# 1. Redistributions of source code must retain the above copyright      #
+# notice, this list of conditions and the following disclaimer.          #
+#                                                                        #
+# 2. Redistributions in binary form must reproduce the above copyright   #
+# notice, this list of conditions and the following disclaimer in the    #
+# documentation and/or other materials provided with the distribution.   #
+#                                                                        #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS    #
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT      #
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR  #
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT   #
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT       #
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY  #
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT    #
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  #
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   #
+##########################################################################
+Date: 6/28/95
+File: Status_spec.txt
+Subject: Developer's Status 
+From: Trung Dung
+
+I   Requirement:
+    Managers
+	* What is person X working on?
+	* What did X do yesterday? the day before?
+	* ??? What is the status of bug9999 ?
+	* Give me team A current status?
+	  Give me current status of person x, y, z?
+	  What is team A doing today? yesterday? tomorow?
+	* Give me all entities that are being modified, 
+	  categorize them acording to subsystem, team, etc. ???
+	* assign next bugs to fix for a developer.
+	
+    Developers:
+	* Is anyone else modifying the same object as I do?
+	* What do I need to merge for my submission?
+	* Who will need to merge when I do submission?
+	* What are the submitted files that will impact my local files?
+	  for compilation?
+
+II  Entity Status : SDO_base
+    a) 	purpose: daily/weekly status indicator from a developer
+    b) 	attributes: owner, team_name,
+	* SDO_base::comment: 
+	* History: capture daily activities like: check in/out, bug submit,
+                   one line daily comment, modified entities (date), 
+	* History_summary: summary of a fixed interval of History
+    c) 	relations:
+	* Entities_attributes: 
+	    * fixing_bugs: bugs currently working on
+  	    * to_fix_bugs: next bugs to fix, could be entered by managers
+	    * checked_out_files, ents_being_modified
+	* Relational: 
+	  * parent <-> child: reflecting team hierachy
+	  * [devProject, Projects]: projects currently participated in.
+    d) 	behavior:
+	* Query/Function:
+	    * get_modified_objects(date)
+ 	* Filter: get_belong_to, get_dependent, 
+	* Action: 
+	    * transfer_from : combining different Status
+            * get_potential_conflic_info(): Give a report of what files,
+	      entities, by whom that are in conflict with my local area.
+	    * get_merging_info: files that need to merge, entities in
+	      conflict (eg. advise to review the merged files). The
+	      information is gathered by storing modified entities into
+	      checked-in files
+            * notify_clashing_of_modification(): notify other owners of
+	      potential conflict.
+	    * update_status: sync local area and status; record history,
+              comments; usually invoked just prior to leaving for the day. 
+	    * append_summary_history: summarize an interval of history and
+              append; remove from history this interval; This is to reflect
+	      weekly and/or monthly status report
+	* View: intersection, union, difference,
+    e) 	Trigger:
+	* check-in:
+	* check-out: 
+	* update_status:

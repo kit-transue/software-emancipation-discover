@@ -1,0 +1,35 @@
+#!/bin/sh
+
+XROOT=${BUILD_SRC_ROOT}/tools/ptest/virtual_display_tools/X11
+
+display=$1
+status=0
+
+echo `date` >> /users/builder/Xvfb.log
+$XROOT/../${Arch}/Xvfb :$display -ac -fp $XROOT/lib/fonts/sun5/,$XROOT/lib/fonts/misc/,$XROOT/lib/fonts/Speedo/,$XROOT/lib/fonts/Type1/,$XROOT/lib/fonts/75dpi/,$XROOT/lib/fonts/100dpi/ -fn cursor -pn >> /users/builder/Xvfb.log 2>&1 &
+
+pid1=$!
+
+# give the Xserver a chance to come up:
+sleep 3
+
+# I don't think the window manager actually needs to be running; tests seem
+# to generally succeed without it.
+echo `date` >> /users/builder/twm.log
+$XROOT/../${Arch}/twm -display :$display -f ${XROOT}/../twmrc >> /users/builder/twm.log 2>&1 &
+
+pid2=$!
+
+echo "Started server on display $display with pid $pid1, window manager pid $pid2"
+
+# make sure the processes are still running after a few seconds:
+sleep 2
+for pid in $pid1 $pid2; do
+	ps -p $pid > /dev/null 2>&1
+	if [ $? -ne 0 ] ; then
+		echo "Process $pid no longer running.  Display may not be usable."
+		status=1
+	fi
+done
+
+exit $status

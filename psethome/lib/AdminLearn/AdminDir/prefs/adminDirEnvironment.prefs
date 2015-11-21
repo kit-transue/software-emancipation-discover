@@ -1,0 +1,12 @@
+*psetPrefs.pdfFileUser:			$ADMINDIR/pdf/adminDirEnvironment.pdf $ADMINDIR/pdf/quickBuildRules.pdf
+
+*psetPrefs.sharedSrcRoot:		$ADMINDIR/src/adminDirEnvironment
+*psetPrefs.sharedModelRoot:		$ADMINDIR/model/SHARED/adminDirEnvironment
+
+*psetPrefs.projectList:			ProjectFour
+
+
+*psetPrefs.logFileCreate:		no
+*psetPrefs.logFileNameFixed:		no
+*psetPrefs.logFileMonitor:		no
+

@@ -1,0 +1,43 @@
+<html>
+<body>
+
+<p><b>UARRCPY - Use 'System.arraycopy ()'</b></p>
+
+<p>Don't using a loop to copy arrays.</p>
+
+<p><b>Wrong</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; int[] array1 = new int [100];<br>
+&nbsp; &nbsp; for (int i = 0; i &lt; array1.length; i++) {<br>
+&nbsp; &nbsp; &nbsp; array1 [i] = i;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; int[] array2 = new int [100];<br>
+&nbsp; &nbsp; for (int i = 0; i &lt; array2.length; i++) {<br>
+&nbsp; &nbsp; &nbsp;<font color='red'> array2 [i] = array1 [i];</font><br>
+&nbsp; &nbsp; }<br>
+&nbsp; }</code></p></nobr>
+
+<p><b>Tip:</b>
+Use 'System.arraycopy ()' instead of using a loop to copy arrays. 
+'System.arraycopy ()' is much faster than using a loop to copy an array.</p>
+
+<p><b>Right</b></p>
+
+<p><code><nobr>
+void oper () {<br>
+&nbsp; &nbsp; int[] array1 = new int [100];<br>
+&nbsp; &nbsp; for (int i = 0; i &lt; array1.length; i++) {<br>
+&nbsp; &nbsp;  &nbsp;array1 [i] = i;<br>
+&nbsp; &nbsp; }<br>
+&nbsp; &nbsp; int[] array2 = new int [100];<br>
+&nbsp; &nbsp; <font color='blue'>System.arraycopy(array1, 0, array2, 0, 100);</font><br>
+}
+</code></p></nobr>
+
+<p><b>REFERENCE</b></p>
+<p>http://www.cs.cmu.edu/~jch/java/speed.html</p>
+
+</body>
+</html>

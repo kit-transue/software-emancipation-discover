@@ -1,0 +1,157 @@
+# constants.dat
+# ws = White Spaces
+# Anything inside <> in format specifications is not necessary
+# Empty lines and comments are ingnored. Comments start with '#' as the
+# first character on a line
+
+[DEFAULT_SYMBOL_FORMAT]
+"%s%s %s ==> %s" kind type name lname
+
+# format: <ws>"Submenu Name"<anything>
+[SUBMENU]
+#   Name		index (not used, shown just for convinience)
+    "Uses"		0
+    "Defines"		1
+    "Nested"		2
+    "Show"		3
+
+[END]
+
+# format: <ws>"Query Name"<ws>"Access cmd"<ws><SubmenuIndex><anything>
+[QUERY]
+
+    "Where Defined"	     	 "where defined"		-1	
+    "Where Referenced"        	 "where referenced"		-1	
+    "Files Where Included"    	 "where included"		-1	
+    "Where Used"              	 "where used"			-1	
+
+    "Uses"                 	 "uses -all"			0	
+    "Uses Tables"		 "uses -tables"			0
+    "Uses Packages"		 "uses -packages"		0
+    "Uses Cursors"		 "uses -cursors"		0
+    "Uses Externrefs"   	 "uses -externrefs"		0
+    "Uses Columns/Fields"	 "uses -fields"			0
+    "Uses Functions"       	 "uses -functions"		0	
+    "Uses Methods"       	 "uses -functions"		0	
+    "Uses Variables"       	 "uses -variables"		0	
+    "Uses Class Variables"     	 "uses -variables"		0	
+    "Uses Classes"         	 "uses -classes"		0	
+    "Uses Structures"      	 "uses -classes"		0	
+    "Uses Interfaces"      	 "uses -interfaces"		0	
+    "Uses Unions"          	 "uses -unions"			0	
+    "Uses Enums"           	 "uses -enums"			0	
+    "Uses Enum Values"     	 "uses -evalues"		0	
+    "Uses Data Members"    	 "uses -fields"			0	
+    "Uses Fields"	    	 "uses -fields"			0	
+    "Uses Typedefs"        	 "uses -typedefs"		0	
+    "Uses Macros"          	 "uses -macros"			0	
+    "Uses String Literals" 	 "uses -strings"		0	
+    "Uses Numeric Literals"      "uses -constants"              0
+    "Uses Local Variables" 	 "uses -local"			0	
+ 
+    "Defines"               	 "defines -all"			1	
+    "Defines Tables"		 "defines -tables"		1
+    "Defines Packages"           "defines -packages"		1
+    "Defines Cursors"		 "defines -cursors"		1
+    "Defines Files"		 "defines -files"		1
+    "Defines Functions"     	 "defines -functions"		1	
+    "Defines Methods"     	 "defines -functions"		1	
+    "Defines Variables"     	 "defines -variables"		1	
+    "Defines Class Variables"    "defines -variables"		1	
+    "Defines Classes"       	 "defines -classes"		1	
+    "Defines Structures"    	 "defines -classes"		1	
+    "Defines Interfaces"       	 "defines -interfaces"		1	
+    "Defines Unions"        	 "defines -unions"		1	
+    "Defines Enums"         	 "defines -enums"		1	
+    "Defines Enum Values"   	 "defines -evalues"		1	
+    "Defines Data Members"  	 "defines -fields"		1	
+    "Defines Fields"	  	 "defines -fields"		1	
+    "Defines Typedefs"      	 "defines -typedefs"		1	
+    "Defines Macros"        	 "defines -macros"		1	
+
+    "Is Part Of"		 "lambda x {filter class [where used $x]}"
+ 
+    "Show Nested"             	 "get_nested"			2	
+    "Show Nested Classes"     	 "get_nested_classes"		2	
+    "Show Nested Interfaces"   	 "get_nested_interfaces"	2	
+    "Show Nested Unions"      	 "get_nested_unions"		2	
+    "Show Nested Enums"       	 "get_nested_enums"		2	
+    "Show Nested Typedefs"    	 "get_nested_typedefs"		2	
+    "Show Nested Packages"    	 "get_nested_packages"		2	
+    "Show Containing"         	 "get_containing"		2	
+ 
+    "Show Include Files"      	 "get_include_files"		3	
+    "Show Member Functions"   	 "get_member_functions"		3	
+    "Show Methods"	   	 "get_member_functions"		3	
+    "Show Member Data"        	 "get_member_data"		3	
+    "Show Fields"        	 "get_member_data"		3	
+    "Show Friends"            	 "get_friends"			3	
+    "Show Generated"           	 "get_generated"		3	
+    "Show Macros"       	 "get_macros"			3	
+    "Show Super-Classes"      	 "get_super_classes"		3	
+    "Show Sub-Classes"        	 "get_sub_classes"		3	
+    "Implements"		 "get_super_implements"		3
+    "Extends"			 "get_super_extends"		3
+    "Extends Interfaces"	 "get_super_classes"		3
+    "Extends/Implements"	 "get_super_classes"		3
+    "Where Implemented"		 "get_sub_implementers"		3
+    "Where Extended"		 "get_sub_classes"		3
+    "Where Interface Extended"	 "get_sub_extenders"		3
+    "Where Extended/Implemented" "get_sub_classes"		3
+    "Show Related Classes"	 "get_related_classes"		3	
+    "Show Related Structures"	 "get_related_classes"		3	
+    "Show Defined As"         	 "get_type"			3	
+    "Show Enum Fields"        	 "uses -evalues"		3	
+    "Template of Instance"    	 "get_template"			3	
+    "Instance of Template"    	 "get_instantiations"		3	
+    "Show Decl Usage"         	 "get_decl_usage"		3
+
+    "Show Instances"          	 "instances"			3	
+    "Show Declarations"		 "get_declarations"		3	
+
+    "Show Modified Entities"     "modified_entities"		3	
+    "Show Overrides"             "get_overrides"		3	
+ 
+    "Declared In"             	 "where declared"		-1	
+    "Declares"                	 "get_declares"			-1
+
+[END]
+
+# format: <ws>"Category Name"<ws>"Access Command"<ws><ddKind><anything>
+[CATEGORY]
+
+# The following are Discover internal categories, changing them is not recommended
+
+   	"Files" 		"defines -modules"	17 
+	"Functions"		"defines -functions"	5  
+	"Methods"		"defines -functions"	5  
+	"Variables"		"defines -variables"	3  
+	"Class Variables"	"defines -variables"	3  
+	"Classes"		"defines -classes"	9  
+	"Structures"		"defines -classes"	9
+	"Unions"		"defines -unions"	14
+	"Enums"			"defines -enums"	7
+	"Typedefs"		"defines -typedefs"	1
+	"Macros"		"defines -macros"	2
+	"Templates"		"defines -templates"	33
+	"String Literals"	"defines -strings"	44 "lambda x {browser set next [instances $x]}"
+	"Local Variables"	"defines -locals"	45 "lambda x {browser set next [instances $x]}"
+	"Projects"		"subprojects"		18 
+	"Fields"		"defines -fields"	4
+	"Instances"		"instances"		47
+	"Scopes"		"scopes"		46 
+	"Enum Values"		"defines -evalues"	8
+	"Semtype"		"defines -semtypes"	24 ""	
+	"Tables"		"defines -tables"	56
+	"Cursors"		"defines -cursors"	55
+	"Packages"		"packages"		54 "lambda x {browser set next [set_union [where defined $x] [uses -files $x]]}"
+	"Externrefs"		"uses -externrefs"	58 "lambda x {browser set next [where referenced $x]}"
+        "Interfaces"            "defines -interfaces"   63
+	"Numeric Literals"	"uses -constants"       61 ""
+# End of Discover internal categories
+
+# User defined Categories go here. Do not specify ddKinds for them
+
+
+[END]
+

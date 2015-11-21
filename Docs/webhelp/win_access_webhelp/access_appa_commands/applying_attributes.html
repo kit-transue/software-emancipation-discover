@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Applying Attributes</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 1.0px 24.0px 1.0px; text-align: center; font: 19.0px Tahoma; color: #af0a16}
+    p.p2 {margin: 0.0px 1.0px 6.7px 1.0px; font: 12.0px Verdana}
+    p.p3 {margin: 0.0px 1.0px 6.7px 24.0px; font: 12.0px 'Courier New'}
+    span.s1 {font: 12.0px 'Courier New'}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Applying Attributes</b></p>
+<p class="p2">You can use attributes as though they were commands; however, if you apply an attribute to a set without using a command to iterate the set, the attribute looks only at the first entity in the set, for example:</p>
+<p class="p3">% numargs ticTacToeGame::nextTurn()<br>
+0<br>
+% numargs get_path(char *)<br>
+1</p>
+<p class="p2">In this example, the <span class="s1">numargs</span> attribute predictably shows how many arguments the functions take. Now try applying this to a set:</p>
+<p class="p3">% size $func<br>
+59<br>
+% numargs $func<br>
+2</p>
+<p class="p2">Now <span class="s1">numargs</span> says that the first entity in the set <span class="s1">$func</span> has two arguments. This says nothing of the other 58 entities in the set. Using the <span class="s1"><b>apply</b></span> command, though, you can get this information:</p>
+<p class="p3">% apply numargs $func<br>
+0 1 2 3 4<br>
+%</p>
+<p class="p2">The <span class="s1"><b>apply</b></span> command applies the <span class="s1">numargs</span> attribute to all entities in the set, but removes duplicates. Therefore, the <span class="s1">$func</span> set has functions that take <span class="s1">1</span>, <span class="s1">2</span>, <span class="s1">3</span>, and <span class="s1">4</span> arguments.</p>
+</body>
+</html>

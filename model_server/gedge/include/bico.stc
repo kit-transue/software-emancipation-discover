@@ -1,0 +1,69 @@
+#ifndef _BICO_STC
+#define _BICO_STC
+
+/*------------------------------------------------------------------------------------------
+  
+    BICO.STC
+     
+    Autor      : Bernd Rumscheid
+    Date       : 14.01.89
+    nderungen : 
+
+ ------------------------------------------------------------------------------------------*/
+   
+#include "adtugraph.stc"
+#include "planar.stc"
+#include "addcross.stc"
+#include "adttree.stc"   
+   
+
+typedef
+    struct ARTI_POINT
+    {
+      int               name;
+      int               flag;
+      int               n;               /* Anzahl der zweifachen Zusammenhangskomponenten */
+      struct BICO_LIST  *BL;
+    } ARTI_POINT;
+    
+    
+typedef
+    ST_EDGE  BC_EDGE;
+    
+    
+typedef
+    struct BICO_COMP
+    {
+      int               n;                                                /* Anzahl Knoten */
+      int               flag;
+      int               *name_table;
+      BC_EDGE           *first, *dummies;       
+      UNDIR_GRAPH       *UG;
+      PLANAR_GRAPH      *PG;
+      DYN_GRAPH         *DG;
+      ST_GRAPH          *SG; 
+      struct ARTI_LIST  *AL;
+      TREE_LIST         *trees;
+    } BICO_COMP;
+    
+      
+typedef
+    struct ARTI_LIST      
+    {
+      ARTI_POINT        *AP;
+      struct ARTI_LIST  *next;
+    } ARTI_LIST;
+    
+    
+typedef
+    struct BICO_LIST
+    {
+      BICO_COMP         *BC;
+      struct BICO_LIST  *next;
+    } BICO_LIST;
+    
+
+/* END BICO.STC */    
+	
+
+#endif

@@ -1,0 +1,12 @@
+<!-- Test of alternate and equivalent. -->
+<!-- Test with:
+           x.c -A /A +A
+     Result is
+           -XA -XA +XA
+-->
+<cmdline nameintro="-"><alternate nameintro="+"/><equivalent nameintro="/"/>
+ <translate>
+  <option name="A" noarg="1">-XA</option>
+  <option name="A" intro="+" noarg="1">+XA</option>
+ </translate>
+</cmdline>

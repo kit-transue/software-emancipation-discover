@@ -1,0 +1,19 @@
+
+CXXROOTS=\
+	xxinterface \
+	license_stubs
+
+CPPROOTS=\
+	xxsn
+
+CPP_INCLUDES=\
+	-I../include \
+	-I$(LMGRHOME)/machind \
+	-I$(LOCAL_SRC_ROOT)/model_server/interface/include \
+	-I$(BUILD_SRC_ROOT)/model_server/interface/include \
+	-I$(LOCAL_SRC_ROOT)/model_server/ui/include \
+	-I$(BUILD_SRC_ROOT)/model_server/ui/include \
+	-I$(LOCAL_SRC_ROOT)/gen/include \
+	-I$(BUILD_SRC_ROOT)/gen/include \
+	-I$(LOCAL_SRC_ROOT)/stream_message/include \
+	-I$(BUILD_SRC_ROOT)/stream_message/include

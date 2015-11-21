@@ -1,0 +1,12 @@
+CXXROOTS = \
+	parray \
+
+CPP_INCLUDES=\
+-I$(LOCAL_SRC_ROOT)/gala/extern/osport/include \
+-I$(BUILD_SRC_ROOT)/gala/extern/osport/include \
+
+
+
+
+
+

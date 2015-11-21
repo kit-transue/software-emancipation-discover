@@ -1,0 +1,47 @@
+ROOT  :  C:/  <->  /ROOT  {
+  "d_drive/program files/swemancipation/prebuilt/source/learn"  :  "$sharedSrcRoot"  <->  "d_drive/program files/swemancipation/prebuilt/source/learn"  {
+      xip  {
+        src  {
+          *.c
+        }
+        include  {
+          canvas.h
+          dt.h
+          externals.h
+          image_win.h
+          stage.h
+          xip.h
+        }
+      }
+      ttt  {
+        src  {
+          *.cpp
+        }
+        include  {
+          ^main.h
+          *.h
+        }
+      }
+      sysinclude  {
+        ^va-sparc.h
+        *.h
+        xm  {
+          *.h
+        }
+        x11  {
+          *.h
+        }
+        sys  {
+          *.h
+        }
+        mrm  {
+          *.h
+        }
+      }
+  }
+}
+__rules  :  /  <->  /__rules  {
+  ""  :  $sharedSrcRoot(**)/(*)/%/.pset  =>  $ADMINDIR/model/pset/d_drive/(1)/(2).pset
+  ""  :  $sharedSrcRoot/(**)/(*)/%/.make  =>  ""$PSETHOME/bin/disperl" "$PSETHOME/mb/cr_GetFlags.pl" "$sharedsrcRoot/(1)/(2)"  "
+  ""  :  C:/(*).pmod/%/.pmoddir  =>  $ADMINDIR/model/pmod/(1).pmod
+}

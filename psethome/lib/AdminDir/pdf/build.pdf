@@ -1,0 +1,65 @@
+#
+# This is a sample PDF, to be used as a template.
+# Copy it into $ADMINDIR/pdf and modify your copy as needed.
+#
+# note: This pdf uses the generic ** construct.  For optimum
+# 	performance, the ** should be replaced with single *s
+#	that reflect the directory structure.
+#
+# note: DISCOVER will complain and exit if you load a pdf that
+#	refers to unset environment variables.
+
+#
+# a writable home project 
+#
+Home : $privateSrcRoot <-> /
+{
+    subs : $privateSrcRoot <-> /DISCOVER-Subsystems {
+	*.sub
+    }
+    **.[ch]
+} 
+
+#
+# the next rule creates a project for each subdirectory of
+# $sharedSrcRoot, and populates each with the source files 
+# in directories beneath it.
+# In build pdf the script read/write selector below should be W
+# in user pdf the selector should be R
+#
+(1) : $sharedSrcRoot/(*) [[ W ]] <-> /(1)
+{
+    **.[ch]
+}
+
+__Rules : $HOME <-> /
+{
+#
+# rules governing the files in the projects under $sharedSrcRoot
+#
+
+#
+#.pset rule: store pset files under $sharedModelRoot
+#
+  $sharedSrcRoot/(1)/(2).o	: $sharedSrcRoot/(**)/(*).([ch])/%/.pset	=> $sharedModelRoot/pset/(1)/(2).(3).pset
+
+  $sharedSrcRoot/(1)		: $sharedSrcRoot/(**)/(*).([ch])/%/.make	=> "cd $sharedSrcRoot/(1); make -n (2).o"
+
+  ""				: $sharedSrcRoot/(**).pmod/%/.pmoddir		=> $sharedModelRoot/pmod/(1).pmod
+
+  ""				: $sharedSrcRoot/(**)/%/.makemf			=> "cd $sharedSrcRoot/(1); make makefile"
+
+#
+# ... and rules for the project Home
+#
+
+  $privateSrcRoot/(1)/(2).o	: $privateSrcRoot/(**)/(*).([ch])/%/.pset	=> $privateModelRoot/pset/(1)/(2).(3).pset
+
+  $privateSrcRoot/(1)		: $privateSrcRoot/(**)/(*).([ch])/%/.make	=> "cd $privateSrcRoot/(1); make -n (2).o"
+
+  ""				: $privateSrcRoot/(**).pmod/%/.pmoddir		=> $privateModelRoot/pmod/(1).pmod
+
+  ""				: $privateSrcRoot/(**)/%/.makemf		=> " "
+
+}
+

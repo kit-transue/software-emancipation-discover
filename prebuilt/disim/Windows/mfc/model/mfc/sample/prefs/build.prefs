@@ -1,0 +1,126 @@
+#
+# build.prefs
+#
+
+*psetPrefs.groupsPath:              %privateModelRoot%/groups
+*psetPrefs.steEditMode:				0
+
+*psetPrefs.debugShowMakeRuleOutput:	yes
+*psetPrefs.PutTrackBugs:			0
+*psetPrefs.acceptSyntaxErrors:		yes
+
+*psetPrefs.configurator:			%PSETHOME%/bin/configurator
+*psetPrefs.configuratorSystem:		
+*psetPrefs.configuratorCustomDirectory:	
+*psetPrefs.configuratorLock:		
+*psetPrefs.configuratorUnlock:		
+*psetPrefs.configuratorPut:		
+*psetPrefs.configuratorGet:		
+*psetPrefs.configuratorDiff:		
+*psetPrefs.putModel:				no
+*psetPrefs.getModel:				no
+
+*psetPrefs.SubmissionCheck.Enabled:		1
+*psetPrefs.SubmissionCheck.SourceList:	
+*psetPrefs.SubmissionCheck.Procedures:	
+*psetPrefs.SubmissionCheck.Enforce:		1
+*psetPrefs.SubmissionCheck.Filter:		BaseLibrary
+*psetPrefs.SubmissionCheck.AnalyzeChanges:	1
+*psetPrefs.SubmissionCheck.MailExecPath:	/bin/mail
+*psetPrefs.SubmissionCheck.CheckinLog:	
+*psetPrefs.SubmissionCheck.Policy:		%PSETHOME%/lib/baselib.sc
+
+*psetPrefs.QACockpit.BaseLibrary:		%PSETHOME%/lib/baselib.sc
+
+*psetPrefs.logFileBuildCompress:		no
+*psetPrefs.logFileCreate:			yes
+*psetPrefs.logFileDir:				%ADMINDIR%/log
+*psetPrefs.logFileMonitor:			yes
+*psetPrefs.logFileNameFixed:		yes
+*psetPrefs.logFileUserDelete:		no
+*psetPrefs.logPrefValues:			no
+*psetPrefs.msgLogger:				yes
+*psetPrefs.nameCompany:					"YOURCOMPANY"
+*psetPrefs.nameDiscoverAdministrator:	"Tech Support, support@yourcompany.com"
+
+#*psetPrefs.cEsqlSuffix:                  .pc
+#*psetPrefs.cEsqlPp:                      ESQL_C
+#*psetPrefs.cEsqlArgs:
+#*psetPrefs.cPlusEsqlSuffix:              .pcc
+#*psetPrefs.cPlusEsqlPp:                  ESQL_CPP
+#*psetPrefs.cPlusEsqlArgs:
+#*psetPrefs.DIS_c.EsqlPreprocessor:	
+
+*psetPrefs.ELS.List:			 	java sql
+*psetPrefs.ELS.nonAscii.Suffix:		.class .zip .jar .pkapl
+*psetPrefs.ELS.java.Suffix:			.java .class .zip .jar .jproxy
+#*psetPrefs.ELS.java.Flags:			--classpath .:/net/psales/usr/j2se/jre/lib/i18n.jar
+*psetPrefs.ELS.java.FileIcon:		158
+*psetPrefs.ELS.sql.Suffix:			.sql .spb .sps .ff .fp .fpp .sf .sp .spp
+#*psetPrefs.ELS.sql.Flags:			INCLUDE=/apps/proc/include
+*psetPrefs.ELS.sql.FileIcon:		29
+
+*psetPrefs.cCompiler:				CL
+*psetPrefs.cHdrSuffix:				.h .i
+*psetPrefs.cSuffix:					.c .h .i
+*psetPrefs.cDfltSrcSuffix:			.c 
+*psetPrefs.cDfltHdrSuffix:			.h
+*psetPrefs.cStyle:					0
+*psetPrefs.cFlags:				
+*psetPrefs.cDefines:				
+*psetPrefs.cIncludes:				
+
+*psetPrefs.cPlusCompiler:			CL
+*psetPrefs.cPlusHdrSuffix:			.H .hpp .hxx
+*psetPrefs.cPlusSuffix:				.C .cc .cpp .cxx .H .hpp .hxx
+*psetPrefs.cPlusDfltSrcSuffix:		.C
+*psetPrefs.cPlusDfltHdrSuffix:		.H
+*psetPrefs.cPlusFlags:				
+*psetPrefs.cPlusDefines:			
+*psetPrefs.cPlusIncludes:			
+
+*psetPrefs.DIS_model.GenerateY2KInfo:	0
+*psetPrefs.ELS.EDG:						yes
+
+*psetPrefs.sharedModelRoot:			%ADMINDIR%/model
+*psetPrefs.privateModelRoot:		%sharedModelRoot%
+*psetPrefs.privateSrcRoot:			%sharedSrcRoot%
+
+*psetPrefs.MBscratch:				yes
+*psetPrefs.MBflagsReuse:			yes
+*psetPrefs.MBcontinue:				no
+*psetPrefs.MBforceCleanup:			yes
+*psetPrefs.MBheartBeat:				no
+
+*psetPrefs.MBdoPassCache:			yes
+*psetPrefs.MBdoPassAnalysis:		yes
+*psetPrefs.MBdoPassParse:			yes
+*psetPrefs.MBdoPassUpdate:			yes
+*psetPrefs.MBdoPassFinalize:		yes
+*psetPrefs.MBincludeAllHdrs:		yes
+*psetPrefs.doBuildDFA:				no
+
+*psetPrefs.MBparallelHosts.parse:		$HOST:1
+#*psetPrefs.MBparallelHosts.update:		$HOST:1
+*psetPrefs.MBremoteEval:				
+*psetPrefs.MBremoteEnvVarList:			MODELNAME ADMINDIR PSETHOME DISMBDIR sharedSrcRoot sharedModelRoot LM_LICENSE_FILE DISPLAY
+*psetPrefs.vfbEnable:					0
+#*psetPrefs.projectListFile:			%ADMINDIR%/config/PmodList.txt
+
+# PreserveFilenameCase automatically defaults to 1 on Unix and 0 on Windows.
+#*psetPrefs.PreserveFilenameCase:		1
+
+*psetPrefs.MBmultipleIFFs:    		yes
+*psetPrefs.MBanalysisMethod:    	TS
+
+*psetPrefs.ADMINDIR:	       		%PSETHOME%/prebuilt/model/mfc/sample
+*psetPrefs.defaultPDF:				%ADMINDIR%/pdf/server.pdf
+*psetPrefs.pdfFileBuild:			%ADMINDIR%/pdf/build.pdf
+*psetPrefs.pdfFileUser:				%ADMINDIR%/pdf/user.pdf
+*psetPrefs.projectHome:				Home
+*psetPrefs.cPlusFlags: 
+*psetPrefs.cPlusDefines: 
+*psetPrefs.cPlusIncludes: 
+*psetPrefs.cFlags: 
+*psetPrefs.cDefines: 
+*psetPrefs.cIncludes: 
